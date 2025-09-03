@@ -3,7 +3,7 @@ name: Build check
 on: [push, pull_request]
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -29,4 +29,4 @@ jobs:
         run: pnpm install
 
       - name: Run expo 
-        run: pnpm start web
+        run: pnpm run web
