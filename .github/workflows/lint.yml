@@ -1,11 +1,9 @@
 name: Linter check
 
-on:
-  push:
-  pull_request:
+on: [push, pull_request]
 
 jobs:
-  quality:
+  lint:
     runs-on: ubuntu-latest
     permissions:
       contents: read
