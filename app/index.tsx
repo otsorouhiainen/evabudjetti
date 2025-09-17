@@ -1,15 +1,48 @@
-import { Text, View } from 'react-native';
+import * as eva from '@eva-design/eva';
+import {
+	ApplicationProvider,
+	IconRegistry,
+	Layout,
+} from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { View } from 'react-native';
+import { ButtonAccessoriesShowcase } from '@/src/components/ButtonExample';
 
 export default function Index() {
 	return (
-		<View
-			style={{
-				flex: 1,
-				justifyContent: 'center',
-				alignItems: 'center',
-			}}
-		>
-			<Text>Edit app/index.tsx to edit this screen.</Text>
-		</View>
+		<>
+			<IconRegistry icons={EvaIconsPack} />
+			<ApplicationProvider {...eva} theme={eva.dark}>
+				<View
+					style={{
+						flex: 1,
+						inset: 0,
+						justifyContent: 'center',
+						alignItems: 'center',
+					}}
+				>
+					<Layout
+						style={{
+							flex: 1,
+							inset: 0,
+							justifyContent: 'center',
+							alignItems: 'center',
+						}}
+					>
+						<Layout
+							style={{
+								flex: 1,
+								flexDirection: 'column',
+								width: '80%',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+						>
+							<ButtonAccessoriesShowcase />
+						</Layout>
+					</Layout>
+				</View>
+			</ApplicationProvider>
+		</>
 	);
 }
