@@ -1,7 +1,15 @@
-import { Button, Icon, type IconElement, type IconProps, Layout } from '@ui-kitten/components';
+import {
+	Button,
+	Icon,
+	type IconElement,
+	type IconProps,
+	Layout,
+} from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 
-const StarIcon = (props: IconProps): IconElement => <Icon {...props} name="star" />;
+const StarIcon = (props: IconProps): IconElement => (
+	<Icon {...props} name="star" />
+);
 
 export const ButtonAccessoriesShowcase = (): React.ReactElement => (
 	<Layout style={styles.container} level="1">
