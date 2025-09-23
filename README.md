@@ -14,20 +14,30 @@ Then run
 pnpm install
 ```
 
-2. Start the app
+2.a Start the app in the browser
 
+   Run in terminal
    ```bash
    pnpm run web
    ```
-2.b (Optional Android startup)
+2.b Android startup
 
    Run in terminal
    ```bash
    pnpm expo start
    ```
-   then start Expo Go on your Android device (download SDK 53 apk from this link: https://github.com/expo/expo-go-releases/releases/download/Expo-Go-2.33.22/Expo-Go-2.33.22.apk)
+   then start Expo Go on your Android device (download latest Expo Go version from Google Play)
    Read QR Code from terminal with Expo Go (NOTE! Both devices need to be in the same Wi-fi network)
-   
+
+2.c Ios startup
+
+   Run in terminal
+   ```bash
+   pnpm expo start
+   ```
+   then start Expo Go on your Ios device (download latest Expo Go version from App Store)
+   Connect the device to the same Wi-fi network as the PC, the application should show up in the list in the application
+
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
 ## Contributing to Git

@@ -25,7 +25,9 @@
 			"output": "static",
 			"favicon": "./assets/images/favicon.png",
 			"build": {
-				"babel": { "include": ["@ui-kitten/components"] }
+				"babel": {
+					"include": ["@ui-kitten/components"]
+				}
 			}
 		},
 		"plugins": [
@@ -39,7 +41,8 @@
 					"backgroundColor": "#ffffff"
 				}
 			],
-			"expo-font"
+			"expo-font",
+			"expo-web-browser"
 		],
 		"experiments": {
 			"typedRoutes": true
