@@ -1,3 +1,4 @@
+import { ButtonAccessoriesShowcase } from '@/src/components/ButtonExample';
 import * as eva from '@eva-design/eva';
 import {
 	ApplicationProvider,
@@ -7,7 +8,6 @@ import {
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { Link } from 'expo-router';
 import { View } from 'react-native';
-import { ButtonAccessoriesShowcase } from '@/src/components/ButtonExample';
 
 export default function Index() {
 	return (
@@ -40,6 +40,7 @@ export default function Index() {
 							}}
 						>
 							<Link href="/landing">Default</Link>
+							<Link href="/budgetView">Show budget</Link>
 							<ButtonAccessoriesShowcase />
 						</Layout>
 					</Layout>
