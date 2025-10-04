@@ -1,4 +1,3 @@
-// app/landing.tsx (or src/screens/Landing.tsx)
 import * as eva from '@eva-design/eva';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -8,19 +7,18 @@ import {
 	Icon,
 	IconRegistry,
 	Layout,
-	Text,
-	useTheme,
+	Text
 } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { BottomNav } from '../src/components/BottomNav';
 import { customTheme } from '../src/theme/eva-theme';
 
 export default function Landing() {
-  const theme = useTheme();
   const router = useRouter();
+  const [helpVisible, setHelpVisible] = useState(false);
   return (
     <>
       <IconRegistry icons={EvaIconsPack} />
@@ -42,9 +40,26 @@ export default function Landing() {
 
       {/* Illustration row */}
       <Layout style={styles.illustrationWrap} level="1">
-        <Icon name="question-mark-circle-outline" style={[styles.helpIcon, { color: customTheme['color-primary-300'] }]} />
+        <Icon
+          name="question-mark-circle-outline"
+          style={[styles.helpIcon, { color: customTheme['color-primary-300'] }]}
+          onPress={() => setHelpVisible(true)}
+        />
         <MaterialCommunityIcons name="piggy-bank" size={96} color={customTheme['color-primary-300']} />
       </Layout>
+
+      {/* Help Modal */}
+      {helpVisible && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text category="h6" style={{ marginBottom: 8 }}>Ohjeet</Text>
+            <Text style={{ marginBottom: 16 }}>
+              Tervetuloa budjettisovellukseen! Käytä alavalikon painikkeita siirtyäksesi eri osioihin. Lisää tulo tai meno painamalla "Lisää tulo/meno". Voit tarkastella ja muokata budjettiasi sekä nähdä yhteenvedon taloudestasi.
+            </Text>
+            <Button onPress={() => setHelpVisible(false)} style={{ alignSelf: 'center' }}>SULJE</Button>
+          </View>
+        </View>
+      )}
 
       {/* Balance card */}
       <Card disabled style={styles.balanceCard}>
@@ -177,5 +192,36 @@ const styles = StyleSheet.create({
   },
   navBtn: {
     borderRadius: 16,
+  },
+  helpIcon: {
+    position: 'absolute',
+    top: 0,
+    right: -80,
+    width: 28,
+    height: 28,
+    zIndex: 10,
+  },
+    modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 100,
+  },
+  modalBox: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 24,
+    width: 320,
+    maxWidth: '90%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    elevation: 8,
   },
 });
