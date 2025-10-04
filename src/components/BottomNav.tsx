@@ -1,4 +1,5 @@
 import { Button, Icon, Layout } from '@ui-kitten/components';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { customTheme } from '../../src/theme/eva-theme';
@@ -10,7 +11,7 @@ interface NavIconProps {
   borderColor?: string;
 }
 
-const NavIcon = ({ name, iconColor, btnColor, borderColor }: NavIconProps) => (
+const NavIcon = ({ name, iconColor, btnColor, borderColor, onPress }: NavIconProps & { onPress?: () => void }) => (
   <Button
     appearance="ghost"
     accessoryLeft={(props) => <Icon {...props} name={name} fill={iconColor} />}
@@ -19,17 +20,43 @@ const NavIcon = ({ name, iconColor, btnColor, borderColor }: NavIconProps) => (
       btnColor ? { backgroundColor: btnColor } : null,
       borderColor ? { borderWidth: 2, borderColor } : null,
     ]}
+    onPress={onPress}
   />
 );
 
-export const BottomNav = () => (
-  <Layout style={[styles.bottomBar, { backgroundColor: customTheme['color-primary-100'] }]} level="2">
-    <NavIcon name="home-outline" iconColor={customTheme['color-white']} btnColor={customTheme['color-primary-100']} borderColor={customTheme['color-primary-200']} />
-    <NavIcon name="plus-circle-outline" iconColor={customTheme['color-white']} btnColor={customTheme['color-primary-100']} borderColor={customTheme['color-primary-200']} />
-    <NavIcon name="grid-outline" iconColor={customTheme['color-white']} btnColor={customTheme['color-primary-100']} borderColor={customTheme['color-primary-200']} />
-    <NavIcon name="pie-chart-outline" iconColor={customTheme['color-white']} btnColor={customTheme['color-primary-100']} borderColor={customTheme['color-primary-200']} />
-  </Layout>
-);
+export const BottomNav = () => {
+  const router = useRouter();
+  return (
+    <Layout style={[styles.bottomBar, { backgroundColor: customTheme['color-primary-100'] }]} level="2">
+      <NavIcon
+        name="home-outline"
+        iconColor={customTheme['color-white']}
+        btnColor={customTheme['color-primary-100']}
+        borderColor={customTheme['color-primary-200']}
+        onPress={() => router.push('/landing')}
+      />
+      <NavIcon
+        name="plus-circle-outline"
+        iconColor={customTheme['color-white']}
+        btnColor={customTheme['color-primary-100']}
+        borderColor={customTheme['color-primary-200']}
+        onPress={() => router.push('/add_transaction')}
+      />
+      <NavIcon
+        name="grid-outline"
+        iconColor={customTheme['color-white']}
+        btnColor={customTheme['color-primary-100']}
+        borderColor={customTheme['color-primary-200']}
+      />
+      <NavIcon
+        name="pie-chart-outline"
+        iconColor={customTheme['color-white']}
+        btnColor={customTheme['color-primary-100']}
+        borderColor={customTheme['color-primary-200']}
+      />
+    </Layout>
+  );
+};
 
 const styles = StyleSheet.create({
   bottomBar: {

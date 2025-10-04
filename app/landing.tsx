@@ -12,6 +12,7 @@ import {
 	useTheme,
 } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { BottomNav } from '../src/components/BottomNav';
@@ -19,6 +20,7 @@ import { customTheme } from '../src/theme/eva-theme';
 
 export default function Landing() {
   const theme = useTheme();
+  const router = useRouter();
   return (
     <>
       <IconRegistry icons={EvaIconsPack} />
@@ -46,12 +48,12 @@ export default function Landing() {
 
       {/* Balance card */}
       <Card disabled style={styles.balanceCard}>
-        <Text category="s1" style={styles.dateText}>31.07.2025</Text>
+        <Text category="s1" style={styles.dateText}>04.10.2025</Text>
         <Text style={styles.rowText}>
-          Tilillä rahaa: <Text category="s1">200€</Text>
+          Tilillä rahaa: <Text category="s1">1234€</Text>
         </Text>
         <Text style={styles.rowText}>
-          Käyttövara: <Text category="s1">6€</Text>
+          Käyttövara: <Text category="s1">123€</Text>
         </Text>
 
         <Button size="small" style={styles.inspectBtn}>
@@ -63,6 +65,7 @@ export default function Landing() {
       <Button
         size="large"
         style={[styles.primaryCta, { backgroundColor: customTheme['color-primary-300'] }]}
+        onPress={() => router.push('/add_transaction')}
       >
         LISÄÄ TULO/MENO
       </Button>
