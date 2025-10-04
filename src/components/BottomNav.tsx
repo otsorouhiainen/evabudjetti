@@ -47,6 +47,7 @@ export const BottomNav = () => {
         iconColor={customTheme['color-white']}
         btnColor={customTheme['color-primary-100']}
         borderColor={customTheme['color-primary-200']}
+        onPress={() => router.push('/budget')}
       />
       <NavIcon
         name="pie-chart-outline"
