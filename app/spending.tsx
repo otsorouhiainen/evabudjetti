@@ -195,6 +195,12 @@ function SimpleBarChart({
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    paddingTop: 24,
+    paddingHorizontal: 20,
+    gap: 18,
+  },
   safe: { flex: 1 },
   scroll: {
     paddingTop: 18,
