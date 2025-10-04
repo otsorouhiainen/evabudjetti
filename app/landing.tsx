@@ -90,6 +90,7 @@ export default function Landing() {
         <Button
           size="large"
           style={[styles.secondaryBtn, { backgroundColor: customTheme['color-primary-300'] }]}
+          onPress={() => router.push('/budget')}
         >
           NÄYTÄ BUDJETTI
         </Button>
