@@ -1,6 +1,7 @@
 import * as eva from '@eva-design/eva';
 import {
 	ApplicationProvider,
+	Button,
 	IconRegistry,
 	Layout,
 } from '@ui-kitten/components';
