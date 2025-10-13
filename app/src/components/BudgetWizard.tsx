@@ -7,8 +7,13 @@ import {
 	Text,
 } from '@ui-kitten/components';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import type { BudgetWizardStep } from '../constants/wizardConfig';
+import { Modal, ScrollView, StyleSheet, View } from 'react-native';
+import {
+	BUDGET_WIZARD_STEPS,
+	type BudgetWizardStep,
+	type Item,
+} from '../constants/wizardConfig';
+import AddItemPopup from './AddItemPopup';
 
 const CalendarIcon = (props): IconElement => (
 	<Icon {...props} name="calendar-outline" />
@@ -20,118 +25,219 @@ const PlusIcon = (props): IconElement => (
 	<Icon {...props} name="plus-outline" />
 );
 
-const BudgetWizard = ({ steps }: { steps: BudgetWizardStep[] }) => {
+export default function BudgetWizard() {
 	const [stepIndex, setStepIndex] = React.useState(0);
-	const [wizardData, setWizardData] = React.useState(steps);
+	const [wizardData, setWizardData] = React.useState(BUDGET_WIZARD_STEPS);
+	const [popupVisible, setPopupVisible] = React.useState(false);
 	const currentStep = wizardData[stepIndex];
+	const progressBarStep = (stepIndex + 1) / wizardData.length;
+
+	function addItem(newItem: Item) {
+		setWizardData((prev) => {
+			return prev.map((step, sIdx) =>
+				sIdx === stepIndex
+					? {
+							...step,
+							items: [...step.items, newItem],
+						}
+					: step,
+			);
+		});
+	}
+
+	function deleteItem(item: Item) {
+		setWizardData((prev) =>
+			prev.map((step, sIdx) =>
+				sIdx === stepIndex
+					? {
+							...step,
+							items: step.items.filter(
+								(it) => it.name !== item.name,
+							),
+						}
+					: step,
+			),
+		);
+	}
+
+	function amountInputChange(item: Item, text: string): BudgetWizardStep[] {
+		return wizardData.map((step, sIdx) =>
+			sIdx === stepIndex
+				? {
+						...step,
+						items: step.items.map((it) =>
+							it.name === item.name
+								? {
+										...it,
+										amount: Number(text),
+									}
+								: it,
+						),
+					}
+				: step,
+		);
+	}
+
 	return (
-		<View style={{ padding: 20 }}>
-			<ProgressBar
-				progress={(stepIndex + 1) / wizardData.length}
-			></ProgressBar>
-			<Text style={{ marginTop: 20 }} category="h3">
-				Create a budget
-			</Text>
-			<View>
-				<Text style={{ marginTop: 20 }} category="h3">
+		<View style={styles.container}>
+			<Modal
+				visible={popupVisible}
+				onRequestClose={() => setPopupVisible(false)}
+				transparent={true}
+			>
+				<AddItemPopup
+					onAdd={(item) => addItem(item)}
+					onClose={() => setPopupVisible(false)}
+				/>
+			</Modal>
+			<View style={styles.topContent}>
+				<ProgressBar progress={progressBarStep} />
+				<Text style={styles.pageHeader} category="h3">
+					Create budget
+				</Text>
+				<Text style={styles.stepHeader} category="h4">
 					{currentStep.header}
 				</Text>
+			</View>
+			<ScrollView
+				contentContainerStyle={{ flexGrow: 1 }}
+				style={styles.content}
+			>
 				{currentStep.items.map((item) => (
-					<View key={item.name}>
 					<View style={styles.itemContainer} key={item.name}>
-						<Text style={{ width: '30%' }} category="s1">
+						<Text style={styles.itemName} category="s1">
 							{item.name}
 						</Text>
-						<View
-							style={{
-								width: '70%',
-								flexDirection: 'row',
-								alignItems: 'center',
-								justifyContent: 'center',
-								gap: 10,
-							}}
-						>
-							<Button size='small'
+						<View style={styles.itemContent}>
+							{/*Calendar button currently nonfunctional as the date picker is seriously limited*/}
+							<Button
+								size="small"
 								accessoryLeft={CalendarIcon}
-								style={{
-									width: '5%',
-									justifyContent: 'center',
-								}}
+								style={styles.calendarIcon}
 							/>
 							<Input
 								size="small"
-								style={{ width: '38%' }}
-								value={item.amount.toString()}
+								style={styles.amountInput}
+								value={
+									item.amount === 0 ? '' : String(item.amount)
+								}
 								onChangeText={(text) => {
-									const updatedSteps = wizardData.map(
-										(step, sIdx) =>
-											sIdx === stepIndex
-												? {
-														...step,
-														items: step.items.map(
-															(it) =>
-																it.name ===
-																item.name
-																	? {
-																			...it,
-																			amount: Number(
-																				text,
-																			),
-																		}
-																	: it,
-														),
-													}
-												: step,
+									setWizardData(
+										amountInputChange(item, text),
 									);
-									setWizardData(updatedSteps);
 								}}
 								keyboardType="numeric"
 							/>
-							<Text style={{ width: '15%' }} category="s1">
-								/mo
+							<Text style={styles.recurrenceText} category="s1">
+								{item.reoccurence}
+								{/* Need to make display enum for this later "/mo, /d, /a, etc" */}
 							</Text>
-							<Button size='small' style={{ width: '5%' }} accessoryLeft={TrashIcon} />
+							<Button
+								size="small"
+								style={styles.trashIcon}
+								accessoryLeft={TrashIcon}
+								onPress={() => deleteItem(item)}
+							/>
 						</View>
 					</View>
-					</View>
 				))}
-				<View style={{alignItems: 'flex-end', marginTop: 10}}>
-					<Button size='medium' accessoryLeft={PlusIcon}></Button>
-				</View>
-				<View
-					style={{
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-						marginTop: 20,
-					}}
+			</ScrollView>
+			<View style={styles.addIconContainer}>
+				<Button
+					size="medium"
+					accessoryLeft={PlusIcon}
+					onPress={() => setPopupVisible(true)}
+					style={styles.addIcon}
+				/>
+			</View>
+			<View style={styles.buttonContainer}>
+				<Button
+					disabled={stepIndex === 0}
+					onPress={() => setStepIndex(stepIndex - 1)}
 				>
+					<Text>Previous</Text>
+				</Button>
+				{stepIndex === wizardData.length - 1 ? (
 					<Button
-						disabled={stepIndex === 0}
-						onPress={() => setStepIndex(stepIndex - 1)}
+						onPress={() =>
+							console.log(
+								'Placeholder for finishing budget creation',
+							)
+						}
 					>
-						<Text>Previous</Text>
+						<Text>Finish</Text>
 					</Button>
-					<Button
-						disabled={stepIndex === wizardData.length - 1}
-						onPress={() => setStepIndex(stepIndex + 1)}
-					>
+				) : (
+					<Button onPress={() => setStepIndex(stepIndex + 1)}>
 						<Text>Next</Text>
 					</Button>
-				</View>
+				)}
 			</View>
 		</View>
 	);
-};
-
-export default BudgetWizard;
+}
 
 const styles = StyleSheet.create({
+	topContent: {
+		height: '20%',
+	},
+	container: {
+		flexDirection: 'column',
+		padding: 20,
+		height: '80%',
+	},
+	content: {
+		flexDirection: 'column',
+		marginTop: 40,
+		height: '60%',
+	},
 	itemContainer: {
-		display: 'flex',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-evenly',
-		backgroundColor: 'red',
+		backgroundColor: 'gray',
 		padding: 5,
+		marginTop: 5,
+	},
+	amountInput: {
+		width: '38%',
+	},
+	buttonContainer: {
+		height: '10%',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		marginTop: 40,
+	},
+	itemContent: {
+		width: '70%',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'flex-end',
+		gap: 10,
+	},
+	calendarIcon: {
+		width: '5%',
+	},
+	addIcon: {
+		marginTop: 10,
+		width: '30%',
+	},
+	addIconContainer: {
+		alignItems: 'flex-end',
+	},
+	itemName: {
+		width: '30%',
+	},
+	trashIcon: {
+		width: '5%',
+	},
+	recurrenceText: {
+		width: '15%',
+	},
+	pageHeader: {
+		marginTop: 20,
+	},
+	stepHeader: {
+		marginTop: 20,
 	},
 });

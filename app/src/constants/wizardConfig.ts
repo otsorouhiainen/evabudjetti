@@ -22,8 +22,13 @@ export const BUDGET_WIZARD_STEPS: BudgetWizardStep[] = [
 				reoccurence: 'monthly',
 				dates: [new Date()],
 			},
+			{
+				name: 'Item 1.2',
+				amount: 150,
+				reoccurence: 'monthly',
+				dates: [new Date()],
+			},
 		],
-		
 	},
 	{
 		header: 'Step 2',
