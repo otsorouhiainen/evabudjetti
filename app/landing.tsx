@@ -1,4 +1,8 @@
-import BudgetWizard from './src/components/BudgetWizard';
+import { Text, View } from 'react-native';
 export default function Landing() {
-	return <BudgetWizard />;
+	return (
+		<View>
+			<Text>Landing Page</Text>
+		</View>
+	);
 }
