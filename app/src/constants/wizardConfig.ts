@@ -1,4 +1,4 @@
-export type Reoccurence = 'daily' | 'monthly' | 'yearly' | 'custom';
+export type Reoccurence = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom';
 
 export interface Item {
 	name: string;

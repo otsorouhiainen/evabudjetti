@@ -2,6 +2,7 @@ import {
 	Button,
 	Icon,
 	type IconElement,
+	type IconProps,
 	Input,
 	ProgressBar,
 	Text,
@@ -15,13 +16,13 @@ import {
 } from '../constants/wizardConfig';
 import AddItemPopup from './AddItemPopup';
 
-const CalendarIcon = (props): IconElement => (
+const CalendarIcon = (props: IconProps): IconElement => (
 	<Icon {...props} name="calendar-outline" />
 );
-const TrashIcon = (props): IconElement => (
+const TrashIcon = (props: IconProps): IconElement => (
 	<Icon {...props} name="trash-2-outline" />
 );
-const PlusIcon = (props): IconElement => (
+const PlusIcon = (props: IconProps): IconElement => (
 	<Icon {...props} name="plus-outline" />
 );
 
@@ -119,7 +120,9 @@ export default function BudgetWizard() {
 								size="small"
 								style={styles.amountInput}
 								value={
-									item.amount === 0 ? '' : String(item.amount)
+									item.amount === 0
+										? ''
+										: `${item.amount.toString()}€`
 								}
 								onChangeText={(text) => {
 									setWizardData(

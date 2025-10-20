@@ -16,6 +16,10 @@ type AddItemPopupProps = {
 	onClose: () => void;
 };
 
+function isNullOrEmpty(value: string | null | undefined): boolean {
+	return value === null || value === undefined || value.trim() === '';
+}
+
 const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	const [name, setName] = React.useState<string>('');
 	const [amount, setAmount] = React.useState<string>('');
@@ -25,13 +29,17 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		IndexPath | IndexPath[]
 	>(new IndexPath(0));
 
+	const isDisabled =
+		!name.trim() ||
+		Number.isNaN(Number(amount)) ||
+		Number(amount) <= 0 ||
+		!date;
+
 	const handleAdd = () => {
-		const parsed = Number(amount);
-		if (!name.trim() || Number.isNaN(parsed)) return;
 		onAdd({
 			name: name.trim(),
-			amount: parsed,
-			reoccurence,
+			amount: Number(amount.trim()),
+			reoccurence: reoccurence,
 			dates: [date || new Date()],
 		} as Item);
 		setName('');
@@ -41,30 +49,30 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		onClose();
 	};
 
-	const isDisabled = !name.trim() || Number.isNaN(Number(amount));
-
 	return (
 		<View style={styles.container}>
 			<View style={styles.card}>
 				<Text>Add a new item</Text>
 				<View style={styles.inputsContainer}>
+					<Text>Name</Text>
 					<Input
-						placeholder="Name"
+						placeholder="Write the name here"
 						style={styles.input}
 						value={name}
 						onChangeText={setName}
+						status={isNullOrEmpty(name) ? 'warning' : 'success'}
 					/>
-
+					<Text>Amount</Text>
 					<Input
-						placeholder="Amount"
+						placeholder="Write the amount here (€)"
 						style={styles.input}
 						keyboardType="numeric"
-						value={amount}
+						value={`${amount}€`}
 						onChangeText={setAmount}
+						status={isNullOrEmpty(amount) ? 'warning' : 'success'}
 					/>
-
+					<Text>Reoccurence</Text>
 					<Select
-						placeholder="Reoccurence"
 						value={reoccurence}
 						selectedIndex={selectedIndex}
 						onSelect={setSelectedIndex}
@@ -72,13 +80,16 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						<SelectItem title={'daily'} />
 						<SelectItem title={'weekly'} />
 						<SelectItem title={'monthly'} />
+						<SelectItem title={'yearly'} />
+						<SelectItem title={'custom'} />
 					</Select>
-
+					<Text>Date</Text>
 					<Datepicker
-						placeholder="Date (YYYY-MM-DD)"
+						placeholder="Select the starting date"
 						style={styles.input}
 						date={date}
 						onSelect={setDate}
+						status={!date ? 'warning' : 'success'}
 					/>
 				</View>
 
