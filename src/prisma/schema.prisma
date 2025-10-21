@@ -1,14 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["reactNative"]
 }
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./app.db"
 }
 
 // Differentiates between money coming in and money going out.
@@ -17,53 +14,35 @@ enum TransactionType {
   EXPENSE
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// A global settings table for the app.
+// Contains things like language, theme etc
+model AppSettings {
+  id        String @id @default(cuid())
+  key       String
+  value     String
+  data_type String
 
-  // The user's single budget. This is an optional 1-to-1 relation.
-  budget Budget?
-
-  // The user's app settings. This is an optional 1-to-1 relation.
-  settings UserSettings?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
-// New model for user-specific app settings.
-model UserSettings {
-  id        String   @id @default(cuid())
-  // ISO 4217 currency code, e.g., "EUR", "USD"
-  currency  String   @default("EUR")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // The user these settings belong to.
-  // @unique ensures the 1-to-1 relationship.
-  // onDelete: Cascade means if the User is deleted, their settings are too.
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @unique
-}
-
+// The single, global budget for the entire app. Will only contain one row.
 model Budget {
-  id        String   @id @default(cuid())
-  name      String   @default("My Budget")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // We use a fixed ID of 1 so we can always query for the same record.
+  id Int @id @default(1)
 
-  // The user this budget belongs to.
-  // @unique ensures a user can only have one budget (1-to-1).
-  // onDelete: Cascade means if the User is deleted, their budget is too.
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @unique
-
-  // All transactions associated with this budget.
-  recurringTransactions RecurringTransaction[]
-  oneTimeTransactions   OneTimeTransaction[]
+  // Planned transactions
+  plannedTransactions RecurringTransaction[]
 }
 
-// Categories are now global (admin-managed) and not tied to a user.
+// Realized transactions
+model Spending {
+  id Int @id @default(1)
+
+  // Realized transactions
+  transactions OneTimeTransaction[]
+}
+
 model Category {
   id   String @id @default(cuid())
   name String
@@ -78,32 +57,24 @@ model Category {
   recurringTransactions RecurringTransaction[]
   oneTimeTransactions   OneTimeTransaction[]
 
-  // A category name must be unique for its type (e.g., only one "Salary" for INCOME)
-  @@unique([name, type])
+  @@unique([name])
 }
 
-// This model represents a TEMPLATE for a recurring transaction.
-// e.g., "Rent, -500 EUR, every 1st of the month"
+// TEMPLATE for a recurring transaction.
 model RecurringTransaction {
   id          String   @id @default(cuid())
   description String
-  // Amount stored in the smallest currency unit (e.g., cents).
+  // Amount in EUR
   amount      Int
-  type        TransactionType // INCOME or EXPENSE
-  // The iCal RRULE string (RFC 5545)
+  // iCal RRULE string
   rrule       String
-  startDate   DateTime
-  endDate     DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // The budget this recurring transaction belongs to.
+  // All recurring transactions belong to the single budget.
   budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-  budgetId String
+  budgetId Int    @default(1) // Always links to the Budget with id = 1.
 
-  // The category this transaction falls under.
-  // onDelete: Restrict prevents an admin from deleting a category
-  // if transactions are still linked to it.
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   categoryId String
 
@@ -111,29 +82,24 @@ model RecurringTransaction {
   @@index([categoryId])
 }
 
-// This model represents a single, concrete transaction that has occurred.
-// e.g., "Bonus, +200 EUR, on 2025-10-15"
+// A single, concrete transaction that has occurred.
+// Recurring transactions get realized into one time
 model OneTimeTransaction {
   id          String   @id @default(cuid())
   description String
-  // Amount stored in the smallest currency unit (e.g., cents).
+  // Amount stored in EUR
   amount      Int
-  type        TransactionType // INCOME or EXPENSE
-  // The specific date this transaction occurred.
   date        DateTime
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // The budget this transaction belongs to.
-  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-  budgetId String
+  // All one-time transactions belong to spending.
+  spending   Spending @relation(fields: [spendingId], references: [id], onDelete: Cascade)
+  spendingId Int      @default(1) // Always links to the Spending with id = 1.
 
-  // The category this transaction falls under.
-  // onDelete: Restrict prevents an admin from deleting a category
-  // if transactions are still linked to it.
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   categoryId String
 
-  @@index([budgetId])
+  @@index([spendingId])
   @@index([categoryId])
 }
