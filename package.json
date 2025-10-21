@@ -38,7 +38,6 @@
 		"expo-web-browser": "~15.0.7",
 		"install": "^0.13.0",
 		"nodejs": "^0.0.0",
-		"prima": "^0.0.1",
 		"react": "19.1.0",
 		"react-dom": "19.1.0",
 		"react-native": "0.81.4",
