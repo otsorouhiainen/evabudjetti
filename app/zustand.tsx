@@ -1,4 +1,4 @@
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import useCounterStore from '../src/store/useCounterStore'; // Adjust the import path
 import usePersistantCounterStore from '../src/store/usePersistantCounterStore';
 
