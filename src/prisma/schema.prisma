@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Differentiates between money coming in and money going out.
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // The user's single budget. This is an optional 1-to-1 relation.
+  budget Budget?
+
+  // The user's app settings. This is an optional 1-to-1 relation.
+  settings UserSettings?
+}
+
+// New model for user-specific app settings.
+model UserSettings {
+  id        String   @id @default(cuid())
+  // ISO 4217 currency code, e.g., "EUR", "USD"
+  currency  String   @default("EUR")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // The user these settings belong to.
+  // @unique ensures the 1-to-1 relationship.
+  // onDelete: Cascade means if the User is deleted, their settings are too.
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+}
+
+model Budget {
+  id        String   @id @default(cuid())
+  name      String   @default("My Budget")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // The user this budget belongs to.
+  // @unique ensures a user can only have one budget (1-to-1).
+  // onDelete: Cascade means if the User is deleted, their budget is too.
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+
+  // All transactions associated with this budget.
+  recurringTransactions RecurringTransaction[]
+  oneTimeTransactions   OneTimeTransaction[]
+}
+
+// Categories are now global (admin-managed) and not tied to a user.
+model Category {
+  id   String @id @default(cuid())
+  name String
+
+  // Each category is either for income or expenses.
+  type TransactionType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // All transactions that use this category.
+  recurringTransactions RecurringTransaction[]
+  oneTimeTransactions   OneTimeTransaction[]
+
+  // A category name must be unique for its type (e.g., only one "Salary" for INCOME)
+  @@unique([name, type])
+}
+
+// This model represents a TEMPLATE for a recurring transaction.
+// e.g., "Rent, -500 EUR, every 1st of the month"
+model RecurringTransaction {
+  id          String   @id @default(cuid())
+  description String
+  // Amount stored in the smallest currency unit (e.g., cents).
+  amount      Int
+  type        TransactionType // INCOME or EXPENSE
+  // The iCal RRULE string (RFC 5545)
+  rrule       String
+  startDate   DateTime
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // The budget this recurring transaction belongs to.
+  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  budgetId String
+
+  // The category this transaction falls under.
+  // onDelete: Restrict prevents an admin from deleting a category
+  // if transactions are still linked to it.
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  categoryId String
+
+  @@index([budgetId])
+  @@index([categoryId])
+}
+
+// This model represents a single, concrete transaction that has occurred.
+// e.g., "Bonus, +200 EUR, on 2025-10-15"
+model OneTimeTransaction {
+  id          String   @id @default(cuid())
+  description String
+  // Amount stored in the smallest currency unit (e.g., cents).
+  amount      Int
+  type        TransactionType // INCOME or EXPENSE
+  // The specific date this transaction occurred.
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // The budget this transaction belongs to.
+  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  budgetId String
+
+  // The category this transaction falls under.
+  // onDelete: Restrict prevents an admin from deleting a category
+  // if transactions are still linked to it.
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  categoryId String
+
+  @@index([budgetId])
+  @@index([categoryId])
+}
