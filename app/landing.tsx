@@ -2,7 +2,7 @@ import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Text, Button, SizableText, XStack, YStack, Stack } from 'tamagui';
-import { BottomNav } from '@/src/components/BottomNav';
+//import { BottomNav } from '@/src/components/BottomNav';
 
 export default function Landing() {
 	const router = useRouter();
@@ -19,7 +19,7 @@ export default function Landing() {
 				maxWidth={600}
 			>
 				{/* Header */}
-				<XStack
+				<YStack
 					alignItems="center"
 					marginTop={6}
 					justifyContent="center"
@@ -31,7 +31,7 @@ export default function Landing() {
 					<SizableText hoverStyle={{ cursor: 'help' }}>
 						Taloudenhallintasi tueksi
 					</SizableText>
-				</XStack>
+				</YStack>
 
 				{/* Illustration row */}
 				<XStack
@@ -46,25 +46,31 @@ export default function Landing() {
 					alignSelf="center"
 				>
 					<Button
-						icon={<AntDesign name="question-circle" />}
-						// Use Tamagui props directly
 						position="absolute"
 						top={0}
-						right={-80} // This is likely web-only, consider media queries
+						right={-80}
 						width="22%"
 						aspectRatio={1}
 						minWidth={18}
 						maxWidth={36}
 						zIndex={5}
-						color="$primary300" // Use your theme color
+						color="$white"
 						onPress={() => setHelpVisible(true)}
-						chromeless // Makes it just an icon
+						icon={(props) => (
+							<AntDesign name="question-circle" {...props} />
+						)}
+						chromeless
 					/>
-					<MaterialCommunityIcons
-						name="piggy-bank"
-						size={96}
-						color="$primary300" // You can't use a token here. You need to use useTheme()
-						// See note below
+					<Button
+						disabled={true}
+						color={'$white'}
+						icon={(props) => (
+							<MaterialCommunityIcons
+								name="piggy-bank"
+								size={96}
+								{...props}
+							/>
+						)}
 					/>
 				</XStack>
 
@@ -187,8 +193,6 @@ export default function Landing() {
 						MUOKKAA BUDJETTIA
 					</Button>
 				</XStack>
-
-				<BottomNav />
 			</YStack>
 		</YStack>
 	);

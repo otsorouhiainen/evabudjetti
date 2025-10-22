@@ -73,7 +73,7 @@ export const tokens = createTokens({
 const light = {
 	background: tokens.color.white,
 	backgroundStrong: tokens.color.primary100,
-	color: tokens.color.primary500,
+	color: tokens.color.black,
 	colorStrong: tokens.color.black,
 
 	bordercolor: tokens.color.black,

@@ -2455,19 +2455,19 @@ var require_compiler = __commonJS({
             var _block2 = createDeclarationBlock({
               pointerEvents: "none"
             });
-            rules.push(selector + ">* " + _block2);
+            rules.push(selector + " * " + _block2);
           } else if (value === "box-none") {
             finalValue = "none!important";
             var _block3 = createDeclarationBlock({
               pointerEvents: "auto"
             });
-            rules.push(selector + ">* " + _block3);
+            rules.push(selector + " * " + _block3);
           } else if (value === "box-only") {
             finalValue = "auto!important";
             var _block4 = createDeclarationBlock({
               pointerEvents: "none"
             });
-            rules.push(selector + ">* " + _block4);
+            rules.push(selector + " * " + _block4);
           }
           var _block5 = createDeclarationBlock({
             pointerEvents: finalValue
@@ -4870,7 +4870,6 @@ var require_forwardedProps = __commonJS({
       "aria-pressed": true,
       "aria-readonly": true,
       "aria-required": true,
-      inert: true,
       role: true,
       "aria-roledescription": true,
       "aria-rowcount": true,
@@ -11991,6 +11990,7 @@ var require_AnimatedProps = __commonJS({
         }
         this._props = props;
         this._callback = callback;
+        this.__attach();
       }
       __getValue() {
         var props = {};
@@ -17987,7 +17987,7 @@ var require_ModalAnimation = __commonJS({
     var React78 = _interopRequireWildcard(require("react"));
     var _StyleSheet = _interopRequireDefault(require_StyleSheet());
     var _createElement = _interopRequireDefault(require_createElement());
-    var ANIMATION_DURATION = 250;
+    var ANIMATION_DURATION = 300;
     function getAnimationStyle(animationType, visible) {
       if (animationType === "slide") {
         return visible ? animatedSlideInStyles : animatedSlideOutStyles;
@@ -18049,12 +18049,12 @@ var require_ModalAnimation = __commonJS({
       },
       animatedIn: {
         animationDuration: ANIMATION_DURATION + "ms",
-        animationTimingFunction: "cubic-bezier(0.215, 0.61, 0.355, 1)"
+        animationTimingFunction: "ease-in"
       },
       animatedOut: {
         pointerEvents: "none",
         animationDuration: ANIMATION_DURATION + "ms",
-        animationTimingFunction: "cubic-bezier(0.47, 0, 0.745, 0.715)"
+        animationTimingFunction: "ease-out"
       },
       fadeIn: {
         opacity: 1,
