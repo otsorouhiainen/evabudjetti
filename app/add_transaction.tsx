@@ -15,7 +15,13 @@ import {
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { format, parseISO } from 'date-fns';
 import { useMemo, useState } from 'react';
-import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+	Platform,
+	ScrollView,
+	StyleSheet,
+	TouchableOpacity,
+	View,
+} from 'react-native';
 import { BottomNav } from '../src/components/BottomNav';
 import { TransactionTypeSegment } from '../src/components/TransactionTypeSegment';
 import { customTheme } from '../src/theme/eva-theme';
@@ -48,9 +54,14 @@ export default function AddTransaction() {
 	const [amount, setAmount] = useState('');
 	const [date, setDate] = useState<Date | null>(new Date(2025, 10, 4)); // 31/07/2025
 	const [repeat, setRepeat] = useState(false);
-	const [repeatInterval, setRepeatInterval] = useState<'kuukausittain' | 'oma aikaväli'>('kuukausittain');
+	const [repeatInterval, setRepeatInterval] = useState<
+		'kuukausittain' | 'oma aikaväli'
+	>('kuukausittain');
 	const [repeatValue, setRepeatValue] = useState('');
-	const [errors, setErrors] = useState<{ amount?: string; repeatValue?: string }>({});
+	const [errors, setErrors] = useState<{
+		amount?: string;
+		repeatValue?: string;
+	}>({});
 
 	const [description, setDescription] = useState('');
 
@@ -81,7 +92,7 @@ export default function AddTransaction() {
 		setRepeatInterval('kuukausittain');
 		setRepeatValue('');
 		setErrors({});
-	}
+	};
 
 	return (
 		<>
@@ -103,231 +114,283 @@ export default function AddTransaction() {
 							contentContainerStyle={styles.scroll}
 							bounces
 						>
-						{/* Top header */}
-						<View style={styles.headerRow}>
-							<Text category="h5" style={styles.headerTitle}>
-								Lisää uusi
+							{/* Top header */}
+							<View style={styles.headerRow}>
+								<Text category="h5" style={styles.headerTitle}>
+									Lisää uusi
+								</Text>
+							</View>
+
+							{/* Segmented: Tulo / Meno */}
+							<TransactionTypeSegment
+								type={type}
+								setType={setType}
+							/>
+
+							{/* Category chips */}
+							<Text appearance="hint" style={styles.labelTop}>
+								Kategoria
 							</Text>
-						</View>
-
-						{/* Segmented: Tulo / Meno */}
-						<TransactionTypeSegment type={type} setType={setType} />
-
-						{/* Category chips */}
-						<Text appearance="hint" style={styles.labelTop}>
-							Kategoria
-						</Text>
-						<View style={styles.chipsRow}>
-							{CATEGORIES.map(({ key, label }) => {
-								const selected = key === category;
-								return (
-									<TouchableOpacity
-										key={key}
-										onPress={() => {
-											setCategory(key);
-											if (type === TransactionType.Income)
-												setName(label);
-										}}
-										style={[
-											styles.chip,
-											selected && {
-												backgroundColor:
-													customTheme[
-														'color-primary-600'
-													],
-											},
-										]}
-									>
-										<Text
+							<View style={styles.chipsRow}>
+								{CATEGORIES.map(({ key, label }) => {
+									const selected = key === category;
+									return (
+										<TouchableOpacity
+											key={key}
+											onPress={() => {
+												setCategory(key);
+												if (
+													type ===
+													TransactionType.Income
+												)
+													setName(label);
+											}}
 											style={[
-												styles.chipText,
+												styles.chip,
 												selected && {
-													color: customTheme[
-														'color-white'
-													],
+													backgroundColor:
+														customTheme[
+															'color-primary-600'
+														],
 												},
 											]}
 										>
-											{label}
-										</Text>
-									</TouchableOpacity>
-								);
-							})}
-						</View>
-						{/* Form */}
-						<Card disabled style={styles.formCard}>
-							<Text style={styles.inputLabel}>
-								{type === TransactionType.Income
-									? 'TULON nimi'
-									: 'MENON nimi'}
-							</Text>
-							<Input
-								value={name}
-								onChangeText={setName}
-								placeholder={
-									type === TransactionType.Income
-										? 'Tulon nimi'
-										: 'Menon nimi'
-								}
-								style={styles.input}
-								size="medium"
-							/>
-
-							<Text style={styles.inputLabel}>Määrä</Text>
-							<Input
-								value={amount}
-								onChangeText={handleAmountChange}
-								status={errors.amount ? 'danger' : 'basic'}
-  								caption={errors.amount}
-								keyboardType="decimal-pad"
-								placeholder="000,00 €"
-								accessoryRight={() => (
-									<Text
-										appearance="hint"
-										style={{ marginRight: 6 }}
-									>
-										€
-									</Text>
-								)}
-								style={styles.input}
-								size="medium"
-							/>
-
-							<Text style={styles.inputLabel}>Päivämäärä</Text>
-							{Platform.OS === 'web' ? (
-								<Input
-									value={
-										date ? format(date, 'dd-MM-yyyy') : ''
-									}
-									onChangeText={(val) =>
-										setDate(val ? parseISO(val) : null)
-									}
-									placeholder="DD-MM-YYYY"
-									style={styles.input}
-									size="medium"
-								/>
-							) : (
-								<Datepicker
-									date={date || undefined}
-									onSelect={(next: Date) => setDate(next)}
-									accessoryRight={CalendarIcon}
-									style={styles.input}
-									size="medium"
-								/>
-							)}
-
-							<View style={{ marginTop: 8 }}>
-								<CheckBox checked={repeat} onChange={setRepeat}>
-									Toistuuko tapahtuma?
-								</CheckBox>
+											<Text
+												style={[
+													styles.chipText,
+													selected && {
+														color: customTheme[
+															'color-white'
+														],
+													},
+												]}
+											>
+												{label}
+											</Text>
+										</TouchableOpacity>
+									);
+								})}
 							</View>
-
-							{repeat && (
-								<View style={styles.segmentWrap}>
-								{(['kuukausittain', 'oma aikaväli'] as const).map((opt) => (
-									<TouchableOpacity
-									key={opt}
-									activeOpacity={0.9}
-									onPress={() => {
-										setRepeatInterval(opt);
-										if (opt !== 'oma aikaväli') setRepeatValue('');
-									}} 
-									style={[
-										styles.segmentItem,
-										opt === repeatInterval && { backgroundColor: customTheme['color-primary-500'] },
-									]}    
-									>
-									<Text
-										category="s1"
-										style={[
-										styles.segmentText,
-										opt === repeatInterval ? { color: '#fff' } : { color: customTheme['color-primary-500'] },
-										]}
-									>
-										{opt}
-									</Text>
-									</TouchableOpacity>
-								))}
-								</View>
-							)}
-
-							{repeat && repeatInterval === 'oma aikaväli' && (
+							{/* Form */}
+							<Card disabled style={styles.formCard}>
+								<Text style={styles.inputLabel}>
+									{type === TransactionType.Income
+										? 'TULON nimi'
+										: 'MENON nimi'}
+								</Text>
 								<Input
-									value={repeatValue}
-									onChangeText={setRepeatValue}
-									status={errors.repeatValue ? 'danger' : 'basic'}
-    								caption={errors.repeatValue}
-									keyboardType="numeric"
+									value={name}
+									onChangeText={setName}
+									placeholder={
+										type === TransactionType.Income
+											? 'Tulon nimi'
+											: 'Menon nimi'
+									}
+									style={styles.input}
+									size="medium"
+								/>
+
+								<Text style={styles.inputLabel}>Määrä</Text>
+								<Input
+									value={amount}
+									onChangeText={handleAmountChange}
+									status={errors.amount ? 'danger' : 'basic'}
+									caption={errors.amount}
+									keyboardType="decimal-pad"
+									placeholder="000,00 €"
 									accessoryRight={() => (
-									<Text appearance="hint" style={{ marginRight: 6 }}>päivän välein</Text>
+										<Text
+											appearance="hint"
+											style={{ marginRight: 6 }}
+										>
+											€
+										</Text>
 									)}
 									style={styles.input}
 									size="medium"
 								/>
-							)}
 
-							<Text style={styles.inputLabel}>Lisätietoa</Text>
-							<Input
-								value={description}
-								onChangeText={setDescription}
-								placeholder="anna lisätietoa"
-								style={styles.input}
-								size="medium"
-							/>
-						</Card>
+								<Text style={styles.inputLabel}>
+									Päivämäärä
+								</Text>
+								{Platform.OS === 'web' ? (
+									<Input
+										value={
+											date
+												? format(date, 'dd-MM-yyyy')
+												: ''
+										}
+										onChangeText={(val) =>
+											setDate(val ? parseISO(val) : null)
+										}
+										placeholder="DD-MM-YYYY"
+										style={styles.input}
+										size="medium"
+									/>
+								) : (
+									<Datepicker
+										date={date || undefined}
+										onSelect={(next: Date) => setDate(next)}
+										accessoryRight={CalendarIcon}
+										style={styles.input}
+										size="medium"
+									/>
+								)}
 
-						{/* Submit */}
-						<Button
-							size="large"
-							disabled={!isValid}
-							style={[
-								styles.submitBtn,
-								{
-									backgroundColor:
-										customTheme['color-primary-500'],
-								},
-							]}
-							onPress={() => {
-								// submit handler placeholder
-								const newErrors: typeof errors = {};
+								<View style={{ marginTop: 8 }}>
+									<CheckBox
+										checked={repeat}
+										onChange={setRepeat}
+									>
+										Toistuuko tapahtuma?
+									</CheckBox>
+								</View>
 
-								if (amount.at(-1) === '.') {
-									newErrors.amount = 'Kirjoita oikea summa';
-								}
-								if (repeatInterval === 'oma aikaväli' && repeatValue === '') {
-									newErrors.repeatValue = 'Anna toistuvuuden aikaväli';
-								}
+								{repeat && (
+									<View style={styles.segmentWrap}>
+										{(
+											[
+												'kuukausittain',
+												'oma aikaväli',
+											] as const
+										).map((opt) => (
+											<TouchableOpacity
+												key={opt}
+												activeOpacity={0.9}
+												onPress={() => {
+													setRepeatInterval(opt);
+													if (opt !== 'oma aikaväli')
+														setRepeatValue('');
+												}}
+												style={[
+													styles.segmentItem,
+													opt === repeatInterval && {
+														backgroundColor:
+															customTheme[
+																'color-primary-500'
+															],
+													},
+												]}
+											>
+												<Text
+													category="s1"
+													style={[
+														styles.segmentText,
+														opt === repeatInterval
+															? { color: '#fff' }
+															: {
+																	color: customTheme[
+																		'color-primary-500'
+																	],
+																},
+													]}
+												>
+													{opt}
+												</Text>
+											</TouchableOpacity>
+										))}
+									</View>
+								)}
 
-								setErrors(newErrors);
+								{repeat &&
+									repeatInterval === 'oma aikaväli' && (
+										<Input
+											value={repeatValue}
+											onChangeText={setRepeatValue}
+											status={
+												errors.repeatValue
+													? 'danger'
+													: 'basic'
+											}
+											caption={errors.repeatValue}
+											keyboardType="numeric"
+											accessoryRight={() => (
+												<Text
+													appearance="hint"
+													style={{ marginRight: 6 }}
+												>
+													päivän välein
+												</Text>
+											)}
+											style={styles.input}
+											size="medium"
+										/>
+									)}
 
-								if (Object.keys(newErrors).length === 0) {
-    								console.log({
-									type,
-									category,
-									name,
-									amount,
-									date,
-									repeat,
-									description,
-									repeatInterval,
-									repeatValue
-								});
-  								}	
-							}}
-						>
-							{type === TransactionType.Income
-								? 'LISÄÄ TULO'
-								: 'LISÄÄ MENO'}
-						</Button>
+								<Text style={styles.inputLabel}>
+									Lisätietoa
+								</Text>
+								<Input
+									value={description}
+									onChangeText={setDescription}
+									placeholder="anna lisätietoa"
+									style={styles.input}
+									size="medium"
+								/>
+							</Card>
 
-						<Button
-							size="large"
-							style={[styles.submitBtn, { backgroundColor: customTheme['color-primary-500'] }]}
-							onPress={handleCancel}
-						>
-							Peruuta
-						</Button>
+							{/* Submit */}
+							<Button
+								size="large"
+								disabled={!isValid}
+								style={[
+									styles.submitBtn,
+									{
+										backgroundColor:
+											customTheme['color-primary-500'],
+									},
+								]}
+								onPress={() => {
+									// submit handler placeholder
+									const newErrors: typeof errors = {};
 
+									if (amount.at(-1) === '.') {
+										newErrors.amount =
+											'Kirjoita oikea summa';
+									}
+									if (
+										repeatInterval === 'oma aikaväli' &&
+										repeatValue === ''
+									) {
+										newErrors.repeatValue =
+											'Anna toistuvuuden aikaväli';
+									}
+
+									setErrors(newErrors);
+
+									if (Object.keys(newErrors).length === 0) {
+										console.log({
+											type,
+											category,
+											name,
+											amount,
+											date,
+											repeat,
+											description,
+											repeatInterval,
+											repeatValue,
+										});
+									}
+								}}
+							>
+								{type === TransactionType.Income
+									? 'LISÄÄ TULO'
+									: 'LISÄÄ MENO'}
+							</Button>
+
+							<Button
+								size="large"
+								style={[
+									styles.submitBtn,
+									{
+										backgroundColor:
+											customTheme['color-primary-500'],
+									},
+								]}
+								onPress={handleCancel}
+							>
+								Peruuta
+							</Button>
 						</ScrollView>
 
 						{/* Bottom nav */}
