@@ -1,3 +1,4 @@
+import config from '../tamagui.config';
 import {
 	FiraSans_400Regular,
 	FiraSans_700Bold,
@@ -6,6 +7,7 @@ import {
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { TamaguiProvider, Theme } from '@tamagui/core';
 
 export default function RootLayout() {
 	const [fontsLoaded] = useFonts({
@@ -21,5 +23,20 @@ export default function RootLayout() {
 	if (!fontsLoaded) {
 		return null;
 	}
-	return <Stack />;
+	return (
+		<TamaguiProvider config={config} defaultTheme={'light'}>
+			<Theme name={'light'}>
+				<Stack>
+					<Stack.Screen
+						name="(tabs)"
+						options={{ headerShown: false }}
+					/>
+					<Stack.Screen
+						name="modal"
+						options={{ presentation: 'modal' }}
+					/>
+				</Stack>
+			</Theme>
+		</TamaguiProvider>
+	);
 }
