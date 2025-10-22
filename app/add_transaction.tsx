@@ -15,7 +15,7 @@ import {
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { format, parseISO } from 'date-fns';
 import { useMemo, useState } from 'react';
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BottomNav } from '../src/components/BottomNav';
 import { TransactionTypeSegment } from '../src/components/TransactionTypeSegment';
 import { customTheme } from '../src/theme/eva-theme';
@@ -48,11 +48,40 @@ export default function AddTransaction() {
 	const [amount, setAmount] = useState('');
 	const [date, setDate] = useState<Date | null>(new Date(2025, 10, 4)); // 31/07/2025
 	const [repeat, setRepeat] = useState(false);
+	const [repeatInterval, setRepeatInterval] = useState<'kuukausittain' | 'oma aikaväli'>('kuukausittain');
+	const [repeatValue, setRepeatValue] = useState('');
+	const [errors, setErrors] = useState<{ amount?: string; repeatValue?: string }>({});
+
+	const [description, setDescription] = useState('');
 
 	const isValid = useMemo(
 		() => name.trim().length > 0 && !!date && !!amount,
 		[name, amount, date],
 	);
+
+	const handleAmountChange = (newValue: string) => {
+		const numeric = newValue.replace(/[^0-9.,]/g, '');
+		const dotSeparators = numeric.replace(',', '.');
+		const parts = dotSeparators.split('.');
+		if (parts.length === 1) {
+			setAmount(parts[0]);
+		} else {
+			const integer = parts[0];
+			const decimal = parts.slice(1).join('').slice(0, 2);
+			setAmount(`${integer}.${decimal}`);
+		}
+	};
+
+	const handleCancel = () => {
+		setName('');
+		setAmount('');
+		setDate(null);
+		setRepeat(false);
+		setDescription('');
+		setRepeatInterval('kuukausittain');
+		setRepeatValue('');
+		setErrors({});
+	}
 
 	return (
 		<>
@@ -70,6 +99,10 @@ export default function AddTransaction() {
 					}}
 				>
 					<Layout style={styles.screen} level="1">
+						<ScrollView
+							contentContainerStyle={styles.scroll}
+							bounces
+						>
 						{/* Top header */}
 						<View style={styles.headerRow}>
 							<Text category="h5" style={styles.headerTitle}>
@@ -143,7 +176,9 @@ export default function AddTransaction() {
 							<Text style={styles.inputLabel}>Määrä</Text>
 							<Input
 								value={amount}
-								onChangeText={setAmount}
+								onChangeText={handleAmountChange}
+								status={errors.amount ? 'danger' : 'basic'}
+  								caption={errors.amount}
 								keyboardType="decimal-pad"
 								placeholder="000,00 €"
 								accessoryRight={() => (
@@ -186,6 +221,59 @@ export default function AddTransaction() {
 									Toistuuko tapahtuma?
 								</CheckBox>
 							</View>
+
+							{repeat && (
+								<View style={styles.segmentWrap}>
+								{(['kuukausittain', 'oma aikaväli'] as const).map((opt) => (
+									<TouchableOpacity
+									key={opt}
+									activeOpacity={0.9}
+									onPress={() => {
+										setRepeatInterval(opt);
+										if (opt !== 'oma aikaväli') setRepeatValue('');
+									}} 
+									style={[
+										styles.segmentItem,
+										opt === repeatInterval && { backgroundColor: customTheme['color-primary-500'] },
+									]}    
+									>
+									<Text
+										category="s1"
+										style={[
+										styles.segmentText,
+										opt === repeatInterval ? { color: '#fff' } : { color: customTheme['color-primary-500'] },
+										]}
+									>
+										{opt}
+									</Text>
+									</TouchableOpacity>
+								))}
+								</View>
+							)}
+
+							{repeat && repeatInterval === 'oma aikaväli' && (
+								<Input
+									value={repeatValue}
+									onChangeText={setRepeatValue}
+									status={errors.repeatValue ? 'danger' : 'basic'}
+    								caption={errors.repeatValue}
+									keyboardType="numeric"
+									accessoryRight={() => (
+									<Text appearance="hint" style={{ marginRight: 6 }}>päivän välein</Text>
+									)}
+									style={styles.input}
+									size="medium"
+								/>
+							)}
+
+							<Text style={styles.inputLabel}>Lisätietoa</Text>
+							<Input
+								value={description}
+								onChangeText={setDescription}
+								placeholder="anna lisätietoa"
+								style={styles.input}
+								size="medium"
+							/>
 						</Card>
 
 						{/* Submit */}
@@ -201,20 +289,46 @@ export default function AddTransaction() {
 							]}
 							onPress={() => {
 								// submit handler placeholder
-								console.log({
+								const newErrors: typeof errors = {};
+
+								if (amount.at(-1) === '.') {
+									newErrors.amount = 'Kirjoita oikea summa';
+								}
+								if (repeatInterval === 'oma aikaväli' && repeatValue === '') {
+									newErrors.repeatValue = 'Anna toistuvuuden aikaväli';
+								}
+
+								setErrors(newErrors);
+
+								if (Object.keys(newErrors).length === 0) {
+    								console.log({
 									type,
 									category,
 									name,
 									amount,
 									date,
 									repeat,
+									description,
+									repeatInterval,
+									repeatValue
 								});
+  								}	
 							}}
 						>
 							{type === TransactionType.Income
 								? 'LISÄÄ TULO'
 								: 'LISÄÄ MENO'}
 						</Button>
+
+						<Button
+							size="large"
+							style={[styles.submitBtn, { backgroundColor: customTheme['color-primary-500'] }]}
+							onPress={handleCancel}
+						>
+							Peruuta
+						</Button>
+
+						</ScrollView>
 
 						{/* Bottom nav */}
 						<BottomNav />
@@ -232,6 +346,12 @@ const styles = StyleSheet.create({
 		paddingTop: 24,
 		paddingHorizontal: 20,
 		gap: 18,
+	},
+	scroll: {
+		paddingTop: 18,
+		paddingHorizontal: 18,
+		paddingBottom: 80,
+		gap: 10,
 	},
 	headerRow: {
 		marginTop: 4,
