@@ -4,6 +4,7 @@ const firaFont = createFont({
 	family: 'FiraSans',
 	size: {
 		true: 10,
+		body: 10,
 		subtitle: 12,
 		title3: 14,
 		title2: 17,
@@ -45,7 +46,10 @@ const size = {
 	true: 3,
 	5: 5,
 	6: 6,
-	// ....
+	7: 7,
+	8: 8,
+	9: 9,
+	10: 10,
 };
 
 const color = {

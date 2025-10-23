@@ -38,12 +38,10 @@ export default function Landing() {
 						shadowOpacity={0.18}
 						shadowRadius={8}
 						elevation={8}
-						gap="$3"
+						gap={'$3'}
 					>
-						<SizableText style={{ marginBottom: 8 }}>
-							Ohjeet
-						</SizableText>
-						<SizableText style={{ marginBottom: 16 }}>
+						<SizableText marginBottom={8}>Ohjeet</SizableText>
+						<SizableText marginBottom={16}>
 							Tervetuloa budjettisovellukseen! ...
 						</SizableText>
 						<Button
@@ -77,7 +75,7 @@ export default function Landing() {
 						alignItems="center"
 						marginTop={6}
 						justifyContent="center"
-						gap="$2"
+						gap={'$2'}
 					>
 						<SizableText fontWeight={'$7'} size={'$title1'}>
 							EVA OmaBudjetti
@@ -118,8 +116,8 @@ export default function Landing() {
 							chromeless
 						/>
 						<Button
-							disabled={true}
-							transparent={true}
+							disabled
+							transparent
 							icon={
 								<MaterialCommunityIcons
 									name="piggy-bank"
@@ -138,8 +136,8 @@ export default function Landing() {
 						alignItems="center"
 						paddingVertical={16}
 						gap={6}
-						backgroundColor="$white"
-						shadowColor="$black"
+						backgroundColor={'$white'}
+						shadowColor={'$black'}
 						shadowOffset={{ width: 0, height: 2 }}
 						shadowOpacity={0.15}
 						shadowRadius={8}
@@ -195,22 +193,22 @@ export default function Landing() {
 					<XStack gap={14} justifyContent="space-between">
 						<Button
 							flex={1}
-							size="$4"
+							size={'$4'}
 							borderRadius={18}
 							padding={20}
-							backgroundColor="$primary300"
-							color="$white"
+							backgroundColor={'$primary300'}
+							color={'$white'}
 							onPress={() => router.push('/budget')}
 						>
 							NÄYTÄ BUDJETTI
 						</Button>
 						<Button
 							flex={1}
-							size="$4" // Use size token
+							size={'$4'}
 							borderRadius={18}
 							padding={20}
-							color="$white"
-							backgroundColor="$primary300" // Use theme token
+							color={'$white'}
+							backgroundColor={'$primary300'}
 						>
 							MUOKKAA BUDJETTIA
 						</Button>

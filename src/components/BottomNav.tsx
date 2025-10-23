@@ -17,7 +17,7 @@ const NavButton = ({
 	onPress,
 }: NavButtonProps & { onPress?: () => void }) => (
 	<Button
-		transparent={true}
+		transparent
 		icon={btnIcon}
 		color={btnColor}
 		onPress={onPress}
