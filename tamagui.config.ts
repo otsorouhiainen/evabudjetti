@@ -1,31 +1,39 @@
-import { createFont, createTamagui, createTokens, isWeb } from '@tamagui/core';
+import { createFont, createTamagui, createTokens } from '@tamagui/core';
 
-// To work with the tamagui UI kit styled components (which is optional)
-// you'd want the keys used for `size`, `lineHeight`, `weight` and
-// `letterSpacing` to be consistent. The `createFont` function
-// will fill-in any missing values if `lineHeight`, `weight` or
-// `letterSpacing` are subsets of `size`.
-
-const systemFont = createFont({
-	family: isWeb ? 'FiraSans' : 'System',
+const firaFont = createFont({
+	family: 'FiraSans',
 	size: {
-		1: 12,
-		2: 14,
-		3: 15,
+		true: 10,
+		subtitle: 12,
+		title3: 14,
+		title2: 17,
+		title1: 22,
 	},
 	lineHeight: {
-		// 1 will be 22
 		2: 22,
 	},
 	weight: {
-		1: '300',
-		// 2 will be 300
-		3: '600',
+		1: '300', // Corresponds to Light
+		true: '400', // Corresponds to Regular
+		3: '500', // Corresponds to Medium
+		4: '600', // Corresponds to SemiBold
+		5: '700', // Corresponds to Bold
+		6: '800', // Corresponds to ExtraBold
 	},
 	letterSpacing: {
 		1: 0,
 		2: -1,
-		// 3 will be -1
+	},
+
+	// This is the magic that links your weight tokens to the loaded font files
+	// It works for both web and native
+	face: {
+		300: { normal: 'FiraSans_300Light' },
+		400: { normal: 'FiraSans_400Regular' },
+		500: { normal: 'FiraSans_500Medium' },
+		600: { normal: 'FiraSans_600SemiBold' },
+		700: { normal: 'FiraSans_700Bold' },
+		800: { normal: 'FiraSans_800ExtraBold' },
 	},
 });
 
@@ -34,7 +42,9 @@ const size = {
 	0: 0,
 	1: 1,
 	2: 2,
-	true: 5,
+	true: 3,
+	5: 5,
+	6: 6,
 	// ....
 };
 
@@ -88,8 +98,8 @@ const light = {
 
 const configDefinition = {
 	fonts: {
-		heading: systemFont,
-		body: systemFont,
+		heading: firaFont,
+		body: firaFont,
 	},
 	tokens,
 

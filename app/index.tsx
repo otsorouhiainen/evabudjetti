@@ -1,5 +1,5 @@
-import { Link } from 'expo-router';
 import { View } from '@tamagui/core';
+import { Link } from 'expo-router';
 
 export default function Index() {
 	return (
