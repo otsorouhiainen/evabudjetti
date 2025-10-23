@@ -39,9 +39,7 @@ export default function Index() {
 								alignItems: 'center',
 							}}
 						>
-							<Link href="/src/components/BudgetWizard">
-								Default
-							</Link>
+							<Link href="/landing">Default</Link>
 							<ButtonAccessoriesShowcase />
 						</Layout>
 					</Layout>
