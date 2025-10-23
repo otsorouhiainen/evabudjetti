@@ -12,6 +12,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import config from '../tamagui.config';
+import { BottomNav } from '@/src/components/BottomNav';
 
 export default function RootLayout() {
 	const [fontsLoaded, fontError] = useFonts({
@@ -45,6 +46,7 @@ export default function RootLayout() {
 						options={{ presentation: 'modal' }}
 					/>
 				</Stack>
+				<BottomNav />
 			</Theme>
 		</TamaguiProvider>
 	);
