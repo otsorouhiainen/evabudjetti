@@ -1,7 +1,7 @@
+import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Button, useTheme, XStack } from 'tamagui';
-import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import type { ReactElement } from 'react';
+import { Button, useTheme, XStack } from 'tamagui';
 
 interface NavButtonProps {
 	iconColor?: string;

@@ -181,11 +181,11 @@ export default function Landing() {
 
 					{/* Primary CTA */}
 					<Button
-						size="$4" // Use size token
+						size="$4"
 						marginTop={8}
 						borderRadius={28}
 						paddingVertical={20}
-						backgroundColor="$primary300" // Use theme token
+						backgroundColor="$primary300"
 						color="$white"
 						onPress={() => router.push('/add_transaction')}
 					>
@@ -196,10 +196,10 @@ export default function Landing() {
 					<XStack gap={14} justifyContent="space-between">
 						<Button
 							flex={1}
-							size="$4" // Use size token
+							size="$4"
 							borderRadius={18}
 							padding={20}
-							backgroundColor="$primary300" // Use theme token
+							backgroundColor="$primary300"
 							color="$white"
 							onPress={() => router.push('/budget')}
 						>
