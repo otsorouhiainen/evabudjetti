@@ -1,88 +1,83 @@
-import { Button, Icon, Layout } from '@ui-kitten/components';
 import { useRouter } from 'expo-router';
-import { StyleSheet } from 'react-native';
-import { customTheme } from '../../src/theme/eva-theme';
+import { Button, useTheme, XStack } from 'tamagui';
+import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
+import type { ReactElement } from 'react';
 
-interface NavIconProps {
-	name: string;
+interface NavButtonProps {
 	iconColor?: string;
 	btnColor?: string;
 	borderColor?: string;
+	btnIcon: ReactElement;
 }
 
-const NavIcon = ({
-	name,
-	iconColor,
+const NavButton = ({
 	btnColor,
 	borderColor,
+	btnIcon,
 	onPress,
-}: NavIconProps & { onPress?: () => void }) => (
+}: NavButtonProps & { onPress?: () => void }) => (
 	<Button
-		appearance="ghost"
-		accessoryLeft={(props) => (
-			<Icon {...props} name={name} fill={iconColor} />
-		)}
-		style={[
-			styles.navBtn,
-			btnColor ? { backgroundColor: btnColor } : null,
-			borderColor ? { borderWidth: 2, borderColor } : null,
-		]}
+		transparent={true}
+		icon={btnIcon}
+		color={btnColor}
 		onPress={onPress}
+		borderRadius={42}
+		paddingHorizontal={22}
+		borderWidth={2}
+		borderColor={borderColor}
+		size={36}
 	/>
 );
 
 type RouteString = '/landing' | '/add_transaction' | '/budget' | '/spending';
 
 interface BottomNavOption {
-	name: string;
+	icon: ReactElement;
 	route: RouteString;
 }
 
 const bottomNavOptions: BottomNavOption[] = [
-	{ name: 'home-outline', route: '/landing' },
-	{ name: 'plus-circle-outline', route: '/add_transaction' },
-	{ name: 'grid-outline', route: '/budget' },
-	{ name: 'pie-chart-outline', route: '/spending' },
+	{
+		icon: <MaterialCommunityIcons name="home-outline" />,
+		route: '/landing',
+	},
+	{
+		icon: <MaterialCommunityIcons name="plus-circle-outline" />,
+		route: '/add_transaction',
+	},
+	{
+		icon: <MaterialCommunityIcons name="view-grid-outline" />,
+		route: '/budget',
+	},
+	{ icon: <AntDesign name="pie-chart" />, route: '/spending' },
 ];
 
 export const BottomNav = () => {
+	const theme = useTheme();
 	const router = useRouter();
 	return (
-		<Layout
-			style={[
-				styles.bottomBar,
-				{ backgroundColor: customTheme['color-primary-100'] },
-			]}
-			level="2"
+		<XStack
+			position="absolute"
+			bottom={0}
+			left={0}
+			right={0}
+			paddingHorizontal={22}
+			height={45}
+			justifyContent={'space-between'}
+			alignItems="center"
+			backgroundColor={'$primary100'}
+			borderTopLeftRadius={6}
+			borderTopRightRadius={6}
 		>
 			{bottomNavOptions.map((option) => (
-				<NavIcon
-					key={option.name}
-					name={option.name}
-					iconColor={customTheme['color-white']}
-					btnColor={customTheme['color-primary-100']}
-					borderColor={customTheme['color-primary-200']}
+				<NavButton
+					key={option.route}
+					btnIcon={option.icon}
+					btnColor={theme.white.val}
+					borderColor={theme.primary200.val}
 					onPress={() => router.push(option.route)}
 				/>
 			))}
-		</Layout>
+		</XStack>
 	);
 };
-
-const styles = StyleSheet.create({
-	bottomBar: {
-		position: 'absolute',
-		left: 0,
-		right: 0,
-		bottom: 0,
-		paddingHorizontal: 18,
-		paddingVertical: 8,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		borderTopLeftRadius: 18,
-		borderTopRightRadius: 18,
-	},
-	navBtn: {
-		borderRadius: 16,
-	},
-});

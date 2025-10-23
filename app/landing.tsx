@@ -2,7 +2,7 @@ import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Button, SizableText, Stack, useTheme, XStack, YStack } from 'tamagui';
-//import { BottomNav } from '@/src/components/BottomNav';
+import { BottomNav } from '@/src/components/BottomNav';
 
 export default function Landing() {
 	const router = useRouter();
@@ -216,8 +216,10 @@ export default function Landing() {
 							MUOKKAA BUDJETTIA
 						</Button>
 					</XStack>
+					<YStack height={48} />
 				</YStack>
 			</YStack>
+			<BottomNav />
 		</>
 	);
 }
