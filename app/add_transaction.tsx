@@ -16,6 +16,7 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { format, parseISO } from 'date-fns';
 import { useMemo, useState } from 'react';
 import {
+	Alert,
 	Platform,
 	ScrollView,
 	StyleSheet,
@@ -64,6 +65,9 @@ export default function AddTransaction() {
 	}>({});
 
 	const [description, setDescription] = useState('');
+	const [expanded, setExpanded] = useState(false);
+
+	const visibleCategories = expanded ? CATEGORIES : CATEGORIES.slice(0, 3);
 
 	const isValid = useMemo(
 		() => name.trim().length > 0 && !!date && !!amount,
@@ -128,11 +132,26 @@ export default function AddTransaction() {
 							/>
 
 							{/* Category chips */}
-							<Text appearance="hint" style={styles.labelTop}>
-								Kategoria
-							</Text>
+							<View style={styles.categoryHeader}>
+								<Text appearance="hint" style={styles.labelTop}>
+									Kategoria
+								</Text>
+								<TouchableOpacity
+									onPress={() => setExpanded(!expanded)}
+								>
+									<Icon
+										name={
+											expanded
+												? 'chevron-up-outline'
+												: 'chevron-down-outline'
+										}
+										fill={customTheme['color-black']}
+										style={{ width: 22, height: 22 }}
+									/>
+								</TouchableOpacity>
+							</View>
 							<View style={styles.chipsRow}>
-								{CATEGORIES.map(({ key, label }) => {
+								{visibleCategories.map(({ key, label }) => {
 									const selected = key === category;
 									return (
 										<TouchableOpacity
@@ -177,6 +196,16 @@ export default function AddTransaction() {
 									{type === TransactionType.Income
 										? 'TULON nimi'
 										: 'MENON nimi'}
+									<Text
+										style={{
+											color: customTheme[
+												'color-danger-500'
+											],
+										}}
+									>
+										{' '}
+										*
+									</Text>
 								</Text>
 								<Input
 									value={name}
@@ -190,7 +219,19 @@ export default function AddTransaction() {
 									size="medium"
 								/>
 
-								<Text style={styles.inputLabel}>Määrä</Text>
+								<Text style={styles.inputLabel}>
+									Määrä
+									<Text
+										style={{
+											color: customTheme[
+												'color-danger-500'
+											],
+										}}
+									>
+										{' '}
+										*
+									</Text>
+								</Text>
 								<Input
 									value={amount}
 									onChangeText={handleAmountChange}
@@ -212,6 +253,16 @@ export default function AddTransaction() {
 
 								<Text style={styles.inputLabel}>
 									Päivämäärä
+									<Text
+										style={{
+											color: customTheme[
+												'color-danger-500'
+											],
+										}}
+									>
+										{' '}
+										*
+									</Text>
 								</Text>
 								{Platform.OS === 'web' ? (
 									<Input
@@ -370,6 +421,14 @@ export default function AddTransaction() {
 											repeatInterval,
 											repeatValue,
 										});
+										Alert.alert(
+											'Tallennettu',
+											`${
+												type === TransactionType.Income
+													? 'Tulo'
+													: 'Meno'
+											} lisätty.`,
+										);
 									}
 								}}
 							>
@@ -378,13 +437,15 @@ export default function AddTransaction() {
 									: 'LISÄÄ MENO'}
 							</Button>
 
+							{/* Cancel */}
 							<Button
 								size="large"
+								appearance="outline"
 								style={[
 									styles.submitBtn,
 									{
 										backgroundColor:
-											customTheme['color-primary-500'],
+											customTheme['color-white'],
 									},
 								]}
 								onPress={handleCancel}
@@ -422,6 +483,11 @@ const styles = StyleSheet.create({
 	headerTitle: {
 		fontWeight: '800',
 	},
+	categoryHeader: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+	},
 	segmentWrap: {
 		flexDirection: 'row',
 		alignSelf: 'flex-start',
@@ -446,6 +512,7 @@ const styles = StyleSheet.create({
 	},
 	chipsRow: {
 		flexDirection: 'row',
+		flexWrap: 'wrap',
 		gap: 10,
 	},
 	chip: {
