@@ -1,4 +1,3 @@
-import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import type { ReactElement } from 'react';
 import { Button, useTheme, XStack } from 'tamagui';
@@ -38,18 +37,18 @@ interface BottomNavOption {
 
 const bottomNavOptions: BottomNavOption[] = [
 	{
-		icon: <MaterialCommunityIcons name="home-outline" />,
+		icon: <div>TEST1</div>,
 		route: '/landing',
 	},
 	{
-		icon: <MaterialCommunityIcons name="plus-circle-outline" />,
+		icon: <div>TEST1</div>,
 		route: '/add_transaction',
 	},
 	{
-		icon: <MaterialCommunityIcons name="view-grid-outline" />,
+		icon: <div>TEST1</div>,
 		route: '/budget',
 	},
-	{ icon: <AntDesign name="pie-chart" />, route: '/spending' },
+	{ icon: <div>TEST2</div>, route: '/spending' },
 ];
 
 export const BottomNav = () => {

@@ -16,17 +16,21 @@ jobs:
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
-          version: 10
+          version: 10.18
           run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 22.14
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
-      - name: Run expo 
-        run: pnpm expo export
+      - name: Build static website
+        run: |
+          echo "Clearing Metro cache..."
+          rm -rf $TMPDIR/metro-cache
+          rm -rf node_modules/.cache/metro
+          pnpm expo export -c

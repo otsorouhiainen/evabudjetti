@@ -1,4 +1,3 @@
-import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Button, SizableText, Stack, useTheme, XStack, YStack } from 'tamagui';
@@ -40,16 +39,18 @@ export default function Landing() {
 						elevation={8}
 						gap={'$3'}
 					>
-						<SizableText marginBottom={8}>Ohjeet</SizableText>
-						<SizableText marginBottom={16}>
+						<SizableText size={'$title1'} marginBottom={8}>
+							Ohjeet
+						</SizableText>
+						<SizableText size={'$title2'} marginBottom={16}>
 							Tervetuloa budjettisovellukseen! ...
 						</SizableText>
 						<Button
 							onPress={() => setHelpVisible(false)}
 							backgroundColor={'$primary300'}
-							size={26}
+							size={42}
 							color={'$white'}
-							padding={12}
+							padding={22}
 							alignSelf="center"
 						>
 							SULJE
@@ -80,7 +81,10 @@ export default function Landing() {
 						<SizableText fontWeight={'$7'} size={'$title1'}>
 							EVA OmaBudjetti
 						</SizableText>
-						<SizableText hoverStyle={{ cursor: 'help' }}>
+						<SizableText
+							size={'$title2'}
+							hoverStyle={{ cursor: 'help' }}
+						>
 							Taloudenhallintasi tueksi
 						</SizableText>
 					</YStack>
@@ -107,25 +111,9 @@ export default function Landing() {
 							maxWidth={36}
 							zIndex={5}
 							onPress={() => setHelpVisible(true)}
-							icon={
-								<AntDesign
-									name="question-circle"
-									color={theme.primary300.val}
-								/>
-							}
 							chromeless
 						/>
-						<Button
-							disabled
-							transparent
-							icon={
-								<MaterialCommunityIcons
-									name="piggy-bank"
-									size={96}
-									color={theme.primary300.val}
-								/>
-							}
-						/>
+						<Button disabled transparent />
 					</XStack>
 
 					{/* Balance card */}
@@ -153,13 +141,13 @@ export default function Landing() {
 						<YStack>
 							<SizableText size={'$title2'}>
 								Tilillä rahaa:{' '}
-								<SizableText fontWeight={'$4'}>
+								<SizableText size={'$title3'} fontWeight={'$4'}>
 									1234€
 								</SizableText>
 							</SizableText>
 							<SizableText size={'$title2'}>
 								Käyttövara:{' '}
-								<SizableText fontWeight={'$4'}>
+								<SizableText size={'$title3'} fontWeight={'$4'}>
 									123€
 								</SizableText>
 							</SizableText>
@@ -169,8 +157,8 @@ export default function Landing() {
 							alignSelf="center"
 							backgroundColor={'$primary500'}
 							color={'$white'}
-							padding={16}
-							size={26}
+							padding={22}
+							size={32}
 						>
 							TARKASTELE
 						</Button>
