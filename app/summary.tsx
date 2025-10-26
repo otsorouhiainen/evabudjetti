@@ -21,17 +21,25 @@ import { customTheme } from '../src/theme/eva-theme';
 
 export default function Summary() {
 	const router = useRouter();
+
+	const budget_total = 4200;
+	const budget_month = 1200;
+	const spent_total = 1200;
+	const spent_month = 1051;
+
+	const current_month = 10; 
+
 	//currentScene is an integer used to attach needed arguments
-	//to their corresponding scenes 
+	//to their correspon:widthding scenes 
 	const [currentScene, setCurrentScene] = useState<number>(0);
 
 	//hardcoded values for the 'scenes'
 	//functions to fetch values dynamically should be added here later
 	const Arguments = [
-		{balance: 1},
-		{balance: 2},
-		{balance: 3},
-		{balance: 4},
+		{budget : budget_total, expected: budget_month, spent: spent_month},
+		{balance: (budget_total - spent_total)},
+		{months: (current_month + Math.round(budget_total/budget_month)) % 12},
+		{categories: [1, 2, 3, 4], upcoming: [5, 6, 7, 8]},
 		{balance: 5},
 	];
 

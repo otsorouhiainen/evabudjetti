@@ -1,6 +1,17 @@
-export const Scene2 = ({ balance}: {balance: number }) => {
+import { View, Text} from 'react-native';
+
+export const Scene2 = ({balance}: {balance: number}) => {
 	return( 
-		<div> {balance} </div>
 
-);};
+	       <View>
+			<View>
+				<Text> Remaining </Text>
 
+				<Text> {balance} </Text> 
+			</View>
+
+	       </View>
+
+
+	);
+};
