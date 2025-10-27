@@ -1,18 +1,18 @@
 import { Button, StyleSheet, Text, View } from 'react-native';
 import useCounterStore from '../src/store/useCounterStore'; // Adjust the import path
-import usePersistantCounterStore from '../src/store/usePersistantCounterStore';
+import usePersistentCounterStore from '../src/store/usePersistentCounterStore';
 
 const CounterDisplay = () => {
 	const count = useCounterStore((state) => state.count);
-	const persCount = usePersistantCounterStore((state) => state.count);
+	const persCount = usePersistentCounterStore((state) => state.count);
 
 	const increment = useCounterStore((state) => state.increment);
 	const decrement = useCounterStore((state) => state.decrement);
 	const reset = useCounterStore((state) => state.reset);
 
-	const persIncrement = usePersistantCounterStore((state) => state.increment);
-	const persDecrement = usePersistantCounterStore((state) => state.decrement);
-	const persReset = usePersistantCounterStore((state) => state.reset);
+	const persIncrement = usePersistentCounterStore((state) => state.increment);
+	const persDecrement = usePersistentCounterStore((state) => state.decrement);
+	const persReset = usePersistentCounterStore((state) => state.reset);
 
 	return (
 		<View style={styles.container}>
