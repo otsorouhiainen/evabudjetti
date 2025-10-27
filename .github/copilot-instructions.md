@@ -103,7 +103,7 @@ ALWAYS:
 - Add/extend tests when altering business logic.
 - Prefer O(n) scans with maps/groupings over nested loops.
 - Explicitly handle edge cases: empty transaction arrays, negative values, rounding issues (use decimal libs if monetary precision matters).
-- Ensure state managment is handled by Zustand. Each module should have it's own store, and use slices for smaller scope structuring.
+- Ensure state management is handled by Zustand. Each module should have its own store, and use slices for smaller scope structuring.
 - Ensure prisma sql migrations are documented in `prisma\migration_log.txt` (excluding init)
 
 ---
