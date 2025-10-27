@@ -3,7 +3,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
 	ApplicationProvider,
 	Button,
-	Card,
 	Icon,
 	IconRegistry,
 	Input,
@@ -15,9 +14,12 @@ import {
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { BudgetDropdown } from '@/src/components/BudgetDropdown';
+import { BudgetEventList } from '@/src/components/BudgetEventList';
 import { BottomNav } from '../src/components/BottomNav';
 import { customTheme } from '../src/theme/eva-theme';
 
+// Possibly removed later if declared for whole project
 const today = new Date();
 
 type Txn = {
@@ -28,7 +30,7 @@ type Txn = {
 };
 
 function parseTxnDate(dateStr: string): Date {
-	// "dd.mm.yyyy" → Date
+	// "dd.mm.yyyy" → Date, intended for parsing from database entries
 	const [day, month, year] = dateStr.split('.').map(Number);
 	return new Date(year, month - 1, day);
 }
@@ -52,18 +54,23 @@ function splitTransactions(transactions: Txn[]) {
 }
 
 const MOCK_TX: Txn[] = [
-	{ id: '4', name: 'Lemmikki', date: '20.10.2025', amount: -60 },
-	{ id: '5', name: 'Puhelinlasku', date: '01.10.2025', amount: -27 },
-	{ id: '1', name: 'Bussikortti', date: '22.10.2025', amount: -50 },
-	{ id: '2', name: 'Opintotuki', date: '25.10.2025', amount: +280 },
-	{ id: '3', name: 'Opintolaina', date: '06.10.2025', amount: +300 },
+	{ id: '1', name: 'Bus card', date: '22.10.2025', amount: -50 },
+	{ id: '2', name: 'Study benefit', date: '25.10.2025', amount: +280 },
+	{ id: '3', name: 'Study loan', date: '06.10.2025', amount: +300 },
+	{ id: '4', name: 'Pet', date: '20.10.2025', amount: -60 },
+	{ id: '5', name: 'Phone bill', date: '01.10.2025', amount: -27 },
 ];
 
 function formatCurrency(value: number, hideSign?: boolean) {
+	// Formats given currency to a locale (currently finnish)
+	// hidesign: hides minus sign on negative numbers if true.
 	return Intl.NumberFormat('fi-FI', {
 		style: 'currency',
 		currency: 'EUR',
 		signDisplay: hideSign ? 'never' : 'auto',
+		unitDisplay: 'narrow',
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 2,
 	}).format(value);
 }
 
@@ -76,6 +83,7 @@ export default function Budget() {
 	const [currentDate, setcurrentDate] = useState(new Date());
 	const [transactions, setTransactions] = useState<Txn[]>(MOCK_TX);
 	const [selectedIndex, setSelectedIndex] = React.useState(0);
+	const [error, setError] = useState('');
 
 	const { past, future } = useMemo(
 		() => splitTransactions(transactions),
@@ -90,7 +98,7 @@ export default function Budget() {
 		(ex) => ex.amount < 0,
 	);
 
-	const monthLabel = new Intl.DateTimeFormat('fi-FI', {
+	const monthLabel = new Intl.DateTimeFormat('en-US', {
 		month: 'long',
 		year: 'numeric',
 	}).format(currentDate);
@@ -124,6 +132,36 @@ export default function Budget() {
 		[],
 	);
 
+	const isValidDate = (text: string) => {
+		// Regex for dd.mm.yyyy
+		const regex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+		const match = regex.exec(text);
+
+		if (!match) return false;
+
+		const day = parseInt(match[1], 10);
+		const month = parseInt(match[2], 10) - 1;
+		const year = parseInt(match[3], 10);
+
+		const date = new Date(year, month, day);
+
+		// Check that JS didn’t autocorrect invalid dates (like 32.01.2025 → 01.02.2025)
+		return (
+			date.getFullYear() === year &&
+			date.getMonth() === month &&
+			date.getDate() === day
+		);
+	};
+
+	const handleDateChange = (text: string) => {
+		if (isValidDate(text)) {
+			setError('');
+		} else {
+			setError('Invalid date, use format: dd.mm.yyyy');
+		}
+		setEditingTxn((prev) => (prev ? { ...prev, date: text } : prev));
+	};
+
 	return (
 		<>
 			<IconRegistry icons={EvaIconsPack} />
@@ -134,12 +172,12 @@ export default function Budget() {
 				<View style={{ flex: 1, alignItems: 'center' }}>
 					<Layout style={styles.screen} level="1">
 						<TabView
-							style={{ flex: 1, width: 415 }}
+							style={{ flex: 1 }}
 							selectedIndex={selectedIndex}
 							onSelect={(index) => setSelectedIndex(index)}
 							swipeEnabled={false}
 						>
-							<Tab title="Päivä">
+							<Tab title="Day">
 								<Layout
 									style={{
 										flex: 1,
@@ -147,10 +185,10 @@ export default function Budget() {
 										alignItems: 'center',
 									}}
 								>
-									<Text>Päivän näkymä</Text>
+									<Text>Day view</Text>
 								</Layout>
 							</Tab>
-							<Tab title="Kuukausi">
+							<Tab title="Month">
 								<Layout
 									style={{
 										flex: 1,
@@ -163,14 +201,8 @@ export default function Budget() {
 										contentContainerStyle={styles.scroll}
 										bounces
 									>
-										{/* Title + month selector */}
+										{/* month selector */}
 										<View style={{ marginTop: 6 }}>
-											<Text
-												category="h5"
-												style={styles.title}
-											>
-												Budjetti
-											</Text>
 											<View style={styles.monthRow}>
 												<TouchableOpacity
 													style={styles.monthBtn}
@@ -216,205 +248,27 @@ export default function Budget() {
 											</View>
 										</View>
 
-										{/* Totals cards */}
-										<Card disabled style={styles.totalCard}>
-											<TouchableOpacity
-												style={styles.totalHeader}
-												onPress={() =>
-													setIncomesOpen((v) => !v)
-												}
-												activeOpacity={0.8}
-											>
-												<Text
-													category="s1"
-													style={styles.totalTitle}
-												>
-													Tulot
-												</Text>
-												<View style={styles.totalRight}>
-													<Text
-														category="s1"
-														style={{
-															fontWeight: '800',
-														}}
-													>
-														{formatCurrency(
-															POSITIVE_TX.reduce(
-																(acc, income) =>
-																	acc +
-																	income.amount,
-																0,
-															),
-														)}
-													</Text>
-													<Icon
-														name={
-															incomesOpen
-																? 'chevron-down-outline'
-																: 'chevron-right-outline'
-														}
-														style={styles.chev}
-													/>
-												</View>
-											</TouchableOpacity>
+										{/* income dropdown */}
+										<BudgetDropdown
+											txns={POSITIVE_TX}
+											name={'Incomes'}
+											setEditVisible={setEditVisible}
+											setEditingTxn={setEditingTxn}
+											openDropdown={setIncomesOpen}
+											isOpen={incomesOpen}
+											formatCurrency={formatCurrency}
+										/>
 
-											{/* income dropdown */}
-											{incomesOpen && (
-												<View style={{ marginTop: 10 }}>
-													{POSITIVE_TX.map(
-														(income) => (
-															<View
-																key={income.id}
-																style={
-																	styles.totalHeader
-																}
-															>
-																<Text category="s1">
-																	{
-																		income.name
-																	}
-																</Text>
-																<View
-																	style={
-																		styles.totalRight
-																	}
-																>
-																	<Text category="s1">
-																		{formatCurrency(
-																			income.amount,
-																		)}
-																	</Text>
-																	<TouchableOpacity
-																		onPress={() => {
-																			setEditVisible(
-																				true,
-																			);
-																			setEditingTxn(
-																				income,
-																			);
-																		}}
-																	>
-																		<MaterialCommunityIcons
-																			name="pencil-outline"
-																			size={
-																				18
-																			}
-																			color={
-																				customTheme[
-																					'color-black'
-																				]
-																			}
-																		/>
-																	</TouchableOpacity>
-																</View>
-															</View>
-														),
-													)}
-												</View>
-											)}
-										</Card>
-
-										<Card disabled style={styles.totalCard}>
-											<TouchableOpacity
-												style={styles.totalHeader}
-												onPress={() =>
-													setExpensesOpen((v) => !v)
-												}
-												activeOpacity={0.8}
-											>
-												<Text
-													category="s1"
-													style={styles.totalTitle}
-												>
-													Menot
-												</Text>
-												<View style={styles.totalRight}>
-													<Text
-														category="s1"
-														style={{
-															fontWeight: '800',
-														}}
-													>
-														{formatCurrency(
-															NEGATIVE_TX.reduce(
-																(
-																	acc,
-																	expense,
-																) =>
-																	acc +
-																	expense.amount,
-																0,
-															),
-															true,
-														)}
-													</Text>
-													<Icon
-														name={
-															expensesOpen
-																? 'chevron-down-outline'
-																: 'chevron-right-outline'
-														}
-														style={styles.chev}
-													/>
-												</View>
-											</TouchableOpacity>
-
-											{/* expense dropdown */}
-											{expensesOpen && (
-												<View style={{ marginTop: 10 }}>
-													{NEGATIVE_TX.map(
-														(expense) => (
-															<View
-																key={expense.id}
-																style={
-																	styles.totalHeader
-																}
-															>
-																<Text category="s1">
-																	{
-																		expense.name
-																	}
-																</Text>
-																<View
-																	style={
-																		styles.totalRight
-																	}
-																>
-																	<Text category="s1">
-																		{formatCurrency(
-																			expense.amount,
-																			true,
-																		)}
-																	</Text>
-																	<TouchableOpacity
-																		onPress={() => {
-																			setEditVisible(
-																				true,
-																			);
-																			setEditingTxn(
-																				expense,
-																			);
-																		}}
-																	>
-																		<MaterialCommunityIcons
-																			name="pencil-outline"
-																			size={
-																				18
-																			}
-																			color={
-																				customTheme[
-																					'color-black'
-																				]
-																			}
-																		/>
-																	</TouchableOpacity>
-																</View>
-															</View>
-														),
-													)}
-												</View>
-											)}
-										</Card>
+										{/* expense dropdown */}
+										<BudgetDropdown
+											txns={NEGATIVE_TX}
+											name={'Expenses'}
+											setEditVisible={setEditVisible}
+											setEditingTxn={setEditingTxn}
+											openDropdown={setExpensesOpen}
+											isOpen={expensesOpen}
+											formatCurrency={formatCurrency}
+										/>
 
 										{/* Snapshot */}
 										<View style={{ marginTop: 4 }}>
@@ -425,9 +279,11 @@ export default function Budget() {
 												{today.toLocaleDateString()}
 											</Text>
 											<Text>
-												Tilillä rahaa:{' '}
+												Balance:{' '}
 												<Text category="s1">
-													{totals.balance}0€
+													{formatCurrency(
+														totals.balance,
+													)}
 												</Text>
 											</Text>
 											<View
@@ -438,7 +294,7 @@ export default function Budget() {
 												}}
 											>
 												<Text>
-													Käyttövara:{' '}
+													Available:{' '}
 													<Text category="s1">
 														{totals.discretionary}0€
 													</Text>
@@ -509,159 +365,22 @@ export default function Budget() {
 										)}
 
 										{/* Future events */}
-										<Text
-											category="s1"
-											style={styles.sectionTitle}
-										>
-											Tulevat tapahtumat
-										</Text>
-										<View style={styles.listWrap}>
-											{future.map((t) => (
-												<View
-													key={t.id}
-													style={styles.pill}
-												>
-													<Text
-														style={styles.pillName}
-													>
-														{t.name}
-													</Text>
-													<Text
-														appearance="hint"
-														style={styles.pillDate}
-													>
-														{t.date}
-													</Text>
-													<View
-														style={{
-															flexDirection:
-																'row',
-															alignItems:
-																'center',
-															gap: 8,
-														}}
-													>
-														<Text
-															style={[
-																styles.pillAmt,
-																{
-																	color:
-																		t.amount >=
-																		0
-																			? customTheme[
-																					'color-primary-300'
-																				]
-																			: customTheme[
-																					'color-black'
-																				],
-																},
-															]}
-														>
-															{t.amount >= 0
-																? '+'
-																: ''}
-															{t.amount}€
-														</Text>
-
-														<TouchableOpacity
-															onPress={() => {
-																setEditVisible(
-																	true,
-																);
-																setEditingTxn(
-																	t,
-																);
-															}}
-														>
-															<MaterialCommunityIcons
-																name="pencil-outline"
-																size={18}
-																color={
-																	customTheme[
-																		'color-black'
-																	]
-																}
-															/>
-														</TouchableOpacity>
-													</View>
-												</View>
-											))}
-										</View>
+										<BudgetEventList
+											txns={future}
+											title={'Future events'}
+											setEditVisible={setEditVisible}
+											setEditingTxn={setEditingTxn}
+											formatCurrency={formatCurrency}
+										/>
 
 										{/* Past events */}
-										<Text
-											category="s1"
-											style={styles.sectionTitle}
-										>
-											Menneet tapahtumat
-										</Text>
-										<View style={styles.listWrap}>
-											{past.map((t) => (
-												<View
-													key={t.id}
-													style={styles.pill}
-												>
-													<Text
-														style={styles.pillName}
-													>
-														{t.name}
-													</Text>
-													<Text
-														appearance="hint"
-														style={styles.pillDate}
-													>
-														{t.date}
-													</Text>
-													<View
-														style={{
-															flexDirection:
-																'row',
-															alignItems:
-																'center',
-															gap: 8,
-														}}
-													>
-														<Text
-															style={[
-																styles.pillAmt,
-																{
-																	color:
-																		t.amount >=
-																		0
-																			? customTheme[
-																					'color-primary-300'
-																				]
-																			: customTheme[
-																					'color-black'
-																				],
-																},
-															]}
-														>
-															{t.amount >= 0
-																? '+'
-																: ''}
-															{t.amount}€
-														</Text>
-														<TouchableOpacity
-															onPress={() => {
-																setEditVisible(
-																	true,
-																);
-																setEditingTxn(
-																	t,
-																);
-															}}
-														>
-															<MaterialCommunityIcons
-																name="pencil-outline"
-																size={18}
-																color="#1c1c1c"
-															/>
-														</TouchableOpacity>
-													</View>
-												</View>
-											))}
-										</View>
+										<BudgetEventList
+											txns={past}
+											title={'Past events'}
+											setEditVisible={setEditVisible}
+											setEditingTxn={setEditingTxn}
+											formatCurrency={formatCurrency}
+										/>
 
 										{/* Edit modal */}
 										{editOpen && (
@@ -672,6 +391,7 @@ export default function Budget() {
 													</Text>
 													<Input
 														label="Name"
+														maxLength={25}
 														value={editingTxn?.name}
 														style={{
 															marginVertical: 8,
@@ -691,7 +411,8 @@ export default function Budget() {
 													<Input
 														label="Amount (€)"
 														keyboardType="numeric"
-														value={String(
+														maxLength={9}
+														defaultValue={String(
 															editingTxn?.amount,
 														)}
 														onChangeText={(text) =>
@@ -700,12 +421,30 @@ export default function Budget() {
 																	prev
 																		? {
 																				...prev,
-																				amount: Number(
-																					text,
-																				),
+																				amount:
+																					Number.isFinite(
+																						Number(
+																							text.trim(),
+																						),
+																					) &&
+																					!Number.isNaN(
+																						Number(
+																							text.trim(),
+																						),
+																					)
+																						? Number(
+																								text.trim(),
+																							)
+																						: prev.amount,
 																			}
 																		: prev,
 															)
+														}
+														status={
+															editingTxn?.amount ===
+															0
+																? 'danger'
+																: 'static'
 														}
 														style={{
 															marginVertical: 8,
@@ -715,17 +454,18 @@ export default function Budget() {
 													<Input
 														label="Date"
 														value={editingTxn?.date}
+														maxLength={10}
 														placeholder="dd.mm.yyyy"
-														onChangeText={(text) =>
-															setEditingTxn(
-																(prev) =>
-																	prev
-																		? {
-																				...prev,
-																				date: text,
-																			}
-																		: prev,
-															)
+														onChangeText={
+															handleDateChange
+														}
+														status={
+															error
+																? 'danger'
+																: 'static'
+														}
+														caption={
+															error || 'dd.mm.yyy'
 														}
 														style={{
 															marginVertical: 8,
@@ -742,15 +482,21 @@ export default function Budget() {
 																alignSelf:
 																	'center',
 															}}
+															disabled={
+																error !== '' ||
+																editingTxn?.amount ===
+																	0
+															}
 														>
 															SAVE
 														</Button>
 														<Button
-															onPress={() =>
+															onPress={() => {
 																setEditVisible(
 																	false,
-																)
-															}
+																);
+																setError('');
+															}}
 															style={{
 																alignSelf:
 																	'center',
@@ -767,7 +513,7 @@ export default function Budget() {
 									</ScrollView>
 								</Layout>
 							</Tab>
-							<Tab title="Vuosi">
+							<Tab title="Year">
 								<Layout
 									style={{
 										flex: 1,
@@ -775,7 +521,7 @@ export default function Budget() {
 										alignItems: 'center',
 									}}
 								>
-									<Text>Vuoden näkymä</Text>
+									<Text>Year view</Text>
 								</Layout>
 							</Tab>
 						</TabView>
