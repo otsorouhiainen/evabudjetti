@@ -86,9 +86,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		marginTop: 4,
 		position: 'relative',
-		//a hack to force width for bottom bar
-		width: 360,
-		height: 220,
+		width: '40%',
+		aspectRatio: 1.1,
+		minWidth: 80,
+		maxWidth: 180,
 		alignSelf: 'center',
 	},
 
