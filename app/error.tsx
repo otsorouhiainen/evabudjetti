@@ -13,7 +13,7 @@ import { StyleSheet, View } from 'react-native';
 import { BottomNav } from '../src/components/BottomNav';
 import { customTheme } from '../src/theme/eva-theme';
 
-export default function Error() {
+export default function Err() {
 	const router = useRouter();
 	return (
 		<>
