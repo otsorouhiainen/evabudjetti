@@ -1,11 +1,11 @@
+import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Button, SizableText, Stack, useTheme, XStack, YStack } from 'tamagui';
+import { Button, SizableText, Stack, XStack, YStack } from 'tamagui';
 
 export default function Landing() {
 	const router = useRouter();
 	const [helpVisible, setHelpVisible] = useState(false);
-	const theme = useTheme();
 
 	return (
 		<>
@@ -75,7 +75,7 @@ export default function Landing() {
 					<YStack
 						alignItems="center"
 						marginTop={6}
-						justifyContent="center"
+						justifyContent="space-between"
 						gap={'$2'}
 					>
 						<SizableText fontWeight={'$7'} size={'$title1'}>
@@ -87,6 +87,14 @@ export default function Landing() {
 						>
 							Taloudenhallintasi tueksi
 						</SizableText>
+						<Button
+							disabled
+							transparent
+							icon={<PiggyBank />}
+							size={200}
+							marginBottom={-190}
+							color={'$primary300'}
+						></Button>
 					</YStack>
 
 					{/* Illustration row */}
@@ -105,13 +113,14 @@ export default function Landing() {
 							position="absolute"
 							top={0}
 							right={-80}
-							width="22%"
+							width="50%"
 							aspectRatio={1}
-							minWidth={18}
-							maxWidth={36}
+							minWidth={28}
+							maxWidth={42}
 							zIndex={5}
 							onPress={() => setHelpVisible(true)}
 							chromeless
+							icon={<MessageCircleQuestion size={28} />}
 						/>
 						<Button disabled transparent />
 					</XStack>

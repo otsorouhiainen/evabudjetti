@@ -1,3 +1,4 @@
+import { ChartColumn, Home, PlusCircle, Wallet } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import type { ReactElement } from 'react';
 import { Button, useTheme, XStack } from 'tamagui';
@@ -20,11 +21,11 @@ const NavButton = ({
 		icon={btnIcon}
 		color={btnColor}
 		onPress={onPress}
-		borderRadius={42}
-		paddingHorizontal={22}
-		borderWidth={2}
 		borderColor={borderColor}
-		size={36}
+		size={'$buttons.md'}
+		borderRadius={32}
+		paddingVertical={20}
+		paddingHorizontal={22}
 	/>
 );
 
@@ -37,18 +38,18 @@ interface BottomNavOption {
 
 const bottomNavOptions: BottomNavOption[] = [
 	{
-		icon: <div>TEST1</div>,
+		icon: <Home size={'$icons.md'} />,
 		route: '/landing',
 	},
 	{
-		icon: <div>TEST1</div>,
+		icon: <PlusCircle size={'$icons.md'} />,
 		route: '/add_transaction',
 	},
 	{
-		icon: <div>TEST1</div>,
+		icon: <Wallet size={'$icons.md'} />,
 		route: '/budget',
 	},
-	{ icon: <div>TEST2</div>, route: '/spending' },
+	{ icon: <ChartColumn size={'$icons.md'} />, route: '/spending' },
 ];
 
 export const BottomNav = () => {
@@ -61,7 +62,7 @@ export const BottomNav = () => {
 			left={0}
 			right={0}
 			paddingHorizontal={22}
-			height={45}
+			height={52}
 			justifyContent={'space-between'}
 			alignItems="center"
 			backgroundColor={'$primary100'}

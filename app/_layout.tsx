@@ -1,4 +1,5 @@
 // do not remove
+// biome-ignore lint/correctness/noUnusedImports: these are here for compiler, actual font import handled in tamagui config
 import {
 	FiraSans_300Light,
 	FiraSans_400Regular,

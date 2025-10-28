@@ -52,6 +52,13 @@ const size = {
 	10: 10,
 };
 
+const icons = {
+	sm: 20,
+	md: 24,
+	lg: 30,
+	xl: 34,
+};
+
 const color = {
 	primary100: '#0A5B55',
 	primary200: '#0E776E',
@@ -76,9 +83,18 @@ const color = {
 	segmentWrap: '#dff1eb',
 };
 
+const buttons = {
+	sm: 24,
+	md: 32,
+	lg: 42,
+	xl: 52,
+};
+
 export const tokens = createTokens({
 	size,
 	color,
+	icons,
+	buttons,
 	space: { ...size, '-1': -5, '-2': -10 },
 	radius: { 0: 0, 1: 3 },
 	zIndex: { 0: 0, 1: 100, 2: 200 },
@@ -106,7 +122,6 @@ const configDefinition = {
 		body: firaFont,
 	},
 	tokens,
-
 	themes: {
 		light,
 		dark: {
