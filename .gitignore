@@ -32,6 +32,10 @@ yarn-error.*
 .DS_Store
 *.pem
 
+# tamagui
+.tamagui/**
+tamagui-web.css
+
 # local env files
 .env*.local
 

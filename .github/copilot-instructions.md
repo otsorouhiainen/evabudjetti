@@ -10,18 +10,22 @@ Visibility: Private
 IMPORTANT OPERATING PRINCIPLE FOR THE AGENT  
 Follow the instructions below as authoritative. Perform additional searches only if (a) a referenced file or script truly does not exist, or (b) a command fails in a way not described here.
 
+!! NOTICE !!
+Any time this file is updated. You should mark it into the github review, and briefly explain the change.
+!! END NOTICE !!
+
 ---
 
 ## 1. High-Level Summary
 
-This repository is a TypeScript codebase (size currently small: ~242 KB reported) likely implementing a budgeting domain (e.g., tracking expenses, categories, balances). Expect a conventional Node.js project structure (e.g., `package.json`, `src/`, maybe `tsconfig.json`). Because only repository metadata was available at instruction time (file inventory not yet enumerated), assume standard conventions unless contradicted by actual files. Project is made using Expo framework and follows it's standards.
+This repository is a TypeScript codebase implementing a budgeting domain (e.g., tracking expenses, categories, balances). Expect a conventional Expo project structure (e.g., `package.json`, `src/` ). Assume standard conventions unless contradicted by actual files. Project is made using Expo framework and follows it's standards.
 
-Probable architectural layers (infer until verified):
+Architectural layers:
 
 - Domain models (e.g., Budget, Transaction, Category)
 - Service or logic layer (calculation, aggregation)
-- Persistence or adapters (in-memory or external API; verify before modifying)
-- Entry point (CLI, API server, or web frontend)
+- Persistence or adapters (zustand state managment)
+- Entry point (Primary web interface, ios and Android app options)
 
 You should preserve separation of concerns, avoid duplicating logic, and prefer pure functions for domain calculations. Favor O(n log n) or linear operations for aggregation; avoid nested loops over large collections where map/reduce/groupBy patterns can replace them.
 
@@ -99,6 +103,8 @@ ALWAYS:
 - Add/extend tests when altering business logic.
 - Prefer O(n) scans with maps/groupings over nested loops.
 - Explicitly handle edge cases: empty transaction arrays, negative values, rounding issues (use decimal libs if monetary precision matters).
+- Ensure state managment is handled by Zustand. Each module should have it's own store, and use slices for smaller scope structuring.
+- Ensure prisma sql migrations are documented in `prisma\migration_log.txt` (excluding init)
 
 ---
 
@@ -112,12 +118,14 @@ Likely root files (NAME → PURPOSE):
 - .gitignore – Ignored build artifacts
 - (Optional) .env.example – Environment variable template
 - src/ – Source root
-  - index.ts or main.ts – Entry point
-  - models/ or types/ – TypeScript interfaces/types
+  - index.tsx – Entry point
+  - components/ – TypeScript interfaces/types
   - services/ or logic/ – Business logic
   - utils/ – Shared helpers
   - tests/ or **tests**/ – Test files (mirroring structure)
+  - store/ - Zustand store files
 - dist/ – Generated build (should NOT be committed unless deliberate)
+- prisma/ - contains schema and migrations for sqlite database made using Prisma
 
 If a web frontend:
 
