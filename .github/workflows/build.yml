@@ -29,8 +29,4 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build static website
-        run: |
-          echo "Clearing Metro cache..."
-          rm -rf $TMPDIR/metro-cache
-          rm -rf node_modules/.cache/metro
-          pnpm expo export -c
+        run: pnpm expo export
