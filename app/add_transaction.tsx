@@ -1,5 +1,4 @@
 import * as eva from '@eva-design/eva';
-import type { IconProps } from '@ui-kitten/components';
 import {
 	ApplicationProvider,
 	Button,
@@ -11,24 +10,39 @@ import {
 	Input,
 	Layout,
 	Text,
-	useTheme,
 } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { format, parseISO } from 'date-fns';
 import { useMemo, useState } from 'react';
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BottomNav } from '../src/components/BottomNav';
+import { TransactionTypeSegment } from '../src/components/TransactionTypeSegment';
 import { customTheme } from '../src/theme/eva-theme';
 
-type CategoryKey = 'Tuki' | 'Vuokratulo' | 'Muu' | 'Lisää kategoria (+)';
+export enum TransactionType {
+	Income = 'TULO', // TODO: i18n to be added
+	Expense = 'MENO',
+}
 
-const CalendarIcon = (props: IconProps) => (
+// TODO: categories to be dynamic from database
+export const CATEGORIES = [
+	{ key: 'support', label: 'Tuki' },
+	{ key: 'rental', label: 'Vuokratulo' },
+	{ key: 'other', label: 'Muu' },
+	{ key: 'add', label: 'Lisää kategoria (+)' },
+] as const;
+
+export type CategoryKey = (typeof CATEGORIES)[number]['key'];
+
+const CalendarIcon = (props: any) => (
 	<Icon {...props} name="calendar-outline" />
 );
 
 export default function AddTransaction() {
-	const theme = useTheme();
-	const [type, setType] = useState<'TULO' | 'MENO'>('TULO');
-	const [category, setCategory] = useState<CategoryKey>('Tuki');
+	const [type, setType] = useState<
+		TransactionType.Income | TransactionType.Expense
+	>(TransactionType.Income);
+	const [category, setCategory] = useState<CategoryKey>('support');
 	const [name, setName] = useState('Tuki');
 	const [amount, setAmount] = useState('');
 	const [date, setDate] = useState<Date | null>(new Date(2025, 10, 4)); // 31/07/2025
@@ -63,91 +77,61 @@ export default function AddTransaction() {
 						</View>
 
 						{/* Segmented: Tulo / Meno */}
-						<View style={styles.segmentWrap}>
-							{(['TULO', 'MENO'] as const).map((opt) => (
-								<TouchableOpacity
-									key={opt}
-									activeOpacity={0.9}
-									onPress={() => setType(opt)}
-									style={[
-										styles.segmentItem,
-										opt === type && {
-											backgroundColor:
-												theme['color-primary-500'],
-										},
-									]}
-								>
-									<Text
-										category="s1"
-										style={[
-											styles.segmentText,
-											opt === type
-												? { color: '#fff' }
-												: {
-														color: theme[
-															'color-primary-500'
-														],
-													},
-										]}
-									>
-										{opt}
-									</Text>
-								</TouchableOpacity>
-							))}
-						</View>
+						<TransactionTypeSegment type={type} setType={setType} />
 
 						{/* Category chips */}
 						<Text appearance="hint" style={styles.labelTop}>
 							Kategoria
 						</Text>
 						<View style={styles.chipsRow}>
-							{(
-								[
-									'Tuki',
-									'Vuokratulo',
-									'Muu',
-									'Lisää kategoria (+)',
-								] as CategoryKey[]
-							).map((c) => {
-								const selected = c === category;
+							{CATEGORIES.map(({ key, label }) => {
+								const selected = key === category;
 								return (
 									<TouchableOpacity
-										key={c}
+										key={key}
 										onPress={() => {
-											setCategory(c);
-											if (type === 'TULO') setName(c);
+											setCategory(key);
+											if (type === TransactionType.Income)
+												setName(label);
 										}}
 										style={[
 											styles.chip,
 											selected && {
 												backgroundColor:
-													theme['color-primary-600'],
+													customTheme[
+														'color-primary-600'
+													],
 											},
 										]}
 									>
 										<Text
 											style={[
 												styles.chipText,
-												selected && { color: '#fff' },
+												selected && {
+													color: customTheme[
+														'color-white'
+													],
+												},
 											]}
 										>
-											{c}
+											{label}
 										</Text>
 									</TouchableOpacity>
 								);
 							})}
 						</View>
-
 						{/* Form */}
 						<Card disabled style={styles.formCard}>
 							<Text style={styles.inputLabel}>
-								{type === 'TULO' ? 'TULON nimi' : 'MENON nimi'}
+								{type === TransactionType.Income
+									? 'TULON nimi'
+									: 'MENON nimi'}
 							</Text>
 							<Input
 								value={name}
 								onChangeText={setName}
 								placeholder={
-									type === 'TULO'
+									type === TransactionType.Income
 										? 'Tulon nimi'
 										: 'Menon nimi'
 								}
@@ -177,14 +161,12 @@ export default function AddTransaction() {
 							{Platform.OS === 'web' ? (
 								<Input
 									value={
-										date
-											? date.toISOString().slice(0, 10)
-											: ''
+										date ? format(date, 'dd-MM-yyyy') : ''
 									}
 									onChangeText={(val) =>
-										setDate(val ? new Date(val) : null)
+										setDate(val ? parseISO(val) : null)
 									}
-									placeholder="YYYY-MM-DD"
+									placeholder="DD-MM-YYYY"
 									style={styles.input}
 									size="medium"
 								/>
@@ -211,7 +193,10 @@ export default function AddTransaction() {
 							disabled={!isValid}
 							style={[
 								styles.submitBtn,
-								{ backgroundColor: theme['color-primary-500'] },
+								{
+									backgroundColor:
+										customTheme['color-primary-500'],
+								},
 							]}
 							onPress={() => {
 								// submit handler placeholder
@@ -225,7 +210,9 @@ export default function AddTransaction() {
 								});
 							}}
 						>
-							{type === 'TULO' ? 'LISÄÄ TULO' : 'LISÄÄ MENO'}
+							{type === TransactionType.Income
+								? 'LISÄÄ TULO'
+								: 'LISÄÄ MENO'}
 						</Button>
 
 						{/* Bottom nav */}
@@ -254,16 +241,19 @@ const styles = StyleSheet.create({
 	segmentWrap: {
 		flexDirection: 'row',
 		alignSelf: 'flex-start',
-		backgroundColor: '#E9F0F1',
+		backgroundColor: customTheme['color-segment-wrap'],
 		borderRadius: 24,
 		padding: 4,
 		gap: 6,
 	},
 	segmentItem: {
 		paddingVertical: 6,
-		paddingHorizontal: 16,
+		paddingHorizontal: '8%',
 		borderRadius: 20,
-		backgroundColor: '#fff',
+		backgroundColor: customTheme['color-white'],
+		minWidth: 60,
+		maxWidth: 120,
+		flexShrink: 1,
 	},
 	segmentText: { fontWeight: '700' },
 	labelTop: {
@@ -275,9 +265,9 @@ const styles = StyleSheet.create({
 		gap: 10,
 	},
 	chip: {
-		backgroundColor: '#E8F2EE',
+		backgroundColor: customTheme['color-button-bg'],
 		paddingVertical: 8,
-		paddingHorizontal: 14,
+		paddingHorizontal: '7%',
 		borderRadius: 12,
 	},
 	chipText: {
@@ -303,5 +293,9 @@ const styles = StyleSheet.create({
 		marginTop: 8,
 		borderRadius: 22,
 		paddingVertical: 14,
+		width: '80%',
+		alignSelf: 'center',
+		minWidth: 120,
+		maxWidth: 320,
 	},
 });

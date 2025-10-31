@@ -16,5 +16,9 @@ export const customTheme: Record<string, string> = {
 
 	'color-black': '#2F2F2F',
 	'color-white': '#fdfdfd',
+
+	'color-button-bg': '#F1F5F4',
+	'color-segment-wrap': '#dff1eb',
+
 	// Add more custom colors as needed
 };

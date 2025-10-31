@@ -1,92 +1,83 @@
-import { Button, Icon, Layout } from '@ui-kitten/components';
+import { ChartColumn, Home, PlusCircle, Wallet } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
-import { StyleSheet } from 'react-native';
-import { customTheme } from '../../src/theme/eva-theme';
+import type { ReactElement } from 'react';
+import { Button, useTheme, XStack } from 'tamagui';
 
-interface NavIconProps {
-	name: string;
+interface NavButtonProps {
 	iconColor?: string;
 	btnColor?: string;
 	borderColor?: string;
+	btnIcon: ReactElement;
 }
 
-const NavIcon = ({
-	name,
-	iconColor,
+const NavButton = ({
 	btnColor,
 	borderColor,
+	btnIcon,
 	onPress,
-}: NavIconProps & { onPress?: () => void }) => (
+}: NavButtonProps & { onPress?: () => void }) => (
 	<Button
-		appearance="ghost"
-		accessoryLeft={(props) => (
-			<Icon {...props} name={name} fill={iconColor} />
-		)}
-		style={[
-			styles.navBtn,
-			btnColor ? { backgroundColor: btnColor } : null,
-			borderColor ? { borderWidth: 2, borderColor } : null,
-		]}
+		transparent
+		icon={btnIcon}
+		color={btnColor}
 		onPress={onPress}
+		borderColor={borderColor}
+		size={'$buttons.md'}
+		borderRadius={32}
+		paddingVertical={20}
+		paddingHorizontal={22}
 	/>
 );
 
+type RouteString = '/landing' | '/add_transaction' | '/budget' | '/spending';
+
+interface BottomNavOption {
+	icon: ReactElement;
+	route: RouteString;
+}
+
+const bottomNavOptions: BottomNavOption[] = [
+	{
+		icon: <Home size={'$icons.md'} />,
+		route: '/landing',
+	},
+	{
+		icon: <PlusCircle size={'$icons.md'} />,
+		route: '/add_transaction',
+	},
+	{
+		icon: <Wallet size={'$icons.md'} />,
+		route: '/budget',
+	},
+	{ icon: <ChartColumn size={'$icons.md'} />, route: '/spending' },
+];
+
 export const BottomNav = () => {
+	const theme = useTheme();
 	const router = useRouter();
 	return (
-		<Layout
-			style={[
-				styles.bottomBar,
-				{ backgroundColor: customTheme['color-primary-100'] },
-			]}
-			level="2"
+		<XStack
+			position="absolute"
+			bottom={0}
+			left={0}
+			right={0}
+			paddingHorizontal={22}
+			height={52}
+			justifyContent={'space-between'}
+			alignItems="center"
+			backgroundColor={'$primary100'}
+			borderTopLeftRadius={6}
+			borderTopRightRadius={6}
 		>
-			<NavIcon
-				name="home-outline"
-				iconColor={customTheme['color-white']}
-				btnColor={customTheme['color-primary-100']}
-				borderColor={customTheme['color-primary-200']}
-				onPress={() => router.push('/landing')}
-			/>
-			<NavIcon
-				name="plus-circle-outline"
-				iconColor={customTheme['color-white']}
-				btnColor={customTheme['color-primary-100']}
-				borderColor={customTheme['color-primary-200']}
-				onPress={() => router.push('/add_transaction')}
-			/>
-			<NavIcon
-				name="grid-outline"
-				iconColor={customTheme['color-white']}
-				btnColor={customTheme['color-primary-100']}
-				borderColor={customTheme['color-primary-200']}
-				onPress={() => router.push('/budget')}
-			/>
-			<NavIcon
-				name="pie-chart-outline"
-				iconColor={customTheme['color-white']}
-				btnColor={customTheme['color-primary-100']}
-				borderColor={customTheme['color-primary-200']}
-				onPress={() => router.push('/spending')}
-			/>
-		</Layout>
+			{bottomNavOptions.map((option) => (
+				<NavButton
+					key={option.route}
+					btnIcon={option.icon}
+					btnColor={theme.white.val}
+					borderColor={theme.primary200.val}
+					onPress={() => router.push(option.route)}
+				/>
+			))}
+		</XStack>
 	);
 };
-
-const styles = StyleSheet.create({
-	bottomBar: {
-		position: 'absolute',
-		left: 0,
-		right: 0,
-		bottom: 0,
-		paddingHorizontal: 18,
-		paddingVertical: 8,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		borderTopLeftRadius: 18,
-		borderTopRightRadius: 18,
-	},
-	navBtn: {
-		borderRadius: 16,
-	},
-});

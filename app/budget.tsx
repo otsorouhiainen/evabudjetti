@@ -1,3 +1,5 @@
+import { BudgetDropdown } from '@/src/components/BudgetDropdown';
+import { BudgetEventList } from '@/src/components/BudgetEventList';
 import * as eva from '@eva-design/eva';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -12,10 +14,8 @@ import {
 	Text,
 } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { BudgetDropdown } from '@/src/components/BudgetDropdown';
-import { BudgetEventList } from '@/src/components/BudgetEventList';
 import { BottomNav } from '../src/components/BottomNav';
 import { customTheme } from '../src/theme/eva-theme';
 
@@ -82,7 +82,7 @@ export default function Budget() {
 	const [editingTxn, setEditingTxn] = useState<Txn | null>(null);
 	const [currentDate, setcurrentDate] = useState(new Date());
 	const [transactions, setTransactions] = useState<Txn[]>(MOCK_TX);
-	const [selectedIndex, setSelectedIndex] = React.useState(0);
+	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [error, setError] = useState('');
 
 	const { past, future } = useMemo(
@@ -541,7 +541,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		gap: 18,
 	},
-	safe: { flex: 1 },
 	scroll: {
 		paddingTop: 18,
 		paddingHorizontal: 18,

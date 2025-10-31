@@ -1,4 +1,3 @@
-// app/spending.tsx (or src/screens/Spending.tsx)
 import * as eva from '@eva-design/eva';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -8,36 +7,63 @@ import {
 	IconRegistry,
 	Layout,
 	Text,
-	useTheme,
 } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { parse } from 'date-fns';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BottomNav } from '../src/components/BottomNav';
 import { customTheme } from '../src/theme/eva-theme';
 
-type Row = { id: string; name: string; date: string; amount: number };
+type Row = { id: string; name: string; date: Date; amount: number };
 
 const PAST: Row[] = [
-	{ id: '1', name: 'Takki', date: '26.09.2025', amount: -34 },
-	{ id: '2', name: 'T-paita', date: '26.09.2025', amount: -12 },
-	{ id: '3', name: 'Netflix', date: '18.09.2025', amount: -16 },
-	{ id: '4', name: 'Salijäsenyys', date: '15.09.2025', amount: -25 },
-	{ id: '5', name: 'Huvipuisto', date: '07.09.2025', amount: -58 },
-	{ id: '6', name: 'Kahvila', date: '05.09.2025', amount: -10 },
+	{
+		id: '1',
+		name: 'Takki',
+		date: parse('26.09.2025', 'dd.MM.yyyy', new Date()),
+		amount: -34,
+	},
+	{
+		id: '2',
+		name: 'T-paita',
+		date: parse('26.09.2025', 'dd.MM.yyyy', new Date()),
+		amount: -12,
+	},
+	{
+		id: '3',
+		name: 'Netflix',
+		date: parse('18.09.2025', 'dd.MM.yyyy', new Date()),
+		amount: -16,
+	},
+	{
+		id: '4',
+		name: 'Salijäsenyys',
+		date: parse('15.09.2025', 'dd.MM.yyyy', new Date()),
+		amount: -25,
+	},
+	{
+		id: '5',
+		name: 'Huvipuisto',
+		date: parse('07.09.2025', 'dd.MM.yyyy', new Date()),
+		amount: -58,
+	},
+	{
+		id: '6',
+		name: 'Kahvila',
+		date: parse('05.09.2025', 'dd.MM.yyyy', new Date()),
+		amount: -10,
+	},
 ];
 
 const CHART = [
 	{ label: 'ravintolat', value: 30 },
 	{ label: 'harrastukset', value: 102 },
-	{ label: 'suora-\ntoisto-\npalvelut', value: 16 },
+	{ label: 'suoratoistonpalvelut', value: 16 },
 	{ label: 'vaatteet', value: 46 },
 	{ label: 'jäljellä', value: 6 },
 ];
 
 export default function Spending() {
-	const theme = useTheme();
-	const primary = theme['color-primary-500'];
-
 	const month = 'Lokakuu 2025';
 	const monthlyAllowance = 200;
 	const spentSoFar = 194;
@@ -73,7 +99,7 @@ export default function Spending() {
 									<TouchableOpacity style={styles.monthBtn}>
 										<Icon
 											name="arrow-ios-back-outline"
-											fill="#222"
+											fill={customTheme['color-black']}
 											style={styles.monthIcon}
 										/>
 									</TouchableOpacity>
@@ -83,7 +109,7 @@ export default function Spending() {
 									<TouchableOpacity style={styles.monthBtn}>
 										<Icon
 											name="arrow-ios-forward-outline"
-											fill="#222"
+											fill={customTheme['color-black']}
 											style={styles.monthIcon}
 										/>
 									</TouchableOpacity>
@@ -95,9 +121,11 @@ export default function Spending() {
 								<SimpleBarChart
 									data={CHART}
 									max={200}
-									barColor={primary}
-									gridColor="#dfe7e5"
-									labelColor="#1c1c1c"
+									barColor={customTheme['color-primary-500']}
+									gridColor={
+										customTheme['color-segment-wrap']
+									}
+									labelColor={customTheme['color-black']}
 								/>
 							</Card>
 
@@ -130,15 +158,15 @@ export default function Spending() {
 							</Text>
 							<View style={styles.listWrap}>
 								{PAST.map((r) => (
-									<View key={r.id} style={styles.pill}>
-										<Text style={styles.pillName}>
+									<View key={r.id} style={styles.bill}>
+										<Text style={styles.billName}>
 											{r.name}
 										</Text>
 										<Text
 											appearance="hint"
-											style={styles.pillDate}
+											style={styles.billDate}
 										>
-											{r.date}
+											{r.date.toDateString}
 										</Text>
 										<View
 											style={{
@@ -147,13 +175,15 @@ export default function Spending() {
 												gap: 8,
 											}}
 										>
-											<Text style={styles.pillAmt}>
+											<Text style={styles.billAmt}>
 												{r.amount},00€
 											</Text>
 											<MaterialCommunityIcons
 												name="pencil-outline"
 												size={16}
-												color="#1c1c1c"
+												color={
+													customTheme['color-black']
+												}
 											/>
 										</View>
 									</View>
@@ -178,9 +208,9 @@ function SimpleBarChart({
 	height = 180,
 	barWidth = 34,
 	gap = 18,
-	barColor = '#2f8f83',
-	gridColor = '#e2e8e6',
-	labelColor = '#111',
+	barColor = customTheme['color-primary-300'],
+	gridColor = customTheme['color-segment-wrap'],
+	labelColor = customTheme['color-black'],
 }: {
 	data: { label: string; value: number }[];
 	max?: number;
@@ -294,15 +324,14 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: '#F1F5F4',
+		backgroundColor: customTheme['color-segment-wrap'],
 	},
 	monthIcon: { width: 18, height: 18 },
 	chartCard: {
 		padding: 10,
 		borderRadius: 16,
-		backgroundColor: '#fff',
-		// subtle shadow
-		shadowColor: '#000',
+		backgroundColor: customTheme['color-white'],
+		shadowColor: customTheme['color-black'],
 		shadowOpacity: 0.08,
 		shadowRadius: 8,
 		shadowOffset: { width: 0, height: 2 },
@@ -311,18 +340,18 @@ const styles = StyleSheet.create({
 	summaryRow: { marginTop: 4 },
 	sectionTitle: { marginTop: 10, fontWeight: '800' },
 	listWrap: { gap: 8, marginTop: 4 },
-	pill: {
+	bill: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		backgroundColor: '#dff1eb',
+		backgroundColor: customTheme['color-segment-wrap'],
 		borderRadius: 12,
 		paddingVertical: 10,
 		paddingHorizontal: 12,
 		gap: 10,
 	},
-	pillName: { flex: 1, fontWeight: '700' },
-	pillDate: { width: 105, textAlign: 'center' },
-	pillAmt: { width: 80, textAlign: 'right', fontWeight: '800' },
+	billName: { flex: 1, fontWeight: '700' },
+	billDate: { width: 105, textAlign: 'center' },
+	billAmt: { width: 80, textAlign: 'right', fontWeight: '800' },
 
 	// Chart bits
 	barsRow: {
