@@ -1,4 +1,5 @@
 import * as eva from '@eva-design/eva';
+import type { IconProps } from '@ui-kitten/components';
 import {
 	ApplicationProvider,
 	Button,
@@ -34,7 +35,7 @@ export const CATEGORIES = [
 
 export type CategoryKey = (typeof CATEGORIES)[number]['key'];
 
-const CalendarIcon = (props: any) => (
+const CalendarIcon = (props: IconProps) => (
 	<Icon {...props} name="calendar-outline" />
 );
 

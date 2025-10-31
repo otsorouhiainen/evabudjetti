@@ -1,5 +1,3 @@
-import { BudgetDropdown } from '@/src/components/BudgetDropdown';
-import { BudgetEventList } from '@/src/components/BudgetEventList';
 import * as eva from '@eva-design/eva';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -16,6 +14,8 @@ import {
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { BudgetDropdown } from '@/src/components/BudgetDropdown';
+import { BudgetEventList } from '@/src/components/BudgetEventList';
 import { BottomNav } from '../src/components/BottomNav';
 import { customTheme } from '../src/theme/eva-theme';
 
@@ -169,33 +169,20 @@ export default function Budget() {
 				{...eva}
 				theme={{ ...eva.light, ...customTheme }}
 			>
-				<View style={{ flex: 1, alignItems: 'center' }}>
-					<Layout style={styles.screen} level="1">
+				<View>
+					<Layout>
 						<TabView
-							style={{ flex: 1 }}
 							selectedIndex={selectedIndex}
 							onSelect={(index) => setSelectedIndex(index)}
 							swipeEnabled={false}
 						>
 							<Tab title="Day">
-								<Layout
-									style={{
-										flex: 1,
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
-								>
+								<Layout>
 									<Text>Day view</Text>
 								</Layout>
 							</Tab>
 							<Tab title="Month">
-								<Layout
-									style={{
-										flex: 1,
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
-								>
+								<Layout>
 									{/* Top header */}
 									<ScrollView
 										contentContainerStyle={styles.scroll}
