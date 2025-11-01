@@ -5,7 +5,6 @@ import {
 	Button,
 	Card,
 	CheckBox,
-	Datepicker,
 	Icon,
 	IconRegistry,
 	Input,
@@ -13,10 +12,11 @@ import {
 	Text,
 } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import { format, parseISO } from 'date-fns';
+import { format, parse, isValid } from 'date-fns';
 import { useMemo, useState } from 'react';
 import {
 	Alert,
+	Modal,
 	Platform,
 	ScrollView,
 	StyleSheet,
@@ -34,10 +34,11 @@ export enum TransactionType {
 
 // TODO: categories to be dynamic from database
 export const CATEGORIES = [
-	{ key: 'support', label: 'Tuki' },
-	{ key: 'rental', label: 'Vuokratulo' },
-	{ key: 'other', label: 'Muu' },
-	{ key: 'add', label: 'Lisää kategoria (+)' },
+	{ key: 'support', label: 'Tuki', type: TransactionType.Income },
+	{ key: 'rental', label: 'Vuokra', type: TransactionType.Expense },
+	{ key: 'other', label: 'Muu', type: TransactionType.Income },
+	{ key: 'electricity', label: 'Sähkö', type: TransactionType.Expense },
+	{ key: 'water', label: 'Vesi', type: TransactionType.Expense },
 ] as const;
 
 export type CategoryKey = (typeof CATEGORIES)[number]['key'];
@@ -50,10 +51,12 @@ export default function AddTransaction() {
 	const [type, setType] = useState<
 		TransactionType.Income | TransactionType.Expense
 	>(TransactionType.Income);
-	const [category, setCategory] = useState<CategoryKey>('support');
-	const [name, setName] = useState('Tuki');
+	const [category, setCategory] = useState<CategoryKey | null>(null);
+	const [name, setName] = useState('');
 	const [amount, setAmount] = useState('');
-	const [date, setDate] = useState<Date | null>(new Date(2025, 10, 4)); // 31/07/2025
+	const [date, setDate] = useState<Date | null>(null);
+	const [dateText, setDateText] = useState('');
+	const [dateError, setDateError] = useState<string | null>(null);
 	const [repeat, setRepeat] = useState(false);
 	const [repeatInterval, setRepeatInterval] = useState<
 		'kuukausittain' | 'oma aikaväli'
@@ -66,10 +69,19 @@ export default function AddTransaction() {
 
 	const [description, setDescription] = useState('');
 	const [expanded, setExpanded] = useState(false);
+	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+	const [newCategory, setNewCategory] = useState('');
 
 	const visibleCategories = expanded ? CATEGORIES : CATEGORIES.slice(0, 3);
 
-	const isValid = useMemo(
+	const handleAddCategory = () => {
+		//placeholder for adding category
+
+		setNewCategory('');
+		setCategoryModalVisible(false);
+	};
+
+	const isValidSubmit = useMemo(
 		() => name.trim().length > 0 && !!date && !!amount,
 		[name, amount, date],
 	);
@@ -87,14 +99,35 @@ export default function AddTransaction() {
 		}
 	};
 
+	const handleDateChange = (newDate: string) => {
+		setDateText(newDate);
+		const parsed = parse(newDate, 'd-M-yyyy', new Date());
+
+		if (isValid(parsed)) {
+			setDate(parsed);
+		} else {
+			setDate(null);
+		}
+	};
+
+	const handleDateBlur = () => {
+		if (date) {
+			setDateText(format(date, 'dd-MM-yyyy'));
+			setDateError(null);
+		} else {
+			setDateError('Anna oikea päivämäärä muodossa dd-mm-yyyy');
+		}
+	};
+
 	const handleCancel = () => {
+		setCategory(null);
 		setName('');
 		setAmount('');
 		setDate(null);
 		setRepeat(false);
-		setDescription('');
 		setRepeatInterval('kuukausittain');
 		setRepeatValue('');
+		setDescription('');
 		setErrors({});
 	};
 
@@ -151,51 +184,120 @@ export default function AddTransaction() {
 								</TouchableOpacity>
 							</View>
 							<View style={styles.chipsRow}>
-								{visibleCategories.map(({ key, label }) => {
-									const selected = key === category;
-									return (
-										<TouchableOpacity
-											key={key}
-											onPress={() => {
-												setCategory(key);
-												if (
-													type ===
-													TransactionType.Income
-												)
-													setName(label);
-											}}
-											style={[
-												styles.chip,
-												selected && {
-													backgroundColor:
-														customTheme[
-															'color-primary-600'
-														],
-												},
-											]}
-										>
-											<Text
+								<TouchableOpacity
+									onPress={() =>
+										setCategoryModalVisible(true)
+									}
+									style={styles.chip}
+								>
+									<Text>+</Text>
+								</TouchableOpacity>
+								<Modal
+									visible={categoryModalVisible}
+									transparent={true}
+									onRequestClose={() =>
+										setCategoryModalVisible(false)
+									}
+								>
+									<View style={styles.modalOverlay}>
+										<View style={styles.modalContainer}>
+											<Text style={styles.inputLabel}>
+												Lisää kategoria
+											</Text>
+											<Input
+												value={newCategory}
+												onChangeText={setNewCategory}
+												placeholder="kirjoita kategoria"
+												style={styles.input}
+											/>
+											<View style={styles.btnRow}>
+												<Button
+													appearance="outline"
+													style={[
+														styles.modalBtn,
+														{
+															backgroundColor:
+																customTheme[
+																	'color-white'
+																],
+														},
+													]}
+													onPress={() =>
+														setCategoryModalVisible(
+															false,
+														)
+													}
+												>
+													Peruuta
+												</Button>
+												<Button
+													style={[
+														styles.modalBtn,
+														{
+															backgroundColor:
+																customTheme[
+																	'color-primary-500'
+																],
+														},
+													]}
+													onPress={handleAddCategory}
+												>
+													Tallenna
+												</Button>
+											</View>
+										</View>
+									</View>
+								</Modal>
+								{visibleCategories
+									.filter(
+										(category) =>
+											(type === TransactionType.Income &&
+												category.type ===
+													TransactionType.Income) ||
+											(type === TransactionType.Expense &&
+												category.type ===
+													TransactionType.Expense),
+									)
+									.map(({ key, label }) => {
+										const selected = key === category;
+										return (
+											<TouchableOpacity
+												key={key}
+												onPress={() => {
+													setCategory(key);
+												}}
 												style={[
-													styles.chipText,
+													styles.chip,
 													selected && {
-														color: customTheme[
-															'color-white'
-														],
+														backgroundColor:
+															customTheme[
+																'color-primary-600'
+															],
 													},
 												]}
 											>
-												{label}
-											</Text>
-										</TouchableOpacity>
-									);
-								})}
+												<Text
+													style={[
+														styles.chipText,
+														selected && {
+															color: customTheme[
+																'color-white'
+															],
+														},
+													]}
+												>
+													{label}
+												</Text>
+											</TouchableOpacity>
+										);
+									})}
 							</View>
 							{/* Form */}
 							<Card disabled style={styles.formCard}>
 								<Text style={styles.inputLabel}>
 									{type === TransactionType.Income
-										? 'TULON nimi'
-										: 'MENON nimi'}
+										? TransactionType.Income + ' nimi'
+										: TransactionType.Expense + ' nimi'}
 									<Text
 										style={{
 											color: customTheme[
@@ -212,8 +314,8 @@ export default function AddTransaction() {
 									onChangeText={setName}
 									placeholder={
 										type === TransactionType.Income
-											? 'Tulon nimi'
-											: 'Menon nimi'
+											? TransactionType.Income + ' nimi'
+											: TransactionType.Expense + ' nimi'
 									}
 									style={styles.input}
 									size="medium"
@@ -264,29 +366,18 @@ export default function AddTransaction() {
 										*
 									</Text>
 								</Text>
-								{Platform.OS === 'web' ? (
-									<Input
-										value={
-											date
-												? format(date, 'dd-MM-yyyy')
-												: ''
-										}
-										onChangeText={(val) =>
-											setDate(val ? parseISO(val) : null)
-										}
-										placeholder="DD-MM-YYYY"
-										style={styles.input}
-										size="medium"
-									/>
-								) : (
-									<Datepicker
-										date={date || undefined}
-										onSelect={(next: Date) => setDate(next)}
-										accessoryRight={CalendarIcon}
-										style={styles.input}
-										size="medium"
-									/>
-								)}
+
+								<Input
+									value={dateText}
+									onChangeText={handleDateChange}
+									onBlur={handleDateBlur}
+									placeholder="DD-MM-YYYY"
+									status={dateError ? 'danger' : 'basic'}
+									caption={dateError}
+									keyboardType="numeric"
+									style={styles.input}
+									size="medium"
+								/>
 
 								<View style={{ marginTop: 8 }}>
 									<CheckBox
@@ -328,7 +419,11 @@ export default function AddTransaction() {
 													style={[
 														styles.segmentText,
 														opt === repeatInterval
-															? { color: '#fff' }
+															? {
+																	color: customTheme[
+																		'color-black'
+																	],
+																}
 															: {
 																	color: customTheme[
 																		'color-primary-500'
@@ -383,7 +478,7 @@ export default function AddTransaction() {
 							{/* Submit */}
 							<Button
 								size="large"
-								disabled={!isValid}
+								disabled={!isValidSubmit}
 								style={[
 									styles.submitBtn,
 									{
@@ -400,6 +495,7 @@ export default function AddTransaction() {
 											'Kirjoita oikea summa';
 									}
 									if (
+										repeat === true &&
 										repeatInterval === 'oma aikaväli' &&
 										repeatValue === ''
 									) {
@@ -425,16 +521,16 @@ export default function AddTransaction() {
 											'Tallennettu',
 											`${
 												type === TransactionType.Income
-													? 'Tulo'
-													: 'Meno'
+													? TransactionType.Income
+													: TransactionType.Expense
 											} lisätty.`,
 										);
 									}
 								}}
 							>
 								{type === TransactionType.Income
-									? 'LISÄÄ TULO'
-									: 'LISÄÄ MENO'}
+									? 'LISÄÄ ' + TransactionType.Income
+									: 'LISÄÄ ' + TransactionType.Expense}
 							</Button>
 
 							{/* Cancel */}
@@ -524,6 +620,18 @@ const styles = StyleSheet.create({
 	chipText: {
 		fontWeight: '700',
 	},
+	modalOverlay: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'rgba(0,0,0,0.5)',
+	},
+	modalContainer: {
+		width: 320,
+		padding: 20,
+		backgroundColor: customTheme['color-white'],
+		borderRadius: 10,
+	},
 	formCard: {
 		paddingVertical: 14,
 		paddingHorizontal: 12,
@@ -548,5 +656,13 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		minWidth: 120,
 		maxWidth: 320,
+	},
+	btnRow: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		paddingTop: 20,
+	},
+	modalBtn: {
+		borderRadius: 12,
 	},
 });
