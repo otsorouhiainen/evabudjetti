@@ -1,117 +1,63 @@
-import * as eva from '@eva-design/eva';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {
-	ApplicationProvider,
-	Button,
-	IconRegistry,
-	Layout,
-	Text,
-} from '@ui-kitten/components';
-import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
-import { BottomNav } from '../src/components/BottomNav';
-import { customTheme } from '../src/theme/eva-theme';
+import { useState } from 'react';
+import { Button, SizableText, Stack, XStack, YStack } from 'tamagui';
 
-export default function Err() {
+export default function Landing() {
 	const router = useRouter();
+	const [helpVisible, setHelpVisible] = useState(false);
+
 	return (
 		<>
-			<IconRegistry icons={EvaIconsPack} />
-			<ApplicationProvider
-				{...eva}
-				theme={{ ...eva.light, ...customTheme }}
+			<YStack
+				flex={1}
+				justifyContent="center"
+				alignItems="center"
+				overflow="scroll"
 			>
-				<View
-					style={{
-						flex: 1,
-						inset: 0,
-						justifyContent: 'center',
-						alignItems: 'center',
-					}}
+				<YStack
+					flex={1}
+					paddingTop={24}
+					paddingHorizontal={20}
+					gap={18}
+					maxWidth={600}
 				>
-					<Layout style={styles.screen} level="1">
-						<Layout style={styles.illustrationWrap} level="1">
-							<MaterialCommunityIcons
-								name="piggy-bank"
-								size={192}
-								color={customTheme['color-primary-300']}
-							/>
-						</Layout>
-
-						<View
-							style={{
-								justifyContent: 'center',
-								alignItems: 'center',
-							}}
-						>
-							<Text>404</Text>
-							<Text>Jokin meni pieleen</Text>
-						</View>
-
+					{/* Header */}
+					<YStack
+						alignItems="center"
+						marginTop={6}
+						justifyContent="space-between"
+						gap={'$2'}
+					>
 						<Button
-							size="large"
-							style={[
-								styles.primaryCta,
-								{
-									backgroundColor:
-										customTheme['color-primary-300'],
-								},
-							]}
-							onPress={() => router.push('/landing')}
-						>
-							PALAA ETUSIVULLE
-						</Button>
+							disabled
+							transparent
+							icon={<PiggyBank />}
+							size={400}
+							marginBottom={-80}
+							color={'$primary300'}
+						/>
+						<SizableText size={'$title2'}>404</SizableText>
+						<SizableText size={'$title2'} marginBottom={16}>
+							Jokin meni pieleen
+						</SizableText>
+					</YStack>
+					{/* Primary CTA */}
 
-						{/* Bottom nav */}
-						<BottomNav />
-					</Layout>
-				</View>
-			</ApplicationProvider>
+					<Button
+						size="$4"
+						marginTop={8}
+						borderRadius={28}
+						paddingVertical={20}
+						backgroundColor="$primary300"
+						color="$white"
+						onPress={() => router.push('/landing')}
+					>
+						PALAA ETUSIVULLE
+					</Button>
+					<YStack height={48} />
+				</YStack>
+			</YStack>
 		</>
 	);
 }
-
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		paddingHorizontal: 20,
-		gap: 18,
-	},
-
-	illustrationWrap: {
-		alignItems: 'center',
-		justifyContent: 'center',
-		marginTop: 4,
-		position: 'relative',
-		width: '40%',
-		aspectRatio: 1.1,
-		minWidth: 80,
-		maxWidth: 180,
-		alignSelf: 'center',
-	},
-
-	primaryCta: {
-		marginTop: 8,
-		borderRadius: 28,
-		paddingVertical: 14,
-	},
-
-	bottomBar: {
-		position: 'absolute',
-		left: 0,
-		right: 0,
-		bottom: 0,
-		paddingHorizontal: 18,
-		paddingVertical: 8,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		borderTopLeftRadius: 18,
-		borderTopRightRadius: 18,
-	},
-	navBtn: {
-		borderRadius: 16,
-	},
-});
