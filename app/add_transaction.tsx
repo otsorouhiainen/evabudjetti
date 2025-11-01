@@ -1,5 +1,4 @@
 import * as eva from '@eva-design/eva';
-import type { IconProps } from '@ui-kitten/components';
 import {
 	ApplicationProvider,
 	Button,
@@ -12,12 +11,11 @@ import {
 	Text,
 } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import { format, parse, isValid } from 'date-fns';
+import { format, isValid, parse } from 'date-fns';
 import { useMemo, useState } from 'react';
 import {
 	Alert,
 	Modal,
-	Platform,
 	ScrollView,
 	StyleSheet,
 	TouchableOpacity,
@@ -42,10 +40,6 @@ export const CATEGORIES = [
 ] as const;
 
 export type CategoryKey = (typeof CATEGORIES)[number]['key'];
-
-const CalendarIcon = (props: IconProps) => (
-	<Icon {...props} name="calendar-outline" />
-);
 
 export default function AddTransaction() {
 	const [type, setType] = useState<
@@ -296,8 +290,8 @@ export default function AddTransaction() {
 							<Card disabled style={styles.formCard}>
 								<Text style={styles.inputLabel}>
 									{type === TransactionType.Income
-										? TransactionType.Income + ' nimi'
-										: TransactionType.Expense + ' nimi'}
+										? `${TransactionType.Income} nimi`
+										: `${TransactionType.Expense} nimi`}
 									<Text
 										style={{
 											color: customTheme[
@@ -314,8 +308,8 @@ export default function AddTransaction() {
 									onChangeText={setName}
 									placeholder={
 										type === TransactionType.Income
-											? TransactionType.Income + ' nimi'
-											: TransactionType.Expense + ' nimi'
+											? `${TransactionType.Income} nimi`
+											: `${TransactionType.Expense} nimi`
 									}
 									style={styles.input}
 									size="medium"
@@ -529,8 +523,8 @@ export default function AddTransaction() {
 								}}
 							>
 								{type === TransactionType.Income
-									? 'LISÄÄ ' + TransactionType.Income
-									: 'LISÄÄ ' + TransactionType.Expense}
+									? `LISÄÄ ${TransactionType.Income}`
+									: `LISÄÄ ${TransactionType.Expense}`}
 							</Button>
 
 							{/* Cancel */}
