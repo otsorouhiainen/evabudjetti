@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Button, SizableText, Stack, XStack, YStack } from 'tamagui';
 
-export default function Landing() {
+export default function Err() {
 	const router = useRouter();
 	const [helpVisible, setHelpVisible] = useState(false);
 
