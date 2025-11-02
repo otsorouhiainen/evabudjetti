@@ -1,31 +1,34 @@
-import * as eva from '@eva-design/eva';
+// do not remove
+// biome-ignore lint/correctness/noUnusedImports: these are here for compiler, actual font import handled in tamagui config
 import {
+	FiraSans_300Light,
 	FiraSans_400Regular,
+	FiraSans_500Medium,
+	FiraSans_600SemiBold,
 	FiraSans_700Bold,
-	useFonts,
+	FiraSans_800ExtraBold,
 } from '@expo-google-fonts/fira-sans';
-import { ApplicationProvider } from '@ui-kitten/components';
+import { TamaguiProvider, Theme } from '@tamagui/core';
 import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { BottomNav } from '@/src/components/BottomNav';
+import config from '../tamagui.config';
 
 export default function RootLayout() {
-	const [fontsLoaded] = useFonts({
-		FiraSans_400Regular,
-		FiraSans_700Bold,
-	});
-	useEffect(() => {
-		if (fontsLoaded) {
-			SplashScreen.hideAsync();
-		}
-	}, [fontsLoaded]);
-
-	if (!fontsLoaded) {
-		return null;
-	}
 	return (
-		<ApplicationProvider {...eva} theme={eva.dark}>
-			<Stack />
-		</ApplicationProvider>
+		<TamaguiProvider config={config} defaultTheme={'light'}>
+			<Theme name={'light'}>
+				<Stack>
+					<Stack.Screen
+						name="(tabs)"
+						options={{ headerShown: false }}
+					/>
+					<Stack.Screen
+						name="modal"
+						options={{ presentation: 'modal' }}
+					/>
+				</Stack>
+				<BottomNav />
+			</Theme>
+		</TamaguiProvider>
 	);
 }
