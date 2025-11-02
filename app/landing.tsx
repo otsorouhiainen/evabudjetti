@@ -44,28 +44,33 @@ export default function Landing() {
 							marginBottom={8}
 							fontFamily="$heading"
 						>
-							Ohjeet
+							Help
 						</SizableText>
 						<SizableText
 							size={'$title2'}
 							marginBottom={16}
 							fontFamily="$body"
 						>
-							Tervetuloa budjettisovellukseen! Käytä alavalikon
-							painikkeita siirtyäksesi eri osioihin. Lisää tulo
-							tai meno painamalla "Lisää tulo/meno". Voit
-							tarkastella ja muokata budjettiasi sekä nähdä
-							yhteenvedon taloudestasi.
+							Welcome to the budget app! Use the bottom navigation
+							buttons to move between sections. Add an income or
+							expense by pressing "Add income/expense". You can
+							view and edit your budget and see a summary of your
+							finances.
 						</SizableText>
 						<Button
 							onPress={() => setHelpVisible(false)}
 							backgroundColor={'$primary300'}
 							size={42}
-							color={'$white'}
 							padding={22}
 							alignSelf="center"
 						>
-							SULJE
+							<SizableText
+								fontFamily="$body"
+								fontWeight="400"
+								color="$white"
+							>
+								CLOSE
+							</SizableText>
 						</Button>
 					</YStack>
 				</Stack>
@@ -97,14 +102,14 @@ export default function Landing() {
 								size={'$title1'}
 								fontFamily="$heading"
 							>
-								EVA OmaBudjetti
+								EVA Personal Budget
 							</SizableText>
 							<SizableText
 								size={'$title2'}
 								fontFamily="$body"
 								hoverStyle={{ cursor: 'help' }}
 							>
-								Taloudenhallintasi tueksi
+								Helping you manage your finances
 							</SizableText>
 							<Button
 								disabled
@@ -172,7 +177,7 @@ export default function Landing() {
 									size={'$title2'}
 									fontFamily="$body"
 								>
-									Tilillä rahaa:{' '}
+									Account balance:{' '}
 									<SizableText
 										size={'$title3'}
 										fontWeight={'$4'}
@@ -185,7 +190,7 @@ export default function Landing() {
 									size={'$title2'}
 									fontFamily="$body"
 								>
-									Käyttövara:{' '}
+									Discretionary:{' '}
 									<SizableText
 										size={'$title3'}
 										fontWeight={'$4'}
@@ -199,12 +204,16 @@ export default function Landing() {
 								marginTop={10}
 								alignSelf="center"
 								backgroundColor={'$primary500'}
-								color={'$white'}
-								fontFamily={'$body'}
 								size={'$4'}
 								padding={22}
 							>
-								TARKASTELE
+								<SizableText
+									fontFamily="$body"
+									fontWeight="400"
+									color="$white"
+								>
+									VIEW DETAILS
+								</SizableText>
 							</Button>
 						</YStack>
 
@@ -222,7 +231,7 @@ export default function Landing() {
 								fontWeight="400"
 								color="$white"
 							>
-								LISÄÄ TULO/MENO
+								ADD INCOME/EXPENSE
 							</SizableText>
 						</Button>
 
@@ -234,20 +243,30 @@ export default function Landing() {
 								borderRadius={18}
 								padding={20}
 								backgroundColor={'$primary300'}
-								color={'$white'}
 								onPress={() => router.push('/budget')}
 							>
-								NÄYTÄ BUDJETTI
+								<SizableText
+									fontFamily="$body"
+									fontWeight="400"
+									color="$white"
+								>
+									VIEW BUDGET
+								</SizableText>
 							</Button>
 							<Button
 								flex={1}
 								size={'$4'}
 								borderRadius={18}
 								padding={20}
-								color={'$white'}
 								backgroundColor={'$primary300'}
 							>
-								MUOKKAA BUDJETTIA
+								<SizableText
+									fontFamily="$body"
+									fontWeight="400"
+									color="$white"
+								>
+									EDIT BUDGET
+								</SizableText>
 							</Button>
 						</XStack>
 						<YStack height={48} />
