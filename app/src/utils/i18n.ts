@@ -10,9 +10,10 @@ i18next.init({
                 "Test string with interpolated value {{value}}": "Test string with interpolated value {{value}}"
             }
         },
-        fi: {translation: {
-            "Test string": "Testistringi",
-            "Test string with interpolated value {{value}}": "Testistringi interpoloidulla arvolla {{value}}"
+        fi: {
+            translation: {
+                "Test string": "Testistringi",
+                "Test string with interpolated value {{value}}": "Testistringi interpoloidulla arvolla {{value}}"
         }}
     }
 })
