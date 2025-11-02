@@ -14,7 +14,7 @@ import {
 	Button,
 	IconRegistry,
 	Layout,
-	Text
+	Text,
 } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { customTheme } from '../src/theme/eva-theme';
@@ -27,24 +27,27 @@ export default function Summary() {
 	const spent_total = 1200;
 	const spent_month = 1051;
 
-	const current_month = 10; 
+	const current_month = 10;
 
 	//currentScene is an integer used to attach needed arguments
-	//to their correspon:widthding scenes 
+	//to their correspon:widthding scenes
 	const [currentScene, setCurrentScene] = useState<number>(0);
 
 	//hardcoded values for the 'scenes'
 	//functions to fetch values dynamically should be added here later
 	const Arguments = [
-		{budget : budget_total, expected: budget_month, spent: spent_month},
-		{balance: (budget_total - spent_total)},
-		{months: (current_month + Math.round(budget_total/budget_month)) % 12},
-		{categories: [1, 2, 3, 4], upcoming: [5, 6, 7, 8]},
-		{balance: 5},
+		{ budget: budget_total, expected: budget_month, spent: spent_month },
+		{ balance: budget_total - spent_total },
+		{
+			months:
+				(current_month + Math.round(budget_total / budget_month)) % 12,
+		},
+		{ categories: [1, 2, 3, 4], upcoming: [5, 6, 7, 8] },
+		{},
 	];
 
-  	const Scenes = [Scene1, Scene2, Scene3, Scene4, Scene5];
-  	const CurrentScene = Scenes[currentScene];
+	const Scenes = [Scene1, Scene2, Scene3, Scene4, Scene5];
+	const CurrentScene = Scenes[currentScene];
 	const CurrentArguments = Arguments[currentScene];
 
 	return (
@@ -63,7 +66,6 @@ export default function Summary() {
 					}}
 				>
 					<Layout style={styles.screen} level="1">
-						
 						{/* Header */}
 						<Layout style={styles.header} level="1">
 							<Button
@@ -77,14 +79,24 @@ export default function Summary() {
 								]}
 								onPress={() => router.push('/landing')}
 							>
-								{"< Back"}
+								{'< Back'}
 							</Button>
-							<Text category="h4" style={styles.headerTxt}> Summary </Text>
+							<Text category="h4" style={styles.headerTxt}>
+								{' '}
+								Summary{' '}
+							</Text>
 						</Layout>
 
 						{/*seperator, forces the screen width*/}
-      					<View style={{height: 1, backgroundColor: '#ccc', marginHorizontal: 16, width: 360,}}></View>
-						
+						<View
+							style={{
+								height: 1,
+								backgroundColor: '#ccc',
+								marginHorizontal: 16,
+								width: 360,
+							}}
+						/>
+
 						{/*content thats loaded from src/summary and buttons to change content*/}
 						<View style={styles.contentArea}>
 							<CurrentScene {...CurrentArguments} />
@@ -93,7 +105,9 @@ export default function Summary() {
 								<Button
 									style={styles.leftBtn}
 									onPress={() =>
-										setCurrentScene(prev => Math.max(prev - 1, 0))
+										setCurrentScene((prev) =>
+											Math.max(prev - 1, 0),
+										)
 									}
 								>
 									-1
@@ -101,7 +115,12 @@ export default function Summary() {
 								<Button
 									style={styles.rightBtn}
 									onPress={() =>
-										setCurrentScene(prev => Math.min(prev + 1, Scenes.length - 1))
+										setCurrentScene((prev) =>
+											Math.min(
+												prev + 1,
+												Scenes.length - 1,
+											),
+										)
 									}
 								>
 									+1
@@ -127,25 +146,25 @@ const styles = StyleSheet.create({
 	},
 	//vibecoded css
 	header: {
-	    flexDirection: 'row',
-	    alignItems: 'center',      // vertically center
-	    justifyContent: 'space-between', // space between button and text placeholder
-	    marginTop: 6,
-	    paddingHorizontal: 10,     // optional spacing from edges
+		flexDirection: 'row',
+		alignItems: 'center', // vertically center
+		justifyContent: 'space-between', // space between button and text placeholder
+		marginTop: 6,
+		paddingHorizontal: 10, // optional spacing from edges
 	},
 
 	headerBtn: {
-	    borderRadius: 18,
-	    paddingVertical: 14,
-	    paddingHorizontal: 20,
+		borderRadius: 18,
+		paddingVertical: 14,
+		paddingHorizontal: 20,
 	},
 
 	headerTxt: {
-	    position: 'absolute',      // position text absolutely in the center
-	    left: 0,
-	    right: 0,
-	    textAlign: 'center',       // centers text across the entire header
-	    fontWeight: '400',
+		position: 'absolute', // position text absolutely in the center
+		left: 0,
+		right: 0,
+		textAlign: 'center', // centers text across the entire header
+		fontWeight: '400',
 	},
 
 	contentArea: {
@@ -166,7 +185,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		pointerEvents: 'box-none',
-		paddingHorizontal: 0,  // remove container padding
+		paddingHorizontal: 0, // remove container padding
 	},
 
 	leftBtn: {
@@ -178,7 +197,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(0,0,0,0.1)',
 		borderWidth: 0,
 		elevation: 0,
-		padding: 0,          // remove all padding
+		padding: 0, // remove all padding
 		paddingHorizontal: 0,
 		paddingVertical: 0,
 	},
@@ -196,4 +215,3 @@ const styles = StyleSheet.create({
 		paddingVertical: 0,
 	},
 });
-

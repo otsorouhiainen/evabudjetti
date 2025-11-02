@@ -1,7 +1,6 @@
-import { View, Text} from 'react-native';
+import { Text, View } from 'react-native';
 
-export const Scene3 = ({months}: {months:number}) => {
-
+export const Scene3 = ({ months }: { months: number }) => {
 	const kuukaudet = [
 		'Joulukuu',
 		'Tammikuu',
@@ -17,20 +16,12 @@ export const Scene3 = ({months}: {months:number}) => {
 		'Marraskuu',
 	];
 
-	return( 
-
-	       <View>
+	return (
+		<View>
 			<View>
-
-
-				<Text> Your money will last until... </Text> 
-				<Text> {kuukaudet[months]} </Text> 
-
+				<Text> Your money will last until... </Text>
+				<Text> {kuukaudet[months]} </Text>
 			</View>
-
-	       </View>
-
-
+		</View>
 	);
 };
-
