@@ -1,37 +1,20 @@
-import {
-	Button,
-	Icon,
-	type IconElement,
-	type IconProps,
-	Input,
-	ProgressBar,
-	Text,
-} from '@ui-kitten/components';
+import { Calendar, Plus, Trash2 } from '@tamagui/lucide-icons';
 import React from 'react';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
+import { Button, Input, Progress, SizableText } from 'tamagui';
+import AddItemPopup from '../src/components/AddItemPopup';
 import {
 	BUDGET_WIZARD_STEPS,
 	type BudgetWizardStep,
 	type Item,
-} from '../constants/wizardConfig';
-import AddItemPopup from './AddItemPopup';
-
-const CalendarIcon = (props: IconProps): IconElement => (
-	<Icon {...props} name="calendar-outline" />
-);
-const TrashIcon = (props: IconProps): IconElement => (
-	<Icon {...props} name="trash-2-outline" />
-);
-const PlusIcon = (props: IconProps): IconElement => (
-	<Icon {...props} name="plus-outline" />
-);
+} from '../src/constants/wizardConfig';
 
 export default function BudgetWizard() {
 	const [stepIndex, setStepIndex] = React.useState(0);
 	const [wizardData, setWizardData] = React.useState(BUDGET_WIZARD_STEPS);
 	const [popupVisible, setPopupVisible] = React.useState(false);
 	const currentStep = wizardData[stepIndex];
-	const progressBarStep = (stepIndex + 1) / wizardData.length;
+	const progressBarValue = (stepIndex + 1) / wizardData.length;
 
 	function addItem(newItem: Item) {
 		setWizardData((prev) => {
@@ -92,13 +75,13 @@ export default function BudgetWizard() {
 				/>
 			</Modal>
 			<View style={styles.topContent}>
-				<ProgressBar progress={progressBarStep} />
-				<Text style={styles.pageHeader} category="h3">
+				<Progress value={progressBarValue} />
+				<SizableText style={styles.pageHeader} fontSize="3">
 					Create budget
-				</Text>
-				<Text style={styles.stepHeader} category="h4">
+				</SizableText>
+				<SizableText style={styles.stepHeader} fontSize="4">
 					{currentStep.header}
-				</Text>
+				</SizableText>
 			</View>
 			<ScrollView
 				contentContainerStyle={{ flexGrow: 1 }}
@@ -106,14 +89,14 @@ export default function BudgetWizard() {
 			>
 				{currentStep.items.map((item) => (
 					<View style={styles.itemContainer} key={item.name}>
-						<Text style={styles.itemName} category="s1">
+						<SizableText style={styles.itemName} fontSize="1">
 							{item.name}
-						</Text>
+						</SizableText>
 						<View style={styles.itemContent}>
 							{/*Calendar button currently nonfunctional as the date picker is seriously limited*/}
 							<Button
 								size="small"
-								accessoryLeft={CalendarIcon}
+								icon={Calendar}
 								style={styles.calendarIcon}
 							/>
 							<Input
@@ -131,14 +114,17 @@ export default function BudgetWizard() {
 								}}
 								keyboardType="numeric"
 							/>
-							<Text style={styles.recurrenceText} category="s1">
+							<SizableText
+								style={styles.recurrenceText}
+								fontSize="1"
+							>
 								{item.reoccurence}
 								{/* Need to make display enum for this later "/mo, /d, /a, etc" */}
-							</Text>
+							</SizableText>
 							<Button
 								size="small"
 								style={styles.trashIcon}
-								accessoryLeft={TrashIcon}
+								icon={Trash2}
 								onPress={() => deleteItem(item)}
 							/>
 						</View>
@@ -148,7 +134,7 @@ export default function BudgetWizard() {
 			<View style={styles.addIconContainer}>
 				<Button
 					size="medium"
-					accessoryLeft={PlusIcon}
+					icon={Plus}
 					onPress={() => setPopupVisible(true)}
 					style={styles.addIcon}
 				/>
@@ -158,7 +144,7 @@ export default function BudgetWizard() {
 					disabled={stepIndex === 0}
 					onPress={() => setStepIndex(stepIndex - 1)}
 				>
-					<Text>Previous</Text>
+					<SizableText>Previous</SizableText>
 				</Button>
 				{stepIndex === wizardData.length - 1 ? (
 					<Button
@@ -168,11 +154,11 @@ export default function BudgetWizard() {
 							)
 						}
 					>
-						<Text>Finish</Text>
+						<SizableText>Finish</SizableText>
 					</Button>
 				) : (
 					<Button onPress={() => setStepIndex(stepIndex + 1)}>
-						<Text>Next</Text>
+						<SizableText>Next</SizableText>
 					</Button>
 				)}
 			</View>

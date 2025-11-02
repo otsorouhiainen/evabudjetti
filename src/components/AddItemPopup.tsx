@@ -1,14 +1,6 @@
-import {
-	Button,
-	Datepicker,
-	IndexPath,
-	Input,
-	Select,
-	SelectItem,
-	Text,
-} from '@ui-kitten/components';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Button, Input, SizableText } from 'tamagui';
 import type { Item, Reoccurence } from '../constants/wizardConfig';
 
 type AddItemPopupProps = {
@@ -52,9 +44,9 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	return (
 		<View style={styles.container}>
 			<View style={styles.card}>
-				<Text>Add a new item</Text>
+				<SizableText>Add a new item</SizableText>
 				<View style={styles.inputsContainer}>
-					<Text>Name</Text>
+					<SizableText>Name</SizableText>
 					<Input
 						placeholder="Write the name here"
 						style={styles.input}
@@ -62,7 +54,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						onChangeText={setName}
 						status={isNullOrEmpty(name) ? 'warning' : 'success'}
 					/>
-					<Text>Amount</Text>
+					<SizableText>Amount</SizableText>
 					<Input
 						placeholder="Write the amount here (€)"
 						style={styles.input}
@@ -71,7 +63,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						onChangeText={setAmount}
 						status={isNullOrEmpty(amount) ? 'warning' : 'success'}
 					/>
-					<Text>Reoccurence</Text>
+					<SizableText>Reoccurence</SizableText>
 					<Select
 						value={reoccurence}
 						selectedIndex={selectedIndex}
@@ -83,7 +75,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						<SelectItem title={'yearly'} />
 						<SelectItem title={'custom'} />
 					</Select>
-					<Text>Date</Text>
+					<SizableText>Date</SizableText>
 					<Datepicker
 						placeholder="Select the starting date"
 						style={styles.input}
