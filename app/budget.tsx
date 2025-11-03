@@ -1,5 +1,3 @@
-import { BudgetDropdown } from '@/src/components/BudgetDropdown';
-import { BudgetEventList } from '@/src/components/BudgetEventList';
 import * as eva from '@eva-design/eva';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -17,6 +15,8 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import i18next from 'i18next';
 import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { BudgetDropdown } from '@/src/components/BudgetDropdown';
+import { BudgetEventList } from '@/src/components/BudgetEventList';
 import { customTheme } from '../src/theme/eva-theme';
 
 // Possibly removed later if declared for whole project
