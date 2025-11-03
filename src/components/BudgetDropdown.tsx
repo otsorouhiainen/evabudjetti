@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Card, Icon, Text } from '@ui-kitten/components';
+import i18next from 'i18next';
 import type { Dispatch, SetStateAction } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { customTheme } from '../theme/eva-theme';
@@ -67,7 +68,7 @@ export const BudgetDropdown: React.FC<Props> = ({
 				<View style={styles.container}>
 					{txns.map((txn) => (
 						<View key={txn.id} style={styles.totalHeader}>
-							<Text category="s1">{txn.name}</Text>
+							<Text category="s1">{i18next.t(txn.name)}</Text>
 							<View style={styles.totalRight}>
 								<Text category="s1">
 									{formatCurrency(txn.amount)}

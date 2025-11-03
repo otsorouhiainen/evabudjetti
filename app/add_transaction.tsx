@@ -12,6 +12,7 @@ import {
 } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { format, isValid, parse } from 'date-fns';
+import i18next from 'i18next';
 import { useMemo, useState } from 'react';
 import {
 	Alert,
@@ -26,17 +27,17 @@ import { TransactionTypeSegment } from '../src/components/TransactionTypeSegment
 import { customTheme } from '../src/theme/eva-theme';
 
 export enum TransactionType {
-	Income = 'TULO', // TODO: i18n to be added
-	Expense = 'MENO',
+	Income = 'Income',
+	Expense = 'Expense',
 }
 
 // TODO: categories to be dynamic from database
 export const CATEGORIES = [
-	{ key: 'support', label: 'Tuki', type: TransactionType.Income },
-	{ key: 'rental', label: 'Vuokra', type: TransactionType.Expense },
-	{ key: 'other', label: 'Muu', type: TransactionType.Income },
-	{ key: 'electricity', label: 'Sähkö', type: TransactionType.Expense },
-	{ key: 'water', label: 'Vesi', type: TransactionType.Expense },
+	{ key: 'benefit', label: 'Benefit', type: TransactionType.Income },
+	{ key: 'other', label: 'Other', type: TransactionType.Income },
+	{ key: 'rent', label: 'Rent', type: TransactionType.Expense },
+	{ key: 'electricity', label: 'Electricity', type: TransactionType.Expense },
+	{ key: 'water', label: 'Water', type: TransactionType.Expense },
 ] as const;
 
 export type CategoryKey = (typeof CATEGORIES)[number]['key'];
@@ -53,8 +54,8 @@ export default function AddTransaction() {
 	const [dateError, setDateError] = useState<string | null>(null);
 	const [repeat, setRepeat] = useState(false);
 	const [repeatInterval, setRepeatInterval] = useState<
-		'kuukausittain' | 'oma aikaväli'
-	>('kuukausittain');
+		'monthly' | 'custom interval'
+	>('monthly');
 	const [repeatValue, setRepeatValue] = useState('');
 	const [errors, setErrors] = useState<{
 		amount?: string;
@@ -109,7 +110,7 @@ export default function AddTransaction() {
 			setDateText(format(date, 'dd-MM-yyyy'));
 			setDateError(null);
 		} else {
-			setDateError('Anna oikea päivämäärä muodossa dd-mm-yyyy');
+			setDateError(i18next.t('Enter correct date in the format DD-MM-YYYY'));
 		}
 	};
 
@@ -119,7 +120,7 @@ export default function AddTransaction() {
 		setAmount('');
 		setDate(null);
 		setRepeat(false);
-		setRepeatInterval('kuukausittain');
+		setRepeatInterval('monthly');
 		setRepeatValue('');
 		setDescription('');
 		setErrors({});
@@ -148,11 +149,11 @@ export default function AddTransaction() {
 							{/* Top header */}
 							<View style={styles.headerRow}>
 								<Text category="h5" style={styles.headerTitle}>
-									Lisää uusi
+									{i18next.t('Add new')}
 								</Text>
 							</View>
 
-							{/* Segmented: Tulo / Meno */}
+							{/* Segmented: Income / Expense */}
 							<TransactionTypeSegment
 								type={type}
 								setType={setType}
@@ -161,7 +162,7 @@ export default function AddTransaction() {
 							{/* Category chips */}
 							<View style={styles.categoryHeader}>
 								<Text appearance="hint" style={styles.labelTop}>
-									Kategoria
+									{i18next.t('Category')}
 								</Text>
 								<TouchableOpacity
 									onPress={() => setExpanded(!expanded)}
@@ -196,12 +197,12 @@ export default function AddTransaction() {
 									<View style={styles.modalOverlay}>
 										<View style={styles.modalContainer}>
 											<Text style={styles.inputLabel}>
-												Lisää kategoria
+												{i18next.t('Add category')}
 											</Text>
 											<Input
 												value={newCategory}
 												onChangeText={setNewCategory}
-												placeholder="kirjoita kategoria"
+												placeholder={i18next.t('Enter category')}
 												style={styles.input}
 											/>
 											<View style={styles.btnRow}>
@@ -222,7 +223,7 @@ export default function AddTransaction() {
 														)
 													}
 												>
-													Peruuta
+													{i18next.t('Cancel')}
 												</Button>
 												<Button
 													style={[
@@ -236,7 +237,7 @@ export default function AddTransaction() {
 													]}
 													onPress={handleAddCategory}
 												>
-													Tallenna
+													{i18next.t('Save')}
 												</Button>
 											</View>
 										</View>
@@ -280,7 +281,7 @@ export default function AddTransaction() {
 														},
 													]}
 												>
-													{label}
+													{i18next.t(label)}
 												</Text>
 											</TouchableOpacity>
 										);
@@ -290,8 +291,24 @@ export default function AddTransaction() {
 							<Card disabled style={styles.formCard}>
 								<Text style={styles.inputLabel}>
 									{type === TransactionType.Income
-										? `${TransactionType.Income} nimi`
-										: `${TransactionType.Expense} nimi`}
+										? i18next.t(
+												'{{transactionType}} name',
+												{
+													transactionType:
+														i18next.t(
+															TransactionType.Income
+														),
+												},
+											)
+										: i18next.t(
+												'{{transactionType}} name',
+												{
+													transactionType:
+														i18next.t(
+															TransactionType.Expense
+														),
+												},
+											)}
 									<Text
 										style={{
 											color: customTheme[
@@ -304,19 +321,17 @@ export default function AddTransaction() {
 									</Text>
 								</Text>
 								<Input
-									value={name}
-									onChangeText={setName}
-									placeholder={
-										type === TransactionType.Income
-											? `${TransactionType.Income} nimi`
-											: `${TransactionType.Expense} nimi`
-									}
-									style={styles.input}
-									size="medium"
+  									value={name}
+  									onChangeText={setName}
+  									placeholder={i18next.t('{{transactionType}} name', {
+    									transactionType: i18next.t(type),
+  									})}
+  									style={styles.input}
+  									size="medium"
 								/>
 
 								<Text style={styles.inputLabel}>
-									Määrä
+									{i18next.t('Amount')}
 									<Text
 										style={{
 											color: customTheme[
@@ -348,7 +363,7 @@ export default function AddTransaction() {
 								/>
 
 								<Text style={styles.inputLabel}>
-									Päivämäärä
+									{i18next.t('Date')}
 									<Text
 										style={{
 											color: customTheme[
@@ -365,7 +380,7 @@ export default function AddTransaction() {
 									value={dateText}
 									onChangeText={handleDateChange}
 									onBlur={handleDateBlur}
-									placeholder="DD-MM-YYYY"
+									placeholder={i18next.t("DD-MM-YYYY")}
 									status={dateError ? 'danger' : 'basic'}
 									caption={dateError}
 									keyboardType="numeric"
@@ -378,7 +393,7 @@ export default function AddTransaction() {
 										checked={repeat}
 										onChange={setRepeat}
 									>
-										Toistuuko tapahtuma?
+										{i18next.t('Does the event repeat?')}
 									</CheckBox>
 								</View>
 
@@ -386,8 +401,8 @@ export default function AddTransaction() {
 									<View style={styles.segmentWrap}>
 										{(
 											[
-												'kuukausittain',
-												'oma aikaväli',
+												'monthly',
+												'custom interval',
 											] as const
 										).map((opt) => (
 											<TouchableOpacity
@@ -395,7 +410,7 @@ export default function AddTransaction() {
 												activeOpacity={0.9}
 												onPress={() => {
 													setRepeatInterval(opt);
-													if (opt !== 'oma aikaväli')
+													if (opt !== 'custom interval')
 														setRepeatValue('');
 												}}
 												style={[
@@ -425,15 +440,17 @@ export default function AddTransaction() {
 																},
 													]}
 												>
-													{opt}
+													{i18next.t(opt)}
 												</Text>
 											</TouchableOpacity>
 										))}
 									</View>
 								)}
 
+								{/*TODO: needs tweaking for smoother translation delivery 
+								eg. compare en: "every __ days" & fi: "__ päivän välein"*/}
 								{repeat &&
-									repeatInterval === 'oma aikaväli' && (
+									repeatInterval === 'custom interval' && (
 										<Input
 											value={repeatValue}
 											onChangeText={setRepeatValue}
@@ -449,7 +466,7 @@ export default function AddTransaction() {
 													appearance="hint"
 													style={{ marginRight: 6 }}
 												>
-													päivän välein
+													{i18next.t("day intervals")}
 												</Text>
 											)}
 											style={styles.input}
@@ -458,12 +475,12 @@ export default function AddTransaction() {
 									)}
 
 								<Text style={styles.inputLabel}>
-									Lisätietoa
+									{i18next.t("Additional information")}
 								</Text>
 								<Input
 									value={description}
 									onChangeText={setDescription}
-									placeholder="anna lisätietoa"
+									placeholder={i18next.t("Write additional information")}
 									style={styles.input}
 									size="medium"
 								/>
@@ -486,15 +503,15 @@ export default function AddTransaction() {
 
 									if (amount.at(-1) === '.') {
 										newErrors.amount =
-											'Kirjoita oikea summa';
+											i18next.t('Enter a valid amount');
 									}
 									if (
 										repeat === true &&
-										repeatInterval === 'oma aikaväli' &&
+										repeatInterval === 'custom interval' &&
 										repeatValue === ''
 									) {
 										newErrors.repeatValue =
-											'Anna toistuvuuden aikaväli';
+											i18next.t('Enter the recurrence interval');
 									}
 
 									setErrors(newErrors);
@@ -512,19 +529,17 @@ export default function AddTransaction() {
 											repeatValue,
 										});
 										Alert.alert(
-											'Tallennettu',
-											`${
-												type === TransactionType.Income
-													? TransactionType.Income
-													: TransactionType.Expense
-											} lisätty.`,
+											i18next.t('Saved'),
+											type === TransactionType.Income
+													? i18next.t('{{transactionType}} added', { transactionType: i18next.t(TransactionType.Income) })
+													: i18next.t('{{transactionType}} added', { transactionType: i18next.t(TransactionType.Expense) })
 										);
 									}
 								}}
 							>
 								{type === TransactionType.Income
-									? `LISÄÄ ${TransactionType.Income}`
-									: `LISÄÄ ${TransactionType.Expense}`}
+									? (i18next.t("Add {{transactionType}}", { transactionType: i18next.t(TransactionType.Income) })).toUpperCase()
+									: (i18next.t("Add {{transactionType}}", { transactionType: i18next.t(TransactionType.Expense) })).toUpperCase()}
 							</Button>
 
 							{/* Cancel */}
@@ -540,7 +555,7 @@ export default function AddTransaction() {
 								]}
 								onPress={handleCancel}
 							>
-								Peruuta
+								{i18next.t("Cancel").toUpperCase()}
 							</Button>
 						</ScrollView>
 

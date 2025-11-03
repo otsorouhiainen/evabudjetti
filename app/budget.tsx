@@ -1,3 +1,5 @@
+import { BudgetDropdown } from '@/src/components/BudgetDropdown';
+import { BudgetEventList } from '@/src/components/BudgetEventList';
 import * as eva from '@eva-design/eva';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -12,11 +14,9 @@ import {
 	Text,
 } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import i18next from 'i18next';
 import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { BudgetDropdown } from '@/src/components/BudgetDropdown';
-import { BudgetEventList } from '@/src/components/BudgetEventList';
-import { BottomNav } from '../src/components/BottomNav';
 import { customTheme } from '../src/theme/eva-theme';
 
 // Possibly removed later if declared for whole project
@@ -55,8 +55,8 @@ function splitTransactions(transactions: Txn[]) {
 
 const MOCK_TX: Txn[] = [
 	{ id: '1', name: 'Bus card', date: '22.10.2025', amount: -50 },
-	{ id: '2', name: 'Study benefit', date: '25.10.2025', amount: +280 },
-	{ id: '3', name: 'Study loan', date: '06.10.2025', amount: +300 },
+	{ id: '2', name: 'Study benefit', date: '25.10.2025', amount: 280 },
+	{ id: '3', name: 'Study loan', date: '06.10.2025', amount: 300 },
 	{ id: '4', name: 'Pet', date: '20.10.2025', amount: -60 },
 	{ id: '5', name: 'Phone bill', date: '01.10.2025', amount: -27 },
 ];
@@ -157,7 +157,7 @@ export default function Budget() {
 		if (isValidDate(text)) {
 			setError('');
 		} else {
-			setError('Invalid date, use format: dd.mm.yyyy');
+			setError(i18next.t('Invalid date, use format: dd.mm.yyyy'));
 		}
 		setEditingTxn((prev) => (prev ? { ...prev, date: text } : prev));
 	};
@@ -176,12 +176,18 @@ export default function Budget() {
 							onSelect={(index) => setSelectedIndex(index)}
 							swipeEnabled={false}
 						>
-							<Tab title="Day">
-								<Layout>
-									<Text>Day view</Text>
+							<Tab title={i18next.t('Day')}>
+								<Layout
+									style={{
+										flex: 1,
+										justifyContent: 'center',
+										alignItems: 'center',
+									}}
+								>
+									<Text>{i18next.t('Day view')}</Text>
 								</Layout>
 							</Tab>
-							<Tab title="Month">
+							<Tab title={i18next.t('Month')}>
 								<Layout>
 									{/* Top header */}
 									<ScrollView
@@ -213,7 +219,13 @@ export default function Budget() {
 														fontWeight: '700',
 													}}
 												>
-													{monthLabel}
+													{i18next.t(
+														monthLabel.replace(
+															/ \d{4}$/,
+															'',
+														),
+													)}{' '}
+													{monthLabel.match(/\d{4}$/)}
 												</Text>
 												<TouchableOpacity
 													style={styles.monthBtn}
@@ -238,7 +250,7 @@ export default function Budget() {
 										{/* income dropdown */}
 										<BudgetDropdown
 											txns={POSITIVE_TX}
-											name={'Incomes'}
+											name={i18next.t('Incomes')}
 											setEditVisible={setEditVisible}
 											setEditingTxn={setEditingTxn}
 											openDropdown={setIncomesOpen}
@@ -249,7 +261,7 @@ export default function Budget() {
 										{/* expense dropdown */}
 										<BudgetDropdown
 											txns={NEGATIVE_TX}
-											name={'Expenses'}
+											name={i18next.t('Expenses')}
 											setEditVisible={setEditVisible}
 											setEditingTxn={setEditingTxn}
 											openDropdown={setExpensesOpen}
@@ -266,7 +278,7 @@ export default function Budget() {
 												{today.toLocaleDateString()}
 											</Text>
 											<Text>
-												Balance:{' '}
+												{i18next.t('Balance')}{' '}
 												<Text category="s1">
 													{formatCurrency(
 														totals.balance,
@@ -281,7 +293,7 @@ export default function Budget() {
 												}}
 											>
 												<Text>
-													Available:{' '}
+													{i18next.t('Available')}:{' '}
 													<Text category="s1">
 														{totals.discretionary}0€
 													</Text>
@@ -317,23 +329,16 @@ export default function Budget() {
 															marginBottom: 8,
 														}}
 													>
-														Ohjeet
+														{i18next.t('Help')}
 													</Text>
 													<Text
 														style={{
 															marginBottom: 16,
 														}}
 													>
-														Käyttövara tarkoittaa
-														rahamäärää, joka jää
-														jäljelle tulojen ja
-														menojen jälkeen. Se
-														auttaa sinua
-														ymmärtämään, kuinka
-														paljon rahaa sinulla on
-														käytettävissä muihin
-														menoihin tai säästöihin
-														kuukauden aikana.
+														{i18next.t(
+															'Help Disposable income',
+														)}
 													</Text>
 													<Button
 														onPress={() =>
@@ -345,7 +350,7 @@ export default function Budget() {
 															alignSelf: 'center',
 														}}
 													>
-														SULJE
+														{i18next.t('Close')}
 													</Button>
 												</View>
 											</View>
@@ -354,7 +359,7 @@ export default function Budget() {
 										{/* Future events */}
 										<BudgetEventList
 											txns={future}
-											title={'Future events'}
+											title={i18next.t('Future events')}
 											setEditVisible={setEditVisible}
 											setEditingTxn={setEditingTxn}
 											formatCurrency={formatCurrency}
@@ -363,7 +368,7 @@ export default function Budget() {
 										{/* Past events */}
 										<BudgetEventList
 											txns={past}
-											title={'Past events'}
+											title={i18next.t('Past events')}
 											setEditVisible={setEditVisible}
 											setEditingTxn={setEditingTxn}
 											formatCurrency={formatCurrency}
@@ -374,10 +379,14 @@ export default function Budget() {
 											<View style={styles.modalOverlay}>
 												<View style={styles.modalBox}>
 													<Text category="h6">
-														Edit Transaction
+														{i18next.t(
+															'Edit Transaction',
+														)}
 													</Text>
 													<Input
-														label="Name"
+														label={i18next.t(
+															'Name',
+														)}
 														maxLength={25}
 														value={editingTxn?.name}
 														style={{
@@ -396,7 +405,9 @@ export default function Budget() {
 														}
 													/>
 													<Input
-														label="Amount (€)"
+														label={i18next.t(
+															'Amount (€)',
+														)}
 														keyboardType="numeric"
 														maxLength={9}
 														defaultValue={String(
@@ -439,10 +450,14 @@ export default function Budget() {
 													/>
 
 													<Input
-														label="Date"
+														label={i18next.t(
+															'Date',
+														)}
 														value={editingTxn?.date}
 														maxLength={10}
-														placeholder="dd.mm.yyyy"
+														placeholder={i18next.t(
+															'dd.mm.yyyy',
+														)}
 														onChangeText={
 															handleDateChange
 														}
@@ -452,7 +467,10 @@ export default function Budget() {
 																: 'static'
 														}
 														caption={
-															error || 'dd.mm.yyy'
+															error ||
+															i18next.t(
+																'dd.mm.yyyy',
+															)
 														}
 														style={{
 															marginVertical: 8,
@@ -475,7 +493,9 @@ export default function Budget() {
 																	0
 															}
 														>
-															SAVE
+															{i18next
+																.t('Save')
+																.toUpperCase()}
 														</Button>
 														<Button
 															onPress={() => {
@@ -489,7 +509,9 @@ export default function Budget() {
 																	'center',
 															}}
 														>
-															CLOSE
+															{i18next
+																.t('Close')
+																.toUpperCase()}
 														</Button>
 													</View>
 												</View>
@@ -500,7 +522,7 @@ export default function Budget() {
 									</ScrollView>
 								</Layout>
 							</Tab>
-							<Tab title="Year">
+							<Tab title={i18next.t('Year')}>
 								<Layout
 									style={{
 										flex: 1,
@@ -508,12 +530,11 @@ export default function Budget() {
 										alignItems: 'center',
 									}}
 								>
-									<Text>Year view</Text>
+									<Text>{i18next.t('Year view')}</Text>
 								</Layout>
 							</Tab>
 						</TabView>
 						{/* Bottom nav */}
-						<BottomNav />
 					</Layout>
 				</View>
 			</ApplicationProvider>
