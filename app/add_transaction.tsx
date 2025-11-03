@@ -110,7 +110,9 @@ export default function AddTransaction() {
 			setDateText(format(date, 'dd-MM-yyyy'));
 			setDateError(null);
 		} else {
-			setDateError(i18next.t('Enter correct date in the format DD-MM-YYYY'));
+			setDateError(
+				i18next.t('Enter correct date in the format DD-MM-YYYY'),
+			);
 		}
 	};
 
@@ -202,7 +204,9 @@ export default function AddTransaction() {
 											<Input
 												value={newCategory}
 												onChangeText={setNewCategory}
-												placeholder={i18next.t('Enter category')}
+												placeholder={i18next.t(
+													'Enter category',
+												)}
 												style={styles.input}
 											/>
 											<View style={styles.btnRow}>
@@ -294,19 +298,17 @@ export default function AddTransaction() {
 										? i18next.t(
 												'{{transactionType}} name',
 												{
-													transactionType:
-														i18next.t(
-															TransactionType.Income
-														),
+													transactionType: i18next.t(
+														TransactionType.Income,
+													),
 												},
 											)
 										: i18next.t(
 												'{{transactionType}} name',
 												{
-													transactionType:
-														i18next.t(
-															TransactionType.Expense
-														),
+													transactionType: i18next.t(
+														TransactionType.Expense,
+													),
 												},
 											)}
 									<Text
@@ -321,13 +323,16 @@ export default function AddTransaction() {
 									</Text>
 								</Text>
 								<Input
-  									value={name}
-  									onChangeText={setName}
-  									placeholder={i18next.t('{{transactionType}} name', {
-    									transactionType: i18next.t(type),
-  									})}
-  									style={styles.input}
-  									size="medium"
+									value={name}
+									onChangeText={setName}
+									placeholder={i18next.t(
+										'{{transactionType}} name',
+										{
+											transactionType: i18next.t(type),
+										},
+									)}
+									style={styles.input}
+									size="medium"
 								/>
 
 								<Text style={styles.inputLabel}>
@@ -380,7 +385,7 @@ export default function AddTransaction() {
 									value={dateText}
 									onChangeText={handleDateChange}
 									onBlur={handleDateBlur}
-									placeholder={i18next.t("DD-MM-YYYY")}
+									placeholder={i18next.t('DD-MM-YYYY')}
 									status={dateError ? 'danger' : 'basic'}
 									caption={dateError}
 									keyboardType="numeric"
@@ -410,7 +415,10 @@ export default function AddTransaction() {
 												activeOpacity={0.9}
 												onPress={() => {
 													setRepeatInterval(opt);
-													if (opt !== 'custom interval')
+													if (
+														opt !==
+														'custom interval'
+													)
 														setRepeatValue('');
 												}}
 												style={[
@@ -466,7 +474,7 @@ export default function AddTransaction() {
 													appearance="hint"
 													style={{ marginRight: 6 }}
 												>
-													{i18next.t("day intervals")}
+													{i18next.t('day intervals')}
 												</Text>
 											)}
 											style={styles.input}
@@ -475,12 +483,14 @@ export default function AddTransaction() {
 									)}
 
 								<Text style={styles.inputLabel}>
-									{i18next.t("Additional information")}
+									{i18next.t('Additional information')}
 								</Text>
 								<Input
 									value={description}
 									onChangeText={setDescription}
-									placeholder={i18next.t("Write additional information")}
+									placeholder={i18next.t(
+										'Write additional information',
+									)}
 									style={styles.input}
 									size="medium"
 								/>
@@ -502,16 +512,18 @@ export default function AddTransaction() {
 									const newErrors: typeof errors = {};
 
 									if (amount.at(-1) === '.') {
-										newErrors.amount =
-											i18next.t('Enter a valid amount');
+										newErrors.amount = i18next.t(
+											'Enter a valid amount',
+										);
 									}
 									if (
 										repeat === true &&
 										repeatInterval === 'custom interval' &&
 										repeatValue === ''
 									) {
-										newErrors.repeatValue =
-											i18next.t('Enter the recurrence interval');
+										newErrors.repeatValue = i18next.t(
+											'Enter the recurrence interval',
+										);
 									}
 
 									setErrors(newErrors);
@@ -531,15 +543,43 @@ export default function AddTransaction() {
 										Alert.alert(
 											i18next.t('Saved'),
 											type === TransactionType.Income
-													? i18next.t('{{transactionType}} added', { transactionType: i18next.t(TransactionType.Income) })
-													: i18next.t('{{transactionType}} added', { transactionType: i18next.t(TransactionType.Expense) })
+												? i18next.t(
+														'{{transactionType}} added',
+														{
+															transactionType:
+																i18next.t(
+																	TransactionType.Income,
+																),
+														},
+													)
+												: i18next.t(
+														'{{transactionType}} added',
+														{
+															transactionType:
+																i18next.t(
+																	TransactionType.Expense,
+																),
+														},
+													),
 										);
 									}
 								}}
 							>
 								{type === TransactionType.Income
-									? (i18next.t("Add {{transactionType}}", { transactionType: i18next.t(TransactionType.Income) })).toUpperCase()
-									: (i18next.t("Add {{transactionType}}", { transactionType: i18next.t(TransactionType.Expense) })).toUpperCase()}
+									? i18next
+											.t('Add {{transactionType}}', {
+												transactionType: i18next.t(
+													TransactionType.Income,
+												),
+											})
+											.toUpperCase()
+									: i18next
+											.t('Add {{transactionType}}', {
+												transactionType: i18next.t(
+													TransactionType.Expense,
+												),
+											})
+											.toUpperCase()}
 							</Button>
 
 							{/* Cancel */}
@@ -555,7 +595,7 @@ export default function AddTransaction() {
 								]}
 								onPress={handleCancel}
 							>
-								{i18next.t("Cancel").toUpperCase()}
+								{i18next.t('Cancel').toUpperCase()}
 							</Button>
 						</ScrollView>
 

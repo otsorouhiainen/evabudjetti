@@ -35,7 +35,7 @@ export const TransactionTypeSegment: React.FC<TransactionTypeSegmentProps> = ({
 							: { color: customTheme['color-primary-500'] },
 					]}
 				>
-					{(i18next.t(opt)).toUpperCase()}
+					{i18next.t(opt).toUpperCase()}
 				</Text>
 			</TouchableOpacity>
 		))}
