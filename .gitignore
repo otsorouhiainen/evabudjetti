@@ -42,4 +42,7 @@ tamagui-web.css
 # typescript
 *.tsbuildinfo
 
+#prisma
+**/*.db
+
 app-example
