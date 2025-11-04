@@ -15,8 +15,7 @@ import { BottomNav } from '@/src/components/BottomNav';
 import config from '../tamagui.config';
 
 export default function RootLayout() {
-	// Below fixed fonts not showing issue
-	// Actually load the fonts
+	// Below fixed issue of fonts not loading on mobile
 	const [fontsLoaded, fontError] = useFonts({
 		FiraSans_300Light,
 		FiraSans_400Regular,
@@ -26,9 +25,8 @@ export default function RootLayout() {
 		FiraSans_800ExtraBold,
 	});
 
-	// Don't render until fonts are loaded
 	if (!fontsLoaded && !fontError) {
-		return null;
+		console.log('Fonts failed to load!');
 	}
 
 	return (
