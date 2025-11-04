@@ -1,6 +1,5 @@
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { TransactionType } from '../../app/add_transaction';
 import { Button, SizableText, XStack } from 'tamagui';
+import { TransactionType } from '../../app/add_transaction';
 
 interface TransactionTypeSegmentProps {
 	type: TransactionType;
