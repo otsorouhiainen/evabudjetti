@@ -180,7 +180,7 @@ export default function BudgetWizard() {
 					disabled={stepIndex === 0}
 					onPress={() => setStepIndex(stepIndex - 1)}
 				>
-					<SizableText color={'$white'} size="$title1">
+					<SizableText color="$white" size="$title1">
 						Previous
 					</SizableText>
 				</Button>
@@ -196,7 +196,9 @@ export default function BudgetWizard() {
 							)
 						}
 					>
-						<SizableText size="$title1">Finish</SizableText>
+						<SizableText color="$white" size="$title1">
+							Finish
+						</SizableText>
 					</Button>
 				) : (
 					<Button
