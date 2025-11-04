@@ -7,10 +7,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - uses: pnpm/action-setup@v4
+        name: install pnpm
         with:
-          node-version: 18.x
-          cache: npm
+          version: 10.18
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.14
+          cache: "pnpm"
+
       - name: Setup Expo and EAS
         uses: expo/expo-github-action@v8
         with:
