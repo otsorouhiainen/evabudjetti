@@ -28,5 +28,5 @@ jobs:
       - name: Install dependencies
         run: pnpm i --frozen-lockfile
       - name: Build on EAS android
-        run: eas build --platform android --non-interactive --no-wait
+        run: eas build --platform android --profile development --non-interactive --no-wait
 
