@@ -60,9 +60,10 @@ export default function Landing() {
 						<Button
 							onPress={() => setHelpVisible(false)}
 							backgroundColor={'$primary300'}
-							size={42}
+							size={64}
 							padding={22}
 							alignSelf="center"
+							height={70}
 						>
 							<SizableText
 								fontFamily="$body"
@@ -204,8 +205,9 @@ export default function Landing() {
 								marginTop={10}
 								alignSelf="center"
 								backgroundColor={'$primary500'}
-								size={'$4'}
-								padding={22}
+								size={64}
+								padding='5%'
+								height={80}
 							>
 								<SizableText
 									fontFamily="$body"
@@ -219,16 +221,14 @@ export default function Landing() {
 
 						{/* Primary CTA */}
 						<Button
-							size="$4"
 							marginTop={8}
-							borderRadius={28}
-							paddingVertical={20}
+							size={64}
 							backgroundColor="$primary300"
+							height={80}
 							onPress={() => router.push('/add_transaction')}
 						>
 							<SizableText
 								fontFamily="$body"
-								fontWeight="400"
 								color="$white"
 							>
 								ADD INCOME/EXPENSE
@@ -239,10 +239,10 @@ export default function Landing() {
 						<XStack gap={14} justifyContent="space-between">
 							<Button
 								flex={1}
-								size={'$4'}
-								borderRadius={18}
+								size={64}
 								padding={20}
 								backgroundColor={'$primary300'}
+								height={80}
 								onPress={() => router.push('/budget')}
 							>
 								<SizableText
@@ -255,10 +255,10 @@ export default function Landing() {
 							</Button>
 							<Button
 								flex={1}
-								size={'$4'}
-								borderRadius={18}
+								size={64}
 								padding={20}
 								backgroundColor={'$primary300'}
+								height={80}
 							>
 								<SizableText
 									fontFamily="$body"
