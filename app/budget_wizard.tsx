@@ -1,8 +1,7 @@
-import { customTheme } from '@/src/theme/eva-theme';
 import { Calendar, Plus, Trash2 } from '@tamagui/lucide-icons';
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
-import { Button, Input, Progress, SizableText } from 'tamagui';
+import { Button, Input, Progress, SizableText, XStack } from 'tamagui';
 import AddItemPopup from '../src/components/AddItemPopup';
 import {
 	BUDGET_WIZARD_STEPS,
@@ -11,9 +10,9 @@ import {
 } from '../src/constants/wizardConfig';
 
 export default function BudgetWizard() {
-	const [stepIndex, setStepIndex] = React.useState(0);
-	const [wizardData, setWizardData] = React.useState(BUDGET_WIZARD_STEPS);
-	const [popupVisible, setPopupVisible] = React.useState(false);
+	const [stepIndex, setStepIndex] = useState(0);
+	const [wizardData, setWizardData] = useState(BUDGET_WIZARD_STEPS);
+	const [popupVisible, setPopupVisible] = useState(false);
 	const currentStep = wizardData[stepIndex];
 	const progressBarValue = ((stepIndex + 1) * 100) / wizardData.length;
 
@@ -76,13 +75,28 @@ export default function BudgetWizard() {
 				/>
 			</Modal>
 			<View style={styles.topContent}>
-				<Progress style={styles.progressBar} value={progressBarValue}>
-					<Progress.Indicator animation="bouncy" />
+				<Progress
+					backgroundColor="$white"
+					style={styles.progressBar}
+					value={progressBarValue}
+				>
+					<Progress.Indicator
+						backgroundColor="$primary300"
+						animation="bouncy"
+					/>
 				</Progress>
-				<SizableText style={styles.pageHeader} size="$title1">
+				<SizableText
+					color="$primary300"
+					style={styles.pageHeader}
+					size="$title1"
+				>
 					Create budget
 				</SizableText>
-				<SizableText style={styles.stepHeader} size="$title2">
+				<SizableText
+					color="$primary300"
+					style={styles.stepHeader}
+					size="$title2"
+				>
 					{currentStep.header}
 				</SizableText>
 			</View>
@@ -91,14 +105,23 @@ export default function BudgetWizard() {
 				style={styles.content}
 			>
 				{currentStep.items.map((item) => (
-					<View style={styles.itemContainer} key={item.name}>
-						<SizableText size="$title3" style={styles.itemName}>
+					<XStack
+						backgroundColor="$primary500"
+						style={styles.itemContainer}
+						key={item.name}
+					>
+						<SizableText
+							color="$white"
+							size="$title3"
+							style={styles.itemName}
+						>
 							{item.name}
 						</SizableText>
 						<View style={styles.itemContent}>
 							{/*Calendar button currently nonfunctional as the date picker is seriously limited*/}
 							<Button
-								size="small"
+								color="$white"
+								transparent
 								icon={Calendar}
 								style={styles.calendarIcon}
 							/>
@@ -106,6 +129,8 @@ export default function BudgetWizard() {
 								size="$title3"
 								keyboardType="numeric"
 								style={styles.amountInput}
+								backgroundColor="$white"
+								borderColor="$white"
 								value={
 									item.amount === 0
 										? ''
@@ -119,6 +144,7 @@ export default function BudgetWizard() {
 								}}
 							/>
 							<SizableText
+								color="$white"
 								style={styles.recurrenceText}
 								size="$title3"
 							>
@@ -126,37 +152,43 @@ export default function BudgetWizard() {
 								{/* Need to make display enum for this later "/mo, /d, /a, etc" */}
 							</SizableText>
 							<Button
-								size="small"
+								color="$white"
+								transparent
 								style={styles.trashIcon}
 								icon={Trash2}
 								onPress={() => deleteItem(item)}
 							/>
 						</View>
-					</View>
+					</XStack>
 				))}
 			</ScrollView>
 			<View style={styles.addIconContainer}>
 				<Button
-					size="medium"
+					borderRadius={28}
+					backgroundColor="$primary300"
 					icon={Plus}
+					color="$white"
 					onPress={() => setPopupVisible(true)}
 					style={styles.addIcon}
 				/>
 			</View>
 			<View style={styles.buttonContainer}>
 				<Button
+					borderRadius={28}
 					style={styles.footerButton}
+					backgroundColor="$primary300"
 					disabled={stepIndex === 0}
-					//onPress={() => setStepIndex(stepIndex - 1)}
-					onPress={() => {
-						console.log(progressBarValue);
-					}}
+					onPress={() => setStepIndex(stepIndex - 1)}
 				>
-					<SizableText size="$title1">Previous</SizableText>
+					<SizableText color={'$white'} size="$title1">
+						Previous
+					</SizableText>
 				</Button>
 				{stepIndex === wizardData.length - 1 ? (
 					<Button
+						borderRadius={28}
 						style={styles.footerButton}
+						backgroundColor="$primary300"
 						onPress={() =>
 							console.log(
 								'Placeholder for finishing budget creation',
@@ -168,10 +200,14 @@ export default function BudgetWizard() {
 					</Button>
 				) : (
 					<Button
+						borderRadius={28}
+						backgroundColor="$primary300"
 						style={styles.footerButton}
 						onPress={() => setStepIndex(stepIndex + 1)}
 					>
-						<SizableText size="$title1">Next</SizableText>
+						<SizableText color="$white" size="$title1">
+							Next
+						</SizableText>
 					</Button>
 				)}
 			</View>
@@ -200,7 +236,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-evenly',
-		backgroundColor: customTheme['color-segment-wrap'],
 		padding: 5,
 		marginTop: 5,
 	},
@@ -227,7 +262,6 @@ const styles = StyleSheet.create({
 	},
 	calendarIcon: {
 		width: '5%',
-		backgroundColor: customTheme['color-segment-wrap'],
 		height: '100%',
 	},
 	addIcon: {
@@ -245,7 +279,6 @@ const styles = StyleSheet.create({
 	trashIcon: {
 		width: '15%',
 		height: '100%',
-		backgroundColor: customTheme['color-segment-wrap'],
 	},
 	recurrenceText: {
 		width: '15%',
