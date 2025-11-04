@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import DatePicker from 'react-native-date-picker';
 import { Button, Input, SizableText } from 'tamagui';
 import type { Item, Reoccurence } from '../constants/wizardConfig';
 
@@ -13,14 +14,11 @@ function isNullOrEmpty(value: string | null | undefined): boolean {
 }
 
 const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
-	const [name, setName] = React.useState<string>('');
-	const [amount, setAmount] = React.useState<string>('');
-	const [reoccurence, setReoccurence] = React.useState<Reoccurence>('daily');
-	const [date, setDate] = React.useState<Date | null>(null);
-	const [selectedIndex, setSelectedIndex] = React.useState<
-		IndexPath | IndexPath[]
-	>(new IndexPath(0));
-
+	const [name, setName] = useState<string>('');
+	const [amount, setAmount] = useState<string>('');
+	const [reoccurence, setReoccurence] = useState<Reoccurence>('daily');
+	const [date, setDate] = useState<Date>(new Date());
+	const [datePickerOpen, setDatePickerOpen] = useState(false);
 	const isDisabled =
 		!name.trim() ||
 		Number.isNaN(Number(amount)) ||
@@ -37,7 +35,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		setName('');
 		setAmount('');
 		setReoccurence('daily');
-		setDate(null);
+		setDate(new Date());
 		onClose();
 	};
 
@@ -52,7 +50,6 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						style={styles.input}
 						value={name}
 						onChangeText={setName}
-						status={isNullOrEmpty(name) ? 'warning' : 'success'}
 					/>
 					<SizableText>Amount</SizableText>
 					<Input
@@ -61,27 +58,29 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						keyboardType="numeric"
 						value={`${amount}€`}
 						onChangeText={setAmount}
-						status={isNullOrEmpty(amount) ? 'warning' : 'success'}
 					/>
 					<SizableText>Reoccurence</SizableText>
-					<Select
-						value={reoccurence}
-						selectedIndex={selectedIndex}
-						onSelect={setSelectedIndex}
-					>
+					{/* <Select value={reoccurence} onSelect={setReoccurence}>
 						<SelectItem title={'daily'} />
 						<SelectItem title={'weekly'} />
 						<SelectItem title={'monthly'} />
 						<SelectItem title={'yearly'} />
 						<SelectItem title={'custom'} />
-					</Select>
+					</Select> */}
 					<SizableText>Date</SizableText>
-					<Datepicker
-						placeholder="Select the starting date"
+					<DatePicker
+						modal
+						open={datePickerOpen}
+						mode="date"
 						style={styles.input}
 						date={date}
-						onSelect={setDate}
-						status={!date ? 'warning' : 'success'}
+						onConfirm={(date) => {
+							setDatePickerOpen(false);
+							setDate(date);
+						}}
+						onCancel={() => {
+							setDatePickerOpen(false);
+						}}
 					/>
 				</View>
 

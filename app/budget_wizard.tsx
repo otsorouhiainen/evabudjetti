@@ -1,3 +1,4 @@
+import { customTheme } from '@/src/theme/eva-theme';
 import { Calendar, Plus, Trash2 } from '@tamagui/lucide-icons';
 import React from 'react';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
@@ -14,7 +15,7 @@ export default function BudgetWizard() {
 	const [wizardData, setWizardData] = React.useState(BUDGET_WIZARD_STEPS);
 	const [popupVisible, setPopupVisible] = React.useState(false);
 	const currentStep = wizardData[stepIndex];
-	const progressBarValue = (stepIndex + 1) / wizardData.length;
+	const progressBarValue = ((stepIndex + 1) * 100) / wizardData.length;
 
 	function addItem(newItem: Item) {
 		setWizardData((prev) => {
@@ -44,7 +45,7 @@ export default function BudgetWizard() {
 		);
 	}
 
-	function amountInputChange(item: Item, text: string): BudgetWizardStep[] {
+	function amountInputChange(item: Item, text: number): BudgetWizardStep[] {
 		return wizardData.map((step, sIdx) =>
 			sIdx === stepIndex
 				? {
@@ -75,11 +76,13 @@ export default function BudgetWizard() {
 				/>
 			</Modal>
 			<View style={styles.topContent}>
-				<Progress value={progressBarValue} />
-				<SizableText style={styles.pageHeader} fontSize="3">
+				<Progress style={styles.progressBar} value={progressBarValue}>
+					<Progress.Indicator animation="bouncy" />
+				</Progress>
+				<SizableText style={styles.pageHeader} size="$title1">
 					Create budget
 				</SizableText>
-				<SizableText style={styles.stepHeader} fontSize="4">
+				<SizableText style={styles.stepHeader} size="$title2">
 					{currentStep.header}
 				</SizableText>
 			</View>
@@ -89,7 +92,7 @@ export default function BudgetWizard() {
 			>
 				{currentStep.items.map((item) => (
 					<View style={styles.itemContainer} key={item.name}>
-						<SizableText style={styles.itemName} fontSize="1">
+						<SizableText size="$title3" style={styles.itemName}>
 							{item.name}
 						</SizableText>
 						<View style={styles.itemContent}>
@@ -100,23 +103,24 @@ export default function BudgetWizard() {
 								style={styles.calendarIcon}
 							/>
 							<Input
-								size="small"
+								size="$title3"
+								keyboardType="numeric"
 								style={styles.amountInput}
 								value={
 									item.amount === 0
 										? ''
-										: `${item.amount.toString()}€`
+										: item.amount.toString()
 								}
 								onChangeText={(text) => {
+									console.log(text);
 									setWizardData(
-										amountInputChange(item, text),
+										amountInputChange(item, Number(text)),
 									);
 								}}
-								keyboardType="numeric"
 							/>
 							<SizableText
 								style={styles.recurrenceText}
-								fontSize="1"
+								size="$title3"
 							>
 								{item.reoccurence}
 								{/* Need to make display enum for this later "/mo, /d, /a, etc" */}
@@ -141,24 +145,33 @@ export default function BudgetWizard() {
 			</View>
 			<View style={styles.buttonContainer}>
 				<Button
+					style={styles.footerButton}
 					disabled={stepIndex === 0}
-					onPress={() => setStepIndex(stepIndex - 1)}
+					//onPress={() => setStepIndex(stepIndex - 1)}
+					onPress={() => {
+						console.log(progressBarValue);
+					}}
 				>
-					<SizableText>Previous</SizableText>
+					<SizableText size="$title1">Previous</SizableText>
 				</Button>
 				{stepIndex === wizardData.length - 1 ? (
 					<Button
+						style={styles.footerButton}
 						onPress={() =>
 							console.log(
 								'Placeholder for finishing budget creation',
+								progressBarValue,
 							)
 						}
 					>
-						<SizableText>Finish</SizableText>
+						<SizableText size="$title1">Finish</SizableText>
 					</Button>
 				) : (
-					<Button onPress={() => setStepIndex(stepIndex + 1)}>
-						<SizableText>Next</SizableText>
+					<Button
+						style={styles.footerButton}
+						onPress={() => setStepIndex(stepIndex + 1)}
+					>
+						<SizableText size="$title1">Next</SizableText>
 					</Button>
 				)}
 			</View>
@@ -168,6 +181,9 @@ export default function BudgetWizard() {
 
 const styles = StyleSheet.create({
 	topContent: {
+		height: '20%',
+	},
+	progressBar: {
 		height: '20%',
 	},
 	container: {
@@ -184,12 +200,17 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-evenly',
-		backgroundColor: 'gray',
+		backgroundColor: customTheme['color-segment-wrap'],
 		padding: 5,
 		marginTop: 5,
 	},
 	amountInput: {
 		width: '38%',
+		height: '100%',
+	},
+	footerButton: {
+		height: '100%',
+		width: '40%',
 	},
 	buttonContainer: {
 		height: '10%',
@@ -206,19 +227,25 @@ const styles = StyleSheet.create({
 	},
 	calendarIcon: {
 		width: '5%',
+		backgroundColor: customTheme['color-segment-wrap'],
+		height: '100%',
 	},
 	addIcon: {
 		marginTop: 10,
-		width: '30%',
+		width: '23%',
+		height: '100%',
 	},
 	addIconContainer: {
 		alignItems: 'flex-end',
+		height: '9%',
 	},
 	itemName: {
 		width: '30%',
 	},
 	trashIcon: {
-		width: '5%',
+		width: '15%',
+		height: '100%',
+		backgroundColor: customTheme['color-segment-wrap'],
 	},
 	recurrenceText: {
 		width: '15%',
