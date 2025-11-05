@@ -99,6 +99,9 @@ const color = {
 	white: '#ffffff',
 	disabled: '#636363ff',
 
+	backgroundColor: '#ffffff',
+	borderColor: '#000000',
+
 	// Required for button states on Android
 	transparent: 'rgba(0,0,0,0)',
 };
@@ -165,22 +168,6 @@ const configDefinition = {
 			borderColorPress: '#111',
 		},
 	},
-	shadows: {
-		sm: {
-			shadowColor: '#000',
-			shadowOffset: { width: 0, height: 2 },
-			shadowOpacity: 0.2,
-			shadowRadius: 2,
-			elevation: 3,
-		},
-		md: {
-			shadowColor: '#000',
-			shadowOffset: { width: 0, height: 4 },
-			shadowOpacity: 0.3,
-			shadowRadius: 4,
-			elevation: 6,
-		},
-	},
 	media: {
 		sm: { maxWidth: 860 },
 		gtSm: { minWidth: 860 + 1 },
@@ -189,17 +176,17 @@ const configDefinition = {
 		pointerCoarse: { pointer: 'coarse' },
 	},
 
-	// Overrides all text elements to use font
-	components: {
-		Text: {
-			fontFamily: firaFont,
-		},
-		Button: {
-			fontFamily: firaFont,
-			fontSize: '$true', // Use default size
-			fontWeight: '$true', // Use default weight
-		},
-	},
+	// // Overrides all text elements to use font
+	// components: {
+	// 	Text: {
+	// 		fontFamily: firaFont,
+	// 	},
+	// 	Button: {
+	// 		fontFamily: firaFont,
+	// 		fontSize: '$true', // Use default size
+	// 		fontWeight: '$true', // Use default weight
+	// 	},
+	// },
 
 	// Shorthands
 	// Adds <View m={10} /> to <View margin={10} />

@@ -10,7 +10,6 @@ module.exports = (api) => {
 			],
 		],
 		plugins: [
-			'react-native-reanimated/plugin', // fixed bug on android
 			[
 				'@tamagui/babel-plugin',
 				{
