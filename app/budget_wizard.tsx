@@ -1,8 +1,9 @@
-import { Calendar, Plus, Trash2 } from '@tamagui/lucide-icons';
+import { Plus, Trash2 } from '@tamagui/lucide-icons';
 import React, { useState } from 'react';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Input, Progress, SizableText, XStack } from 'tamagui';
 import AddItemPopup from '../src/components/AddItemPopup';
+import { MultiPlatformDatePicker } from '../src/components/MultiPlatformDatePicker';
 import {
 	BUDGET_WIZARD_STEPS,
 	type BudgetWizardStep,
@@ -118,12 +119,29 @@ export default function BudgetWizard() {
 							{item.name}
 						</SizableText>
 						<View style={styles.itemContent}>
-							{/*Calendar button currently nonfunctional as the date picker is seriously limited*/}
-							<Button
-								color="$white"
-								transparent
-								icon={Calendar}
-								style={styles.calendarIcon}
+							<MultiPlatformDatePicker
+								value={item.date}
+								onChange={(date: Date) => {
+									setWizardData((prev) =>
+										prev.map((step, sIdx) =>
+											sIdx === stepIndex
+												? {
+														...step,
+														items: step.items.map(
+															(it) =>
+																it.name ===
+																item.name
+																	? {
+																			...it,
+																			date,
+																		}
+																	: it,
+														),
+													}
+												: step,
+										),
+									);
+								}}
 							/>
 							<Input
 								size="$title3"
@@ -229,6 +247,12 @@ const styles = StyleSheet.create({
 		padding: 20,
 		height: '80%',
 	},
+	dateContainer: {
+		flexDirection: 'row',
+		height: '20%',
+		alignItems: 'center',
+		gap: 20,
+	},
 	content: {
 		flexDirection: 'column',
 		marginTop: 40,
@@ -243,6 +267,9 @@ const styles = StyleSheet.create({
 	},
 	amountInput: {
 		width: '38%',
+		height: '100%',
+	},
+	dateInput: {
 		height: '100%',
 	},
 	footerButton: {
