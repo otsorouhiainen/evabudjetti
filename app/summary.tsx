@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Button, SizableText, Stack, View, XStack, YStack } from 'tamagui';
+import SlideWrapper from '../src/components/SlideWrapper';
 import { Scene1 } from '../src/components/summary/scene1';
 import { Scene2 } from '../src/components/summary/scene2';
 import { Scene3 } from '../src/components/summary/scene3';
@@ -20,6 +21,7 @@ export default function Summary() {
 	//currentScene is an integer used to attach needed arguments
 	//to their correspon:widthding scenes
 	const [currentScene, setCurrentScene] = useState<number>(0);
+	const [direction, setDirection] = useState<boolean>(true);
 
 	//hardcoded values for the 'scenes'
 	//functions to fetch values dynamically should be added here later
@@ -99,7 +101,9 @@ export default function Summary() {
 						alignItems="center"
 						width="100%"
 					>
-						<CurrentScene {...CurrentArguments} />
+						<SlideWrapper key={currentScene} fromRight={direction}>
+							<CurrentScene {...CurrentArguments} />
+						</SlideWrapper>
 					</YStack>
 					<XStack
 						flex={1}
@@ -117,9 +121,12 @@ export default function Summary() {
 							paddingVertical={20}
 							backgroundColor="$primary300"
 							color="$white"
-							onPress={() =>
-								setCurrentScene((prev) => Math.max(prev - 1, 0))
-							}
+							onPress={() => {
+								setDirection(false);
+								setCurrentScene((prev) =>
+									Math.max(prev - 1, 0),
+								);
+							}}
 						>
 							-1
 						</Button>
@@ -134,11 +141,12 @@ export default function Summary() {
 							paddingVertical={20}
 							backgroundColor="$primary300"
 							color="$white"
-							onPress={() =>
+							onPress={() => {
+								setDirection(true);
 								setCurrentScene((prev) =>
 									Math.min(prev + 1, Scenes.length - 1),
-								)
-							}
+								);
+							}}
 						>
 							+1
 						</Button>
