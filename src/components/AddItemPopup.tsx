@@ -1,10 +1,8 @@
-import { Calendar } from '@tamagui/lucide-icons';
-import { parseISO } from 'date-fns';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import DatePicker from 'react-native-date-picker';
-import { Button, Input, SizableText } from 'tamagui';
+import { Button, Input, SizableText, YStack } from 'tamagui';
 import type { Item, Reoccurence } from '../constants/wizardConfig';
+import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 const Platform = require('react-native').Platform;
 
@@ -18,47 +16,47 @@ function isNullOrEmpty(value: string | null | undefined): boolean {
 }
 
 const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
+	const REOCCURENCE_OPTIONS: Reoccurence[] = [
+		'daily',
+		'weekly',
+		'monthly',
+		'yearly',
+		'custom',
+	];
 	const [name, setName] = useState<string>('');
 	const [amount, setAmount] = useState<number | null>(null);
+	const [date, setDate] = useState<Date>(new Date());
 	const [reoccurence, setReoccurence] = useState<Reoccurence>('daily');
-	const [editorDate, setDate] = useState<string>('');
+	const [reoccurenceInterval, setReoccurenceInterval] = useState<
+		number | undefined
+	>(undefined);
 	const [datePickerOpen, setDatePickerOpen] = useState(false);
 	const isDisabled =
 		!name.trim() ||
 		Number.isNaN(Number(amount)) ||
 		Number(amount) <= 0 ||
-		!editorDate;
+		!date;
 
 	const handleAdd = () => {
 		onAdd({
 			name: name.trim(),
 			amount: amount,
 			reoccurence: reoccurence,
-			date: parseISO(editorDate),
+			date: date,
+			reoccurenceInterval:
+				reoccurence === 'custom' ? reoccurenceInterval : undefined,
 		} as Item);
 		setName('');
 		setAmount(null);
 		setReoccurence('daily');
-		setDate('');
+		setReoccurenceInterval(undefined);
+		setDate(new Date());
 		onClose();
 	};
 
 	return (
 		<View style={styles.container}>
-			<DatePicker
-				modal
-				open={datePickerOpen}
-				mode="date"
-				date={editorDate ? parseISO(editorDate) : new Date()}
-				onConfirm={(date) => {
-					setDatePickerOpen(false);
-					setDate(date.toISOString());
-				}}
-				onCancel={() => {
-					setDatePickerOpen(false);
-				}}
-			/>
-			<View style={styles.card}>
+			<YStack backgroundColor="$background" style={styles.card}>
 				<SizableText color="$primary300" size="$title2">
 					Add a new item
 				</SizableText>
@@ -90,36 +88,95 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						<SizableText color="$primary300" size="$title3">
 							Reoccurence
 						</SizableText>
+						<View
+							style={{
+								flexDirection: 'row',
+								gap: 12,
+								alignItems: 'center',
+							}}
+						>
+							{REOCCURENCE_OPTIONS.map((opt) => (
+								<View
+									style={{
+										flexDirection: 'row',
+										alignItems: 'center',
+										height: '100%',
+										gap: 10,
+									}}
+									key={opt}
+								>
+									<Button
+										borderRadius={20}
+										backgroundColor={
+											reoccurence === opt
+												? '$primary300'
+												: undefined
+										}
+										onPress={() => setReoccurence(opt)}
+										style={{
+											height: '100%',
+											paddingHorizontal: 12,
+											paddingVertical: 8,
+										}}
+									>
+										<SizableText
+											color={
+												reoccurence === opt
+													? '$white'
+													: '$primary300'
+											}
+											size="$title3"
+										>
+											{opt.charAt(0).toUpperCase() +
+												opt.slice(1)}
+										</SizableText>
+									</Button>
+									{opt === 'custom' &&
+										reoccurence === 'custom' && (
+											<Input
+												style={{ height: '100%' }}
+												placeholder="Interval (days)"
+												keyboardType="numeric"
+												onChangeText={(text) => {
+													const interval =
+														Number(text);
+													if (
+														!Number.isNaN(
+															interval,
+														) &&
+														interval > 0
+													) {
+														setReoccurenceInterval(
+															interval,
+														);
+													}
+												}}
+											/>
+										)}
+								</View>
+							))}
+						</View>
 					</View>
-					{Platform.OS === 'web' ? (
-						<View style={styles.dateContainer}>
-							<SizableText color="$primary300" size="$title3">
-								Date:
-							</SizableText>
-							<Input
-								placeholder="Write the date here (YYYY-MM-DD)"
-								style={styles.dateInput}
-								value={editorDate}
-								onChangeText={(text: string) => {
-									setDate(text);
-								}}
-							/>
-						</View>
-					) : (
-						<View style={styles.dateContainer}>
-							<SizableText color="$primary300" size="$title3">
-								Date:{' '}
-								{editorDate
-									? parseISO(editorDate).toLocaleDateString()
-									: ''}
-							</SizableText>
-							<Button
-								icon={Calendar}
-								style={styles.calendarIcon}
-								onPress={() => setDatePickerOpen(true)}
-							/>
-						</View>
-					)}
+					<View
+						style={{
+							height: '10%',
+							flexDirection: 'row',
+							alignItems: 'center',
+							gap: 10,
+						}}
+					>
+						<SizableText
+							style={{ height: '100%' }}
+							color="$primary300"
+							size="$title3"
+						>
+							Date:
+						</SizableText>
+						<MultiPlatformDatePicker
+							value={date}
+							onChange={setDate}
+						/>
+					</View>
 				</View>
 
 				<View style={styles.buttonRow}>
@@ -145,7 +202,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						</SizableText>
 					</Button>
 				</View>
-			</View>
+			</YStack>
 		</View>
 	);
 };
@@ -172,12 +229,10 @@ const styles = StyleSheet.create({
 	},
 	card: {
 		width: '90%',
-		backgroundColor: '#fff',
 		padding: 20,
 		height: '60%',
 	},
 	input: {
-		borderColor: '#ccc',
 		height: '100%',
 	},
 	buttonRow: {

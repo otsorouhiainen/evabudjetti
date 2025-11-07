@@ -4,6 +4,7 @@ export interface Item {
 	name: string;
 	amount: number;
 	reoccurence: Reoccurence;
+	reoccurenceInterval?: number;
 	date: Date;
 }
 

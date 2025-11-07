@@ -47,16 +47,10 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 			}
 		}
 	}, [editorDate, onChange, date]);
+
 	if (Platform.OS === 'web') {
 		return (
 			<View style={styles.dateElementsContainer}>
-				<SizableText
-					style={{ height: '100%' }}
-					color="$white"
-					size="$title3"
-				>
-					Date:
-				</SizableText>
 				<Input
 					style={{ height: '100%' }}
 					placeholder="Write the date here (DD-MM-YYYY)"
