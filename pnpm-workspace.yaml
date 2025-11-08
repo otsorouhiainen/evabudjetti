@@ -1,0 +1,2 @@
+patchedDependencies:
+  '@prisma/react-native': patches/@prisma__react-native.patch
