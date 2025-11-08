@@ -1,19 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Input, SizableText, YStack } from 'tamagui';
 import type { Item, Reoccurence } from '../constants/wizardConfig';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
-const Platform = require('react-native').Platform;
-
 type AddItemPopupProps = {
 	onAdd: (item: Item) => void;
 	onClose: () => void;
 };
-
-function isNullOrEmpty(value: string | null | undefined): boolean {
-	return value === null || value === undefined || value.trim() === '';
-}
 
 const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	const REOCCURENCE_OPTIONS: Reoccurence[] = [
@@ -30,7 +24,6 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	const [reoccurenceInterval, setReoccurenceInterval] = useState<
 		number | undefined
 	>(undefined);
-	const [datePickerOpen, setDatePickerOpen] = useState(false);
 	const isDisabled =
 		!name.trim() ||
 		Number.isNaN(Number(amount)) ||

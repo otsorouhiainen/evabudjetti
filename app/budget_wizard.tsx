@@ -1,5 +1,5 @@
 import { Plus, Trash2 } from '@tamagui/lucide-icons';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Input, Progress, SizableText, XStack } from 'tamagui';
 import AddItemPopup from '../src/components/AddItemPopup';
