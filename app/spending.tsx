@@ -10,6 +10,7 @@ import {
 } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { parse } from 'date-fns';
+import i18next from 'i18next';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BottomNav } from '../src/components/BottomNav';
 import { customTheme } from '../src/theme/eva-theme';
@@ -19,13 +20,13 @@ type Row = { id: string; name: string; date: Date; amount: number };
 const PAST: Row[] = [
 	{
 		id: '1',
-		name: 'Takki',
+		name: 'Jacket',
 		date: parse('26.09.2025', 'dd.MM.yyyy', new Date()),
 		amount: -34,
 	},
 	{
 		id: '2',
-		name: 'T-paita',
+		name: 'T-shirt',
 		date: parse('26.09.2025', 'dd.MM.yyyy', new Date()),
 		amount: -12,
 	},
@@ -37,34 +38,34 @@ const PAST: Row[] = [
 	},
 	{
 		id: '4',
-		name: 'Salijäsenyys',
+		name: 'Gym Membership',
 		date: parse('15.09.2025', 'dd.MM.yyyy', new Date()),
 		amount: -25,
 	},
 	{
 		id: '5',
-		name: 'Huvipuisto',
+		name: 'Amusement Park',
 		date: parse('07.09.2025', 'dd.MM.yyyy', new Date()),
 		amount: -58,
 	},
 	{
 		id: '6',
-		name: 'Kahvila',
+		name: 'Café',
 		date: parse('05.09.2025', 'dd.MM.yyyy', new Date()),
 		amount: -10,
 	},
 ];
 
 const CHART = [
-	{ label: 'ravintolat', value: 30 },
-	{ label: 'harrastukset', value: 102 },
-	{ label: 'suoratoistonpalvelut', value: 16 },
-	{ label: 'vaatteet', value: 46 },
-	{ label: 'jäljellä', value: 6 },
+	{ label: i18next.t('Restaurants'), value: 30 },
+	{ label: i18next.t('Hobbies'), value: 102 },
+	{ label: i18next.t('Streaming Services'), value: 16 },
+	{ label: i18next.t('Clothing'), value: 46 },
+	{ label: i18next.t('Remaining'), value: 6 },
 ];
 
 export default function Spending() {
-	const month = 'Lokakuu 2025';
+	const month = i18next.t('October 2025');
 	const monthlyAllowance = 200;
 	const spentSoFar = 194;
 	const remaining = monthlyAllowance - spentSoFar;
@@ -92,7 +93,7 @@ export default function Spending() {
 							{/* Title + month selector */}
 							<View style={{ marginTop: 6 }}>
 								<Text category="h5" style={styles.title}>
-									Käyttörahan kulutus
+									{i18next.t('Usage of disposable income')}
 								</Text>
 
 								<View style={styles.monthRow}>
@@ -131,7 +132,7 @@ export default function Spending() {
 
 							{/* Summary */}
 							<Text style={styles.summaryRow}>
-								Kuukauden käyttövara:{' '}
+								{i18next.t('Disposable income this month')}:{' '}
 								<Text category="s1">{monthlyAllowance}€</Text>
 							</Text>
 
@@ -143,24 +144,24 @@ export default function Spending() {
 									31.09.2025
 								</Text>
 								<Text>
-									Tähän mennessä käytetty:{' '}
+									{i18next.t('Spent so far')}:{' '}
 									<Text category="s1">{spentSoFar},00€</Text>
 								</Text>
 								<Text>
-									Jäljellä oleva käyttövara:{' '}
+									{i18next.t('Remaining disposable income')}:{' '}
 									<Text category="s1">{remaining},00€</Text>
 								</Text>
 							</View>
 
 							{/* Past events */}
 							<Text category="s1" style={styles.sectionTitle}>
-								Menneet tapahtumat:
+								{i18next.t('Past events')}:
 							</Text>
 							<View style={styles.listWrap}>
 								{PAST.map((r) => (
 									<View key={r.id} style={styles.bill}>
 										<Text style={styles.billName}>
-											{r.name}
+											{i18next.t(r.name)}
 										</Text>
 										<Text
 											appearance="hint"

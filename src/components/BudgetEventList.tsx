@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Text } from '@ui-kitten/components';
+import i18next from 'i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { customTheme } from '../theme/eva-theme';
 
@@ -33,7 +34,7 @@ export const BudgetEventList: React.FC<Props> = ({
 
 			{txns.map((t) => (
 				<View key={t.id} style={styles.pill}>
-					<Text style={styles.pillName}>{t.name}</Text>
+					<Text style={styles.pillName}>{i18next.t(t.name)}</Text>
 					<Text appearance="hint" style={styles.pillDate}>
 						{t.date}
 					</Text>
