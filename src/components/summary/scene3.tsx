@@ -1,4 +1,5 @@
-import { Text, View } from 'react-native';
+import { Calendar } from '@tamagui/lucide-icons';
+import { Button, Stack, Text, View } from 'tamagui';
 
 export const Scene3 = ({ months }: { months: number }) => {
 	const kuukaudet = [
@@ -18,10 +19,32 @@ export const Scene3 = ({ months }: { months: number }) => {
 
 	return (
 		<View>
-			<View>
-				<Text> Your money will last until... </Text>
-				<Text> {kuukaudet[months]} </Text>
-			</View>
+			<Text textAlign="center" marginBottom={60} fontSize={24}>
+				{' '}
+				Forecast{' '}
+			</Text>
+
+			<Text fontSize={18} marginBottom={20}>
+				{' '}
+				Your money will last until...{' '}
+			</Text>
+
+			<Stack
+				alignItems="center"
+				justifyContent="center"
+				position="relative"
+			>
+				<Calendar size={200} color="$primary300" />
+				<Text
+					position="absolute"
+					fontSize={16}
+					marginTop={48}
+					fontWeight="bold"
+					color="$primary300"
+				>
+					{kuukaudet[months]}
+				</Text>
+			</Stack>
 		</View>
 	);
 };
