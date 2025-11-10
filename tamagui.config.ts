@@ -8,7 +8,7 @@ const firaFont = createFont({
 		title3: 14,
 		title2: 17,
 		title1: 22,
-		// added button sizes
+		// button sizes
 		'buttons.sm': 14,
 		'buttons.md': 16,
 		'buttons.lg': 18,
@@ -55,7 +55,7 @@ const firaFont = createFont({
 
 // Set up tokens
 const size = {
-	popupWidth: 320,
+	popupMaxWidth: 320,
 	tabItemHeight: 48,
 	// Button sizes (now part of size tokens)
 	'buttons.sm': 24,
@@ -66,7 +66,7 @@ const size = {
 	1: 5,
 	2: 10,
 	3: 15,
-	4: 20, // ✅ ADDED - was missing
+	4: 20,
 	true: 20,
 	5: 25,
 	6: 30,
@@ -88,19 +88,19 @@ const color = {
 	primary100: '#0A5B55',
 	primary200: '#3AA18D',
 	primary300: '#D2EFE9',
-	background100: '#ffffffff',
+	background100: '#fff',
 
 	success500: '#4CAF50',
 	caution: '#FFE3A6',
 	danger500: '#F44336',
 	info500: '#2196F3',
 
-	black: '#000000',
-	white: '#ffffff',
+	black: '#000',
+	white: '#fff',
 	disabled: '#636363ff',
 
-	backgroundColor: '#ffffff',
-	borderColor: '#000000',
+	backgroundColor: '#fff',
+	borderColor: '#000',
 
 	// Required for button states on Android
 	transparent: 'rgba(0,0,0,0)',
@@ -175,18 +175,6 @@ const configDefinition = {
 		hoverNone: { hover: 'none' },
 		pointerCoarse: { pointer: 'coarse' },
 	},
-
-	// // Overrides all text elements to use font
-	// components: {
-	// 	Text: {
-	// 		fontFamily: firaFont,
-	// 	},
-	// 	Button: {
-	// 		fontFamily: firaFont,
-	// 		fontSize: '$true', // Use default size
-	// 		fontWeight: '$true', // Use default weight
-	// 	},
-	// },
 
 	// Shorthands
 	// Adds <View m={10} /> to <View margin={10} />

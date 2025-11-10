@@ -2,6 +2,7 @@ import { ChevronDown, ChevronRight, Pencil } from '@tamagui/lucide-icons';
 import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import { StyledCard } from '@/app/src/components/styledCard';
+import {LOCALE} from '@/app/src/constants'
 
 type Txn = {
 	id: string;
@@ -9,8 +10,6 @@ type Txn = {
 	date: Date; // dd.mm.yyyy
 	amount: number | string; // string essential for input rendering
 };
-
-const LOCALE = 'en-US';
 
 interface Props {
 	name: string;

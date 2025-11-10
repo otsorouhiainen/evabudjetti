@@ -8,7 +8,7 @@ import { StyledTab } from './src/components/StyledTab';
 import { LOCALE } from './src/constants/';
 
 // Possibly removed later if declared for whole project
-const today = new Date(2025, 9, 12);
+const today = new Date(Date.now());
 
 type Txn = {
 	id: string;
@@ -43,7 +43,7 @@ function splitTransactions(transactions: Txn[], referenceDate: Date = today) {
 }
 
 const MOCK_TX: Txn[] = [
-	{ id: '1', name: 'Rent', date: parseTxnDate('22.10.2025'), amount: -830.5 },
+	{ id: '1', name: 'Rent', date: parseTxnDate('22.10.2026'), amount: -830.5 },
 	{
 		id: '2',
 		name: 'Study benefit',
@@ -56,11 +56,11 @@ const MOCK_TX: Txn[] = [
 		date: parseTxnDate('06.10.2025'),
 		amount: +300,
 	},
-	{ id: '4', name: 'Pet', date: parseTxnDate('20.10.2025'), amount: -60 },
+	{ id: '4', name: 'Pet', date: parseTxnDate('20.10.2026'), amount: -60 },
 	{
 		id: '5',
 		name: 'Phone bill',
-		date: parseTxnDate('01.10.2025'),
+		date: parseTxnDate('01.10.2026'),
 		amount: -27,
 	},
 	{
@@ -113,7 +113,6 @@ export default function Budget() {
 	const [transactions, setTransactions] = useState<Txn[]>(MOCK_TX);
 	const [selectedTab, setSelectedTab] = useState('day');
 	const [error, setError] = useState('');
-	const [scrollY, setScrollY] = useState(0);
 	const [dateInput, setDateInput] = useState('');
 
 	const { past, future } = useMemo(
@@ -287,9 +286,6 @@ export default function Budget() {
 							nestedScrollEnabled={true}
 							contentContainerStyle={{ paddingBottom: 100 }}
 							bounces
-							onScroll={(e) =>
-								setScrollY(e.nativeEvent.contentOffset.y)
-							}
 							scrollEventThrottle={16}
 							scrollEnabled={!editOpen}
 						>
@@ -352,16 +348,16 @@ export default function Budget() {
 									{today.toLocaleDateString(LOCALE)}
 								</Text>
 								<Text>
-									Balance:{' '}
+									Balance:
 									<Text fontSize={'$body'}>
 										{formatCurrency(totals.balance)}
 									</Text>
 								</Text>
 								<XStack>
 									<Text>
-										Disposable income:{' '}
+										Disposable income:
 										<Text fontSize={'$body'}>
-											{totals.discretionary}0€
+											{formatCurrency(totals.discretionary)}
 										</Text>
 									</Text>
 									<Button
@@ -381,17 +377,16 @@ export default function Budget() {
 									left={0}
 									right={0}
 									bottom={0}
-									//backgroundColor="rgba(0,0,0,0.3)"
 									justifyContent="center"
 									alignItems="center"
-									zIndex={100}
+									zIndex={"$zIndex.1"}
 								>
 									<YStack
 										backgroundColor="$color.white"
 										borderRadius="$2"
 										padding="$3"
-										width="$popupWidth"
-										//maxWidth='90%'
+										width="90%"
+										maxWidth="$popupMaxWidth"
 										shadowColor="$color.black"
 										shadowOffset={{ width: 0, height: 3 }}
 										shadowOpacity={0.25}
@@ -399,7 +394,7 @@ export default function Budget() {
 										elevation={3}
 									>
 										<Text fontSize={'$4'} mb={'$2'}>
-											Ohjeet
+											Instructions
 										</Text>
 										<Text mb={'$2'}>
 											Disposable income refers to the
@@ -417,7 +412,7 @@ export default function Budget() {
 											size={'$buttons.lg'}
 											width={'50%'}
 										>
-											<Text color={'$white'}>SULJE</Text>
+											<Text color={'$white'}>CLOSE</Text>
 										</Button>
 									</YStack>
 								</YStack>
@@ -443,145 +438,6 @@ export default function Budget() {
 								formatCurrency={formatCurrency}
 							/>
 
-							{/* Edit modal CHANGE TO DIALOG??*/}
-							{editOpen && (
-								<YStack
-									position="absolute"
-									top={0}
-									left={0}
-									right={0}
-									bottom={0}
-									backgroundColor="rgba(0,0,0,0.3)"
-									justifyContent="center"
-									alignItems="center"
-									zIndex={100}
-								>
-									<YStack
-										top={scrollY - 360}
-										backgroundColor="$color.white"
-										borderRadius="$2"
-										padding="$3"
-										width="$popupWidth"
-										//maxWidth='90%'
-										shadowColor="$color.black"
-										shadowOffset={{ width: 0, height: 3 }}
-										shadowOpacity={0.25}
-										shadowRadius={3}
-										elevation={3}
-									>
-										<Text>Edit Transaction</Text>
-										<Input
-											height={40}
-											maxLength={25}
-											borderRadius={'$2'}
-											px={'$2'}
-											value={editingTxn?.name}
-											marginVertical={'$2'}
-											onChangeText={(text) =>
-												setEditingTxn((prev) =>
-													prev
-														? {
-																...prev,
-																name: text,
-															}
-														: prev,
-												)
-											}
-										/>
-										{editingTxn?.amount === 0 && (
-											<Text
-												color="$color.danger500"
-												fontSize="$2"
-												marginTop="$1"
-											>
-												Amount must be greater than zero
-											</Text>
-										)}
-
-										<Input
-											height={40}
-											px={'$2'}
-											keyboardType="numeric"
-											maxLength={9}
-											borderRadius={'$2'}
-											value={String(
-												editingTxn?.amount || '',
-											)}
-											onChangeText={handleAmountChange}
-											borderColor={
-												editingTxn?.amount === 0
-													? '$color.danger500'
-													: '$color.black'
-											}
-											marginVertical={'$2'}
-										/>
-										{!editingTxn?.name && (
-											<Text
-												color="$color.danger500"
-												fontSize="$2"
-												marginTop="$1"
-											>
-												Name is required
-											</Text>
-										)}
-
-										<Input
-											height={40}
-											px={'$2'}
-											value={dateInput}
-											maxLength={10}
-											borderRadius={'$2'}
-											onChangeText={handleDateChange}
-											borderColor={
-												error
-													? '$color.danger500'
-													: '$color.black'
-											}
-											marginVertical={'$2'}
-										/>
-										{error && (
-											<Text
-												color="$color.danger500"
-												fontSize="$2"
-												marginTop="$1"
-											>
-												Invalid date format
-											</Text>
-										)}
-										<XStack gap={'$3'}>
-											<Button
-												onPress={() => handleSave()}
-												disabled={
-													error !== '' ||
-													editingTxn?.amount === 0
-												}
-												backgroundColor={
-													'$color.primary200'
-												}
-												size={'$buttons.md'}
-												borderRadius={'$4'}
-											>
-												<Text color={'$color.white'}>
-													SAVE
-												</Text>
-											</Button>
-											<Button
-												onPress={() => {
-													setEditVisible(false);
-													setError('');
-												}}
-												backgroundColor={
-													'$color.caution'
-												}
-												size={'$buttons.md'}
-												borderRadius={'$4'}
-											>
-												<Text>CLOSE</Text>
-											</Button>
-										</XStack>
-									</YStack>
-								</YStack>
-							)}
 						</ScrollView>
 					</Tabs.Content>
 					<Tabs.Content value="day">
@@ -596,6 +452,145 @@ export default function Budget() {
 					</Tabs.Content>
 				</Tabs>
 			</YStack>
+							{/* Edit modal*/}
+				{editOpen && (
+					<YStack
+						position="absolute"
+						top={0}
+						left={0}
+						right={0}
+						bottom={0}
+						backgroundColor="rgba(0,0,0,0.3)"
+						justifyContent="center"
+						alignItems="center"
+						zIndex={"$zIndex.1"}
+					>
+						<YStack
+							bottom={150}
+							backgroundColor="$color.white"
+							borderRadius="$2"
+							padding="$3"
+							width="90%"
+							maxWidth="$popupMaxWidth"
+							shadowColor="$color.black"
+							shadowOffset={{ width: 0, height: 3 }}
+							shadowOpacity={0.25}
+							shadowRadius={3}
+							elevation={3}
+						>
+							<Text>Edit Transaction</Text>
+							<Input
+								height={40}
+								maxLength={25}
+								borderRadius={'$2'}
+								px={'$2'}
+								value={editingTxn?.name}
+								marginVertical={'$2'}
+								onChangeText={(text) =>
+									setEditingTxn((prev) =>
+										prev
+											? {
+													...prev,
+													name: text,
+												}
+											: prev,
+									)
+								}
+							/>
+							{editingTxn?.amount === 0 && (
+								<Text
+									color="$color.danger500"
+									fontSize="$2"
+									marginTop="$1"
+								>
+									Amount must be greater than zero
+								</Text>
+							)}
+
+							<Input
+								height={40}
+								px={'$2'}
+								keyboardType="numeric"
+								maxLength={9}
+								borderRadius={'$2'}
+								value={String(
+									editingTxn?.amount || '',
+								)}
+								onChangeText={handleAmountChange}
+								borderColor={
+									editingTxn?.amount === 0
+										? '$color.danger500'
+										: '$color.black'
+								}
+								marginVertical={'$2'}
+							/>
+							{!editingTxn?.name && (
+								<Text
+									color="$color.danger500"
+									fontSize="$2"
+									marginTop="$1"
+								>
+									Name is required
+								</Text>
+							)}
+
+							<Input
+								height={40}
+								px={'$2'}
+								value={dateInput}
+								maxLength={10}
+								borderRadius={'$2'}
+								onChangeText={handleDateChange}
+								borderColor={
+									error
+										? '$color.danger500'
+										: '$color.black'
+								}
+								marginVertical={'$2'}
+							/>
+							{error && (
+								<Text
+									color="$color.danger500"
+									fontSize="$2"
+									marginTop="$1"
+								>
+									Invalid date format
+								</Text>
+							)}
+							<XStack gap={'$3'}>
+								<Button
+									onPress={() => handleSave()}
+									disabled={
+										error !== '' ||
+										editingTxn?.amount === 0
+									}
+									backgroundColor={
+										'$color.primary200'
+									}
+									size={'$buttons.md'}
+									borderRadius={'$4'}
+								>
+									<Text color={'$color.white'}>
+										SAVE
+									</Text>
+								</Button>
+								<Button
+									onPress={() => {
+										setEditVisible(false);
+										setError('');
+									}}
+									backgroundColor={
+										'$color.caution'
+									}
+									size={'$buttons.md'}
+									borderRadius={'$4'}
+								>
+									<Text>CLOSE</Text>
+								</Button>
+							</XStack>
+						</YStack>
+					</YStack>
+				)}
 		</SafeAreaView>
 	);
 }
