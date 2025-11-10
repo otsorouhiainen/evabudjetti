@@ -357,7 +357,9 @@ export default function Budget() {
 									<Text>
 										Disposable income:
 										<Text fontSize={'$body'}>
-											{formatCurrency(totals.discretionary)}
+											{formatCurrency(
+												totals.discretionary,
+											)}
 										</Text>
 									</Text>
 									<Button
@@ -379,7 +381,7 @@ export default function Budget() {
 									bottom={0}
 									justifyContent="center"
 									alignItems="center"
-									zIndex={"$zIndex.1"}
+									zIndex={'$zIndex.1'}
 								>
 									<YStack
 										backgroundColor="$color.white"
@@ -437,7 +439,6 @@ export default function Budget() {
 								setInputDate={setDateInput}
 								formatCurrency={formatCurrency}
 							/>
-
 						</ScrollView>
 					</Tabs.Content>
 					<Tabs.Content value="day">
@@ -452,145 +453,134 @@ export default function Budget() {
 					</Tabs.Content>
 				</Tabs>
 			</YStack>
-							{/* Edit modal*/}
-				{editOpen && (
+			{/* Edit modal*/}
+			{editOpen && (
+				<YStack
+					position="absolute"
+					top={0}
+					left={0}
+					right={0}
+					bottom={0}
+					backgroundColor="rgba(0,0,0,0.3)"
+					justifyContent="center"
+					alignItems="center"
+					zIndex={'$zIndex.1'}
+				>
 					<YStack
-						position="absolute"
-						top={0}
-						left={0}
-						right={0}
-						bottom={0}
-						backgroundColor="rgba(0,0,0,0.3)"
-						justifyContent="center"
-						alignItems="center"
-						zIndex={"$zIndex.1"}
+						bottom={150}
+						backgroundColor="$color.white"
+						borderRadius="$2"
+						padding="$3"
+						width="90%"
+						maxWidth="$popupMaxWidth"
+						shadowColor="$color.black"
+						shadowOffset={{ width: 0, height: 3 }}
+						shadowOpacity={0.25}
+						shadowRadius={3}
+						elevation={3}
 					>
-						<YStack
-							bottom={150}
-							backgroundColor="$color.white"
-							borderRadius="$2"
-							padding="$3"
-							width="90%"
-							maxWidth="$popupMaxWidth"
-							shadowColor="$color.black"
-							shadowOffset={{ width: 0, height: 3 }}
-							shadowOpacity={0.25}
-							shadowRadius={3}
-							elevation={3}
-						>
-							<Text>Edit Transaction</Text>
-							<Input
-								height={40}
-								maxLength={25}
-								borderRadius={'$2'}
-								px={'$2'}
-								value={editingTxn?.name}
-								marginVertical={'$2'}
-								onChangeText={(text) =>
-									setEditingTxn((prev) =>
-										prev
-											? {
-													...prev,
-													name: text,
-												}
-											: prev,
-									)
-								}
-							/>
-							{editingTxn?.amount === 0 && (
-								<Text
-									color="$color.danger500"
-									fontSize="$2"
-									marginTop="$1"
-								>
-									Amount must be greater than zero
-								</Text>
-							)}
+						<Text>Edit Transaction</Text>
+						<Input
+							height={40}
+							maxLength={25}
+							borderRadius={'$2'}
+							px={'$2'}
+							value={editingTxn?.name}
+							marginVertical={'$2'}
+							onChangeText={(text) =>
+								setEditingTxn((prev) =>
+									prev
+										? {
+												...prev,
+												name: text,
+											}
+										: prev,
+								)
+							}
+						/>
+						{editingTxn?.amount === 0 && (
+							<Text
+								color="$color.danger500"
+								fontSize="$2"
+								marginTop="$1"
+							>
+								Amount must be greater than zero
+							</Text>
+						)}
 
-							<Input
-								height={40}
-								px={'$2'}
-								keyboardType="numeric"
-								maxLength={9}
-								borderRadius={'$2'}
-								value={String(
-									editingTxn?.amount || '',
-								)}
-								onChangeText={handleAmountChange}
-								borderColor={
-									editingTxn?.amount === 0
-										? '$color.danger500'
-										: '$color.black'
-								}
-								marginVertical={'$2'}
-							/>
-							{!editingTxn?.name && (
-								<Text
-									color="$color.danger500"
-									fontSize="$2"
-									marginTop="$1"
-								>
-									Name is required
-								</Text>
-							)}
+						<Input
+							height={40}
+							px={'$2'}
+							keyboardType="numeric"
+							maxLength={9}
+							borderRadius={'$2'}
+							value={String(editingTxn?.amount || '')}
+							onChangeText={handleAmountChange}
+							borderColor={
+								editingTxn?.amount === 0
+									? '$color.danger500'
+									: '$color.black'
+							}
+							marginVertical={'$2'}
+						/>
+						{!editingTxn?.name && (
+							<Text
+								color="$color.danger500"
+								fontSize="$2"
+								marginTop="$1"
+							>
+								Name is required
+							</Text>
+						)}
 
-							<Input
-								height={40}
-								px={'$2'}
-								value={dateInput}
-								maxLength={10}
-								borderRadius={'$2'}
-								onChangeText={handleDateChange}
-								borderColor={
-									error
-										? '$color.danger500'
-										: '$color.black'
+						<Input
+							height={40}
+							px={'$2'}
+							value={dateInput}
+							maxLength={10}
+							borderRadius={'$2'}
+							onChangeText={handleDateChange}
+							borderColor={
+								error ? '$color.danger500' : '$color.black'
+							}
+							marginVertical={'$2'}
+						/>
+						{error && (
+							<Text
+								color="$color.danger500"
+								fontSize="$2"
+								marginTop="$1"
+							>
+								Invalid date format
+							</Text>
+						)}
+						<XStack gap={'$3'}>
+							<Button
+								onPress={() => handleSave()}
+								disabled={
+									error !== '' || editingTxn?.amount === 0
 								}
-								marginVertical={'$2'}
-							/>
-							{error && (
-								<Text
-									color="$color.danger500"
-									fontSize="$2"
-									marginTop="$1"
-								>
-									Invalid date format
-								</Text>
-							)}
-							<XStack gap={'$3'}>
-								<Button
-									onPress={() => handleSave()}
-									disabled={
-										error !== '' ||
-										editingTxn?.amount === 0
-									}
-									backgroundColor={
-										'$color.primary200'
-									}
-									size={'$buttons.md'}
-									borderRadius={'$4'}
-								>
-									<Text color={'$color.white'}>
-										SAVE
-									</Text>
-								</Button>
-								<Button
-									onPress={() => {
-										setEditVisible(false);
-										setError('');
-									}}
-									backgroundColor={
-										'$color.caution'
-									}
-									size={'$buttons.md'}
-									borderRadius={'$4'}
-								>
-									<Text>CLOSE</Text>
-								</Button>
-							</XStack>
-						</YStack>
+								backgroundColor={'$color.primary200'}
+								size={'$buttons.md'}
+								borderRadius={'$4'}
+							>
+								<Text color={'$color.white'}>SAVE</Text>
+							</Button>
+							<Button
+								onPress={() => {
+									setEditVisible(false);
+									setError('');
+								}}
+								backgroundColor={'$color.caution'}
+								size={'$buttons.md'}
+								borderRadius={'$4'}
+							>
+								<Text>CLOSE</Text>
+							</Button>
+						</XStack>
 					</YStack>
-				)}
+				</YStack>
+			)}
 		</SafeAreaView>
 	);
 }
