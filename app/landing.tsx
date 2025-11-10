@@ -206,7 +206,7 @@ export default function Landing() {
 								alignSelf="center"
 								backgroundColor={'$primary500'}
 								size={64}
-								padding='5%'
+								padding="5%"
 								height={80}
 							>
 								<SizableText
@@ -227,10 +227,7 @@ export default function Landing() {
 							height={80}
 							onPress={() => router.push('/add_transaction')}
 						>
-							<SizableText
-								fontFamily="$body"
-								color="$white"
-							>
+							<SizableText fontFamily="$body" color="$white">
 								ADD INCOME/EXPENSE
 							</SizableText>
 						</Button>
