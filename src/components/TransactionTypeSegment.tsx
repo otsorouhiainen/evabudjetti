@@ -1,4 +1,5 @@
 import { Button, SizableText, XStack } from 'tamagui';
+import i18next from 'i18next';
 import { TransactionType } from '../../app/add_transaction';
 
 interface TransactionTypeSegmentProps {
@@ -26,7 +27,9 @@ export const TransactionTypeSegment: React.FC<TransactionTypeSegmentProps> = ({
 				padding={16}
 				paddingHorizontal={16}
 			>
-				<SizableText fontWeight="700">{opt}</SizableText>
+				<SizableText fontWeight="700">
+					{i18next.t(opt).toUpperCase()}
+				</SizableText>
 			</Button>
 		))}
 	</XStack>

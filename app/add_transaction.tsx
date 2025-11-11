@@ -5,6 +5,7 @@ import {
 	Plus,
 } from '@tamagui/lucide-icons';
 import { format, isValid, parse } from 'date-fns';
+import i18next from 'i18next';
 import { useMemo, useState } from 'react';
 import {
 	AlertDialog,
@@ -21,17 +22,17 @@ import {
 import { TransactionTypeSegment } from '../src/components/TransactionTypeSegment';
 
 export enum TransactionType {
-	Income = 'TULO', // TODO: i18n to be added
-	Expense = 'MENO',
+	Income = 'Income',
+	Expense = 'Expense',
 }
 
 // TODO: categories to be dynamic from database
 export const CATEGORIES = [
-	{ key: 'support', label: 'Tuki', type: TransactionType.Income },
-	{ key: 'rental', label: 'Vuokra', type: TransactionType.Expense },
-	{ key: 'other', label: 'Muu', type: TransactionType.Income },
-	{ key: 'electricity', label: 'Sähkö', type: TransactionType.Expense },
-	{ key: 'water', label: 'Vesi', type: TransactionType.Expense },
+	{ key: 'benefit', label: 'Benefit', type: TransactionType.Income },
+	{ key: 'rent', label: 'Rent', type: TransactionType.Expense },
+	{ key: 'other', label: 'Other', type: TransactionType.Income },
+	{ key: 'electricity', label: 'Electricity', type: TransactionType.Expense },
+	{ key: 'water', label: 'Water', type: TransactionType.Expense },
 ] as const;
 
 export type CategoryKey = (typeof CATEGORIES)[number]['key'];
@@ -48,8 +49,8 @@ export default function AddTransaction() {
 	const [dateError, setDateError] = useState<string | null>(null);
 	const [repeat, setRepeat] = useState(false);
 	const [repeatInterval, setRepeatInterval] = useState<
-		'kuukausittain' | 'oma aikaväli'
-	>('kuukausittain');
+		'monthly' | 'custom interval'
+	>('monthly');
 	const [repeatValue, setRepeatValue] = useState('');
 	const [errors, setErrors] = useState<{
 		amount?: string;
@@ -105,7 +106,9 @@ export default function AddTransaction() {
 			setDateText(format(date, 'dd-MM-yyyy'));
 			setDateError(null);
 		} else {
-			setDateError('Anna oikea päivämäärä muodossa dd-mm-yyyy');
+			setDateError(
+				i18next.t('Enter correct date in the format DD-MM-YYYY'),
+			);
 		}
 	};
 
@@ -116,7 +119,7 @@ export default function AddTransaction() {
 		setDate(null);
 		setDateText('');
 		setRepeat(false);
-		setRepeatInterval('kuukausittain');
+		setRepeatInterval('monthly');
 		setRepeatValue('');
 		setDescription('');
 		setErrors({});
@@ -127,14 +130,14 @@ export default function AddTransaction() {
 		const newErrors: typeof errors = {};
 
 		if (amount.at(-1) === '.') {
-			newErrors.amount = 'Kirjoita oikea summa';
+			newErrors.amount = i18next.t('Enter a valid amount');
 		}
 		if (
 			repeat === true &&
-			repeatInterval === 'oma aikaväli' &&
+			repeatInterval === 'custom interval' &&
 			repeatValue === ''
 		) {
-			newErrors.repeatValue = 'Anna toistuvuuden aikaväli';
+			newErrors.repeatValue = i18next.t('Enter the recurrence interval');
 		}
 
 		setErrors(newErrors);
@@ -182,18 +185,17 @@ export default function AddTransaction() {
 							opacity={1}
 							borderRadius={16}
 							padding={24}
-							width="80%"
-							minWidth={220}
-							maxWidth={400}
+							width={'30%'}
 							gap={'$4'}
+							background={'red'}
 						>
 							<SizableText size={'$title1'} marginBottom={8}>
-								Lisää kategoria
+								{i18next.t('Add category')}
 							</SizableText>
 							<Input
 								value={newCategory}
 								onChangeText={setNewCategory}
-								placeholder="kirjoita kategoria"
+								placeholder={i18next.t('Enter category')}
 								height={40}
 								borderRadius={6}
 								marginBottom={22}
@@ -216,7 +218,7 @@ export default function AddTransaction() {
 									fontSize={'$title3'}
 								>
 									<SizableText size={'$title3'}>
-										SULJE
+										{i18next.t('Cancel')}
 									</SizableText>
 								</Button>
 								<Button
@@ -232,7 +234,7 @@ export default function AddTransaction() {
 										size={'$title3'}
 										color={'$white'}
 									>
-										TALLENNA
+										{i18next.t('Save')}
 									</SizableText>
 								</Button>
 							</XStack>
@@ -251,13 +253,14 @@ export default function AddTransaction() {
 						paddingTop={24}
 						paddingHorizontal={20}
 						gap={18}
-						width={340}
-						maxWidth={600}
+						width={'30%'}
 					>
 						{/* Top header */}
-						<SizableText size={'$title1'}>Lisää uusi</SizableText>
+						<SizableText size={'$title1'}>
+							{i18next.t('Add new')}
+						</SizableText>
 
-						{/* Segmented: Tulo / Meno */}
+						{/* Segmented: Income / Expense */}
 						<XStack justifyContent="center">
 							<TransactionTypeSegment
 								type={type}
@@ -271,7 +274,7 @@ export default function AddTransaction() {
 							alignItems="center"
 						>
 							<SizableText size={'$title2'}>
-								Kategoria
+								{i18next.t('Category')}
 							</SizableText>
 							<Button
 								onPress={() => setExpanded(!expanded)}
@@ -320,7 +323,7 @@ export default function AddTransaction() {
 											}
 										>
 											<SizableText size={'$title3'}>
-												{label}
+												{i18next.t(label)}
 											</SizableText>
 										</Button>
 									);
@@ -330,7 +333,7 @@ export default function AddTransaction() {
 						{/* Form */}
 						<YStack
 							alignSelf="center"
-							width="100%"
+							width={'100%'}
 							borderRadius={16}
 							padding={16}
 							gap={6}
@@ -339,8 +342,22 @@ export default function AddTransaction() {
 							<YStack>
 								<SizableText size={'$title3'}>
 									{type === TransactionType.Income
-										? `${TransactionType.Income}N nimi`
-										: `${TransactionType.Expense}N nimi`}
+										? i18next.t(
+												'{{transactionType}} name',
+												{
+													transactionType: i18next.t(
+														TransactionType.Income,
+													),
+												},
+											)
+										: i18next.t(
+												'{{transactionType}} name',
+												{
+													transactionType: i18next.t(
+														TransactionType.Expense,
+													),
+												},
+											)}
 									<SizableText size={'$title3'}>
 										{' '}
 										*
@@ -349,11 +366,10 @@ export default function AddTransaction() {
 								<Input
 									value={name}
 									onChangeText={setName}
-									placeholder={
-										type === TransactionType.Income
-											? `${TransactionType.Income}N nimi`
-											: `${TransactionType.Expense}N nimi`
-									}
+									placeholder={i18next.t(
+										'{{transactionType}} name',
+										{ transactionType: i18next.t(type) },
+									)}
 									height={40}
 									borderRadius={6}
 									focusStyle={{
@@ -366,7 +382,7 @@ export default function AddTransaction() {
 
 							<YStack>
 								<SizableText size={'$title3'}>
-									Määrä
+									{i18next.t('Amount')}
 									<SizableText size={'$title3'}>
 										{' '}
 										*
@@ -400,7 +416,7 @@ export default function AddTransaction() {
 
 							<YStack>
 								<SizableText size={'$title3'}>
-									Päivämäärä
+									{i18next.t('Date')}
 									<SizableText size={'$title3'}>
 										{' '}
 										*
@@ -411,7 +427,7 @@ export default function AddTransaction() {
 									value={dateText}
 									onChangeText={handleDateChange}
 									onBlur={handleDateBlur}
-									placeholder="DD-MM-YYYY"
+									placeholder={i18next.t('DD-MM-YYYY')}
 									keyboardType="numeric"
 									height={40}
 									borderRadius={6}
@@ -434,7 +450,7 @@ export default function AddTransaction() {
 								)}
 							</YStack>
 
-							<XStack width={300} alignItems="center">
+							<XStack alignItems="center">
 								<Checkbox
 									size={44}
 									padding={8}
@@ -450,7 +466,7 @@ export default function AddTransaction() {
 								</Checkbox>
 
 								<SizableText size={'$title3'}>
-									Toistuuko tapahtuma?
+									{i18next.t('Does the event repeat?')}
 								</SizableText>
 							</XStack>
 
@@ -464,10 +480,7 @@ export default function AddTransaction() {
 									backgroundColor="$segmentWrap"
 								>
 									{(
-										[
-											'kuukausittain',
-											'oma aikaväli',
-										] as const
+										['monthly', 'custom interval'] as const
 									).map((opt) => (
 										<Button
 											key={opt}
@@ -476,7 +489,7 @@ export default function AddTransaction() {
 											borderRadius={10}
 											onPress={() => {
 												setRepeatInterval(opt);
-												if (opt !== 'oma aikaväli')
+												if (opt !== 'custom interval')
 													setRepeatValue('');
 											}}
 											backgroundColor={
@@ -486,17 +499,17 @@ export default function AddTransaction() {
 											}
 										>
 											<SizableText size={'$title3'}>
-												{opt}
+												{i18next.t(opt)}
 											</SizableText>
 										</Button>
 									))}
 								</XStack>
 							)}
 
-							{repeat && repeatInterval === 'oma aikaväli' && (
+							{repeat && repeatInterval === 'custom interval' && (
 								<YStack>
 									<Input
-										placeholder="kirjoita aikaväli"
+										placeholder={i18next.t('day intervals')}
 										value={repeatValue}
 										onChangeText={setRepeatValue}
 										keyboardType="numeric"
@@ -526,12 +539,14 @@ export default function AddTransaction() {
 
 							<YStack>
 								<SizableText size={'$title3'}>
-									Lisätietoa
+									{i18next.t('Additional information')}
 								</SizableText>
 								<Input
 									value={description}
 									onChangeText={setDescription}
-									placeholder="kirjoita lisätietoa"
+									placeholder={i18next.t(
+										'Write additional information',
+									)}
 									height={40}
 									borderRadius={6}
 									focusStyle={{
@@ -559,8 +574,20 @@ export default function AddTransaction() {
 						>
 							<SizableText size={'$title3'} color={'$white'}>
 								{type === TransactionType.Income
-									? `LISÄÄ ${TransactionType.Income}`
-									: `LISÄÄ ${TransactionType.Expense}`}
+									? i18next
+											.t('Add {{transactionType}}', {
+												transactionType: i18next.t(
+													TransactionType.Income,
+												),
+											})
+											.toUpperCase()
+									: i18next
+											.t('Add {{transactionType}}', {
+												transactionType: i18next.t(
+													TransactionType.Expense,
+												),
+											})
+											.toUpperCase()}
 							</SizableText>
 						</Button>
 
@@ -577,17 +604,33 @@ export default function AddTransaction() {
 								<AlertDialog.Content
 									bordered
 									elevate
-									width={300}
+									width={'25%'}
 									padding={24}
 									borderRadius={16}
 								>
 									<SizableText size={'$title1'}>
-										Tallennettu
+										{i18next.t('Saved')}
 									</SizableText>
 									<SizableText size={'$title3'}>
 										{type === TransactionType.Income
-											? 'Tulo lisätty.'
-											: 'Meno lisätty.'}
+											? i18next.t(
+													'{{transactionType}} added',
+													{
+														transactionType:
+															i18next.t(
+																TransactionType.Income,
+															),
+													},
+												)
+											: i18next.t(
+													'{{transactionType}} added',
+													{
+														transactionType:
+															i18next.t(
+																TransactionType.Expense,
+															),
+													},
+												)}
 									</SizableText>
 									<XStack
 										justifyContent="flex-end"
@@ -626,7 +669,9 @@ export default function AddTransaction() {
 							color="$buttonPrimary"
 							fontSize={'$title3'}
 						>
-							<SizableText size={'$title3'}>Peruuta</SizableText>
+							<SizableText size={'$title3'}>
+								{i18next.t('Cancel').toUpperCase()}
+							</SizableText>
 						</Button>
 					</YStack>
 				</YStack>
