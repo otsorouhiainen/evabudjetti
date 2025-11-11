@@ -1,5 +1,5 @@
-import { Button, SizableText, XStack } from 'tamagui';
 import i18next from 'i18next';
+import { Button, SizableText, XStack } from 'tamagui';
 import { TransactionType } from '../../app/add_transaction';
 
 interface TransactionTypeSegmentProps {
