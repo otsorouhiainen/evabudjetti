@@ -1,16 +1,33 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Button, SizableText, Stack, View, XStack, YStack } from 'tamagui';
-import SlideWrapper from '../src/components/SlideWrapper';
+import { useEffect } from 'react';
 import { Scene1 } from '../src/components/summary/scene1';
 import { Scene2 } from '../src/components/summary/scene2';
 import { Scene3 } from '../src/components/summary/scene3';
 import { Scene4 } from '../src/components/summary/scene4';
 import { Scene5 } from '../src/components/summary/scene5';
 
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+
+import Animated, {
+	FadeInLeft,
+	FadeInRight,
+	FadeOutLeft,
+	FadeOutRight,
+} from 'react-native-reanimated';
+
+export type Expense = {
+	name: string;
+	date: string;
+	amount: number;
+};
+
 export default function Summary() {
 	const router = useRouter();
 
+	//hardcoded values
+	//dynamic ones should just replace these and the page SHOULD work
 	const budget_total = 4200;
 	const budget_month = 1200;
 	const spent_total = 1200;
@@ -18,13 +35,28 @@ export default function Summary() {
 
 	const current_month = 10;
 
-	//currentScene is an integer used to attach needed arguments
-	//to their correspon:widthding scenes
+	//modifying the Expense type might be neccessary before adding these dynamically
+	const expense1: Expense = {
+		name: 'Bus card',
+		date: '01.08.2025',
+		amount: -50,
+	};
+	const expense2: Expense = {
+		name: 'Netflix',
+		date: '03.08.2025',
+		amount: -15.99,
+	};
+	const expense3: Expense = {
+		name: 'Electricity bill',
+		date: '03.08.2025',
+		amount: -30,
+	};
+
+	const expenses: Expense[] = [expense1, expense2, expense3];
+
 	const [currentScene, setCurrentScene] = useState<number>(0);
 	const [direction, setDirection] = useState<boolean>(true);
 
-	//hardcoded values for the 'scenes'
-	//functions to fetch values dynamically should be added here later
 	const Arguments = [
 		{ budget: budget_total, expected: budget_month, spent: spent_month },
 		{ balance: budget_total - spent_total },
@@ -32,7 +64,16 @@ export default function Summary() {
 			months:
 				(current_month + Math.round(budget_total / budget_month)) % 12,
 		},
-		{ categories: [1, 2, 3, 4], upcoming: [5, 6, 7, 8] },
+		{
+			categories: [
+				'Living',
+				'Groceries',
+				'Hobbies',
+				'Transportation',
+				'Savings',
+			],
+			upcoming: expenses,
+		},
 		{},
 	];
 
@@ -40,8 +81,43 @@ export default function Summary() {
 	const CurrentScene = Scenes[currentScene];
 	const CurrentArguments = Arguments[currentScene];
 
+	const handleNextScene = () => {
+		if (currentScene < Scenes.length - 1) {
+			setDirection(true);
+			setCurrentScene((prev) => Math.min(prev + 1, Scenes.length - 1));
+		}
+	};
+
+	const handlePrevScene = () => {
+		if (currentScene > 0) {
+			setDirection(false);
+			setCurrentScene((prev) => Math.max(prev - 1, 0));
+		}
+	};
+
+	const swipeLeft = Gesture.Fling()
+		.direction(1)		
+		.onEnd(() => handleNextScene());
+
+	const swipeRight = Gesture.Fling()
+		.direction(2) 
+		.onEnd(() => handlePrevScene());
+
+	const composed = Gesture.Simultaneous(swipeLeft, swipeRight);
+	useEffect(() => {
+	const handleKeyPress = (event) => {
+		if (event.key === 'ArrowRight') {
+			handleNextScene();
+		} else if (event.key === 'ArrowLeft') {
+			handlePrevScene();
+		}
+	};
+	window.addEventListener('keydown', handleKeyPress);
+	return () => window.removeEventListener('keydown', handleKeyPress);
+	}, [currentScene, direction]);
+
 	return (
-		<>
+		<GestureDetector gesture={composed}>
 			<YStack
 				flex={1}
 				justifyContent="center"
@@ -75,22 +151,21 @@ export default function Summary() {
 						</Button>
 						<SizableText
 							size={'$title2'}
-							position="absolute" // position text absolutely in the center
+							position="absolute"
 							left={0}
 							right={0}
-							textAlign="center" // centers text across the entire header
+							textAlign="center"
 							fontWeight="400"
 						>
 							Summary
 						</SizableText>
 					</XStack>
-					{/*seperator, forces the screen width*/}
+					{/*seperator*/}
 					<View
 						style={{
 							height: 1,
 							backgroundColor: '#ccc',
 							marginHorizontal: 16,
-							width: 360,
 						}}
 					/>
 
@@ -101,59 +176,23 @@ export default function Summary() {
 						alignItems="center"
 						width="100%"
 					>
-						<SlideWrapper key={currentScene} fromRight={direction}>
+						
+						<Animated.View
+							key={`${currentScene}-${direction}`}
+							entering={
+								direction ? FadeInRight.delay(200) : FadeInLeft.delay(200)
+							}
+							exiting={
+								direction ? FadeOutLeft : FadeOutRight
+							}
+						>
 							<CurrentScene {...CurrentArguments} />
-						</SlideWrapper>
-					</YStack>
-					<XStack
-						flex={1}
-						paddingTop={24}
-						paddingHorizontal={20}
-						gap={18}
-					>
-						<Button
-							size="$4"
-							marginTop={8}
-							position="absolute" // position text absolutely in the center
-							left={1}
-							bottom={1}
-							borderRadius={8}
-							paddingVertical={20}
-							backgroundColor="$primary300"
-							color="$white"
-							onPress={() => {
-								setDirection(false);
-								setCurrentScene((prev) =>
-									Math.max(prev - 1, 0),
-								);
-							}}
-						>
-							-1
-						</Button>
 
-						<Button
-							size="$4"
-							position="absolute" // position text absolutely in the center
-							right={1}
-							bottom={1}
-							marginTop={8}
-							borderRadius={8}
-							paddingVertical={20}
-							backgroundColor="$primary300"
-							color="$white"
-							onPress={() => {
-								setDirection(true);
-								setCurrentScene((prev) =>
-									Math.min(prev + 1, Scenes.length - 1),
-								);
-							}}
-						>
-							+1
-						</Button>
-					</XStack>
+						</Animated.View>
+					</YStack>
 					<YStack height={48} />
 				</YStack>
 			</YStack>
-		</>
+		</GestureDetector>
 	);
 }
