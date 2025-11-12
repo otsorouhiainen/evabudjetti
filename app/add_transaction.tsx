@@ -1,30 +1,25 @@
-import * as eva from '@eva-design/eva';
 import {
-	ApplicationProvider,
-	Button,
-	Card,
-	CheckBox,
-	Icon,
-	IconRegistry,
-	Input,
-	Layout,
-	Text,
-} from '@ui-kitten/components';
-import { EvaIconsPack } from '@ui-kitten/eva-icons';
+	Check as CheckIcon,
+	ChevronDown,
+	ChevronUp,
+	Plus,
+} from '@tamagui/lucide-icons';
 import { format, isValid, parse } from 'date-fns';
 import i18next from 'i18next';
 import { useMemo, useState } from 'react';
 import {
-	Alert,
-	Modal,
+	AlertDialog,
+	Button,
+	Checkbox,
+	Input,
+	PortalProvider,
 	ScrollView,
-	StyleSheet,
-	TouchableOpacity,
-	View,
-} from 'react-native';
-import { BottomNav } from '../src/components/BottomNav';
+	SizableText,
+	Stack,
+	XStack,
+	YStack,
+} from 'tamagui';
 import { TransactionTypeSegment } from '../src/components/TransactionTypeSegment';
-import { customTheme } from '../src/theme/eva-theme';
 
 export enum TransactionType {
 	Income = 'Income',
@@ -34,8 +29,8 @@ export enum TransactionType {
 // TODO: categories to be dynamic from database
 export const CATEGORIES = [
 	{ key: 'benefit', label: 'Benefit', type: TransactionType.Income },
-	{ key: 'other', label: 'Other', type: TransactionType.Income },
 	{ key: 'rent', label: 'Rent', type: TransactionType.Expense },
+	{ key: 'other', label: 'Other', type: TransactionType.Income },
 	{ key: 'electricity', label: 'Electricity', type: TransactionType.Expense },
 	{ key: 'water', label: 'Water', type: TransactionType.Expense },
 ] as const;
@@ -66,6 +61,7 @@ export default function AddTransaction() {
 	const [expanded, setExpanded] = useState(false);
 	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [newCategory, setNewCategory] = useState('');
+	const [showSuccess, setShowSuccess] = useState(false);
 
 	const visibleCategories = expanded ? CATEGORIES : CATEGORIES.slice(0, 3);
 
@@ -121,6 +117,7 @@ export default function AddTransaction() {
 		setName('');
 		setAmount('');
 		setDate(null);
+		setDateText('');
 		setRepeat(false);
 		setRepeatInterval('monthly');
 		setRepeatValue('');
@@ -128,172 +125,222 @@ export default function AddTransaction() {
 		setErrors({});
 	};
 
-	return (
-		<>
-			<IconRegistry icons={EvaIconsPack} />
-			<ApplicationProvider
-				{...eva}
-				theme={{ ...eva.light, ...customTheme }}
-			>
-				<View
-					style={{
-						flex: 1,
-						inset: 0,
-						justifyContent: 'center',
-						alignItems: 'center',
-					}}
-				>
-					<Layout style={styles.screen} level="1">
-						<ScrollView
-							contentContainerStyle={styles.scroll}
-							bounces
-						>
-							{/* Top header */}
-							<View style={styles.headerRow}>
-								<Text category="h5" style={styles.headerTitle}>
-									{i18next.t('Add new')}
-								</Text>
-							</View>
+	const handleSubmit = () => {
+		// submit handler placeholder
+		const newErrors: typeof errors = {};
 
-							{/* Segmented: Income / Expense */}
+		if (amount.at(-1) === '.') {
+			newErrors.amount = i18next.t('Enter a valid amount');
+		}
+		if (
+			repeat === true &&
+			repeatInterval === 'custom interval' &&
+			repeatValue === ''
+		) {
+			newErrors.repeatValue = i18next.t('Enter the recurrence interval');
+		}
+
+		setErrors(newErrors);
+
+		if (Object.keys(newErrors).length === 0) {
+			console.log({
+				type,
+				category,
+				name,
+				amount,
+				date,
+				repeat,
+				description,
+				repeatInterval,
+				repeatValue,
+			});
+			setShowSuccess(true);
+		}
+	};
+
+	return (
+		<PortalProvider>
+			<ScrollView
+				contentContainerStyle={{
+					paddingBottom: 70,
+				}}
+			>
+				{/* Add Category Modal */}
+				{categoryModalVisible && (
+					<Stack
+						position="absolute"
+						top={0}
+						bottom={0}
+						left={0}
+						right={0}
+						backgroundColor="rgba(0, 0, 0, 0.4)"
+						justifyContent="center"
+						alignItems="center"
+						zIndex={10}
+					>
+						<YStack
+							backgroundColor="$white"
+							borderColor={'$black'}
+							borderWidth={2}
+							opacity={1}
+							borderRadius={16}
+							padding={24}
+							width={'30%'}
+							gap={'$4'}
+							background={'red'}
+						>
+							<SizableText size={'$title1'} marginBottom={8}>
+								{i18next.t('Add category')}
+							</SizableText>
+							<Input
+								value={newCategory}
+								onChangeText={setNewCategory}
+								placeholder={i18next.t('Enter category')}
+								height={40}
+								borderRadius={6}
+								marginBottom={22}
+								focusStyle={{
+									outlineColor: 'transparent',
+								}}
+								px="10px"
+								fontSize={'$title3'}
+							/>
+							<XStack justifyContent="space-between">
+								<Button
+									onPress={() =>
+										setCategoryModalVisible(false)
+									}
+									borderColor="$buttonPrimary"
+									color="$buttonPrimary"
+									padding={22}
+									alignSelf="center"
+									size={42}
+									fontSize={'$title3'}
+								>
+									<SizableText size={'$title3'}>
+										{i18next.t('Cancel')}
+									</SizableText>
+								</Button>
+								<Button
+									onPress={handleAddCategory}
+									backgroundColor={'$primary300'}
+									size={42}
+									color={'$white'}
+									padding={22}
+									alignSelf="center"
+									fontSize={'$title3'}
+								>
+									<SizableText
+										size={'$title3'}
+										color={'$white'}
+									>
+										{i18next.t('Save')}
+									</SizableText>
+								</Button>
+							</XStack>
+						</YStack>
+					</Stack>
+				)}
+
+				<YStack
+					flex={1}
+					justifyContent="center"
+					alignItems="center"
+					overflow="scroll"
+				>
+					<YStack
+						flex={1}
+						paddingTop={24}
+						paddingHorizontal={20}
+						gap={18}
+						width={'30%'}
+					>
+						{/* Top header */}
+						<SizableText size={'$title1'}>
+							{i18next.t('Add new')}
+						</SizableText>
+
+						{/* Segmented: Income / Expense */}
+						<XStack justifyContent="center">
 							<TransactionTypeSegment
 								type={type}
 								setType={setType}
 							/>
+						</XStack>
 
-							{/* Category chips */}
-							<View style={styles.categoryHeader}>
-								<Text appearance="hint" style={styles.labelTop}>
-									{i18next.t('Category')}
-								</Text>
-								<TouchableOpacity
-									onPress={() => setExpanded(!expanded)}
-								>
-									<Icon
-										name={
-											expanded
-												? 'chevron-up-outline'
-												: 'chevron-down-outline'
-										}
-										fill={customTheme['color-black']}
-										style={{ width: 22, height: 22 }}
-									/>
-								</TouchableOpacity>
-							</View>
-							<View style={styles.chipsRow}>
-								<TouchableOpacity
-									onPress={() =>
-										setCategoryModalVisible(true)
-									}
-									style={styles.chip}
-								>
-									<Text>+</Text>
-								</TouchableOpacity>
-								<Modal
-									visible={categoryModalVisible}
-									transparent={true}
-									onRequestClose={() =>
-										setCategoryModalVisible(false)
-									}
-								>
-									<View style={styles.modalOverlay}>
-										<View style={styles.modalContainer}>
-											<Text style={styles.inputLabel}>
-												{i18next.t('Add category')}
-											</Text>
-											<Input
-												value={newCategory}
-												onChangeText={setNewCategory}
-												placeholder={i18next.t(
-													'Enter category',
-												)}
-												style={styles.input}
-											/>
-											<View style={styles.btnRow}>
-												<Button
-													appearance="outline"
-													style={[
-														styles.modalBtn,
-														{
-															backgroundColor:
-																customTheme[
-																	'color-white'
-																],
-														},
-													]}
-													onPress={() =>
-														setCategoryModalVisible(
-															false,
-														)
-													}
-												>
-													{i18next.t('Cancel')}
-												</Button>
-												<Button
-													style={[
-														styles.modalBtn,
-														{
-															backgroundColor:
-																customTheme[
-																	'color-primary-500'
-																],
-														},
-													]}
-													onPress={handleAddCategory}
-												>
-													{i18next.t('Save')}
-												</Button>
-											</View>
-										</View>
-									</View>
-								</Modal>
-								{visibleCategories
-									.filter(
-										(category) =>
-											(type === TransactionType.Income &&
-												category.type ===
-													TransactionType.Income) ||
-											(type === TransactionType.Expense &&
-												category.type ===
-													TransactionType.Expense),
-									)
-									.map(({ key, label }) => {
-										const selected = key === category;
-										return (
-											<TouchableOpacity
-												key={key}
-												onPress={() => {
-													setCategory(key);
-												}}
-												style={[
-													styles.chip,
-													selected && {
-														backgroundColor:
-															customTheme[
-																'color-primary-600'
-															],
-													},
-												]}
-											>
-												<Text
-													style={[
-														styles.chipText,
-														selected && {
-															color: customTheme[
-																'color-white'
-															],
-														},
-													]}
-												>
-													{i18next.t(label)}
-												</Text>
-											</TouchableOpacity>
-										);
-									})}
-							</View>
-							{/* Form */}
-							<Card disabled style={styles.formCard}>
-								<Text style={styles.inputLabel}>
+						{/* Category chips */}
+						<XStack
+							justifyContent="space-between"
+							alignItems="center"
+						>
+							<SizableText size={'$title2'}>
+								{i18next.t('Category')}
+							</SizableText>
+							<Button
+								onPress={() => setExpanded(!expanded)}
+								icon={expanded ? ChevronUp : ChevronDown}
+								height="100%"
+								background={'transparent'}
+							></Button>
+						</XStack>
+
+						{/* Add category button */}
+						<XStack>
+							<Button
+								onPress={() => setCategoryModalVisible(true)}
+								icon={Plus}
+								size={26}
+								padding={14}
+								marginRight={8}
+							></Button>
+
+							{/* Visible Category Chips */}
+							{visibleCategories
+								.filter(
+									(category) =>
+										(type === TransactionType.Income &&
+											category.type ===
+												TransactionType.Income) ||
+										(type === TransactionType.Expense &&
+											category.type ===
+												TransactionType.Expense),
+								)
+								.map(({ key, label }) => {
+									const selected = key === category;
+									return (
+										<Button
+											key={key}
+											onPress={() => {
+												setCategory(key);
+											}}
+											size={28}
+											padding={14}
+											marginRight={8}
+											backgroundColor={
+												selected
+													? '$primary500'
+													: '$white'
+											}
+										>
+											<SizableText size={'$title3'}>
+												{i18next.t(label)}
+											</SizableText>
+										</Button>
+									);
+								})}
+						</XStack>
+
+						{/* Form */}
+						<YStack
+							alignSelf="center"
+							width={'100%'}
+							borderRadius={16}
+							padding={16}
+							gap={6}
+							backgroundColor={'$white'}
+						>
+							<YStack>
+								<SizableText size={'$title3'}>
 									{type === TransactionType.Income
 										? i18next.t(
 												'{{transactionType}} name',
@@ -311,260 +358,221 @@ export default function AddTransaction() {
 													),
 												},
 											)}
-									<Text
-										style={{
-											color: customTheme[
-												'color-danger-500'
-											],
-										}}
-									>
+									<SizableText size={'$title3'}>
 										{' '}
 										*
-									</Text>
-								</Text>
+									</SizableText>
+								</SizableText>
 								<Input
 									value={name}
 									onChangeText={setName}
 									placeholder={i18next.t(
 										'{{transactionType}} name',
-										{
-											transactionType: i18next.t(type),
-										},
+										{ transactionType: i18next.t(type) },
 									)}
-									style={styles.input}
-									size="medium"
+									height={40}
+									borderRadius={6}
+									focusStyle={{
+										outlineColor: 'transparent',
+									}}
+									fontSize={'$title3'}
+									px="10px"
 								/>
+							</YStack>
 
-								<Text style={styles.inputLabel}>
+							<YStack>
+								<SizableText size={'$title3'}>
 									{i18next.t('Amount')}
-									<Text
-										style={{
-											color: customTheme[
-												'color-danger-500'
-											],
-										}}
-									>
+									<SizableText size={'$title3'}>
 										{' '}
 										*
-									</Text>
-								</Text>
+									</SizableText>
+								</SizableText>
 								<Input
 									value={amount}
 									onChangeText={handleAmountChange}
-									status={errors.amount ? 'danger' : 'basic'}
-									caption={errors.amount}
 									keyboardType="decimal-pad"
 									placeholder="000,00 €"
-									accessoryRight={() => (
-										<Text
-											appearance="hint"
-											style={{ marginRight: 6 }}
-										>
-											€
-										</Text>
-									)}
-									style={styles.input}
-									size="medium"
+									height={40}
+									borderRadius={6}
+									borderColor={
+										errors.amount ? '$danger500' : '$black'
+									}
+									focusStyle={{
+										outlineColor: 'transparent',
+									}}
+									px="10px"
+									fontSize={'$title3'}
 								/>
-
-								<Text style={styles.inputLabel}>
-									{i18next.t('Date')}
-									<Text
-										style={{
-											color: customTheme[
-												'color-danger-500'
-											],
-										}}
+								{errors.amount && (
+									<SizableText
+										size={'$title3'}
+										color="$danger500"
 									>
+										{errors.amount}
+									</SizableText>
+								)}
+							</YStack>
+
+							<YStack>
+								<SizableText size={'$title3'}>
+									{i18next.t('Date')}
+									<SizableText size={'$title3'}>
 										{' '}
 										*
-									</Text>
-								</Text>
+									</SizableText>
+								</SizableText>
 
 								<Input
 									value={dateText}
 									onChangeText={handleDateChange}
 									onBlur={handleDateBlur}
 									placeholder={i18next.t('DD-MM-YYYY')}
-									status={dateError ? 'danger' : 'basic'}
-									caption={dateError}
 									keyboardType="numeric"
-									style={styles.input}
-									size="medium"
+									height={40}
+									borderRadius={6}
+									borderColor={
+										dateError ? '$danger500' : '$black'
+									}
+									focusStyle={{
+										outlineColor: 'transparent',
+									}}
+									px="10px"
+									fontSize={'$title3'}
 								/>
-
-								<View style={{ marginTop: 8 }}>
-									<CheckBox
-										checked={repeat}
-										onChange={setRepeat}
+								{dateError && (
+									<SizableText
+										size={'$title3'}
+										color="$danger500"
 									>
-										{i18next.t('Does the event repeat?')}
-									</CheckBox>
-								</View>
-
-								{repeat && (
-									<View style={styles.segmentWrap}>
-										{(
-											[
-												'monthly',
-												'custom interval',
-											] as const
-										).map((opt) => (
-											<TouchableOpacity
-												key={opt}
-												activeOpacity={0.9}
-												onPress={() => {
-													setRepeatInterval(opt);
-													if (
-														opt !==
-														'custom interval'
-													)
-														setRepeatValue('');
-												}}
-												style={[
-													styles.segmentItem,
-													opt === repeatInterval && {
-														backgroundColor:
-															customTheme[
-																'color-primary-500'
-															],
-													},
-												]}
-											>
-												<Text
-													category="s1"
-													style={[
-														styles.segmentText,
-														opt === repeatInterval
-															? {
-																	color: customTheme[
-																		'color-black'
-																	],
-																}
-															: {
-																	color: customTheme[
-																		'color-primary-500'
-																	],
-																},
-													]}
-												>
-													{i18next.t(opt)}
-												</Text>
-											</TouchableOpacity>
-										))}
-									</View>
+										{dateError}
+									</SizableText>
 								)}
+							</YStack>
 
-								{/*TODO: needs tweaking for smoother translation delivery 
-								eg. compare en: "every __ days" & fi: "__ päivän välein"*/}
-								{repeat &&
-									repeatInterval === 'custom interval' && (
-										<Input
-											value={repeatValue}
-											onChangeText={setRepeatValue}
-											status={
-												errors.repeatValue
-													? 'danger'
-													: 'basic'
+							<XStack alignItems="center">
+								<Checkbox
+									size={44}
+									padding={8}
+									marginRight={10}
+									checked={repeat}
+									onCheckedChange={(checked) =>
+										setRepeat(checked === true)
+									}
+								>
+									<Checkbox.Indicator>
+										<CheckIcon size={14} />
+									</Checkbox.Indicator>
+								</Checkbox>
+
+								<SizableText size={'$title3'}>
+									{i18next.t('Does the event repeat?')}
+								</SizableText>
+							</XStack>
+
+							{/* Repeat */}
+							{repeat && (
+								<XStack
+									alignSelf="center"
+									borderRadius={10}
+									padding={4}
+									gap={6}
+									backgroundColor="$segmentWrap"
+								>
+									{(
+										['monthly', 'custom interval'] as const
+									).map((opt) => (
+										<Button
+											key={opt}
+											pressStyle={{ opacity: 0.8 }}
+											padding={15}
+											borderRadius={10}
+											onPress={() => {
+												setRepeatInterval(opt);
+												if (opt !== 'custom interval')
+													setRepeatValue('');
+											}}
+											backgroundColor={
+												opt === repeatInterval
+													? '$primary500'
+													: '$white'
 											}
-											caption={errors.repeatValue}
-											keyboardType="numeric"
-											accessoryRight={() => (
-												<Text
-													appearance="hint"
-													style={{ marginRight: 6 }}
-												>
-													{i18next.t('day intervals')}
-												</Text>
-											)}
-											style={styles.input}
-											size="medium"
-										/>
-									)}
+										>
+											<SizableText size={'$title3'}>
+												{i18next.t(opt)}
+											</SizableText>
+										</Button>
+									))}
+								</XStack>
+							)}
 
-								<Text style={styles.inputLabel}>
+							{repeat && repeatInterval === 'custom interval' && (
+								<YStack>
+									<Input
+										placeholder={i18next.t('day intervals')}
+										value={repeatValue}
+										onChangeText={setRepeatValue}
+										keyboardType="numeric"
+										height={40}
+										borderRadius={6}
+										borderColor={
+											errors.repeatValue
+												? '$danger500'
+												: '$black'
+										}
+										focusStyle={{
+											outlineColor: 'transparent',
+										}}
+										px="10px"
+										fontSize={'$title3'}
+									/>
+									{errors.repeatValue && (
+										<SizableText
+											size={'$title3'}
+											color="$danger500"
+										>
+											{errors.repeatValue}
+										</SizableText>
+									)}
+								</YStack>
+							)}
+
+							<YStack>
+								<SizableText size={'$title3'}>
 									{i18next.t('Additional information')}
-								</Text>
+								</SizableText>
 								<Input
 									value={description}
 									onChangeText={setDescription}
 									placeholder={i18next.t(
 										'Write additional information',
 									)}
-									style={styles.input}
-									size="medium"
+									height={40}
+									borderRadius={6}
+									focusStyle={{
+										outlineColor: 'transparent',
+									}}
+									px="10px"
+									fontSize={'$title3'}
 								/>
-							</Card>
+							</YStack>
+						</YStack>
 
-							{/* Submit */}
-							<Button
-								size="large"
-								disabled={!isValidSubmit}
-								style={[
-									styles.submitBtn,
-									{
-										backgroundColor:
-											customTheme['color-primary-500'],
-									},
-								]}
-								onPress={() => {
-									// submit handler placeholder
-									const newErrors: typeof errors = {};
-
-									if (amount.at(-1) === '.') {
-										newErrors.amount = i18next.t(
-											'Enter a valid amount',
-										);
-									}
-									if (
-										repeat === true &&
-										repeatInterval === 'custom interval' &&
-										repeatValue === ''
-									) {
-										newErrors.repeatValue = i18next.t(
-											'Enter the recurrence interval',
-										);
-									}
-
-									setErrors(newErrors);
-
-									if (Object.keys(newErrors).length === 0) {
-										console.log({
-											type,
-											category,
-											name,
-											amount,
-											date,
-											repeat,
-											description,
-											repeatInterval,
-											repeatValue,
-										});
-										Alert.alert(
-											i18next.t('Saved'),
-											type === TransactionType.Income
-												? i18next.t(
-														'{{transactionType}} added',
-														{
-															transactionType:
-																i18next.t(
-																	TransactionType.Income,
-																),
-														},
-													)
-												: i18next.t(
-														'{{transactionType}} added',
-														{
-															transactionType:
-																i18next.t(
-																	TransactionType.Expense,
-																),
-														},
-													),
-										);
-									}
-								}}
-							>
+						{/* Submit */}
+						<Button
+							marginTop={8}
+							borderRadius={28}
+							paddingVertical={20}
+							backgroundColor="$buttonPrimary"
+							color="$white"
+							disabled={!isValidSubmit}
+							disabledStyle={{
+								opacity: 0.5,
+							}}
+							onPress={handleSubmit}
+							fontSize={'$title3'}
+						>
+							<SizableText size={'$title3'} color={'$white'}>
 								{type === TransactionType.Income
 									? i18next
 											.t('Add {{transactionType}}', {
@@ -580,138 +588,94 @@ export default function AddTransaction() {
 												),
 											})
 											.toUpperCase()}
-							</Button>
+							</SizableText>
+						</Button>
 
-							{/* Cancel */}
-							<Button
-								size="large"
-								appearance="outline"
-								style={[
-									styles.submitBtn,
-									{
-										backgroundColor:
-											customTheme['color-white'],
-									},
-								]}
-								onPress={handleCancel}
-							>
+						{/* Success alert */}
+						<AlertDialog
+							open={showSuccess}
+							onOpenChange={setShowSuccess}
+						>
+							<AlertDialog.Portal>
+								<AlertDialog.Overlay
+									opacity={0.5}
+									backgroundColor={'$black'}
+								/>
+								<AlertDialog.Content
+									bordered
+									elevate
+									width={'25%'}
+									padding={24}
+									borderRadius={16}
+								>
+									<SizableText size={'$title1'}>
+										{i18next.t('Saved')}
+									</SizableText>
+									<SizableText size={'$title3'}>
+										{type === TransactionType.Income
+											? i18next.t(
+													'{{transactionType}} added',
+													{
+														transactionType:
+															i18next.t(
+																TransactionType.Income,
+															),
+													},
+												)
+											: i18next.t(
+													'{{transactionType}} added',
+													{
+														transactionType:
+															i18next.t(
+																TransactionType.Expense,
+															),
+													},
+												)}
+									</SizableText>
+									<XStack
+										justifyContent="flex-end"
+										marginTop="15"
+									>
+										<Button
+											backgroundColor={'$primary300'}
+											size={42}
+											color={'$white'}
+											padding={22}
+											alignSelf="center"
+											onPress={() =>
+												setShowSuccess(false)
+											}
+											fontSize={'$title3'}
+										>
+											<SizableText
+												size={'$title3'}
+												color={'$white'}
+											>
+												OK
+											</SizableText>
+										</Button>
+									</XStack>
+								</AlertDialog.Content>
+							</AlertDialog.Portal>
+						</AlertDialog>
+
+						{/* Cancel */}
+						<Button
+							marginTop={8}
+							borderRadius={28}
+							paddingVertical={20}
+							borderColor="$buttonPrimary"
+							onPress={handleCancel}
+							color="$buttonPrimary"
+							fontSize={'$title3'}
+						>
+							<SizableText size={'$title3'}>
 								{i18next.t('Cancel').toUpperCase()}
-							</Button>
-						</ScrollView>
-
-						{/* Bottom nav */}
-						<BottomNav />
-					</Layout>
-				</View>
-			</ApplicationProvider>
-		</>
+							</SizableText>
+						</Button>
+					</YStack>
+				</YStack>
+			</ScrollView>
+		</PortalProvider>
 	);
 }
-
-const styles = StyleSheet.create({
-	safe: { flex: 1 },
-	screen: {
-		flex: 1,
-		paddingTop: 24,
-		paddingHorizontal: 20,
-		gap: 18,
-	},
-	scroll: {
-		paddingTop: 18,
-		paddingHorizontal: 18,
-		paddingBottom: 80,
-		gap: 10,
-	},
-	headerRow: {
-		marginTop: 4,
-	},
-	headerTitle: {
-		fontWeight: '800',
-	},
-	categoryHeader: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-	segmentWrap: {
-		flexDirection: 'row',
-		alignSelf: 'flex-start',
-		backgroundColor: customTheme['color-segment-wrap'],
-		borderRadius: 24,
-		padding: 4,
-		gap: 6,
-	},
-	segmentItem: {
-		paddingVertical: 6,
-		paddingHorizontal: '8%',
-		borderRadius: 20,
-		backgroundColor: customTheme['color-white'],
-		minWidth: 60,
-		maxWidth: 120,
-		flexShrink: 1,
-	},
-	segmentText: { fontWeight: '700' },
-	labelTop: {
-		marginTop: 4,
-		marginBottom: -6,
-	},
-	chipsRow: {
-		flexDirection: 'row',
-		flexWrap: 'wrap',
-		gap: 10,
-	},
-	chip: {
-		backgroundColor: customTheme['color-button-bg'],
-		paddingVertical: 8,
-		paddingHorizontal: '7%',
-		borderRadius: 12,
-	},
-	chipText: {
-		fontWeight: '700',
-	},
-	modalOverlay: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: 'rgba(0,0,0,0.5)',
-	},
-	modalContainer: {
-		width: 320,
-		padding: 20,
-		backgroundColor: customTheme['color-white'],
-		borderRadius: 10,
-	},
-	formCard: {
-		paddingVertical: 14,
-		paddingHorizontal: 12,
-		borderRadius: 16,
-		gap: 6,
-	},
-	inputLabel: {
-		marginTop: 4,
-		marginBottom: -4,
-		fontWeight: '700',
-		fontSize: 13,
-	},
-	input: {
-		marginTop: 6,
-		borderRadius: 10,
-	},
-	submitBtn: {
-		marginTop: 8,
-		borderRadius: 22,
-		paddingVertical: 14,
-		width: '80%',
-		alignSelf: 'center',
-		minWidth: 120,
-		maxWidth: 320,
-	},
-	btnRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		paddingTop: 20,
-	},
-	modalBtn: {
-		borderRadius: 12,
-	},
-});
