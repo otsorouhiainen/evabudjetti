@@ -1,21 +1,19 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { Button, Separator, SizableText, XStack, YStack } from 'tamagui';
-import { Scene1 } from '../src/components/summary/scene1';
-import { Scene2 } from '../src/components/summary/scene2';
-import { Scene3 } from '../src/components/summary/scene3';
-import { Scene4 } from '../src/components/summary/scene4';
-import { Scene5 } from '../src/components/summary/scene5';
-
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-
 import Animated, {
 	FadeInLeft,
 	FadeInRight,
 	FadeOutLeft,
 	FadeOutRight,
 } from 'react-native-reanimated';
+import { Button, Separator, SizableText, XStack, YStack } from 'tamagui';
+
+import { Scene1 } from '../src/components/summary/scene1';
+import { Scene2 } from '../src/components/summary/scene2';
+import { Scene3 } from '../src/components/summary/scene3';
+import { Scene4 } from '../src/components/summary/scene4';
+import { Scene5 } from '../src/components/summary/scene5';
 
 export type Expense = {
 	name: string;
@@ -194,13 +192,3 @@ export default function Summary() {
 		</GestureDetector>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		backgroundColor: '#eaeaea',
-		outlineColor: '#000000',
-		borderWidth: 2,
-		borderRadius: 10,
-		gap: 10,
-	},
-});
