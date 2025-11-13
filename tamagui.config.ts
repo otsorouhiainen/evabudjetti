@@ -41,8 +41,6 @@ const firaFont = createFont({
 		true: 0,
 	},
 
-	// This is the magic that links your weight tokens to the loaded font files
-	// It works for both web and native
 	face: {
 		300: { normal: 'FiraSans_300Light' },
 		400: { normal: 'FiraSans_400Regular' },
