@@ -39,7 +39,7 @@ export default function Err() {
 						/>
 						<SizableText size={'$title2'}>404</SizableText>
 						<SizableText size={'$title2'} marginBottom={16}>
-							Jokin meni pieleen
+							Something went wrong.
 						</SizableText>
 					</YStack>
 					{/* Primary CTA */}
@@ -53,7 +53,7 @@ export default function Err() {
 						color="$white"
 						onPress={() => router.push('/landing')}
 					>
-						PALAA ETUSIVULLE
+						RETURN TO FRONT PAGE
 					</Button>
 					<YStack height={48} />
 				</YStack>
