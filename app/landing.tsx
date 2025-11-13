@@ -94,7 +94,7 @@ export default function Landing() {
 							icon={<PiggyBank />}
 							size={200}
 							marginBottom={-190}
-							color={'$primary300'}
+							color={'$primary100'}
 						></Button>
 					</YStack>
 
@@ -134,7 +134,7 @@ export default function Landing() {
 						alignItems="center"
 						paddingVertical={16}
 						gap={6}
-						backgroundColor={'$white'}
+						backgroundColor={'$color.white'}
 						shadowColor={'$black'}
 						shadowOffset={{ width: 0, height: 2 }}
 						shadowOpacity={0.15}
@@ -165,7 +165,7 @@ export default function Landing() {
 						<Button
 							marginTop={10}
 							alignSelf="center"
-							backgroundColor={'$primary500'}
+							backgroundColor={'$primary200'}
 							color={'$white'}
 							padding={22}
 							size={32}
@@ -180,7 +180,7 @@ export default function Landing() {
 						marginTop={8}
 						borderRadius={28}
 						paddingVertical={20}
-						backgroundColor="$primary300"
+						backgroundColor="$primary200"
 						color="$white"
 						onPress={() => router.push('/add_transaction')}
 					>
@@ -194,7 +194,7 @@ export default function Landing() {
 							size={'$4'}
 							borderRadius={18}
 							padding={20}
-							backgroundColor={'$primary300'}
+							backgroundColor={'$primary200'}
 							color={'$white'}
 							onPress={() => router.push('/budget')}
 						>
@@ -206,7 +206,7 @@ export default function Landing() {
 							borderRadius={18}
 							padding={20}
 							color={'$white'}
-							backgroundColor={'$primary300'}
+							backgroundColor={'$primary200'}
 						>
 							{i18next.t('EDIT BUDGET')}
 						</Button>
