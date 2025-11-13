@@ -39,8 +39,6 @@ export const Scene3 = ({ months }: { months: number }) => {
 					position="absolute"
 					fontSize={16}
 					marginTop={48}
-					fontWeight="bold"
-					color="$primary300"
 				>
 					{kuukaudet[months]}
 				</Text>

@@ -71,6 +71,7 @@ export const Scene5 = () => {
 
 const styles = StyleSheet.create({
 	headerBtn: {
+		marginBottom: 12,
 		borderRadius: 18,
 		paddingVertical: 14,
 		paddingHorizontal: 20,

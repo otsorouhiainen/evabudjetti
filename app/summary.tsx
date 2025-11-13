@@ -1,7 +1,6 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Button, SizableText, Stack, View, XStack, YStack } from 'tamagui';
-import { useEffect } from 'react';
+import { useState, useEffect} from 'react';
+import { Button, SizableText, XStack, YStack, Separator} from 'tamagui';
 import { Scene1 } from '../src/components/summary/scene1';
 import { Scene2 } from '../src/components/summary/scene2';
 import { Scene3 } from '../src/components/summary/scene3';
@@ -51,12 +50,15 @@ export default function Summary() {
 		date: '03.08.2025',
 		amount: -30,
 	};
-
 	const expenses: Expense[] = [expense1, expense2, expense3];
+	const expense_categories = ['Living','Groceries','Hobbies','Transportation','Savings',];
 
+	//variables used to change the 'scene' dynamically,
 	const [currentScene, setCurrentScene] = useState<number>(0);
 	const [direction, setDirection] = useState<boolean>(true);
 
+	//each argument for each scene is given here
+	//the purpose is to make switching to dynamic values easier
 	const Arguments = [
 		{ budget: budget_total, expected: budget_month, spent: spent_month },
 		{ balance: budget_total - spent_total },
@@ -65,22 +67,20 @@ export default function Summary() {
 				(current_month + Math.round(budget_total / budget_month)) % 12,
 		},
 		{
-			categories: [
-				'Living',
-				'Groceries',
-				'Hobbies',
-				'Transportation',
-				'Savings',
-			],
+			categories: expense_categories,
 			upcoming: expenses,
 		},
 		{},
 	];
 
+	//each scene is a predefined react node
+	//scenes are changed dynamically to avoid re-loading anything unneccessary
 	const Scenes = [Scene1, Scene2, Scene3, Scene4, Scene5];
 	const CurrentScene = Scenes[currentScene];
 	const CurrentArguments = Arguments[currentScene];
 
+	//the rest of the consts here define ways to navigate through scenes
+	//the only current ways are to swipe either left or right or to use the arrow keys
 	const handleNextScene = () => {
 		if (currentScene < Scenes.length - 1) {
 			setDirection(true);
@@ -161,13 +161,9 @@ export default function Summary() {
 						</SizableText>
 					</XStack>
 					{/*seperator*/}
-					<View
-						style={{
-							height: 1,
-							backgroundColor: '#ccc',
-							marginHorizontal: 16,
-						}}
-					/>
+
+					<Separator borderColor="#ccc" borderWidth={1} borderRadius={10}/>		
+					
 
 					{/*body*/}
 					<YStack
@@ -196,3 +192,5 @@ export default function Summary() {
 		</GestureDetector>
 	);
 }
+
+

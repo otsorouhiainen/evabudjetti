@@ -15,9 +15,9 @@ export const Scene2 = ({ balance }: { balance: number }) => {
 			<Button
 				disabled
 				transparent
-				marginTop={-84}
+				marginTop={-64}
 				icon={<PiggyBank />}
-				size={400}
+				size={300}
 				color={'$primary300'}
 			/>
 		</View>
