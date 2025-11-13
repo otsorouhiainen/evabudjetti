@@ -5,10 +5,10 @@ export const Scene1 = ({
 	budget,
 	expected,
 	spent,
-}: { 
-	budget: number; 
-	expected: number; 
-	spent: number 
+}: {
+	budget: number;
+	expected: number;
+	spent: number;
 }) => {
 	const spentPercent = Math.round((spent / expected) * 100);
 	const progressHeight = 20;

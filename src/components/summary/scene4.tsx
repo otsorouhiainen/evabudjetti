@@ -1,13 +1,13 @@
+import type Expense from '@/app/summary';
 import { StyleSheet } from 'react-native';
 import { Text, View, XStack } from 'tamagui';
-import type Expense from '@/app/summary';
 
 export const Scene4 = ({
 	categories,
 	upcoming,
-}: { 
-	categories: string[]; 
-	upcoming: Expense[] 
+}: {
+	categories: string[];
+	upcoming: Expense[];
 }) => {
 	const font = 12;
 

@@ -1,6 +1,5 @@
-import { StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import {Button} from 'tamagui';
+import { Button, View } from 'tamagui';
 
 export const Scene5 = () => {
 	const router = useRouter();
@@ -30,7 +29,7 @@ export const Scene5 = () => {
 				>
 					{'Add transaction'}
 				</Button>
-				
+
 				<Button
 					size="$4"
 					marginTop={8}

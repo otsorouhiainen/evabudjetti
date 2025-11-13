@@ -1,5 +1,5 @@
 import { Calendar } from '@tamagui/lucide-icons';
-import { Button, Stack, Text, View } from 'tamagui';
+import { Stack, Text, View } from 'tamagui';
 
 export const Scene3 = ({ months }: { months: number }) => {
 	const kuukaudet = [
