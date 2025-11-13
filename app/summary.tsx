@@ -1,13 +1,14 @@
 import { useRouter } from 'expo-router';
-import { useState, useEffect} from 'react';
-import { Button, SizableText, XStack, YStack, Separator} from 'tamagui';
+import { useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { Button, Separator, SizableText, XStack, YStack } from 'tamagui';
 import { Scene1 } from '../src/components/summary/scene1';
 import { Scene2 } from '../src/components/summary/scene2';
 import { Scene3 } from '../src/components/summary/scene3';
 import { Scene4 } from '../src/components/summary/scene4';
 import { Scene5 } from '../src/components/summary/scene5';
 
-import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 import Animated, {
 	FadeInLeft,
@@ -51,7 +52,13 @@ export default function Summary() {
 		amount: -30,
 	};
 	const expenses: Expense[] = [expense1, expense2, expense3];
-	const expense_categories = ['Living','Groceries','Hobbies','Transportation','Savings',];
+	const expense_categories = [
+		'Living',
+		'Groceries',
+		'Hobbies',
+		'Transportation',
+		'Savings',
+	];
 
 	//variables used to change the 'scene' dynamically,
 	const [currentScene, setCurrentScene] = useState<number>(0);
@@ -81,6 +88,14 @@ export default function Summary() {
 
 	//the rest of the consts here define ways to navigate through scenes
 	//the only current ways are to swipe either left or right or to use the arrow keys
+	const handlePrevScene = () => {
+		if (currentScene > 0) {
+			setDirection(false);
+
+			setCurrentScene((prev) => Math.max(prev - 1, 0));
+		}
+	};
+
 	const handleNextScene = () => {
 		if (currentScene < Scenes.length - 1) {
 			setDirection(true);
@@ -88,109 +103,104 @@ export default function Summary() {
 		}
 	};
 
-	const handlePrevScene = () => {
-		if (currentScene > 0) {
-			setDirection(false);
-			setCurrentScene((prev) => Math.max(prev - 1, 0));
-		}
-	};
-
 	const swipeLeft = Gesture.Fling()
-		.direction(1)		
+		.direction(1)
 		.onEnd(() => handleNextScene());
 
 	const swipeRight = Gesture.Fling()
-		.direction(2) 
+		.direction(2)
 		.onEnd(() => handlePrevScene());
 
 	const composed = Gesture.Simultaneous(swipeLeft, swipeRight);
 	useEffect(() => {
-	const handleKeyPress = (event) => {
-		if (event.key === 'ArrowRight') {
-			handleNextScene();
-		} else if (event.key === 'ArrowLeft') {
-			handlePrevScene();
-		}
-	};
-	window.addEventListener('keydown', handleKeyPress);
-	return () => window.removeEventListener('keydown', handleKeyPress);
-	}, [currentScene, direction]);
+		const handleKeyPress = (event) => {
+			if (event.key === 'ArrowRight') {
+				handleNextScene();
+			} else if (event.key === 'ArrowLeft') {
+				handlePrevScene();
+			}
+		};
+		window.addEventListener('keydown', handleKeyPress);
+		return () => window.removeEventListener('keydown', handleKeyPress);
+	});
 
 	return (
 		<GestureDetector gesture={composed}>
 			<YStack
 				flex={1}
-				justifyContent="center"
-				alignItems="center"
 				overflow="scroll"
+				paddingTop={24}
+				paddingHorizontal={20}
+				gap={18}
 			>
+				{/* Header */}
+				<XStack
+					flexDirection="row"
+					alignItems="center"
+					marginTop={6}
+					justifyContent="space-between"
+					gap={'$2'}
+				>
+					<Button
+						size="$4"
+						marginTop={8}
+						borderRadius={8}
+						paddingVertical={20}
+						backgroundColor="$primary300"
+						color="$white"
+						onPress={() => router.push('/landing')}
+					>
+						{'< Back'}
+					</Button>
+					<SizableText
+						size={'$title2'}
+						position="absolute"
+						left={0}
+						right={0}
+						textAlign="center"
+						fontWeight="400"
+					>
+						Summary
+					</SizableText>
+				</XStack>
+
+				{/*seperator*/}
+				<Separator
+					borderColor="#ccc"
+					borderWidth={1}
+					borderRadius={10}
+				/>
+				{/*body*/}
 				<YStack
 					flex={1}
-					paddingTop={24}
-					paddingHorizontal={20}
-					gap={18}
+					justifyContent="center"
+					alignItems="center"
+					width="100%"
 				>
-					{/* Header */}
-					<XStack
-						flexDirection="row"
-						alignItems="center"
-						marginTop={6}
-						justifyContent="space-between"
-						gap={'$2'}
+					<Animated.View
+						key={currentScene}
+						entering={
+							direction
+								? FadeInRight.delay(200)
+								: FadeInLeft.delay(200)
+						}
+						exiting={direction ? FadeOutLeft : FadeOutRight}
 					>
-						<Button
-							size="$4"
-							marginTop={8}
-							borderRadius={8}
-							paddingVertical={20}
-							backgroundColor="$primary300"
-							color="$white"
-							onPress={() => router.push('/landing')}
-						>
-							{'< Back'}
-						</Button>
-						<SizableText
-							size={'$title2'}
-							position="absolute"
-							left={0}
-							right={0}
-							textAlign="center"
-							fontWeight="400"
-						>
-							Summary
-						</SizableText>
-					</XStack>
-					{/*seperator*/}
-
-					<Separator borderColor="#ccc" borderWidth={1} borderRadius={10}/>		
-					
-
-					{/*body*/}
-					<YStack
-						flex={1}
-						justifyContent="center"
-						alignItems="center"
-						width="100%"
-					>
-						
-						<Animated.View
-							key={`${currentScene}-${direction}`}
-							entering={
-								direction ? FadeInRight.delay(200) : FadeInLeft.delay(200)
-							}
-							exiting={
-								direction ? FadeOutLeft : FadeOutRight
-							}
-						>
-							<CurrentScene {...CurrentArguments} />
-
-						</Animated.View>
-					</YStack>
-					<YStack height={48} />
+						<CurrentScene {...CurrentArguments} />
+					</Animated.View>
 				</YStack>
+				<YStack height={48} />
 			</YStack>
 		</GestureDetector>
 	);
 }
 
-
+const styles = StyleSheet.create({
+	container: {
+		backgroundColor: '#eaeaea',
+		outlineColor: '#000000',
+		borderWidth: 2,
+		borderRadius: 10,
+		gap: 10,
+	},
+});

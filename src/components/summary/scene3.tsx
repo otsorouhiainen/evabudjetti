@@ -35,11 +35,7 @@ export const Scene3 = ({ months }: { months: number }) => {
 				position="relative"
 			>
 				<Calendar size={200} color="$primary300" />
-				<Text
-					position="absolute"
-					fontSize={16}
-					marginTop={48}
-				>
+				<Text position="absolute" fontSize={16} marginTop={48}>
 					{kuukaudet[months]}
 				</Text>
 			</Stack>
