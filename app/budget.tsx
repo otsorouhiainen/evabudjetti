@@ -1,48 +1,37 @@
-import * as eva from '@eva-design/eva';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {
-	ApplicationProvider,
-	Button,
-	Icon,
-	IconRegistry,
-	Input,
-	Layout,
-	Tab,
-	TabView,
-	Text,
-} from '@ui-kitten/components';
-import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { ChevronLeft, ChevronRight, HelpCircle } from '@tamagui/lucide-icons';
 import { useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Button, Input, ScrollView, Tabs, Text, XStack, YStack } from 'tamagui';
 import { BudgetDropdown } from '@/src/components/BudgetDropdown';
 import { BudgetEventList } from '@/src/components/BudgetEventList';
-import { BottomNav } from '../src/components/BottomNav';
-import { customTheme } from '../src/theme/eva-theme';
+import { StyledTab } from './src/components/StyledTab';
+import { LOCALE } from './src/constants/';
 
 // Possibly removed later if declared for whole project
-const today = new Date();
+const today = new Date(Date.now());
 
 type Txn = {
 	id: string;
 	name: string;
-	date: string; // dd.mm.yyyy
-	amount: number; // + or -
+	date: Date; // dd.mm.yyyy
+	amount: number | string; // string essential for input rendering
 };
 
 function parseTxnDate(dateStr: string): Date {
-	// "dd.mm.yyyy" → Date, intended for parsing from database entries
+	// "dd.mm.yyyy" → Date
 	const [day, month, year] = dateStr.split('.').map(Number);
 	return new Date(year, month - 1, day);
 }
 
-function splitTransactions(transactions: Txn[]) {
-	today.setHours(0, 0, 0, 0); // normalize to midnight
+function splitTransactions(transactions: Txn[], referenceDate: Date = today) {
+	const normalizedDate = new Date(referenceDate);
+	normalizedDate.setHours(0, 0, 0, 0);
 
 	const past: Txn[] = [];
 	const future: Txn[] = [];
 
 	for (const tx of transactions) {
-		const txDate = parseTxnDate(tx.date);
+		const txDate = tx.date;
 		if (txDate < today) {
 			past.push(tx);
 		} else {
@@ -54,11 +43,51 @@ function splitTransactions(transactions: Txn[]) {
 }
 
 const MOCK_TX: Txn[] = [
-	{ id: '1', name: 'Bus card', date: '22.10.2025', amount: -50 },
-	{ id: '2', name: 'Study benefit', date: '25.10.2025', amount: +280 },
-	{ id: '3', name: 'Study loan', date: '06.10.2025', amount: +300 },
-	{ id: '4', name: 'Pet', date: '20.10.2025', amount: -60 },
-	{ id: '5', name: 'Phone bill', date: '01.10.2025', amount: -27 },
+	{ id: '1', name: 'Rent', date: parseTxnDate('22.10.2026'), amount: -830.5 },
+	{
+		id: '2',
+		name: 'Study benefit',
+		date: parseTxnDate('25.10.2025'),
+		amount: +280,
+	},
+	{
+		id: '3',
+		name: 'Study loan',
+		date: parseTxnDate('06.10.2025'),
+		amount: +300,
+	},
+	{ id: '4', name: 'Pet', date: parseTxnDate('20.10.2026'), amount: -60 },
+	{
+		id: '5',
+		name: 'Phone bill',
+		date: parseTxnDate('01.10.2026'),
+		amount: -27,
+	},
+	{
+		id: '6',
+		name: 'Netflix',
+		date: parseTxnDate('22.10.2025'),
+		amount: -12.99,
+	},
+	{
+		id: '7',
+		name: 'Spotify',
+		date: parseTxnDate('13.10.2025'),
+		amount: -15.99,
+	},
+	{ id: '8', name: 'Water', date: parseTxnDate('11.10.2025'), amount: -25 },
+	{
+		id: '9',
+		name: 'Salary',
+		date: parseTxnDate('15.10.2025'),
+		amount: 340.79,
+	},
+	{
+		id: '10',
+		name: 'additional benefit',
+		date: parseTxnDate('01.10.2025'),
+		amount: 150,
+	},
 ];
 
 function formatCurrency(value: number, hideSign?: boolean) {
@@ -69,7 +98,7 @@ function formatCurrency(value: number, hideSign?: boolean) {
 		currency: 'EUR',
 		signDisplay: hideSign ? 'never' : 'auto',
 		unitDisplay: 'narrow',
-		minimumFractionDigits: 0,
+		minimumFractionDigits: 2,
 		maximumFractionDigits: 2,
 	}).format(value);
 }
@@ -82,8 +111,9 @@ export default function Budget() {
 	const [editingTxn, setEditingTxn] = useState<Txn | null>(null);
 	const [currentDate, setcurrentDate] = useState(new Date());
 	const [transactions, setTransactions] = useState<Txn[]>(MOCK_TX);
-	const [selectedIndex, setSelectedIndex] = useState(0);
+	const [selectedTab, setSelectedTab] = useState('day');
 	const [error, setError] = useState('');
+	const [dateInput, setDateInput] = useState('');
 
 	const { past, future } = useMemo(
 		() => splitTransactions(transactions),
@@ -91,14 +121,14 @@ export default function Budget() {
 	);
 
 	const POSITIVE_TX: Txn[] = [...future, ...past].filter(
-		(ex) => ex.amount >= 0,
+		(ex) => Number(ex.amount) >= 0,
 	);
 
 	const NEGATIVE_TX: Txn[] = [...future, ...past].filter(
-		(ex) => ex.amount < 0,
+		(ex) => Number(ex.amount) < 0,
 	);
 
-	const monthLabel = new Intl.DateTimeFormat('en-US', {
+	const monthLabel = new Intl.DateTimeFormat(LOCALE, {
 		month: 'long',
 		year: 'numeric',
 	}).format(currentDate);
@@ -124,17 +154,14 @@ export default function Budget() {
 		setEditingTxn(null);
 	};
 
-	const totals = useMemo(
-		() => ({
-			balance: 111,
-			discretionary: 6,
-		}),
-		[],
-	);
+	const totals = {
+		balance: 111,
+		discretionary: 6,
+	};
 
 	const isValidDate = (text: string) => {
 		// Regex for dd.mm.yyyy
-		const regex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+		const regex = /^(\d{2})[./](\d{2})[./](\d{4})$/;
 		const match = regex.exec(text);
 
 		if (!match) return false;
@@ -154,476 +181,406 @@ export default function Budget() {
 	};
 
 	const handleDateChange = (text: string) => {
+		setDateInput(text);
+
+		if (text === '') {
+			setError('');
+			return; // don’t touch txn.date
+		}
+
 		if (isValidDate(text)) {
 			setError('');
+			const newDate = parseTxnDate(text);
+			setEditingTxn((prev) => (prev ? { ...prev, date: newDate } : prev));
 		} else {
 			setError('Invalid date, use format: dd.mm.yyyy');
+			// leave txn.date as-is
 		}
-		setEditingTxn((prev) => (prev ? { ...prev, date: text } : prev));
+	};
+
+	const handleAmountChange = (text: string) => {
+		setEditingTxn((prev) => {
+			if (!prev) return prev;
+
+			// Allow empty string or just "-" without forcing a number
+			if (text === '' || text === '-') {
+				return { ...prev, amount: text }; // or add a separate `amountInput` field
+			}
+
+			const num = Number(text);
+			return Number.isFinite(num) ? { ...prev, amount: num } : prev;
+		});
 	};
 
 	return (
-		<>
-			<IconRegistry icons={EvaIconsPack} />
-			<ApplicationProvider
-				{...eva}
-				theme={{ ...eva.light, ...customTheme }}
+		<SafeAreaView style={{ flex: 1 }}>
+			<YStack
+				backgroundColor={'$color.white'}
+				paddingTop={'$paddingmd'}
+				paddingHorizontal={'$paddingmd'}
+				flex={1}
 			>
-				<View>
-					<Layout>
-						<TabView
-							selectedIndex={selectedIndex}
-							onSelect={(index) => setSelectedIndex(index)}
-							swipeEnabled={false}
+				<Tabs
+					value={selectedTab}
+					onValueChange={setSelectedTab}
+					backgroundColor="transparent"
+					f={1}
+					flexDirection="column"
+				>
+					<Tabs.List
+						flexDirection="row"
+						height={'$tabItemHeight'}
+						backgroundColor="transparent"
+					>
+						<StyledTab
+							value="day"
+							flex={1} // You can conditionally set this
+							borderTopLeftRadius={20}
+							borderBottomLeftRadius={20}
 						>
-							<Tab title="Day">
-								<Layout>
-									<Text>Day view</Text>
-								</Layout>
-							</Tab>
-							<Tab title="Month">
-								<Layout>
-									{/* Top header */}
-									<ScrollView
-										contentContainerStyle={styles.scroll}
-										bounces
-									>
-										{/* month selector */}
-										<View style={{ marginTop: 6 }}>
-											<View style={styles.monthRow}>
-												<TouchableOpacity
-													style={styles.monthBtn}
-													onPress={() => handlePrev()}
-												>
-													<Icon
-														name="arrow-ios-back-outline"
-														fill={
-															customTheme[
-																'color-black'
-															]
-														}
-														style={{
-															width: 18,
-															height: 18,
-														}}
-													/>
-												</TouchableOpacity>
-												<Text
-													style={{
-														fontWeight: '700',
-													}}
-												>
-													{monthLabel}
-												</Text>
-												<TouchableOpacity
-													style={styles.monthBtn}
-													onPress={() => handleNext()}
-												>
-													<Icon
-														name="arrow-ios-forward-outline"
-														fill={
-															customTheme[
-																'color-black'
-															]
-														}
-														style={{
-															width: 18,
-															height: 18,
-														}}
-													/>
-												</TouchableOpacity>
-											</View>
-										</View>
-
-										{/* income dropdown */}
-										<BudgetDropdown
-											txns={POSITIVE_TX}
-											name={'Incomes'}
-											setEditVisible={setEditVisible}
-											setEditingTxn={setEditingTxn}
-											openDropdown={setIncomesOpen}
-											isOpen={incomesOpen}
-											formatCurrency={formatCurrency}
-										/>
-
-										{/* expense dropdown */}
-										<BudgetDropdown
-											txns={NEGATIVE_TX}
-											name={'Expenses'}
-											setEditVisible={setEditVisible}
-											setEditingTxn={setEditingTxn}
-											openDropdown={setExpensesOpen}
-											isOpen={expensesOpen}
-											formatCurrency={formatCurrency}
-										/>
-
-										{/* Snapshot */}
-										<View style={{ marginTop: 4 }}>
-											<Text
-												category="s2"
-												style={{ fontWeight: '800' }}
-											>
-												{today.toLocaleDateString()}
-											</Text>
-											<Text>
-												Balance:{' '}
-												<Text category="s1">
-													{formatCurrency(
-														totals.balance,
-													)}
-												</Text>
-											</Text>
-											<View
-												style={{
-													flexDirection: 'row',
-													alignItems: 'center',
-													gap: 6,
-												}}
-											>
-												<Text>
-													Available:{' '}
-													<Text category="s1">
-														{totals.discretionary}0€
-													</Text>
-												</Text>
-												<MaterialCommunityIcons
-													name="help-circle-outline"
-													size={18}
-													color={
-														customTheme[
-															'color-black'
-														]
-													}
-													onPress={() =>
-														setHelpVisible(true)
-													}
-													style={{
-														marginLeft: 2,
-														marginTop: 2,
-														opacity: 0.8,
-														cursor: 'pointer',
-													}}
-												/>
-											</View>
-										</View>
-
-										{/* Help Modal */}
-										{helpVisible && (
-											<View style={styles.modalOverlay}>
-												<View style={styles.modalBox}>
-													<Text
-														category="h6"
-														style={{
-															marginBottom: 8,
-														}}
-													>
-														Ohjeet
-													</Text>
-													<Text
-														style={{
-															marginBottom: 16,
-														}}
-													>
-														Käyttövara tarkoittaa
-														rahamäärää, joka jää
-														jäljelle tulojen ja
-														menojen jälkeen. Se
-														auttaa sinua
-														ymmärtämään, kuinka
-														paljon rahaa sinulla on
-														käytettävissä muihin
-														menoihin tai säästöihin
-														kuukauden aikana.
-													</Text>
-													<Button
-														onPress={() =>
-															setHelpVisible(
-																false,
-															)
-														}
-														style={{
-															alignSelf: 'center',
-														}}
-													>
-														SULJE
-													</Button>
-												</View>
-											</View>
-										)}
-
-										{/* Future events */}
-										<BudgetEventList
-											txns={future}
-											title={'Future events'}
-											setEditVisible={setEditVisible}
-											setEditingTxn={setEditingTxn}
-											formatCurrency={formatCurrency}
-										/>
-
-										{/* Past events */}
-										<BudgetEventList
-											txns={past}
-											title={'Past events'}
-											setEditVisible={setEditVisible}
-											setEditingTxn={setEditingTxn}
-											formatCurrency={formatCurrency}
-										/>
-
-										{/* Edit modal */}
-										{editOpen && (
-											<View style={styles.modalOverlay}>
-												<View style={styles.modalBox}>
-													<Text category="h6">
-														Edit Transaction
-													</Text>
-													<Input
-														label="Name"
-														maxLength={25}
-														value={editingTxn?.name}
-														style={{
-															marginVertical: 8,
-														}}
-														onChangeText={(text) =>
-															setEditingTxn(
-																(prev) =>
-																	prev
-																		? {
-																				...prev,
-																				name: text,
-																			}
-																		: prev,
-															)
-														}
-													/>
-													<Input
-														label="Amount (€)"
-														keyboardType="numeric"
-														maxLength={9}
-														defaultValue={String(
-															editingTxn?.amount,
-														)}
-														onChangeText={(text) =>
-															setEditingTxn(
-																(prev) =>
-																	prev
-																		? {
-																				...prev,
-																				amount:
-																					Number.isFinite(
-																						Number(
-																							text.trim(),
-																						),
-																					) &&
-																					!Number.isNaN(
-																						Number(
-																							text.trim(),
-																						),
-																					)
-																						? Number(
-																								text.trim(),
-																							)
-																						: prev.amount,
-																			}
-																		: prev,
-															)
-														}
-														status={
-															editingTxn?.amount ===
-															0
-																? 'danger'
-																: 'static'
-														}
-														style={{
-															marginVertical: 8,
-														}}
-													/>
-
-													<Input
-														label="Date"
-														value={editingTxn?.date}
-														maxLength={10}
-														placeholder="dd.mm.yyyy"
-														onChangeText={
-															handleDateChange
-														}
-														status={
-															error
-																? 'danger'
-																: 'static'
-														}
-														caption={
-															error || 'dd.mm.yyy'
-														}
-														style={{
-															marginVertical: 8,
-														}}
-													/>
-													<View
-														style={styles.monthRow}
-													>
-														<Button
-															onPress={() =>
-																handleSave()
-															}
-															style={{
-																alignSelf:
-																	'center',
-															}}
-															disabled={
-																error !== '' ||
-																editingTxn?.amount ===
-																	0
-															}
-														>
-															SAVE
-														</Button>
-														<Button
-															onPress={() => {
-																setEditVisible(
-																	false,
-																);
-																setError('');
-															}}
-															style={{
-																alignSelf:
-																	'center',
-															}}
-														>
-															CLOSE
-														</Button>
-													</View>
-												</View>
-											</View>
-										)}
-
-										<View style={{ height: 90 }} />
-									</ScrollView>
-								</Layout>
-							</Tab>
-							<Tab title="Year">
-								<Layout
-									style={{
-										flex: 1,
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
+							<Text
+								color={
+									selectedTab === 'day'
+										? '$color.white'
+										: '$color.black'
+								}
+							>
+								Day
+							</Text>
+						</StyledTab>
+						<StyledTab value="month" flex={1} borderRadius={0}>
+							<Text
+								padding={'$2'}
+								color={
+									selectedTab === 'month'
+										? '$color.white'
+										: '$color.black'
+								}
+							>
+								Month
+							</Text>
+						</StyledTab>
+						<StyledTab
+							value="year"
+							flex={1}
+							borderTopRightRadius={20}
+							borderBottomRightRadius={20}
+						>
+							<Text
+								padding={10}
+								color={
+									selectedTab === 'year'
+										? '$color.white'
+										: '$color.black'
+								}
+								borderRadius={15}
+							>
+								Year
+							</Text>
+						</StyledTab>
+					</Tabs.List>
+					<Tabs.Content value="month">
+						<ScrollView
+							paddingTop={'$3'}
+							paddingHorizontal={'$3'}
+							nestedScrollEnabled={true}
+							contentContainerStyle={{ paddingBottom: 100 }}
+							bounces
+							scrollEventThrottle={16}
+							scrollEnabled={!editOpen}
+						>
+							{/* month selector */}
+							<YStack marginBottom={'$2'}>
+								<XStack
+									ai="center"
+									jc="space-between"
+									width={180}
 								>
-									<Text>Year view</Text>
-								</Layout>
-							</Tab>
-						</TabView>
-						{/* Bottom nav */}
-						<BottomNav />
-					</Layout>
-				</View>
-			</ApplicationProvider>
-		</>
+									<Button
+										outlineColor={'$black'}
+										size="$buttons.md"
+										icon={ChevronLeft}
+										onPress={() => handlePrev()}
+										backgroundColor="$transparent"
+										circular
+									/>
+									<Text fontSize={'$body'} fontWeight={'6'}>
+										{monthLabel}
+									</Text>
+									<Button
+										outlineColor={'$black'}
+										size={'$buttons.sm'}
+										icon={ChevronRight}
+										onPress={() => handleNext()}
+										backgroundColor="$transparent"
+										circular
+									/>
+								</XStack>
+							</YStack>
+
+							{/* income dropdown */}
+							<BudgetDropdown
+								txns={POSITIVE_TX}
+								name={'Incomes'}
+								setEditVisible={setEditVisible}
+								setEditingTxn={setEditingTxn}
+								setInputDate={setDateInput}
+								openDropdown={setIncomesOpen}
+								isOpen={incomesOpen}
+								formatCurrency={formatCurrency}
+							/>
+
+							{/* expense dropdown */}
+							<BudgetDropdown
+								txns={NEGATIVE_TX}
+								name={'Expenses'}
+								setEditVisible={setEditVisible}
+								setEditingTxn={setEditingTxn}
+								setInputDate={setDateInput}
+								openDropdown={setExpensesOpen}
+								isOpen={expensesOpen}
+								formatCurrency={formatCurrency}
+							/>
+
+							{/* Snapshot */}
+							<YStack marginBottom={'$3'}>
+								<Text fontSize={'$body'} fontWeight={'700'}>
+									{today.toLocaleDateString(LOCALE)}
+								</Text>
+								<Text>
+									Balance:
+									<Text fontSize={'$body'}>
+										{formatCurrency(totals.balance)}
+									</Text>
+								</Text>
+								<XStack>
+									<Text>
+										Disposable income:
+										<Text fontSize={'$body'}>
+											{formatCurrency(
+												totals.discretionary,
+											)}
+										</Text>
+									</Text>
+									<Button
+										outlineColor={'$black'}
+										onPress={() => setHelpVisible(true)}
+										icon={HelpCircle}
+										width={'$2'}
+									/>
+								</XStack>
+							</YStack>
+
+							{/* Help Modal */}
+							{helpVisible && (
+								<YStack
+									position="absolute"
+									top={0}
+									left={0}
+									right={0}
+									bottom={0}
+									justifyContent="center"
+									alignItems="center"
+									zIndex={'$zIndex.1'}
+								>
+									<YStack
+										backgroundColor="$color.white"
+										borderRadius="$2"
+										padding="$3"
+										width="90%"
+										maxWidth="$popupMaxWidth"
+										shadowColor="$color.black"
+										shadowOffset={{ width: 0, height: 3 }}
+										shadowOpacity={0.25}
+										shadowRadius={3}
+										elevation={3}
+									>
+										<Text fontSize={'$4'} mb={'$2'}>
+											Instructions
+										</Text>
+										<Text mb={'$2'}>
+											Disposable income refers to the
+											amount of money that remains after
+											income and expenses. It helps you
+											understand how much money you have
+											available for other expenses or
+											savings during the month
+										</Text>
+										<Button
+											onPress={() =>
+												setHelpVisible(false)
+											}
+											backgroundColor={'$primary200'}
+											size={'$buttons.lg'}
+											width={'50%'}
+										>
+											<Text color={'$white'}>CLOSE</Text>
+										</Button>
+									</YStack>
+								</YStack>
+							)}
+
+							{/* Future events */}
+							<BudgetEventList
+								txns={future}
+								title={'Future events'}
+								setEditVisible={setEditVisible}
+								setEditingTxn={setEditingTxn}
+								setInputDate={setDateInput}
+								formatCurrency={formatCurrency}
+							/>
+
+							{/* Past events */}
+							<BudgetEventList
+								txns={past}
+								title={'Past events'}
+								setEditVisible={setEditVisible}
+								setEditingTxn={setEditingTxn}
+								setInputDate={setDateInput}
+								formatCurrency={formatCurrency}
+							/>
+						</ScrollView>
+					</Tabs.Content>
+					<Tabs.Content value="day">
+						<ScrollView>
+							<Text>Day goes here</Text>
+						</ScrollView>
+					</Tabs.Content>
+					<Tabs.Content value="year">
+						<ScrollView>
+							<Text>Year goes here</Text>
+						</ScrollView>
+					</Tabs.Content>
+				</Tabs>
+			</YStack>
+			{/* Edit modal*/}
+			{editOpen && (
+				<YStack
+					position="absolute"
+					top={0}
+					left={0}
+					right={0}
+					bottom={0}
+					backgroundColor="rgba(0,0,0,0.3)"
+					justifyContent="center"
+					alignItems="center"
+					zIndex={'$zIndex.1'}
+				>
+					<YStack
+						bottom={150}
+						backgroundColor="$color.white"
+						borderRadius="$2"
+						padding="$3"
+						width="90%"
+						maxWidth="$popupMaxWidth"
+						shadowColor="$color.black"
+						shadowOffset={{ width: 0, height: 3 }}
+						shadowOpacity={0.25}
+						shadowRadius={3}
+						elevation={3}
+					>
+						<Text>Edit Transaction</Text>
+						<Input
+							height={40}
+							maxLength={25}
+							borderRadius={'$2'}
+							px={'$2'}
+							value={editingTxn?.name}
+							marginVertical={'$2'}
+							onChangeText={(text) =>
+								setEditingTxn((prev) =>
+									prev
+										? {
+												...prev,
+												name: text,
+											}
+										: prev,
+								)
+							}
+						/>
+						{editingTxn?.amount === 0 && (
+							<Text
+								color="$color.danger500"
+								fontSize="$2"
+								marginTop="$1"
+							>
+								Amount must be greater than zero
+							</Text>
+						)}
+
+						<Input
+							height={40}
+							px={'$2'}
+							keyboardType="numeric"
+							maxLength={9}
+							borderRadius={'$2'}
+							value={String(editingTxn?.amount || '')}
+							onChangeText={handleAmountChange}
+							borderColor={
+								editingTxn?.amount === 0
+									? '$color.danger500'
+									: '$color.black'
+							}
+							marginVertical={'$2'}
+						/>
+						{!editingTxn?.name && (
+							<Text
+								color="$color.danger500"
+								fontSize="$2"
+								marginTop="$1"
+							>
+								Name is required
+							</Text>
+						)}
+
+						<Input
+							height={40}
+							px={'$2'}
+							value={dateInput}
+							maxLength={10}
+							borderRadius={'$2'}
+							onChangeText={handleDateChange}
+							borderColor={
+								error ? '$color.danger500' : '$color.black'
+							}
+							marginVertical={'$2'}
+						/>
+						{error && (
+							<Text
+								color="$color.danger500"
+								fontSize="$2"
+								marginTop="$1"
+							>
+								Invalid date format
+							</Text>
+						)}
+						<XStack gap={'$3'}>
+							<Button
+								onPress={() => handleSave()}
+								disabled={
+									error !== '' || editingTxn?.amount === 0
+								}
+								backgroundColor={'$color.primary200'}
+								size={'$buttons.md'}
+								borderRadius={'$4'}
+							>
+								<Text color={'$color.white'}>SAVE</Text>
+							</Button>
+							<Button
+								onPress={() => {
+									setEditVisible(false);
+									setError('');
+								}}
+								backgroundColor={'$color.caution'}
+								size={'$buttons.md'}
+								borderRadius={'$4'}
+							>
+								<Text>CLOSE</Text>
+							</Button>
+						</XStack>
+					</YStack>
+				</YStack>
+			)}
+		</SafeAreaView>
 	);
 }
-
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		paddingTop: 24,
-		paddingHorizontal: 20,
-		gap: 18,
-	},
-	scroll: {
-		paddingTop: 18,
-		paddingHorizontal: 18,
-		paddingBottom: 0,
-		gap: 10,
-	},
-	segmentWrap: {
-		flexDirection: 'row',
-		alignSelf: 'center',
-		backgroundColor: customTheme['color-white'],
-		borderRadius: 24,
-		padding: 4,
-		gap: 6,
-	},
-	segmentItem: {
-		paddingVertical: 8,
-		paddingHorizontal: 16,
-		borderRadius: 20,
-		backgroundColor: customTheme['color-white'],
-	},
-	segmentText: {
-		fontWeight: '700',
-		color: customTheme['color-black'],
-	},
-	title: { fontWeight: '800' },
-	monthRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 6,
-		marginTop: 2,
-	},
-	monthBtn: {
-		width: 30,
-		height: 30,
-		borderRadius: 8,
-		alignItems: 'center',
-		justifyContent: 'center',
-		backgroundColor: customTheme['color-white'],
-	},
-	totalCard: {
-		borderRadius: 14,
-		paddingVertical: 6,
-		paddingHorizontal: 10,
-		backgroundColor: customTheme['color-primary-600'],
-		shadowColor: customTheme['color-black'],
-		shadowOffset: { width: 0, height: 1 },
-		shadowOpacity: 0.08,
-		shadowRadius: 6,
-		elevation: 4,
-	},
-	totalHeader: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-	totalTitle: { fontWeight: '800' },
-	totalRight: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-	chev: { width: 18, height: 18, tintColor: customTheme['color-black'] },
-	income: {
-		flexDirection: 'row',
-	},
-	sectionTitle: { marginTop: 8, marginBottom: 4, fontWeight: '800' },
-	listWrap: { gap: 8 },
-	pill: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		backgroundColor: customTheme['color-primary-600'],
-		borderRadius: 12,
-		paddingVertical: 10,
-		paddingHorizontal: 12,
-		gap: 10,
-	},
-	pillName: { flex: 1, fontWeight: '700' },
-	pillDate: { width: 100, textAlign: 'center' },
-	pillAmt: { width: 70, textAlign: 'right', fontWeight: '800' },
-	modalOverlay: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
-		backgroundColor: 'rgba(0,0,0,0.3)',
-		justifyContent: 'center',
-		alignItems: 'center',
-		zIndex: 100,
-	},
-	modalBox: {
-		backgroundColor: customTheme['color-white'],
-		borderRadius: 16,
-		padding: 24,
-		width: 320,
-		maxWidth: '90%',
-		shadowColor: customTheme['color-black'],
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.18,
-		shadowRadius: 8,
-		elevation: 8,
-	},
-});

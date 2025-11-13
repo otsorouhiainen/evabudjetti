@@ -1,5 +1,6 @@
 import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
+import i18next from 'i18next';
 import { useState } from 'react';
 import { ScrollView } from 'react-native';
 import { Button, SizableText, Stack, XStack, YStack } from 'tamagui';
