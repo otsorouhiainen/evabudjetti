@@ -20,11 +20,7 @@ import {
 	YStack,
 } from 'tamagui';
 import { TransactionTypeSegment } from '../src/components/TransactionTypeSegment';
-
-export enum TransactionType {
-	Income = 'Income',
-	Expense = 'Expense',
-}
+import { TransactionType } from '../src/components/TransactionTypeSegment';
 
 // TODO: categories to be dynamic from database
 export const CATEGORIES = [
@@ -92,7 +88,7 @@ export default function AddTransaction() {
 
 	const handleDateChange = (newDate: string) => {
 		setDateText(newDate);
-		const parsed = parse(newDate, 'd-M-yyyy', new Date());
+		const parsed = parse(newDate, 'd.M.yyyy', new Date());
 
 		if (isValid(parsed)) {
 			setDate(parsed);
@@ -103,11 +99,11 @@ export default function AddTransaction() {
 
 	const handleDateBlur = () => {
 		if (date) {
-			setDateText(format(date, 'dd-MM-yyyy'));
+			setDateText(format(date, 'dd.MM.yyyy'));
 			setDateError(null);
 		} else {
 			setDateError(
-				i18next.t('Enter correct date in the format DD-MM-YYYY'),
+				i18next.t('Enter correct date in the format dd.mm.yyyy'),
 			);
 		}
 	};
@@ -187,7 +183,6 @@ export default function AddTransaction() {
 							padding={24}
 							width={'30%'}
 							gap={'$4'}
-							background={'red'}
 						>
 							<SizableText size={'$title1'} marginBottom={8}>
 								{i18next.t('Add category')}
@@ -210,22 +205,23 @@ export default function AddTransaction() {
 									onPress={() =>
 										setCategoryModalVisible(false)
 									}
-									borderColor="$buttonPrimary"
-									color="$buttonPrimary"
+									borderColor={'$primary200'}
 									padding={22}
 									alignSelf="center"
 									size={42}
 									fontSize={'$title3'}
 								>
-									<SizableText size={'$title3'}>
+									<SizableText
+										size={'$title3'}
+										color={'$primary200'}
+									>
 										{i18next.t('Cancel')}
 									</SizableText>
 								</Button>
 								<Button
 									onPress={handleAddCategory}
-									backgroundColor={'$primary300'}
+									backgroundColor={'$primary200'}
 									size={42}
-									color={'$white'}
 									padding={22}
 									alignSelf="center"
 									fontSize={'$title3'}
@@ -280,7 +276,7 @@ export default function AddTransaction() {
 								onPress={() => setExpanded(!expanded)}
 								icon={expanded ? ChevronUp : ChevronDown}
 								height="100%"
-								background={'transparent'}
+								background={'$transparent'}
 							></Button>
 						</XStack>
 
@@ -318,7 +314,7 @@ export default function AddTransaction() {
 											marginRight={8}
 											backgroundColor={
 												selected
-													? '$primary500'
+													? '$primary200'
 													: '$white'
 											}
 										>
@@ -427,7 +423,7 @@ export default function AddTransaction() {
 									value={dateText}
 									onChangeText={handleDateChange}
 									onBlur={handleDateBlur}
-									placeholder={i18next.t('DD-MM-YYYY')}
+									placeholder={i18next.t('dd.mm.yyyy')}
 									keyboardType="numeric"
 									height={40}
 									borderRadius={6}
@@ -477,7 +473,7 @@ export default function AddTransaction() {
 									borderRadius={10}
 									padding={4}
 									gap={6}
-									backgroundColor="$segmentWrap"
+									backgroundColor="$primary300"
 								>
 									{(
 										['monthly', 'custom interval'] as const
@@ -494,7 +490,7 @@ export default function AddTransaction() {
 											}}
 											backgroundColor={
 												opt === repeatInterval
-													? '$primary500'
+													? '$primary200'
 													: '$white'
 											}
 										>
@@ -508,6 +504,13 @@ export default function AddTransaction() {
 
 							{repeat && repeatInterval === 'custom interval' && (
 								<YStack>
+									<SizableText size={'$title3'}>
+										{i18next.t('Repeat interval')}
+										<SizableText size={'$title3'}>
+											{' '}
+											*
+										</SizableText>
+									</SizableText>
 									<Input
 										placeholder={i18next.t('day intervals')}
 										value={repeatValue}
@@ -563,7 +566,7 @@ export default function AddTransaction() {
 							marginTop={8}
 							borderRadius={28}
 							paddingVertical={20}
-							backgroundColor="$buttonPrimary"
+							backgroundColor="$primary200"
 							color="$white"
 							disabled={!isValidSubmit}
 							disabledStyle={{
@@ -637,7 +640,7 @@ export default function AddTransaction() {
 										marginTop="15"
 									>
 										<Button
-											backgroundColor={'$primary300'}
+											backgroundColor={'$primary200'}
 											size={42}
 											color={'$white'}
 											padding={22}
@@ -664,12 +667,11 @@ export default function AddTransaction() {
 							marginTop={8}
 							borderRadius={28}
 							paddingVertical={20}
-							borderColor="$buttonPrimary"
+							borderColor={'$primary200'}
 							onPress={handleCancel}
-							color="$buttonPrimary"
 							fontSize={'$title3'}
 						>
-							<SizableText size={'$title3'}>
+							<SizableText size={'$title3'} color={'$primary200'}>
 								{i18next.t('Cancel').toUpperCase()}
 							</SizableText>
 						</Button>

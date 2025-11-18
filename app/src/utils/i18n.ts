@@ -19,8 +19,8 @@ i18next.init({
 				'Rent': 'Rent',
 				'Electricity': 'Electricity',
 				'Water': 'Water',
-				'Enter correct date in the format DD-MM-YYYY':
-					'Enter correct date in the format DD-MM-YYYY',
+				'Enter correct date in the format dd.mm.yyyy':
+					'Enter correct date in the format dd.mm.yyyy',
 				'Add new': 'Add new',
 				'Category': 'Category',
 				'Add category': 'Add category',
@@ -34,6 +34,7 @@ i18next.init({
 				'day intervals': 'day intervals',
 				'monthly': 'monthly',
 				'custom interval': 'custom interval',
+				'Repeat interval': 'Repeat interval',
 				'Additional information': 'Additional information',
 				'Write additional information': 'Write additional information',
 				'Enter a valid amount': 'Enter a valid amount',
@@ -121,7 +122,7 @@ i18next.init({
 				'Rent': 'Vuokra',
 				'Electricity': 'Sähkö',
 				'Water': 'Vesi',
-				'Enter correct date in the format DD-MM-YYYY':
+				'Enter correct date in the format dd.mm.yyyy':
 					'Anna oikea päivämäärä muodossa pp.kk.vvvv',
 				'Add new': 'Lisää uusi',
 				'Category': 'Kategoria',
@@ -132,11 +133,11 @@ i18next.init({
 				'{{transactionType}} name': '{{transactionType}}n nimi',
 				'Amount': 'Määrä',
 				'Date': 'Päivämäärä',
-				'DD-MM-YYYY': 'pp-kk-vvvv',
 				'Does the event repeat?': 'Toistuuko tapahtuma?',
 				'day intervals': 'päivän välein',
 				'monthly': 'kuukausittain',
 				'custom interval': 'oma aikaväli',
+				'Repeat interval': 'Toistuvuuden aikaväli',
 				'Additional information': 'Lisätietoa',
 				'Write additional information': 'Anna lisätietoa',
 				'Enter a valid amount': 'Lisää määrä',
