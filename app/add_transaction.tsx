@@ -19,8 +19,10 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
-import { TransactionTypeSegment } from '../src/components/TransactionTypeSegment';
-import { TransactionType } from '../src/components/TransactionTypeSegment';
+import {
+	TransactionType,
+	TransactionTypeSegment,
+} from '../src/components/TransactionTypeSegment';
 
 // TODO: categories to be dynamic from database
 export const CATEGORIES = [
