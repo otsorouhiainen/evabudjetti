@@ -1,4 +1,5 @@
 import { Text } from '@ui-kitten/components';
+import i18next from 'i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { TransactionType } from '../../app/add_transaction';
 import { customTheme } from '../theme/eva-theme';
@@ -34,7 +35,7 @@ export const TransactionTypeSegment: React.FC<TransactionTypeSegmentProps> = ({
 							: { color: customTheme['color-primary-500'] },
 					]}
 				>
-					{opt}
+					{i18next.t(opt).toUpperCase()}
 				</Text>
 			</TouchableOpacity>
 		))}
