@@ -19,7 +19,7 @@ const CounterDisplay = () => {
 
 	return (
 		<View style={styles.container}>
-			<Button title="Add Planned Transaction" onPress={() => addTransaction({ name: 'New Transaction', type: 'expense', amount: 50, reoccurence: 'monthly', date: new Date() })} />
+			<Button title="Add Planned Transaction" onPress={() => addTransaction({ id: 3, name: 'New Transaction', type: 'expense', amount: 50, reoccurence: 'monthly', date: new Date() })} />
 			<Text style={styles.text}>Planned Transactions Count: {transactions.length}</Text>
 			{transactions.map((t, idx) => (<Text key={idx} style={styles.text}>{t.name}</Text>))}
 
