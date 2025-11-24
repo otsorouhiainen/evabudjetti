@@ -1,61 +1,40 @@
-import { Text } from '@ui-kitten/components';
 import i18next from 'i18next';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { TransactionType } from '../../app/add_transaction';
-import { customTheme } from '../theme/eva-theme';
+import { Button, SizableText, XStack } from 'tamagui';
 
 interface TransactionTypeSegmentProps {
 	type: TransactionType;
 	setType: (type: TransactionType) => void;
 }
 
+export enum TransactionType {
+	Income = 'Income',
+	Expense = 'Expense',
+}
+
 export const TransactionTypeSegment: React.FC<TransactionTypeSegmentProps> = ({
 	type,
 	setType,
 }) => (
-	<View style={styles.segmentWrap}>
+	<XStack
+		alignSelf="flex-start"
+		borderRadius={24}
+		padding={4}
+		gap={6}
+		backgroundColor="$primary300"
+	>
 		{[TransactionType.Income, TransactionType.Expense].map((opt) => (
-			<TouchableOpacity
+			<Button
 				key={opt}
-				activeOpacity={0.9}
 				onPress={() => setType(opt)}
-				style={[
-					styles.segmentItem,
-					opt === type && {
-						backgroundColor: customTheme['color-primary-500'],
-					},
-				]}
+				backgroundColor={opt === type ? '$primary200' : '$white'}
+				borderRadius={20}
+				padding={16}
+				paddingHorizontal={16}
 			>
-				<Text
-					category="s1"
-					style={[
-						styles.segmentText,
-						opt === type
-							? { color: customTheme['color-white'] }
-							: { color: customTheme['color-primary-500'] },
-					]}
-				>
+				<SizableText fontWeight="700">
 					{i18next.t(opt).toUpperCase()}
-				</Text>
-			</TouchableOpacity>
+				</SizableText>
+			</Button>
 		))}
-	</View>
+	</XStack>
 );
-
-const styles = StyleSheet.create({
-	segmentWrap: {
-		flexDirection: 'row',
-		alignSelf: 'flex-start',
-		backgroundColor: customTheme['color-segment-wrap'],
-		borderRadius: 24,
-		padding: 4,
-		gap: 6,
-	},
-	segmentItem: {
-		paddingVertical: 6,
-		paddingHorizontal: 16,
-		borderRadius: 20,
-		backgroundColor: customTheme['color-white'],
-	},
-	segmentText: { fontWeight: '700' },
-});
