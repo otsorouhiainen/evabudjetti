@@ -1,5 +1,5 @@
-import { Button, StyleSheet, Text, View } from 'react-native';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import useCounterStore from '../src/store/useCounterStore'; // Adjust the import path
 import usePersistantCounterStore from '../src/store/usePersistantCounterStore';
 
@@ -27,6 +27,7 @@ const CounterDisplay = () => {
 					addTransaction({
 						id: 3,
 						name: 'New Transaction',
+						category: 'Utilities',
 						type: 'expense',
 						amount: 50,
 						reoccurence: 'monthly',
