@@ -1,4 +1,5 @@
-import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
+import useLanguageStore from '@/src/store/useLanguageStore';
+import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import i18next from 'i18next';
 import { useState } from 'react';
@@ -7,6 +8,8 @@ import { Button, SizableText, Stack, XStack, YStack } from 'tamagui';
 export default function Landing() {
 	const router = useRouter();
 	const [helpVisible, setHelpVisible] = useState(false);
+	const language = useLanguageStore((state) => state.language);
+	const change = useLanguageStore((state) => state.change);
 
 	return (
 		<>
@@ -88,6 +91,18 @@ export default function Landing() {
 						>
 							{i18next.t('Supporting your financial well-being')}
 						</SizableText>
+
+						<XStack>
+							<Button
+								icon={Globe}
+								onPress={() =>
+									change(language === 'en' ? 'fi' : 'en')
+								}
+							>
+								{language === 'fi' ? 'Suomi' : 'English'}
+							</Button>
+						</XStack>
+
 						<Button
 							disabled
 							transparent
