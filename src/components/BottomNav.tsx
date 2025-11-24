@@ -29,7 +29,7 @@ const NavButton = ({
 	/>
 );
 
-type RouteString = '/landing' | '/add_transaction' | '/budget' | '/spending';
+type RouteString = '/landing' | '/add_transaction' | '/budget' | '/summary';
 
 interface BottomNavOption {
 	icon: ReactElement;
@@ -49,7 +49,10 @@ const bottomNavOptions: BottomNavOption[] = [
 		icon: <Wallet size={'$icons.md'} />,
 		route: '/budget',
 	},
-	{ icon: <ChartColumn size={'$icons.md'} />, route: '/spending' },
+	{
+		icon: <ChartColumn size={'$icons.md'} />,
+		route: '/summary',
+	},
 ];
 
 export const BottomNav = () => {
