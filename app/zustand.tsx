@@ -1,8 +1,11 @@
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import useCounterStore from '../src/store/useCounterStore'; // Adjust the import path
 import usePersistantCounterStore from '../src/store/usePersistantCounterStore';
 
 const CounterDisplay = () => {
+	const transactions = usePlannedTransactionsStore((state) => state.transactions);
+	const addTransaction = usePlannedTransactionsStore((state) => state.add);
 	const count = useCounterStore((state) => state.count);
 	const persCount = usePersistantCounterStore((state) => state.count);
 
@@ -16,6 +19,11 @@ const CounterDisplay = () => {
 
 	return (
 		<View style={styles.container}>
+			<Button title="Add Planned Transaction" onPress={() => addTransaction({ name: 'New Transaction', type: 'expense', amount: 50, reoccurence: 'monthly', date: new Date() })} />
+			<Text style={styles.text}>Planned Transactions Count: {transactions.length}</Text>
+			{transactions.map((t, idx) => (<Text key={idx} style={styles.text}>{t.name}</Text>))}
+
+		
 			<Text style={styles.text}>This count will reset on refresh</Text>
 			<Text style={styles.text}>The current count is: {count}</Text>
 
