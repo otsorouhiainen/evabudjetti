@@ -251,7 +251,7 @@ export default function AddTransaction() {
 						paddingTop={24}
 						paddingHorizontal={20}
 						gap={18}
-						width={'30%'}
+						width={'100%'}
 					>
 						{/* Top header */}
 						<SizableText size={'$title1'}>
