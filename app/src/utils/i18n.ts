@@ -19,8 +19,8 @@ i18next.init({
 				'Rent': 'Rent',
 				'Electricity': 'Electricity',
 				'Water': 'Water',
-				'Enter correct date in the format DD-MM-YYYY':
-					'Enter correct date in the format DD-MM-YYYY',
+				'Enter correct date in the format dd.mm.yyyy':
+					'Enter correct date in the format dd.mm.yyyy',
 				'Add new': 'Add new',
 				'Category': 'Category',
 				'Add category': 'Add category',
@@ -34,6 +34,7 @@ i18next.init({
 				'day intervals': 'day intervals',
 				'monthly': 'monthly',
 				'custom interval': 'custom interval',
+				'Repeat interval': 'Repeat interval',
 				'Additional information': 'Additional information',
 				'Write additional information': 'Write additional information',
 				'Enter a valid amount': 'Enter a valid amount',
@@ -95,7 +96,7 @@ i18next.init({
 				// LANDING
 				'Help': 'Help',
 				'Welcome to the budgeting app!':
-					'Welcome to the budgeting app! ...',
+					'Welcome to the budget app! Use the bottom navigation buttons to move between sections. Add an income or expense by pressing "Add income/expense". You can view and edit your budget and see a summary of your finances.',
 				'CLOSE': 'CLOSE',
 				'Supporting your financial well-being':
 					'Supporting your financial well-being',
@@ -105,6 +106,8 @@ i18next.init({
 				'ADD INCOME/EXPENSE': 'ADD INCOME/EXPENSE',
 				'EDIT BUDGET': 'EDIT BUDGET',
 				'SHOW BUDGET': 'SHOW BUDGET',
+				'EVA Personal Budget': 'EVA Personal Budget',
+				'VIEW DETAILS': 'VIEW DETAILS',
 			},
 		},
 		fi: {
@@ -121,7 +124,7 @@ i18next.init({
 				'Rent': 'Vuokra',
 				'Electricity': 'Sähkö',
 				'Water': 'Vesi',
-				'Enter correct date in the format DD-MM-YYYY':
+				'Enter correct date in the format dd.mm.yyyy':
 					'Anna oikea päivämäärä muodossa pp.kk.vvvv',
 				'Add new': 'Lisää uusi',
 				'Category': 'Kategoria',
@@ -132,11 +135,11 @@ i18next.init({
 				'{{transactionType}} name': '{{transactionType}}n nimi',
 				'Amount': 'Määrä',
 				'Date': 'Päivämäärä',
-				'DD-MM-YYYY': 'pp-kk-vvvv',
 				'Does the event repeat?': 'Toistuuko tapahtuma?',
 				'day intervals': 'päivän välein',
 				'monthly': 'kuukausittain',
 				'custom interval': 'oma aikaväli',
+				'Repeat interval': 'Toistuvuuden aikaväli',
 				'Additional information': 'Lisätietoa',
 				'Write additional information': 'Anna lisätietoa',
 				'Enter a valid amount': 'Lisää määrä',
@@ -209,7 +212,7 @@ i18next.init({
 
 				// LANDING
 				'Welcome to the budgeting app!':
-					'Tervetuloa budjettisovellukseen! ...',
+					'Tervetuloa budjettisovellukseen! Käytä alaosan navigointipainikkeita siirtyäksesi osioiden välillä. Lisää tulo tai meno painamalla "Lisää tulo/meno". Voit tarkastella ja muokata budjettiasi sekä nähdä yhteenvedon taloudestasi.',
 				'Supporting your financial well-being':
 					'Taloudenhallintasi tueksi',
 				'Money in account': 'Tilillä rahaa',
@@ -218,6 +221,8 @@ i18next.init({
 				'ADD INCOME/EXPENSE': 'LISÄÄ TULO/MENO',
 				'EDIT BUDGET': 'MUOKKAA BUDJETTIA',
 				'SHOW BUDGET': 'NÄYTÄ BUDJETTI',
+				'EVA Personal Budget': 'EVA henkilökohtainen budjetti',
+				'VIEW DETAILS': 'NÄYTÄ TIEDOT',
 			},
 		},
 	},
