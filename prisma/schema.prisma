@@ -82,6 +82,27 @@ model RecurringTransaction {
   @@index([categoryId])
 }
 
+// This is used for budgeting dynamic transactions with a certain
+// e.g 'I aim to spend 300 on groceries'. But the real amount might differ
+model TransactionTarget {
+  id		String id @default(cuid())
+  description	String
+  amount	Int
+  rrule		String
+  createdAt 	DateTime @default(now())
+  updatedAt	DateTime @updatedAt
+
+  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  budgetId Int    @default(1) // Always links to the Budget with id = 1.
+
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  categoryId String
+
+  @@index([budgetId])
+  @@index([categoryId])
+}
+
+
 // A single, concrete transaction that has occurred.
 // Recurring transactions get realized into one time
 model OneTimeTransaction {
