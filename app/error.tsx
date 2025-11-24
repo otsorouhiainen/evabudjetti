@@ -9,6 +9,7 @@ import {
 } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { useRouter } from 'expo-router';
+import i18next from 'i18next';
 import { StyleSheet, View } from 'react-native';
 import { BottomNav } from '../src/components/BottomNav';
 import { customTheme } from '../src/theme/eva-theme';
@@ -46,7 +47,7 @@ export default function Err() {
 							}}
 						>
 							<Text>404</Text>
-							<Text>Jokin meni pieleen</Text>
+							<Text>{i18next.t('Something went wrong')}</Text>
 						</View>
 
 						<Button
@@ -60,7 +61,7 @@ export default function Err() {
 							]}
 							onPress={() => router.push('/landing')}
 						>
-							PALAA ETUSIVULLE
+							{i18next.t('Back to home').toUpperCase()}
 						</Button>
 
 						{/* Bottom nav */}

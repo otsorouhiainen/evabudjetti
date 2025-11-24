@@ -1,5 +1,6 @@
 import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
+import i18next from 'i18next';
 import { useState } from 'react';
 import { Button, SizableText, Stack, XStack, YStack } from 'tamagui';
 
@@ -40,10 +41,10 @@ export default function Landing() {
 						gap={'$3'}
 					>
 						<SizableText size={'$title1'} marginBottom={8}>
-							Ohjeet
+							{i18next.t('Help')}
 						</SizableText>
 						<SizableText size={'$title2'} marginBottom={16}>
-							Tervetuloa budjettisovellukseen! ...
+							{i18next.t('Welcome to the budgeting app!')}
 						</SizableText>
 						<Button
 							onPress={() => setHelpVisible(false)}
@@ -53,7 +54,7 @@ export default function Landing() {
 							padding={22}
 							alignSelf="center"
 						>
-							SULJE
+							{i18next.t('CLOSE')}
 						</Button>
 					</YStack>
 				</Stack>
@@ -85,7 +86,7 @@ export default function Landing() {
 							size={'$title2'}
 							hoverStyle={{ cursor: 'help' }}
 						>
-							Taloudenhallintasi tueksi
+							{i18next.t('Supporting your financial well-being')}
 						</SizableText>
 						<Button
 							disabled
@@ -93,7 +94,7 @@ export default function Landing() {
 							icon={<PiggyBank />}
 							size={200}
 							marginBottom={-190}
-							color={'$primary300'}
+							color={'$primary100'}
 						></Button>
 					</YStack>
 
@@ -133,7 +134,7 @@ export default function Landing() {
 						alignItems="center"
 						paddingVertical={16}
 						gap={6}
-						backgroundColor={'$white'}
+						backgroundColor={'$color.white'}
 						shadowColor={'$black'}
 						shadowOffset={{ width: 0, height: 2 }}
 						shadowOpacity={0.15}
@@ -149,13 +150,13 @@ export default function Landing() {
 						</SizableText>
 						<YStack>
 							<SizableText size={'$title2'}>
-								Tilillä rahaa:{' '}
+								{i18next.t('Money in account')}:{' '}
 								<SizableText size={'$title3'} fontWeight={'$4'}>
 									1234€
 								</SizableText>
 							</SizableText>
 							<SizableText size={'$title2'}>
-								Käyttövara:{' '}
+								{i18next.t('Disposable income')}:{' '}
 								<SizableText size={'$title3'} fontWeight={'$4'}>
 									123€
 								</SizableText>
@@ -164,12 +165,12 @@ export default function Landing() {
 						<Button
 							marginTop={10}
 							alignSelf="center"
-							backgroundColor={'$primary500'}
+							backgroundColor={'$primary200'}
 							color={'$white'}
 							padding={22}
 							size={32}
 						>
-							TARKASTELE
+							{i18next.t('EXAMINE')}
 						</Button>
 					</YStack>
 
@@ -179,11 +180,11 @@ export default function Landing() {
 						marginTop={8}
 						borderRadius={28}
 						paddingVertical={20}
-						backgroundColor="$primary300"
+						backgroundColor="$primary200"
 						color="$white"
 						onPress={() => router.push('/add_transaction')}
 					>
-						LISÄÄ TULO/MENO
+						{i18next.t('ADD INCOME/EXPENSE')}
 					</Button>
 
 					{/* Secondary CTAs */}
@@ -193,11 +194,11 @@ export default function Landing() {
 							size={'$4'}
 							borderRadius={18}
 							padding={20}
-							backgroundColor={'$primary300'}
+							backgroundColor={'$primary200'}
 							color={'$white'}
 							onPress={() => router.push('/budget')}
 						>
-							NÄYTÄ BUDJETTI
+							{i18next.t('SHOW BUDGET')}
 						</Button>
 						<Button
 							flex={1}
@@ -205,9 +206,9 @@ export default function Landing() {
 							borderRadius={18}
 							padding={20}
 							color={'$white'}
-							backgroundColor={'$primary300'}
+							backgroundColor={'$primary200'}
 						>
-							MUOKKAA BUDJETTIA
+							{i18next.t('EDIT BUDGET')}
 						</Button>
 					</XStack>
 					<YStack height={48} />
