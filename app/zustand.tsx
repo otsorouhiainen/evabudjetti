@@ -1,5 +1,5 @@
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import { Button, StyleSheet, Text, View } from 'react-native';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import useCounterStore from '../src/store/useCounterStore'; // Adjust the import path
 import usePersistantCounterStore from '../src/store/usePersistantCounterStore';
 
@@ -37,8 +37,8 @@ const CounterDisplay = () => {
 			<Text style={styles.text}>
 				Planned Transactions Count: {transactions.length}
 			</Text>
-			{transactions.map((t, idx) => (
-				<Text key={idx} style={styles.text}>
+			{transactions.map((t) => (
+				<Text key={t.name} style={styles.text}>
 					{t.name}
 				</Text>
 			))}

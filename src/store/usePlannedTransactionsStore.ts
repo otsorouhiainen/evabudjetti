@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { Item } from '../constants/wizardConfig';
+import type { Item } from '../constants/wizardConfig';
+
 interface PlannedTransactionsState {
 	transactions: Item[];
 	add: (item: Item) => void;

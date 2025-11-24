@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Item } from '../constants/wizardConfig';
+import type { Item } from '../constants/wizardConfig';
 
 interface RealTransactionsState {
 	transactions: Item[];
