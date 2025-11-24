@@ -1,10 +1,13 @@
 export type Reoccurence = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom';
-
+export type TransactionType = 'income' | 'expense';
 export interface Item {
+	id: number;
 	name: string;
+	type: TransactionType;
 	amount: number;
 	reoccurence: Reoccurence;
-	dates: Date[];
+	reoccurenceInterval?: number;
+	date: Date;
 }
 
 export interface BudgetWizardStep {
@@ -17,16 +20,20 @@ export const BUDGET_WIZARD_STEPS: BudgetWizardStep[] = [
 		header: 'Step 1',
 		items: [
 			{
+				id: 1,
 				name: 'Item 1',
+				type: 'income',
 				amount: 100,
 				reoccurence: 'monthly',
-				dates: [new Date()],
+				date: new Date(),
 			},
 			{
+				id: 2,
 				name: 'Item 1.2',
+				type: 'income',
 				amount: 150,
 				reoccurence: 'monthly',
-				dates: [new Date()],
+				date: new Date(),
 			},
 		],
 	},
@@ -34,10 +41,12 @@ export const BUDGET_WIZARD_STEPS: BudgetWizardStep[] = [
 		header: 'Step 2',
 		items: [
 			{
+				id: 3,
 				name: 'Item 2',
+				type: 'expense',
 				amount: 200,
 				reoccurence: 'yearly',
-				dates: [new Date()],
+				date: new Date(),
 			},
 		],
 	},
@@ -45,10 +54,12 @@ export const BUDGET_WIZARD_STEPS: BudgetWizardStep[] = [
 		header: 'Step 3',
 		items: [
 			{
+				id: 4,
 				name: 'Item 3',
+				type: 'expense',
 				amount: 300,
 				reoccurence: 'custom',
-				dates: [new Date()],
+				date: new Date(),
 			},
 		],
 	},

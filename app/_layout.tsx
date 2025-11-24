@@ -7,6 +7,7 @@ import {
 	FiraSans_600SemiBold,
 	FiraSans_700Bold,
 	FiraSans_800ExtraBold,
+	useFonts,
 } from '@expo-google-fonts/fira-sans';
 import { TamaguiProvider, Theme } from '@tamagui/core';
 import { Stack } from 'expo-router';
