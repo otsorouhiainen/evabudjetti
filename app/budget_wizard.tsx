@@ -1,5 +1,6 @@
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import { Plus, Trash2 } from '@tamagui/lucide-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Input, Progress, SizableText, XStack } from 'tamagui';
 import AddItemPopup from '../src/components/AddItemPopup';
@@ -11,8 +12,56 @@ import {
 } from '../src/constants/wizardConfig';
 
 export default function BudgetWizard() {
+	const transactions = usePlannedTransactionsStore(
+		(state) => state.transactions,
+	);
+	const replaceAll = usePlannedTransactionsStore((state) => state.replaceAll);
 	const [stepIndex, setStepIndex] = useState(0);
-	const [wizardData, setWizardData] = useState(BUDGET_WIZARD_STEPS);
+	const [wizardData, setWizardData] = useState<BudgetWizardStep[]>(
+		BUDGET_WIZARD_STEPS,
+	);
+
+	useEffect(() => {
+		// when transactions arrive asynchronously, populate wizard steps from them
+		if (!transactions || transactions.length === 0) return;
+
+		const incomeItems: Item[] = transactions
+			.filter((t) => t.type === 'income')
+			.map((t) => ({
+				id: t.id,
+				name: t.name,
+				type: t.type,
+				category: t.category,
+				amount: t.amount,
+				date: t.date,
+				reoccurence: t.reoccurence,
+				reoccurenceInterval: t.reoccurenceInterval,
+			}));
+
+		const expenseItems: Item[] = transactions
+			.filter((t) => t.type === 'expense')
+			.map((t) => ({
+				id: t.id,
+				name: t.name,
+				type: t.type,
+				category: t.category,
+				amount: t.amount,
+				date: t.date,
+				reoccurence: t.reoccurence,
+				reoccurenceInterval: t.reoccurenceInterval,
+			}));
+			console.log('yay', expenseItems);
+		setWizardData([
+			{
+				header: 'Income',
+				items: incomeItems,
+			},
+			{
+				header: 'Expenses',
+				items: expenseItems,
+			},
+		]);
+	}, [transactions]);
 	const [popupVisible, setPopupVisible] = useState(false);
 	const currentStep = wizardData[stepIndex];
 	const progressBarValue = ((stepIndex + 1) * 100) / wizardData.length;
@@ -28,6 +77,7 @@ export default function BudgetWizard() {
 					: step,
 			);
 		});
+		console.log('tx', transactions, wizardData);
 	}
 
 	function deleteItem(item: Item) {
@@ -207,11 +257,13 @@ export default function BudgetWizard() {
 						borderRadius={28}
 						style={styles.footerButton}
 						backgroundColor="$primary300"
-						onPress={() =>
+						onPress={() => {
+							const allItems: Item[] = wizardData.flatMap((step) => step.items);
 							console.log(
-								'Placeholder for finishing budget creation',
-								progressBarValue,
+								'yep', allItems
 							)
+							replaceAll(allItems);
+						}
 						}
 					>
 						<SizableText color="$white" size="$title1">
