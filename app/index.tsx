@@ -11,7 +11,7 @@ export default function Index() {
 				alignItems: 'center',
 			}}
 		>
-			<Link href="/landing">Default</Link>
+			<Link href="/budget_wizard">Default</Link>
 		</View>
 	);
 }
