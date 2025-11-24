@@ -1,73 +1,132 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, Tabs, Text, XStack, YStack } from 'tamagui';
-import { StyledTab } from './src/components/StyledTab';
-import {BudgetYearView} from './src/components/BudgetYearView'
-import { 
-  parseTxnDate, 
-  isValidDate 
-} from './src/utils/budgetUtils';
+import type { Item } from '../src/constants/wizardConfig';
 import { BudgetDayView } from './src/components/BudgetDayView';
 import { BudgetMonthView } from './src/components/BudgetMonthView';
-import type { Txn } from './src/constants/budget';
+import { BudgetYearView } from './src/components/BudgetYearView';
+import { StyledTab } from './src/components/StyledTab';
+import { isValidDate, parseTxnDate } from './src/utils/budgetUtils';
 
+const currentYear = new Date().getFullYear();
+const getDate = (day: string, month: string) =>
+	parseTxnDate(`${day}.${month}.${currentYear}`);
 
-const MOCK_TX: Txn[] = [
-	{ id: '1', name: 'Rent', date: parseTxnDate('22.10.2026'), amount: -830.5 },
+const MOCK_TX: Item[] = [
 	{
-		id: '2',
+		id: 1,
+		name: 'Rent',
+		category: 'Housing',
+		type: 'expense',
+		date: getDate('22', '12'),
+		amount: -830.5,
+		reoccurence: 'monthly',
+		reoccurenceInterval: 1,
+	},
+	{
+		id: 2,
 		name: 'Study benefit',
-		date: parseTxnDate('25.10.2025'),
-		amount: +280,
+		category: 'Benefits',
+		type: 'income',
+		date: getDate('25', '12'),
+		amount: 280,
+		reoccurence: 'monthly',
+		reoccurenceInterval: 1,
 	},
 	{
-		id: '3',
+		id: 3,
 		name: 'Study loan',
-		date: parseTxnDate('06.10.2025'),
-		amount: +300,
+		category: 'Loans',
+		type: 'income',
+		date: getDate('06', '12'),
+		amount: 300,
+		reoccurence: 'monthly',
+		reoccurenceInterval: 1,
 	},
-	{ id: '4', name: 'Pet', date: parseTxnDate('20.10.2026'), amount: -60 },
 	{
-		id: '5',
+		id: 4,
+		name: 'Pet food',
+		category: 'Pets',
+		type: 'expense',
+		date: getDate('20', '12'),
+		amount: -60,
+		reoccurence: 'monthly',
+		reoccurenceInterval: 1,
+	},
+	{
+		id: 5,
 		name: 'Phone bill',
-		date: parseTxnDate('01.10.2026'),
+		category: 'Communication',
+		type: 'expense',
+		date: getDate('01', '12'),
 		amount: -27,
+		reoccurence: 'monthly',
+		reoccurenceInterval: 1,
 	},
 	{
-		id: '6',
+		id: 6,
 		name: 'Netflix',
-		date: parseTxnDate('22.10.2025'),
+		category: 'Entertainment',
+		type: 'expense',
+		date: getDate('22', '12'),
 		amount: -12.99,
+		reoccurence: 'monthly',
+		reoccurenceInterval: 1,
 	},
 	{
-		id: '7',
+		id: 7,
 		name: 'Spotify',
-		date: parseTxnDate('13.10.2025'),
+		category: 'Entertainment',
+		type: 'expense',
+		date: getDate('13', '10'),
 		amount: -15.99,
+		reoccurence: 'monthly',
+		reoccurenceInterval: 1,
 	},
-	{ id: '8', name: 'Water', date: parseTxnDate('11.10.2025'), amount: -25 },
 	{
-		id: '9',
+		id: 8,
+		name: 'Water',
+		category: 'Utilities',
+		type: 'expense',
+		date: getDate('11', '10'),
+		amount: -25,
+		reoccurence: 'monthly',
+		reoccurenceInterval: 1,
+	},
+	{
+		id: 9,
 		name: 'Salary',
-		date: parseTxnDate('15.10.2025'),
+		category: 'Income',
+		type: 'income',
+		date: getDate('15', '10'),
 		amount: 340.79,
+		reoccurence: 'monthly',
+		reoccurenceInterval: 1,
 	},
 	{
-		id: '10',
-		name: 'additional benefit',
-		date: parseTxnDate('01.10.2025'),
+		id: 10,
+		name: 'Housing Benefit',
+		category: 'Benefits',
+		type: 'income',
+		date: getDate('01', '10'),
 		amount: 150,
+		reoccurence: 'monthly',
+		reoccurenceInterval: 1,
 	},
 ];
 
 export default function Budget() {
 	const [editOpen, setEditVisible] = useState(false);
-	const [editingTxn, setEditingTxn] = useState<Txn | null>(null);
+	const [editingTxn, setEditingTxn] = useState<Item | null>(null);
 	const [currentDate, setcurrentDate] = useState(new Date());
-	const [transactions, setTransactions] = useState<Txn[]>(MOCK_TX);
+	const [transactions, setTransactions] = useState<Item[]>(MOCK_TX);
 	const [selectedTab, setSelectedTab] = useState('day');
 	const [error, setError] = useState('');
 	const [dateInput, setDateInput] = useState('');
+	const [amountInput, setAmountInput] = useState(''); // Add this new state
+
+	const router = useRouter();
 
 	const handleSave = () => {
 		if (!editingTxn) return;
@@ -92,22 +151,21 @@ export default function Budget() {
 			setEditingTxn((prev) => (prev ? { ...prev, date: newDate } : prev));
 		} else {
 			setError('Invalid date, use format: dd.mm.yyyy');
-			// leave txn.date as-is
 		}
 	};
 
 	const handleAmountChange = (text: string) => {
-		setEditingTxn((prev) => {
-			if (!prev) return prev;
+		setAmountInput(text); // Store the input string
 
-			// Allow empty string or just "-" without forcing a number
-			if (text === '' || text === '-') {
-				return { ...prev, amount: text }; // or add a separate `amountInput` field
-			}
+		// Allow empty string or just "-" without updating the transaction
+		if (text === '' || text === '-') {
+			return;
+		}
 
-			const num = Number(text);
-			return Number.isFinite(num) ? { ...prev, amount: num } : prev;
-		});
+		const num = Number(text);
+		if (Number.isFinite(num) && num !== 0) {
+			setEditingTxn((prev) => (prev ? { ...prev, amount: num } : prev));
+		}
 	};
 
 	return (
@@ -177,31 +235,28 @@ export default function Budget() {
 							</Text>
 						</StyledTab>
 					</Tabs.List>
-					<Tabs.Content value="day">
-						<BudgetDayView 
+					<Tabs.Content value="day" flex={1}>
+						<BudgetDayView
 							currentDate={currentDate}
 							transactions={transactions}
 							setInputDate={setDateInput}
 							setEditVisible={setEditVisible}
 							setEditingTxn={setEditingTxn}
 							onAddPress={() => {
-								setEditVisible(true);
-								setEditingTxn({
-									id: Math.random().toString(),
-									name: '',
-									date: currentDate,
-									amount: '',
-								});
+								router.push('/add_transaction');
 							}}
 							onEditPress={(txn) => {
 								setEditingTxn(txn);
 								setEditVisible(true);
-								setDateInput(txn.date.toLocaleDateString('fi-FI')); // or your formatting util
+								setDateInput(
+									txn.date.toLocaleDateString('fi-FI'),
+								);
+								setAmountInput(String(txn.amount)); // Initialize amount input
 							}}
 						/>
 					</Tabs.Content>
-					<Tabs.Content value="month">
-					    <BudgetMonthView
+					<Tabs.Content value="month" flex={1}>
+						<BudgetMonthView
 							currentDate={currentDate}
 							transactions={transactions}
 							onDateChange={setcurrentDate}
@@ -211,7 +266,7 @@ export default function Budget() {
 							editOpen={editOpen}
 						/>
 					</Tabs.Content>
-					<Tabs.Content value="year">
+					<Tabs.Content value="year" flex={1}>
 						<BudgetYearView
 							ReceivedCurrentDate={currentDate}
 							transactions={transactions}
@@ -280,7 +335,7 @@ export default function Budget() {
 							keyboardType="numeric"
 							maxLength={9}
 							borderRadius={'$2'}
-							value={String(editingTxn?.amount || '')}
+							value={amountInput} // Use amountInput state
 							onChangeText={handleAmountChange}
 							borderColor={
 								editingTxn?.amount === 0

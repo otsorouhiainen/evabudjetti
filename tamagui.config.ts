@@ -190,7 +190,7 @@ const configDefinition = {
 		mb: 'marginBottom',
 		ml: 'marginLeft',
 		mr: 'marginRight',
-		pb: 'paddingBottom'
+		pb: 'paddingBottom',
 	} as const,
 } as const;
 
