@@ -19,11 +19,11 @@ const useRealTransactionsStore = create<RealTransactionsState>()((set) => ({
 		set((state) => {
 			// remove by matching id
 			const id = item.id;
-				if (id === undefined) return state;
-				const newTransactions = state.transactions.filter(
-					(t) => t.id !== id,
-				);
-				return { ...state, transactions: newTransactions };
+			if (id === undefined) return state;
+			const newTransactions = state.transactions.filter(
+				(t) => t.id !== id,
+			);
+			return { ...state, transactions: newTransactions };
 		});
 	},
 	change: () => {

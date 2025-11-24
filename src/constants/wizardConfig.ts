@@ -1,4 +1,10 @@
-export type Reoccurence = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom';
+export type Reoccurence =
+	| 'none'
+	| 'daily'
+	| 'weekly'
+	| 'monthly'
+	| 'yearly'
+	| 'custom';
 export type TransactionType = 'income' | 'expense';
 export interface Item {
 	id: number;
