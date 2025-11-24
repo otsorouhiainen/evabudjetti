@@ -1,5 +1,4 @@
 // do not remove
-// biome-ignore lint/correctness/noUnusedImports: these are here for compiler, actual font import handled in tamagui config
 import { TamaguiProvider, Theme } from '@tamagui/core';
 import { Stack } from 'expo-router';
 import { BottomNav } from '@/src/components/BottomNav';
