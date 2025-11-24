@@ -8,7 +8,6 @@ import { Button, SizableText, Stack, XStack, YStack } from 'tamagui';
 export default function Landing() {
 	const router = useRouter();
 	const [helpVisible, setHelpVisible] = useState(false);
-
 	return (
 		<>
 			{/* Help Modal */}
@@ -45,18 +44,14 @@ export default function Landing() {
 							marginBottom={8}
 							fontFamily="$heading"
 						>
-							Help
+							{i18next.t('Help')}
 						</SizableText>
 						<SizableText
 							size={'$title2'}
 							marginBottom={16}
 							fontFamily="$body"
 						>
-							Welcome to the budget app! Use the bottom navigation
-							buttons to move between sections. Add an income or
-							expense by pressing "Add income/expense". You can
-							view and edit your budget and see a summary of your
-							finances.
+							{i18next.t('Help Disposable income')}
 						</SizableText>
 						<Button
 							onPress={() => setHelpVisible(false)}
@@ -71,7 +66,7 @@ export default function Landing() {
 								fontWeight="400"
 								color="$white"
 							>
-								CLOSE
+								{i18next.t('CLOSE')}
 							</SizableText>
 						</Button>
 					</YStack>
@@ -104,14 +99,16 @@ export default function Landing() {
 								size={'$title1'}
 								fontFamily="$heading"
 							>
-								EVA Personal Budget
+								{i18next.t('EVA Personal Budget')}
 							</SizableText>
 							<SizableText
 								size={'$title2'}
 								fontFamily="$body"
 								hoverStyle={{ cursor: 'help' }}
 							>
-								Helping you manage your finances
+								{i18next.t(
+									'Supporting your financial well-being',
+								)}
 							</SizableText>
 							<Button
 								disabled
@@ -179,7 +176,7 @@ export default function Landing() {
 									size={'$title2'}
 									fontFamily="$body"
 								>
-									Account balance:{' '}
+									{i18next.t('Money in account')}{' '}
 									<SizableText
 										size={'$title3'}
 										fontWeight={'$4'}
@@ -192,7 +189,7 @@ export default function Landing() {
 									size={'$title2'}
 									fontFamily="$body"
 								>
-									Discretionary:{' '}
+									{i18next.t('Disposable income')}{' '}
 									<SizableText
 										size={'$title3'}
 										fontWeight={'$4'}
@@ -215,7 +212,7 @@ export default function Landing() {
 									fontWeight="400"
 									color="$white"
 								>
-									VIEW DETAILS
+									{i18next.t('VIEW DETAILS')}
 								</SizableText>
 							</Button>
 						</YStack>
@@ -229,7 +226,7 @@ export default function Landing() {
 							onPress={() => router.push('/add_transaction')}
 						>
 							<SizableText fontFamily="$body" color="$white">
-								ADD INCOME/EXPENSE
+								{i18next.t('ADD INCOME/EXPENSE')}
 							</SizableText>
 						</Button>
 
@@ -248,7 +245,7 @@ export default function Landing() {
 									fontWeight="400"
 									color="$white"
 								>
-									VIEW BUDGET
+									{i18next.t('SHOW BUDGET')}
 								</SizableText>
 							</Button>
 							<Button
@@ -263,7 +260,7 @@ export default function Landing() {
 									fontWeight="400"
 									color="$white"
 								>
-									EDIT BUDGET
+									{i18next.t('EDIT BUDGET')}
 								</SizableText>
 							</Button>
 						</XStack>
