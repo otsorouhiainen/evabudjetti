@@ -1,8 +1,6 @@
 /// Fake data for testing
-//  had to run 'pnpm add -D @types/node' to get this working
 //  prisma.config.ts added to root to get following commands working
-//  First run 'pnpm prisma migrate dev' to init prisma
-//  then run 'pnpm prisma db seed' to add the data locally
+//  first run 'pnpm prisma migrate reset'
 //  then 'pnpm prisma studio' if you want to explore data in your browser
 
 const { PrismaClient } = require('@prisma/client');
