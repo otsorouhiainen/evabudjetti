@@ -17,14 +17,12 @@ const useRealTransactionsStore = create<RealTransactionsState>()((set) => ({
 	},
 	remove: (item: Item) => {
 		set((state) => {
-			// remove by matching name
-			const name = item.name;
-			if (name === undefined) return state;
-			const idx = state.transactions.findIndex((t) => t.name === name);
-			if (idx === -1) return state;
-			const newTransactions = state.transactions
-				.slice(0, idx)
-				.concat(state.transactions.slice(idx + 1));
+			// remove by matching id
+			const id = item.id;
+			if (id === undefined) return state;
+			const newTransactions = state.transactions.filter(
+				(t) => t.id !== id,
+			);
 			return { ...state, transactions: newTransactions };
 		});
 	},

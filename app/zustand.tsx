@@ -27,6 +27,7 @@ const CounterDisplay = () => {
 					addTransaction({
 						id: 3,
 						name: 'New Transaction',
+						category: 'Utilities',
 						type: 'expense',
 						amount: 50,
 						reoccurence: 'monthly',
