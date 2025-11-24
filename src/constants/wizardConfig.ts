@@ -4,7 +4,8 @@ export interface Item {
 	name: string;
 	amount: number;
 	reoccurence: Reoccurence;
-	dates: Date[];
+	reoccurenceInterval?: number;
+	date: Date;
 }
 
 export interface BudgetWizardStep {
@@ -20,13 +21,13 @@ export const BUDGET_WIZARD_STEPS: BudgetWizardStep[] = [
 				name: 'Item 1',
 				amount: 100,
 				reoccurence: 'monthly',
-				dates: [new Date()],
+				date: new Date(),
 			},
 			{
 				name: 'Item 1.2',
 				amount: 150,
 				reoccurence: 'monthly',
-				dates: [new Date()],
+				date: new Date(),
 			},
 		],
 	},
@@ -37,7 +38,7 @@ export const BUDGET_WIZARD_STEPS: BudgetWizardStep[] = [
 				name: 'Item 2',
 				amount: 200,
 				reoccurence: 'yearly',
-				dates: [new Date()],
+				date: new Date(),
 			},
 		],
 	},
@@ -48,7 +49,7 @@ export const BUDGET_WIZARD_STEPS: BudgetWizardStep[] = [
 				name: 'Item 3',
 				amount: 300,
 				reoccurence: 'custom',
-				dates: [new Date()],
+				date: new Date(),
 			},
 		],
 	},
