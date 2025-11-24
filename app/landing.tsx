@@ -1,9 +1,9 @@
-import useLanguageStore from '@/src/store/useLanguageStore';
 import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import i18next from 'i18next';
 import { useState } from 'react';
 import { Button, SizableText, Stack, XStack, YStack } from 'tamagui';
+import useLanguageStore from '@/src/store/useLanguageStore';
 
 export default function Landing() {
 	const router = useRouter();
