@@ -13,11 +13,11 @@ async function main() {
 	//===========================================================
 	//							INIT
 	//===========================================================
-	const budget = await prisma.budget.create({
+	const _budget = await prisma.budget.create({
 		data: {}, //uses default data
 	});
 
-	const spending = await prisma.spending.create({
+	const _spending = await prisma.spending.create({
 		data: {},
 	});
 
@@ -62,7 +62,7 @@ async function main() {
 	//===========================================================
 	//					RECURRING TRANSACTIONS
 	//===========================================================
-	const recurring_expenses = await prisma.recurringTransaction.createMany({
+	const _recurring_expenses = await prisma.recurringTransaction.createMany({
 		data: [
 			{
 				description: 'Bus card',
@@ -154,7 +154,7 @@ async function main() {
 	//===========================================================
 	//					ONE TIME TRANSACTIONS
 	//===========================================================
-	const irregular_expenses = await prisma.oneTimeTransaction.createMany({
+	const _irregular_expenses = await prisma.oneTimeTransaction.createMany({
 		data: [
 			{
 				description: 'Champagne',
