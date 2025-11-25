@@ -35,13 +35,14 @@ const usePlannedTransactionsStore = create<PlannedTransactionsState>()(
 				set((state) => state);
 			},
 			replaceAll: (items: Item[]) => {
-				set(() => ({
+				set((state) => ({
+					...state,
 					transactions: items,
 				}));
-			}
+			},
 		}),
 		{
-			name: 'some-storage',
+			name: 'planned-transactions-storage',
 			storage: createJSONStorage(() => AsyncStorage),
 		},
 	),
