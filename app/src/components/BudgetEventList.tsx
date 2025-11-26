@@ -1,7 +1,7 @@
 import { Pencil } from '@tamagui/lucide-icons';
 import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
-import { StyledListItem } from '@/app/src/components/StyledListItem';
+import StyledListItem from '@/app/src/components/StyledListItem';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
 
@@ -14,7 +14,7 @@ interface Props {
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
 
-export const BudgetEventList: React.FC<Props> = ({
+const BudgetEventList: React.FC<Props> = ({
 	txns,
 	title,
 	setEditVisible,
@@ -23,7 +23,7 @@ export const BudgetEventList: React.FC<Props> = ({
 	formatCurrency,
 }) => {
 	return (
-		<YStack gap={'$2'}>
+		<YStack gap={8}>
 			<Text fontSize={'$title1'} fontWeight={'700'} mt={'$2'}>
 				{title}
 			</Text>
@@ -62,3 +62,5 @@ export const BudgetEventList: React.FC<Props> = ({
 		</YStack>
 	);
 };
+
+export default BudgetEventList;

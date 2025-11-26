@@ -5,8 +5,8 @@ import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
 import { formatCurrency, splitTransactions } from '../utils/budgetUtils';
-import { BudgetDropdown } from './BudgetDropdown';
-import { BudgetEventList } from './BudgetEventList';
+import BudgetDropdown from './BudgetDropdown';
+import BudgetEventList from './BudgetEventList';
 
 interface BudgetMonthViewProps {
 	currentDate: Date;
@@ -18,7 +18,7 @@ interface BudgetMonthViewProps {
 	editOpen: boolean;
 }
 
-export function BudgetMonthView({
+export default function BudgetMonthView({
 	currentDate,
 	transactions,
 	onDateChange,
@@ -84,7 +84,7 @@ export function BudgetMonthView({
 		<YStack flex={1}>
 			<ScrollView
 				paddingTop={'$3'}
-				paddingHorizontal={'$4'}
+				paddingHorizontal={'$1'}
 				contentContainerStyle={{ paddingBottom: 100 }}
 				scrollEnabled={!editOpen}
 				showsVerticalScrollIndicator={false}

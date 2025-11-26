@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight, Pencil, X } from '@tamagui/lucide-icons';
 import i18next from 'i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { Button, ScrollView, Separator, Text, XStack, YStack } from 'tamagui';
-import { BudgetDropdown } from '@/app/src/components/BudgetDropdown';
+import BudgetDropdown from '@/app/src/components/BudgetDropdown';
 import type {
 	Item,
 	Reoccurence,
@@ -47,7 +47,7 @@ const MONTH_NAMES_FULL = [
 	'December',
 ];
 
-export function BudgetYearView({
+export default function BudgetYearView({
 	ReceivedCurrentDate,
 	transactions,
 }: BudgetYearViewProps) {
@@ -311,7 +311,7 @@ export function BudgetYearView({
 				contentContainerStyle={{ paddingBottom: 50 }}
 				showsVerticalScrollIndicator={false}
 				paddingTop={'$3'}
-				paddingHorizontal={'$4'}
+				paddingHorizontal={'$1'}
 			>
 				{/* year selector */}
 				<YStack marginBottom={'$2'}>

@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronRight, Pencil } from '@tamagui/lucide-icons';
 import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
-import { StyledCard } from '@/app/src/components/styledCard';
+import StyledCard from '@/app/src/components/styledCard';
 import { LOCALE } from '@/app/src/constants';
 import type { Item } from '../../../src/constants/wizardConfig';
 
@@ -16,7 +16,7 @@ interface Props {
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
 
-export const BudgetDropdown: React.FC<Props> = ({
+const BudgetDropdown: React.FC<Props> = ({
 	txns,
 	name,
 	setEditVisible,
@@ -120,3 +120,5 @@ export const BudgetDropdown: React.FC<Props> = ({
 		</StyledCard>
 	);
 };
+
+export default BudgetDropdown;

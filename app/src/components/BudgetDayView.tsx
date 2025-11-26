@@ -2,7 +2,7 @@ import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
 import i18next from 'i18next';
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
-import { BudgetEventList } from '@/app/src/components/BudgetEventList';
+import BudgetEventList from '@/app/src/components/BudgetEventList';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
 import { formatCurrency } from '../utils/budgetUtils';
@@ -26,7 +26,7 @@ const formatDate = (date: Date) => {
 	}).format(date);
 };
 
-export function BudgetDayView({
+export default function BudgetDayView({
 	currentDate,
 	transactions,
 	onAddPress,
@@ -108,7 +108,7 @@ export function BudgetDayView({
 				contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
 				showsVerticalScrollIndicator={false}
 			>
-				<YStack paddingHorizontal="$3">
+				<YStack paddingHorizontal="$1">
 					{/* --- Navigation / Up Chevron --- */}
 					<YStack alignItems="center" marginBottom="$2">
 						<Button

@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, Tabs, Text, XStack, YStack } from 'tamagui';
 import type { Item } from '../src/constants/wizardConfig';
-import { BudgetDayView } from './src/components/BudgetDayView';
-import { BudgetMonthView } from './src/components/BudgetMonthView';
-import { BudgetYearView } from './src/components/BudgetYearView';
-import { StyledTab } from './src/components/StyledTab';
+import BudgetDayView from './src/components/BudgetDayView';
+import BudgetMonthView from './src/components/BudgetMonthView';
+import BudgetYearView from './src/components/BudgetYearView';
+import StyledTab from './src/components/StyledTab';
 import { isValidDate, parseTxnDate } from './src/utils/budgetUtils';
 
 const currentYear = new Date().getFullYear();
@@ -173,7 +173,7 @@ export default function Budget() {
 			<YStack
 				backgroundColor={'$color.white'}
 				paddingTop={'$paddingmd'}
-				paddingHorizontal={'$paddingmd'}
+				paddingHorizontal={'$2'}
 				flex={1}
 			>
 				<Tabs
@@ -285,7 +285,7 @@ export default function Budget() {
 					backgroundColor="rgba(0,0,0,0.3)"
 					justifyContent="center"
 					alignItems="center"
-					zIndex={'$zIndex.1'}
+					zIndex={10}
 				>
 					<YStack
 						bottom={150}
