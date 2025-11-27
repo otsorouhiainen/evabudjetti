@@ -578,20 +578,16 @@ export default function AddTransaction() {
 						>
 							<SizableText size={'$title3'} color={'$white'}>
 								{type === TransactionType.Income
-									? i18next
-											.t('Add {{transactionType}}', {
-												transactionType: i18next.t(
-													TransactionType.Income,
-												),
-											})
-											.toUpperCase()
-									: i18next
-											.t('Add {{transactionType}}', {
-												transactionType: i18next.t(
-													TransactionType.Expense,
-												),
-											})
-											.toUpperCase()}
+									? i18next.t('Add {{transactionType}}', {
+											transactionType: i18next.t(
+												TransactionType.Income,
+											),
+										})
+									: i18next.t('Add {{transactionType}}', {
+											transactionType: i18next.t(
+												TransactionType.Expense,
+											),
+										})}
 							</SizableText>
 						</Button>
 
@@ -673,7 +669,7 @@ export default function AddTransaction() {
 							fontSize={'$title3'}
 						>
 							<SizableText size={'$title3'} color={'$primary200'}>
-								{i18next.t('Cancel').toUpperCase()}
+								{i18next.t('Cancel')}
 							</SizableText>
 						</Button>
 					</YStack>

@@ -31,9 +31,7 @@ export const TransactionTypeSegment: React.FC<TransactionTypeSegmentProps> = ({
 				padding={16}
 				paddingHorizontal={16}
 			>
-				<SizableText fontWeight="700">
-					{i18next.t(opt).toUpperCase()}
-				</SizableText>
+				<SizableText fontWeight="700">{i18next.t(opt)}</SizableText>
 			</Button>
 		))}
 	</XStack>
