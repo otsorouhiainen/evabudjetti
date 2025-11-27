@@ -1,13 +1,16 @@
-import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
+import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import i18next from 'i18next';
 import { useState } from 'react';
 import { ScrollView } from 'react-native';
 import { Button, SizableText, Stack, XStack, YStack } from 'tamagui';
+import useLanguageStore from '@/src/store/useLanguageStore';
 
 export default function Landing() {
 	const router = useRouter();
 	const [helpVisible, setHelpVisible] = useState(false);
+	const language = useLanguageStore((state) => state.language);
+	const change = useLanguageStore((state) => state.change);
 	return (
 		<>
 			{/* Help Modal */}
@@ -110,6 +113,16 @@ export default function Landing() {
 									'Supporting your financial well-being',
 								)}
 							</SizableText>
+							<XStack>
+								<Button
+									icon={Globe}
+									onPress={() =>
+										change(language === 'en' ? 'fi' : 'en')
+									}
+								>
+									{language === 'fi' ? 'Suomi' : 'English'}
+								</Button>
+							</XStack>
 							<Button
 								disabled
 								transparent
@@ -254,6 +267,7 @@ export default function Landing() {
 								padding={20}
 								backgroundColor={'$primary300'}
 								height={80}
+								onPress={() => router.push('/budget_wizard')}
 							>
 								<SizableText
 									fontFamily="$body"

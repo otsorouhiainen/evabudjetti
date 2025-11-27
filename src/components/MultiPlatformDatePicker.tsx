@@ -38,9 +38,16 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 		const isValidDateFormat = /^\d{2}-\d{2}-\d{4}$/.test(editorDate);
 		if (isValidDateFormat) {
 			const [day, month, year] = editorDate.split('-').map(Number);
-			const parsedDate = new Date(year, month - 1, day);
+			const parsedDate: Date = new Date(year, month - 1, day);
 			if (!Number.isNaN(parsedDate.getTime())) {
-				if (!date || parsedDate.getTime() !== date.getTime()) {
+				const parsedTime = parsedDate.getTime();
+				console.log('parsed time', parsedTime);
+				let currentTime = NaN;
+				if (date instanceof Date) {
+					currentTime = date.getTime();
+				}
+				// Only update if the parsed date differs from the current date (compare by timestamp)
+				if (Number.isNaN(currentTime) || parsedTime !== currentTime) {
 					onChange(parsedDate);
 					setDate(parsedDate);
 				}

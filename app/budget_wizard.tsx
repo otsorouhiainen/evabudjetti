@@ -1,7 +1,9 @@
 import { Plus, Trash2 } from '@tamagui/lucide-icons';
-import { useState } from 'react';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Input, Progress, SizableText, XStack } from 'tamagui';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import AddItemPopup from '../src/components/AddItemPopup';
 import { MultiPlatformDatePicker } from '../src/components/MultiPlatformDatePicker';
 import {
@@ -11,13 +13,33 @@ import {
 } from '../src/constants/wizardConfig';
 
 export default function BudgetWizard() {
+	const router = useRouter();
+	const transactions = usePlannedTransactionsStore(
+		(state) => state.transactions,
+	);
+	const replaceAll = usePlannedTransactionsStore((state) => state.replaceAll);
 	const [stepIndex, setStepIndex] = useState(0);
-	const [wizardData, setWizardData] = useState(BUDGET_WIZARD_STEPS);
+	const [wizardData, setWizardData] =
+		useState<BudgetWizardStep[]>(BUDGET_WIZARD_STEPS);
+	useEffect(() => {
+		setWizardData((prev) =>
+			prev.map((step) => ({
+				...step,
+				items:
+					step.header === 'Income'
+						? transactions.filter((t) => t.type === 'income')
+						: transactions.filter((t) => t.type === 'expense'),
+			})),
+		);
+	}, [transactions]);
 	const [popupVisible, setPopupVisible] = useState(false);
 	const currentStep = wizardData[stepIndex];
 	const progressBarValue = ((stepIndex + 1) * 100) / wizardData.length;
 
 	function addItem(newItem: Item) {
+		newItem.type = currentStep.header === 'Income' ? 'income' : 'expense';
+		newItem.category = 'uncategorized';
+		newItem.id = Math.floor(Math.random() * 10000);
 		setWizardData((prev) => {
 			return prev.map((step, sIdx) =>
 				sIdx === stepIndex
@@ -207,12 +229,13 @@ export default function BudgetWizard() {
 						borderRadius={28}
 						style={styles.footerButton}
 						backgroundColor="$primary300"
-						onPress={() =>
-							console.log(
-								'Placeholder for finishing budget creation',
-								progressBarValue,
-							)
-						}
+						onPress={() => {
+							const allItems: Item[] = wizardData.flatMap(
+								(step) => step.items,
+							);
+							replaceAll(allItems);
+							router.push('/landing');
+						}}
 					>
 						<SizableText color="$white" size="$title1">
 							Finish
