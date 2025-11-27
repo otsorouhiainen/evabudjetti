@@ -104,19 +104,19 @@ export default function BudgetWizard() {
 					value={progressBarValue}
 				>
 					<Progress.Indicator
-						backgroundColor="$primary300"
+						backgroundColor="$primary200"
 						animation="bouncy"
 					/>
 				</Progress>
 				<SizableText
-					color="$primary300"
+					color="$primary100"
 					style={styles.pageHeader}
 					size="$title1"
 				>
 					Create budget
 				</SizableText>
 				<SizableText
-					color="$primary300"
+					color="$primary100"
 					style={styles.stepHeader}
 					size="$title2"
 				>
@@ -134,7 +134,7 @@ export default function BudgetWizard() {
 						key={item.name}
 					>
 						<SizableText
-							color="$white"
+							color="$black"
 							size="$title3"
 							style={styles.itemName}
 						>
@@ -170,7 +170,7 @@ export default function BudgetWizard() {
 								keyboardType="numeric"
 								style={styles.amountInput}
 								backgroundColor="$white"
-								borderColor="$white"
+								borderColor="$black"
 								value={
 									item.amount === 0
 										? ''
@@ -184,7 +184,7 @@ export default function BudgetWizard() {
 								}}
 							/>
 							<SizableText
-								color="$white"
+								color="$black"
 								style={styles.recurrenceText}
 								size="$title3"
 							>
@@ -192,7 +192,7 @@ export default function BudgetWizard() {
 								{/* Need to make display enum for this later "/mo, /d, /a, etc" */}
 							</SizableText>
 							<Button
-								color="$white"
+								color="$black"
 								transparent
 								style={styles.trashIcon}
 								icon={Trash2}
@@ -205,7 +205,7 @@ export default function BudgetWizard() {
 			<View style={styles.addIconContainer}>
 				<Button
 					borderRadius={28}
-					backgroundColor="$primary300"
+					backgroundColor="$primary200"
 					icon={Plus}
 					color="$white"
 					onPress={() => setPopupVisible(true)}
@@ -216,7 +216,7 @@ export default function BudgetWizard() {
 				<Button
 					borderRadius={28}
 					style={styles.footerButton}
-					backgroundColor="$primary300"
+					backgroundColor="$primary200"
 					disabled={stepIndex === 0}
 					onPress={() => setStepIndex(stepIndex - 1)}
 				>
@@ -228,7 +228,7 @@ export default function BudgetWizard() {
 					<Button
 						borderRadius={28}
 						style={styles.footerButton}
-						backgroundColor="$primary300"
+						backgroundColor="$primary200"
 						onPress={() => {
 							const allItems: Item[] = wizardData.flatMap(
 								(step) => step.items,
@@ -244,7 +244,7 @@ export default function BudgetWizard() {
 				) : (
 					<Button
 						borderRadius={28}
-						backgroundColor="$primary300"
+						backgroundColor="$primary200"
 						style={styles.footerButton}
 						onPress={() => setStepIndex(stepIndex + 1)}
 					>
