@@ -1,11 +1,12 @@
+
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
   previewFeatures = ["reactNative"]
 }
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./app.db"
+  url = "file:./app.db"
 }
 
 // Differentiates between money coming in and money going out.
