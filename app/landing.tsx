@@ -316,6 +316,7 @@ export default function Landing() {
 										setBalance(Number(initialBalance));
 										router.push('/budget_wizard');
 									}}
+									disabled={initialBalance === ''}
 								>
 									<SizableText
 										fontFamily="$body"
