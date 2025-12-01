@@ -1,6 +1,6 @@
 import { Card, styled } from 'tamagui';
 
-export const StyledCard = Object.assign(
+const StyledCard = Object.assign(
 	styled(Card, {
 		name: 'StyledCard',
 		backgroundColor: '$primary200',
@@ -23,3 +23,5 @@ export const StyledCard = Object.assign(
 		Footer: Card.Footer,
 	},
 );
+
+export default StyledCard;

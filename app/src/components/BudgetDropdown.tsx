@@ -1,22 +1,22 @@
-import { StyledCard } from '@/app/src/components/styledCard';
+import StyledCard from '@/app/src/components/styledCard';
 import { LOCALE } from '@/app/src/constants';
 import { ChevronDown, ChevronRight, Pencil } from '@tamagui/lucide-icons';
 import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
-import type { Item } from '../constants/wizardConfig';
+import type { Item } from '../../../src/constants/wizardConfig';
 
 interface Props {
 	name: string;
 	txns: Item[];
 	isOpen: boolean;
-	setEditVisible: (state: boolean) => void;
-	setEditingTxn: (txn: Item) => void;
-	setInputDate: Dispatch<SetStateAction<string>>;
+	setEditVisible?: (state: boolean) => void;
+	setEditingTxn?: (txn: Item) => void;
+	setInputDate?: Dispatch<SetStateAction<string>>;
 	openDropdown: Dispatch<SetStateAction<boolean>>;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
 
-export const BudgetDropdown: React.FC<Props> = ({
+const BudgetDropdown: React.FC<Props> = ({
 	txns,
 	name,
 	setEditVisible,
@@ -92,24 +92,26 @@ export const BudgetDropdown: React.FC<Props> = ({
 								>
 									{formatCurrency(Number(txn.amount))}
 								</Text>
-								<Button
-									size="$buttons.sm"
-									color={'$color.white'}
-									circular
-									icon={Pencil}
-									onPress={() => {
-										setEditVisible(true);
-										setEditingTxn(txn);
-										setInputDate(
-											txn.date
-												? txn.date.toLocaleString(
+								{setEditVisible &&
+									setEditingTxn &&
+									setInputDate && (
+										<Button
+											size="$buttons.sm"
+											color={'$color.white'}
+											circular
+											icon={Pencil}
+											onPress={() => {
+												setEditVisible(true);
+												setEditingTxn(txn);
+												setInputDate(
+													txn.date.toLocaleDateString(
 														LOCALE,
-													)
-												: '',
-										);
-									}}
-									chromeless
-								/>
+													),
+												);
+											}}
+											chromeless
+										/>
+									)}
 							</XStack>
 						</XStack>
 					))}
@@ -118,3 +120,5 @@ export const BudgetDropdown: React.FC<Props> = ({
 		</StyledCard>
 	);
 };
+
+export default BudgetDropdown;

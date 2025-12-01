@@ -26,11 +26,11 @@ importers:
         specifier: ^15.0.2
         version: 15.0.3(expo-font@14.0.9(expo@54.0.22)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
       '@prisma/client':
-        specifier: ^6.17.1
-        version: 6.18.0(prisma@6.18.0(typescript@5.9.3))(typescript@5.9.3)
+        specifier: ^6.19.0
+        version: 6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
       '@prisma/react-native':
         specifier: 6.0.1
-        version: 6.0.1(patch_hash=03b223c508e8985e110cf233b9ea196a234ba4f43ec14baa1a5ddf9b9bb53a51)(@prisma/client@6.18.0(prisma@6.18.0(typescript@5.9.3))(typescript@5.9.3))(expo@54.0.22)(react-native-quick-base64@2.2.2(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+        version: 6.0.1(patch_hash=03b223c508e8985e110cf233b9ea196a234ba4f43ec14baa1a5ddf9b9bb53a51)(@prisma/client@6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3))(expo@54.0.22)(react-native-quick-base64@2.2.2(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
       '@react-native-async-storage/async-storage':
         specifier: 2.2.0
         version: 2.2.0(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))
@@ -77,8 +77,8 @@ importers:
         specifier: ~18.0.10
         version: 18.0.10(expo@54.0.22)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))
       expo-dev-client:
-        specifier: ~6.0.16
-        version: 6.0.16(expo@54.0.22)
+        specifier: ~6.0.18
+        version: 6.0.18(expo@54.0.22)
       expo-font:
         specifier: ~14.0.9
         version: 14.0.9(expo@54.0.22)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -183,8 +183,8 @@ importers:
         specifier: ^8.5.6
         version: 8.5.6
       prisma:
-        specifier: ^6.17.1
-        version: 6.18.0(typescript@5.9.3)
+        specifier: ^6.19.0
+        version: 6.19.0(typescript@5.9.3)
       tailwindcss:
         specifier: 3.4.17
         version: 3.4.17
@@ -1191,8 +1191,8 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@prisma/client@6.18.0':
-    resolution: {integrity: sha512-jnL2I9gDnPnw4A+4h5SuNn8Gc+1mL1Z79U/3I9eE2gbxJG1oSA+62ByPW4xkeDgwE0fqMzzpAZ7IHxYnLZ4iQA==}
+  '@prisma/client@6.19.0':
+    resolution: {integrity: sha512-QXFT+N/bva/QI2qoXmjBzL7D6aliPffIwP+81AdTGq0FXDoLxLkWivGMawG8iM5B9BKfxLIXxfWWAF6wbuJU6g==}
     engines: {node: '>=18.18'}
     peerDependencies:
       prisma: '*'
@@ -1203,23 +1203,23 @@ packages:
       typescript:
         optional: true
 
-  '@prisma/config@6.18.0':
-    resolution: {integrity: sha512-rgFzspCpwsE+q3OF/xkp0fI2SJ3PfNe9LLMmuSVbAZ4nN66WfBiKqJKo/hLz3ysxiPQZf8h1SMf2ilqPMeWATQ==}
+  '@prisma/config@6.19.0':
+    resolution: {integrity: sha512-zwCayme+NzI/WfrvFEtkFhhOaZb/hI+X8TTjzjJ252VbPxAl2hWHK5NMczmnG9sXck2lsXrxIZuK524E25UNmg==}
 
-  '@prisma/debug@6.18.0':
-    resolution: {integrity: sha512-PMVPMmxPj0ps1VY75DIrT430MoOyQx9hmm174k6cmLZpcI95rAPXOQ+pp8ANQkJtNyLVDxnxVJ0QLbrm/ViBcg==}
+  '@prisma/debug@6.19.0':
+    resolution: {integrity: sha512-8hAdGG7JmxrzFcTzXZajlQCidX0XNkMJkpqtfbLV54wC6LSSX6Vni25W/G+nAANwLnZ2TmwkfIuWetA7jJxJFA==}
 
-  '@prisma/engines-version@6.18.0-8.34b5a692b7bd79939a9a2c3ef97d816e749cda2f':
-    resolution: {integrity: sha512-T7Af4QsJQnSgWN1zBbX+Cha5t4qjHRxoeoWpK4JugJzG/ipmmDMY5S+O0N1ET6sCBNVkf6lz+Y+ZNO9+wFU8pQ==}
+  '@prisma/engines-version@6.19.0-26.2ba551f319ab1df4bc874a89965d8b3641056773':
+    resolution: {integrity: sha512-gV7uOBQfAFlWDvPJdQxMT1aSRur3a0EkU/6cfbAC5isV67tKDWUrPauyaHNpB+wN1ebM4A9jn/f4gH+3iHSYSQ==}
 
-  '@prisma/engines@6.18.0':
-    resolution: {integrity: sha512-i5RzjGF/ex6AFgqEe2o1IW8iIxJGYVQJVRau13kHPYEL1Ck8Zvwuzamqed/1iIljs5C7L+Opiz5TzSsUebkriA==}
+  '@prisma/engines@6.19.0':
+    resolution: {integrity: sha512-pMRJ+1S6NVdXoB8QJAPIGpKZevFjxhKt0paCkRDTZiczKb7F4yTgRP8M4JdVkpQwmaD4EoJf6qA+p61godDokw==}
 
-  '@prisma/fetch-engine@6.18.0':
-    resolution: {integrity: sha512-TdaBvTtBwP3IoqVYoGIYpD4mWlk0pJpjTJjir/xLeNWlwog7Sl3bD2J0jJ8+5+q/6RBg+acb9drsv5W6lqae7A==}
+  '@prisma/fetch-engine@6.19.0':
+    resolution: {integrity: sha512-OOx2Lda0DGrZ1rodADT06ZGqHzr7HY7LNMaFE2Vp8dp146uJld58sRuasdX0OiwpHgl8SqDTUKHNUyzEq7pDdQ==}
 
-  '@prisma/get-platform@6.18.0':
-    resolution: {integrity: sha512-uXNJCJGhxTCXo2B25Ta91Rk1/Nmlqg9p7G9GKh8TPhxvAyXCvMNQoogj4JLEUy+3ku8g59cpyQIKFhqY2xO2bg==}
+  '@prisma/get-platform@6.19.0':
+    resolution: {integrity: sha512-ym85WDO2yDhC3fIXHWYpG3kVMBA49cL1XD2GCsCF8xbwoy2OkDQY44gEbAt2X46IQ4Apq9H6g0Ex1iFfPqEkHA==}
 
   '@prisma/react-native@6.0.1':
     resolution: {integrity: sha512-X144mzLdSJeBdJ6N3TwpUUObnPdO308a1pkPSgChMiJU7YZyXsIG/3SqUchd5Fe8X/2Vl07ZqJVqz9NZtXC2lg==}
@@ -2857,13 +2857,13 @@ packages:
       expo: '*'
       react-native: '*'
 
-  expo-dev-client@6.0.16:
-    resolution: {integrity: sha512-8GLud/dtNteqChL9pNGqLBSHd7of2scFmsgN5WwWgtt2dET7+EJM/K1zp0FYUzfmIF5NLsf5xUDg6AjDldOLqg==}
+  expo-dev-client@6.0.18:
+    resolution: {integrity: sha512-8QKWvhsoZpMkecAMlmWoRHnaTNiPS3aO7E42spZOMjyiaNRJMHZsnB8W2b63dt3Yg3oLyskLAoI8IOmnqVX8vA==}
     peerDependencies:
       expo: '*'
 
-  expo-dev-launcher@6.0.16:
-    resolution: {integrity: sha512-OVg5T5ip7evh8zHJeIj2IYgtvTeY8EOiwNQYlmN0JHAw8wlUxYHnSf08RcevVgYTKcIryCyeLG5UHxsQQWbycA==}
+  expo-dev-launcher@6.0.18:
+    resolution: {integrity: sha512-JTtcIfNvHO9PTdRJLmHs+7HJILXXZjF95jxgzu6hsJrgsTg/AZDtEsIt/qa6ctEYQTqrLdsLDgDhiXVel3AoQA==}
     peerDependencies:
       expo: '*'
 
@@ -2872,8 +2872,8 @@ packages:
     peerDependencies:
       expo: '*'
 
-  expo-dev-menu@7.0.15:
-    resolution: {integrity: sha512-aThUhoBUuQVbCS2k0MwP28/au46FqOXAAiGtCYIWp+Hne95RgFO+KaO0VGksJFwK7I9IPbbminm8ijZDf2KzXg==}
+  expo-dev-menu@7.0.17:
+    resolution: {integrity: sha512-NIu7TdaZf+A8+DROa6BB6lDfxjXxwaD+Q8QbNSVa0E0x6yl3P0ZJ80QbD2cCQeBzlx3Ufd3hNhczQWk4+A29HQ==}
     peerDependencies:
       expo: '*'
 
@@ -2921,8 +2921,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  expo-manifests@1.0.8:
-    resolution: {integrity: sha512-nA5PwU2uiUd+2nkDWf9e71AuFAtbrb330g/ecvuu52bmaXtN8J8oiilc9BDvAX0gg2fbtOaZdEdjBYopt1jdlQ==}
+  expo-manifests@1.0.9:
+    resolution: {integrity: sha512-5uVgvIo0o+xBcEJiYn4uVh72QSIqyHePbYTWXYa4QamXd+AmGY/yWmtHaNqCqjsPLCwXyn4OxPr7jXJCeTWLow==}
     peerDependencies:
       expo: '*'
 
@@ -4030,8 +4030,8 @@ packages:
     resolution: {integrity: sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
 
-  prisma@6.18.0:
-    resolution: {integrity: sha512-bXWy3vTk8mnRmT+SLyZBQoC2vtV9Z8u7OHvEu+aULYxwiop/CPiFZ+F56KsNRNf35jw+8wcu8pmLsjxpBxAO9g==}
+  prisma@6.19.0:
+    resolution: {integrity: sha512-F3eX7K+tWpkbhl3l4+VkFtrwJlLXbAM+f9jolgoUZbFcm1DgHZ4cq9AgVEgUym2au5Ad/TDLN8lg83D+M10ycw==}
     engines: {node: '>=18.18'}
     hasBin: true
     peerDependencies:
@@ -6169,12 +6169,12 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@prisma/client@6.18.0(prisma@6.18.0(typescript@5.9.3))(typescript@5.9.3)':
+  '@prisma/client@6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)':
     optionalDependencies:
-      prisma: 6.18.0(typescript@5.9.3)
+      prisma: 6.19.0(typescript@5.9.3)
       typescript: 5.9.3
 
-  '@prisma/config@6.18.0':
+  '@prisma/config@6.19.0':
     dependencies:
       c12: 3.1.0
       deepmerge-ts: 7.1.5
@@ -6183,30 +6183,30 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@prisma/debug@6.18.0': {}
+  '@prisma/debug@6.19.0': {}
 
-  '@prisma/engines-version@6.18.0-8.34b5a692b7bd79939a9a2c3ef97d816e749cda2f': {}
+  '@prisma/engines-version@6.19.0-26.2ba551f319ab1df4bc874a89965d8b3641056773': {}
 
-  '@prisma/engines@6.18.0':
+  '@prisma/engines@6.19.0':
     dependencies:
-      '@prisma/debug': 6.18.0
-      '@prisma/engines-version': 6.18.0-8.34b5a692b7bd79939a9a2c3ef97d816e749cda2f
-      '@prisma/fetch-engine': 6.18.0
-      '@prisma/get-platform': 6.18.0
+      '@prisma/debug': 6.19.0
+      '@prisma/engines-version': 6.19.0-26.2ba551f319ab1df4bc874a89965d8b3641056773
+      '@prisma/fetch-engine': 6.19.0
+      '@prisma/get-platform': 6.19.0
 
-  '@prisma/fetch-engine@6.18.0':
+  '@prisma/fetch-engine@6.19.0':
     dependencies:
-      '@prisma/debug': 6.18.0
-      '@prisma/engines-version': 6.18.0-8.34b5a692b7bd79939a9a2c3ef97d816e749cda2f
-      '@prisma/get-platform': 6.18.0
+      '@prisma/debug': 6.19.0
+      '@prisma/engines-version': 6.19.0-26.2ba551f319ab1df4bc874a89965d8b3641056773
+      '@prisma/get-platform': 6.19.0
 
-  '@prisma/get-platform@6.18.0':
+  '@prisma/get-platform@6.19.0':
     dependencies:
-      '@prisma/debug': 6.18.0
+      '@prisma/debug': 6.19.0
 
-  '@prisma/react-native@6.0.1(patch_hash=03b223c508e8985e110cf233b9ea196a234ba4f43ec14baa1a5ddf9b9bb53a51)(@prisma/client@6.18.0(prisma@6.18.0(typescript@5.9.3))(typescript@5.9.3))(expo@54.0.22)(react-native-quick-base64@2.2.2(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)':
+  '@prisma/react-native@6.0.1(patch_hash=03b223c508e8985e110cf233b9ea196a234ba4f43ec14baa1a5ddf9b9bb53a51)(@prisma/client@6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3))(expo@54.0.22)(react-native-quick-base64@2.2.2(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)':
     dependencies:
-      '@prisma/client': 6.18.0(prisma@6.18.0(typescript@5.9.3))(typescript@5.9.3)
+      '@prisma/client': 6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
       react: 19.1.0
       react-native: 0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0)
       react-native-quick-base64: 2.2.2(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -8579,22 +8579,22 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  expo-dev-client@6.0.16(expo@54.0.22):
+  expo-dev-client@6.0.18(expo@54.0.22):
     dependencies:
       expo: 54.0.22(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.13)(react-native-webview@13.15.0(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
-      expo-dev-launcher: 6.0.16(expo@54.0.22)
-      expo-dev-menu: 7.0.15(expo@54.0.22)
+      expo-dev-launcher: 6.0.18(expo@54.0.22)
+      expo-dev-menu: 7.0.17(expo@54.0.22)
       expo-dev-menu-interface: 2.0.0(expo@54.0.22)
-      expo-manifests: 1.0.8(expo@54.0.22)
+      expo-manifests: 1.0.9(expo@54.0.22)
       expo-updates-interface: 2.0.0(expo@54.0.22)
     transitivePeerDependencies:
       - supports-color
 
-  expo-dev-launcher@6.0.16(expo@54.0.22):
+  expo-dev-launcher@6.0.18(expo@54.0.22):
     dependencies:
       expo: 54.0.22(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.13)(react-native-webview@13.15.0(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
-      expo-dev-menu: 7.0.15(expo@54.0.22)
-      expo-manifests: 1.0.8(expo@54.0.22)
+      expo-dev-menu: 7.0.17(expo@54.0.22)
+      expo-manifests: 1.0.9(expo@54.0.22)
     transitivePeerDependencies:
       - supports-color
 
@@ -8602,7 +8602,7 @@ snapshots:
     dependencies:
       expo: 54.0.22(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.13)(react-native-webview@13.15.0(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
 
-  expo-dev-menu@7.0.15(expo@54.0.22):
+  expo-dev-menu@7.0.17(expo@54.0.22):
     dependencies:
       expo: 54.0.22(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.13)(react-native-webview@13.15.0(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
       expo-dev-menu-interface: 2.0.0(expo@54.0.22)
@@ -8648,7 +8648,7 @@ snapshots:
       - expo
       - supports-color
 
-  expo-manifests@1.0.8(expo@54.0.22):
+  expo-manifests@1.0.9(expo@54.0.22):
     dependencies:
       '@expo/config': 12.0.10
       expo: 54.0.22(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.13)(react-native-webview@13.15.0(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -9977,10 +9977,10 @@ snapshots:
       ansi-styles: 5.2.0
       react-is: 18.3.1
 
-  prisma@6.18.0(typescript@5.9.3):
+  prisma@6.19.0(typescript@5.9.3):
     dependencies:
-      '@prisma/config': 6.18.0
-      '@prisma/engines': 6.18.0
+      '@prisma/config': 6.19.0
+      '@prisma/engines': 6.19.0
     optionalDependencies:
       typescript: 5.9.3
     transitivePeerDependencies:

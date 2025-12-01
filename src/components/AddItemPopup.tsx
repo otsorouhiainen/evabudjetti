@@ -50,12 +50,12 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	return (
 		<View style={styles.container}>
 			<YStack backgroundColor="$background" style={styles.card}>
-				<SizableText color="$primary300" size="$title2">
+				<SizableText color="$black" size="$title2">
 					Add a new item
 				</SizableText>
 				<View style={styles.inputsContainer}>
 					<View style={styles.singleItemContainer}>
-						<SizableText color="$primary300" size="$title3">
+						<SizableText color="$black" size="$title3">
 							Name
 						</SizableText>
 						<Input
@@ -66,7 +66,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						/>
 					</View>
 					<View style={styles.singleItemContainer}>
-						<SizableText color="$primary300" size="$title3">
+						<SizableText color="$black" size="$title3">
 							Amount
 						</SizableText>
 						<Input
@@ -78,7 +78,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						/>
 					</View>
 					<View style={styles.reoccurenceContainer}>
-						<SizableText color="$primary300" size="$title3">
+						<SizableText color="$black" size="$title3">
 							Reoccurence
 						</SizableText>
 						<View
@@ -102,8 +102,8 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 										borderRadius={20}
 										backgroundColor={
 											reoccurence === opt
-												? '$primary300'
-												: undefined
+												? '$primary200'
+												: '$primary300'
 										}
 										onPress={() => setReoccurence(opt)}
 										style={{
@@ -116,7 +116,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 											color={
 												reoccurence === opt
 													? '$white'
-													: '$primary300'
+													: '$primary100'
 											}
 											size="$title3"
 										>
@@ -160,7 +160,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 					>
 						<SizableText
 							style={{ height: '100%' }}
-							color="$primary300"
+							color="$black"
 							size="$title3"
 						>
 							Date:
@@ -175,7 +175,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 				<View style={styles.buttonRow}>
 					<Button
 						borderRadius={28}
-						backgroundColor="$primary300"
+						backgroundColor="$primary200"
 						style={styles.button}
 						onPress={handleAdd}
 						disabled={isDisabled}
@@ -186,7 +186,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 					</Button>
 					<Button
 						borderRadius={28}
-						backgroundColor="$primary300"
+						backgroundColor="$primary200"
 						style={styles.button}
 						onPress={onClose}
 					>

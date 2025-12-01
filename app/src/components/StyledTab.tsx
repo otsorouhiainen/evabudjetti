@@ -1,6 +1,6 @@
 import { styled, Tabs } from 'tamagui';
 
-export const StyledTab = styled(Tabs.Tab, {
+const StyledTab = styled(Tabs.Tab, {
 	height: 40,
 	borderWidth: 1,
 	borderColor: '$color.primary200',
@@ -21,3 +21,5 @@ export const StyledTab = styled(Tabs.Tab, {
 		},
 	},
 });
+
+export default StyledTab;

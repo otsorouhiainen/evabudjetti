@@ -1,6 +1,6 @@
 import { styled, XStack } from 'tamagui';
 
-export const StyledListItem = styled(XStack, {
+const StyledListItem = styled(XStack, {
 	backgroundColor: '$color.primary300',
 	padding: '$2',
 	borderRadius: '$2',
@@ -11,3 +11,5 @@ export const StyledListItem = styled(XStack, {
 	elevation: 3,
 	alignItems: 'center',
 });
+
+export default StyledListItem;
