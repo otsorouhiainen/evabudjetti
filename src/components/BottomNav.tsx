@@ -17,15 +17,14 @@ const NavButton = ({
 	onPress,
 }: NavButtonProps & { onPress?: () => void }) => (
 	<Button
-		transparent
+		chromeless
 		icon={btnIcon}
 		color={btnColor}
 		onPress={onPress}
 		borderColor={borderColor}
-		size={'$buttons.md'}
-		borderRadius={32}
-		paddingVertical={20}
-		paddingHorizontal={22}
+		size="$5"
+		borderRadius="$4"
+		padding="$2"
 	/>
 );
 
@@ -64,13 +63,18 @@ export const BottomNav = () => {
 			bottom={0}
 			left={0}
 			right={0}
-			paddingHorizontal={22}
-			height={52}
-			justifyContent={'space-between'}
+			paddingHorizontal="$4"
+			paddingVertical="$2"
+			justifyContent="space-between"
 			alignItems="center"
-			backgroundColor={'$primary100'}
+			backgroundColor="$primary100"
 			borderTopLeftRadius={6}
 			borderTopRightRadius={6}
+			elevation={10}
+			shadowColor="$black"
+			shadowOffset={{ width: 0, height: -2 }}
+			shadowOpacity={0.1}
+			shadowRadius={4}
 		>
 			{bottomNavOptions.map((option) => (
 				<NavButton

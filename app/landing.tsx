@@ -1,3 +1,6 @@
+import useBalanceStore from '@/src/store/useBalanceStore';
+import useLanguageStore from '@/src/store/useLanguageStore';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import i18next from 'i18next';
@@ -5,9 +8,6 @@ import { useState } from 'react';
 import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, SizableText, Stack, XStack, YStack } from 'tamagui';
-import useBalanceStore from '@/src/store/useBalanceStore';
-import useLanguageStore from '@/src/store/useLanguageStore';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 
 export default function Landing() {
 	const storeBalance = useBalanceStore((state) => state.balance);
@@ -31,48 +31,47 @@ export default function Landing() {
 					bottom={0}
 					left={0}
 					right={0}
-					backgroundColor="$black"
+					backgroundColor="rgba(0,0,0,0.5)"
 					justifyContent="center"
 					alignItems="center"
-					zIndex={10}
+					zIndex={100}
 				>
 					<YStack
 						backgroundColor="$white"
-						borderColor={'$black'}
+						borderColor="$black"
 						borderWidth={2}
-						opacity={1}
 						borderRadius={16}
 						padding={24}
-						width="80%"
-						minWidth={220}
+						width="85%"
+						maxWidth={400}
 						shadowColor="$black"
-						shadowOffset={{ width: 0, height: 2 }}
-						shadowOpacity={0.18}
+						shadowOffset={{ width: 0, height: 4 }}
+						shadowOpacity={0.3}
 						shadowRadius={8}
-						elevation={8}
-						gap={'$4'}
+						elevation={10}
+						gap="$4"
 					>
 						<SizableText
-							size={'$title1'}
+							size="$8"
 							marginBottom={8}
 							fontFamily="$heading"
+							textAlign="center"
 						>
 							{i18next.t('Help')}
 						</SizableText>
 						<SizableText
-							size={'$title2'}
+							size="$5"
 							marginBottom={16}
 							fontFamily="$body"
+							textAlign="center"
 						>
 							{i18next.t('Help Disposable income')}
 						</SizableText>
 						<Button
 							onPress={() => setHelpVisible(false)}
-							backgroundColor={'$primary300'}
-							size={64}
-							padding={22}
+							backgroundColor="$primary300"
+							size="$5"
 							alignSelf="center"
-							height={70}
 						>
 							<SizableText
 								fontFamily="$body"
@@ -85,47 +84,49 @@ export default function Landing() {
 					</YStack>
 				</Stack>
 			)}
-			<YStack flex={1}>
+			<YStack flex={1} backgroundColor="$background">
 				<ScrollView
 					contentContainerStyle={{
 						flexGrow: 1,
 						alignItems: 'center',
+						paddingBottom: 100, // Space for bottom nav
 					}}
 				>
 					<YStack
 						flex={1}
-						paddingTop={24}
-						paddingHorizontal={20}
-						gap={18}
+						paddingTop="$6"
+						paddingHorizontal="$4"
+						gap="$4"
 						width="100%"
-						maxWidth={800}
+						maxWidth={600}
 					>
 						{/* Header */}
-						<YStack
-							alignItems="center"
-							marginTop={6}
-							justifyContent="space-between"
-							gap={'$2'}
-						>
+						<YStack alignItems="center" marginTop="$2" gap="$2">
 							<SizableText
-								fontWeight={'$7'}
-								size={'$title1'}
+								fontWeight="700"
+								size="$9"
 								fontFamily="$heading"
+								textAlign="center"
+								lineHeight={34}
 							>
 								{i18next.t('EVA Personal Budget')}
 							</SizableText>
 							<SizableText
-								size={'$title2'}
+								size="$5"
 								fontFamily="$body"
-								hoverStyle={{ cursor: 'help' }}
+								textAlign="center"
+								color="$gray11"
 							>
 								{i18next.t(
 									'Supporting your financial well-being',
 								)}
 							</SizableText>
-							<XStack>
+
+							<XStack marginTop="$2">
 								<Button
 									icon={Globe}
+									size="$3"
+									chromeless
 									onPress={() =>
 										change(language === 'en' ? 'fi' : 'en')
 									}
@@ -133,106 +134,112 @@ export default function Landing() {
 									{language === 'fi' ? 'Suomi' : 'English'}
 								</Button>
 							</XStack>
-							<Button
-								disabled
-								transparent
-								icon={<PiggyBank />}
-								size={200}
-								marginBottom={-190}
-								color={'$primary100'}
-							></Button>
+
+							<YStack
+								alignItems="center"
+								justifyContent="center"
+								marginTop="$4"
+								marginBottom="$4"
+								position="relative"
+							>
+								{/* Piggy Bank Icon */}
+								<PiggyBank size={120} color="$primary100" />
+
+								{/* Help Icon positioned relative to the piggy bank */}
+								<Button
+									position="absolute"
+									top={-10}
+									right={-40}
+									size="$3"
+									circular
+									chromeless
+									onPress={() => setHelpVisible(true)}
+									icon={
+										<MessageCircleQuestion
+											size={28}
+											color="$black"
+										/>
+									}
+								/>
+							</YStack>
 						</YStack>
 
-						{/* Illustration row */}
-						<XStack
-							alignItems="center"
-							justifyContent="center"
-							marginTop={16}
-							position="relative"
-							alignSelf="center"
-							width={200}
-							height={120}
-						>
-							<Button
-								position="absolute"
-								top={0}
-								right="-10%"
-								width="50%"
-								aspectRatio={1}
-								minWidth={28}
-								maxWidth={42}
-								zIndex={5}
-								onPress={() => setHelpVisible(true)}
-								circular
-								size="$4"
-								chromeless
-								icon={<MessageCircleQuestion size={28} />}
-							/>
-						</XStack>
 						{budgetCreated && (
-							<>
+							<YStack gap="$4" width="100%">
 								<YStack
-									alignSelf="center"
-									width="90%"
-									maxWidth={480}
+									width="100%"
 									borderRadius={16}
 									alignItems="center"
-									paddingVertical={16}
-									gap={6}
-									backgroundColor={'$white'}
-									shadowColor={'$black'}
+									paddingVertical="$5"
+									paddingHorizontal="$4"
+									gap="$2"
+									backgroundColor="$white"
+									shadowColor="$black"
 									shadowOffset={{ width: 0, height: 2 }}
-									shadowOpacity={0.15}
+									shadowOpacity={0.1}
 									shadowRadius={8}
-									elevation={6}
+									elevation={4}
+									borderColor="$gray5"
+									borderWidth={1}
 								>
 									<SizableText
-										size={'$title2'}
-										fontWeight={'$5'}
-										marginBottom={4}
+										size="$5"
+										fontWeight="600"
+										marginBottom="$2"
 										fontFamily="$heading"
+										color="$gray11"
 									>
-										{'04.10.2025'}
+										{new Date().toLocaleDateString('fi-FI')}
 									</SizableText>
-									<YStack>
+
+									<YStack alignItems="center" gap="$1">
 										<SizableText
-											size={'$title2'}
+											size="$5"
 											fontFamily="$body"
 										>
-											{i18next.t('Money in account')}{' '}
-											<SizableText
-												size={'$title3'}
-												fontWeight={'$4'}
-												fontFamily="$body"
-											>
-												{storeBalance}€
-											</SizableText>
+											{i18next.t('Money in account')}
 										</SizableText>
 										<SizableText
-											size={'$title2'}
+											size="$8"
+											fontWeight="700"
 											fontFamily="$body"
+											color="$primary100"
 										>
-											{i18next.t('Disposable income')}{' '}
-											<SizableText
-												size={'$title3'}
-												fontWeight={'$4'}
-												fontFamily="$body"
-											>
-												{storeDisposable}€
-											</SizableText>
+											{storeBalance}€
 										</SizableText>
 									</YStack>
+
+									<YStack
+										alignItems="center"
+										gap="$1"
+										marginTop="$2"
+									>
+										<SizableText
+											size="$5"
+											fontFamily="$body"
+										>
+											{i18next.t('Disposable income')}
+										</SizableText>
+										<SizableText
+											size="$8"
+											fontWeight="700"
+											fontFamily="$body"
+											color="$primary200"
+										>
+											{storeDisposable}€
+										</SizableText>
+									</YStack>
+
 									<Button
-										marginTop={10}
-										alignSelf="center"
-										backgroundColor={'$primary200'}
-										size={64}
-										padding="5%"
-										height={80}
+										marginTop="$4"
+										backgroundColor="$primary200"
+										size="$5"
+										width="100%"
+										maxWidth={200}
 									>
 										<SizableText
 											fontFamily="$body"
-											fontWeight="400"
+											fontWeight="600"
 											color="$white"
 										>
 											{i18next.t('VIEW DETAILS')}
@@ -241,10 +248,8 @@ export default function Landing() {
 								</YStack>
 
 								<Button
-									marginTop={8}
-									size={64}
+									size="$6"
 									backgroundColor="$primary200"
-									height={80}
 									onPress={() =>
 										router.push('/add_transaction')
 									}
@@ -252,70 +257,79 @@ export default function Landing() {
 									<SizableText
 										fontFamily="$body"
 										color="$white"
+										fontWeight="600"
+										size="$5"
 									>
 										{i18next.t('ADD INCOME/EXPENSE')}
 									</SizableText>
 								</Button>
 
-								<XStack gap={14} justifyContent="space-between">
+								<XStack gap="$3" justifyContent="space-between">
 									<Button
 										flex={1}
-										size={64}
-										padding={20}
-										backgroundColor={'$primary200'}
-										height={80}
+										size="$6"
+										backgroundColor="$primary200"
 										onPress={() => router.push('/budget')}
 									>
 										<SizableText
 											fontFamily="$body"
-											fontWeight="400"
+											fontWeight="600"
 											color="$white"
+											size="$4"
+											textAlign="center"
 										>
 											{i18next.t('SHOW BUDGET')}
 										</SizableText>
 									</Button>
 									<Button
 										flex={1}
-										size={64}
-										padding={20}
-										backgroundColor={'$primary200'}
-										height={80}
+										size="$6"
+										backgroundColor="$primary200"
 										onPress={() =>
 											router.push('/budget_wizard')
 										}
 									>
 										<SizableText
 											fontFamily="$body"
-											fontWeight="400"
+											fontWeight="600"
 											color="$white"
+											size="$4"
+											textAlign="center"
 										>
 											{i18next.t('EDIT BUDGET')}
 										</SizableText>
 									</Button>
 								</XStack>
-								<YStack height={48} />
-							</>
+							</YStack>
 						)}
+
 						{!budgetCreated && (
-							<YStack alignItems="center" gap={'$4'} mt={'$8'}>
-								<SizableText>
+							<YStack alignItems="center" gap="$4" marginTop="$4">
+								<SizableText
+									textAlign="center"
+									size="$5"
+									fontFamily="$body"
+								>
 									{i18next.t(
 										'No budget created yet. Enter your balance in € without commas and press the "Create budget" button below to get started!',
 									)}
 								</SizableText>
 								<Input
-									height={56}
+									size="$5"
+									width="100%"
 									value={initialBalance}
 									onChangeText={setInitialBalance}
 									borderColor="$black"
 									borderWidth={1}
 									backgroundColor="$white"
-								></Input>
+									keyboardType="numeric"
+									placeholder="0"
+								/>
 								<Button
-									marginTop={8}
-									size={64}
+									marginTop="$2"
+									size="$6"
 									backgroundColor="$primary100"
-									height={80}
+									width="100%"
 									onPress={() => {
 										setBalance(Number(initialBalance));
 										router.push('/budget_wizard');
@@ -325,6 +339,8 @@ export default function Landing() {
 									<SizableText
 										fontFamily="$body"
 										color="$white"
+										fontWeight="600"
+										size="$5"
 									>
 										{i18next.t('CREATE BUDGET')}
 									</SizableText>

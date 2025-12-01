@@ -1,7 +1,7 @@
 import { styled, Tabs } from 'tamagui';
 
 const StyledTab = styled(Tabs.Tab, {
-	height: 40,
+	flex: 1,
 	borderWidth: 1,
 	borderColor: '$color.primary200',
 	shadowColor: '$color.black',
@@ -11,6 +11,8 @@ const StyledTab = styled(Tabs.Tab, {
 	elevation: 2,
 	pressStyle: { backgroundColor: '$primary300' },
 	focusStyle: { backgroundColor: '$primary200' },
+	justifyContent: 'center',
+	alignItems: 'center',
 	'$platform-native': {
 		backgroundColor: '$color.white',
 		pressStyle: {
