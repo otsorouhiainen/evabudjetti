@@ -1,8 +1,15 @@
+import BudgetEventList from '@/app/src/components/BudgetEventList';
+import useBalanceStore from '@/src/store/useBalanceStore';
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
 import i18next from 'i18next';
-import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
+import {
+	type Dispatch,
+	type SetStateAction,
+	useEffect,
+	useMemo,
+	useState,
+} from 'react';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
-import BudgetEventList from '@/app/src/components/BudgetEventList';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
 import { formatCurrency } from '../utils/budgetUtils';
@@ -31,15 +38,34 @@ export default function BudgetDayView({
 	setEditVisible,
 }: BudgetDayViewProps) {
 	// State to track how many transactions to show
-	const [futureCount, setFutureCount] = useState(3);
-	const [pastCount, setPastCount] = useState(4);
+	const storeBalance = useBalanceStore((state) => state.balance);
+	const storeDisposable = useBalanceStore((state) => state.disposable);
+	const [futureCount, setFutureCount] = useState(0);
+	const [pastCount, setPastCount] = useState(0);
+	const [currentBalance, setCurrentBalance] = useState(0);
+	const [disposable, setDisposable] = useState(0);
+	useEffect(() => {
+		setCurrentBalance(storeBalance);
+		setDisposable(storeDisposable);
+	}, [storeBalance, storeDisposable]);
 
 	// --- Data Processing ---
 	const { past, current, future, futureTxns, pastTxns } = useMemo(() => {
 		const cDateStr = formatDate(currentDate);
+		console.log('ype', transactions);
+
+		// Normalize dates: ensure each txn.date is a Date object so getTime() is available
+		const normalizedTxns: Item[] = transactions.map((t) => {
+			const parsedDate =
+				// if already a Date keep it, otherwise create a Date from the value
+				t.date instanceof Date
+					? t.date
+					: new Date(t.date as unknown as string);
+			return { ...t, date: parsedDate };
+		});
 
 		// Sort all transactions by date descending (Newest first)
-		const sorted = [...transactions].sort(
+		const sorted = [...normalizedTxns].sort(
 			(a, b) => b.date.getTime() - a.date.getTime(),
 		);
 
@@ -79,7 +105,10 @@ export default function BudgetDayView({
 			pastTxns: pastTxns,
 		};
 	}, [transactions, currentDate, futureCount, pastCount]);
-
+	useEffect(() => {
+		setFutureCount(futureTxns.length);
+		setPastCount(pastTxns.length);
+	}, [futureTxns, pastTxns]);
 	// Handlers for chevron clicks
 	const handleUpChevronClick = () => {
 		if (futureTxns.length > futureCount) {
@@ -92,10 +121,6 @@ export default function BudgetDayView({
 			setPastCount((prev) => Math.min(prev + 3, pastTxns.length));
 		}
 	};
-
-	// Mock Totals for the center card (In a real app, calculate these based on history)
-	const currentBalance = 200.0;
-	const disposable = 6.0;
 
 	return (
 		<YStack flex={1}>
@@ -125,7 +150,9 @@ export default function BudgetDayView({
 					{/* --- Future Events --- */}
 					<BudgetEventList
 						txns={future}
-						title={i18next.t('3 Upcoming events')}
+						title={i18next.t('{{count}} upcoming events', {
+							count: futureCount,
+						})}
 						setInputDate={setInputDate}
 						formatCurrency={formatCurrency}
 						setEditVisible={setEditVisible}
@@ -221,7 +248,9 @@ export default function BudgetDayView({
 					{/* --- Past Events --- */}
 					<BudgetEventList
 						txns={past}
-						title={i18next.t('4 past events')}
+						title={i18next.t('{{count}} past events', {
+							count: pastCount,
+						})}
 						setInputDate={setInputDate}
 						formatCurrency={formatCurrency}
 						setEditVisible={setEditVisible}

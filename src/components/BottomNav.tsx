@@ -1,6 +1,7 @@
 import { ChartColumn, Home, PlusCircle, Wallet } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import type { ReactElement } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, useTheme, XStack } from 'tamagui';
 
 interface NavButtonProps {
@@ -55,12 +56,13 @@ const bottomNavOptions: BottomNavOption[] = [
 ];
 
 export const BottomNav = () => {
+	const insets = useSafeAreaInsets();
 	const theme = useTheme();
 	const router = useRouter();
 	return (
 		<XStack
 			position="absolute"
-			bottom={0}
+			bottom={insets.bottom}
 			left={0}
 			right={0}
 			paddingHorizontal="$4"

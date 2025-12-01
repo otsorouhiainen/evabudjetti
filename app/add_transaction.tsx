@@ -1,3 +1,6 @@
+import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
+import { type Category, useCategoryStore } from '@/src/store/categoryStore';
+import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import {
 	Check as CheckIcon,
 	ChevronDown,
@@ -20,9 +23,6 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
-import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
-import { useCategoryStore } from '@/src/store/categoryStore';
-import { useTransactionStore } from '@/src/store/transactionStore';
 import {
 	TransactionType,
 	TransactionTypeSegment,
@@ -52,13 +52,13 @@ export default function AddTransaction() {
 	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [newCategory, setNewCategory] = useState('');
 	const [showSuccess, setShowSuccess] = useState(false);
-
-	const { categories, fetchCategories, addCategory } = useCategoryStore();
-	const { addTransaction } = useTransactionStore();
-
+	const addTransaction = useRealTransactionsStore((state) => state.add);
+	const addCategory = useCategoryStore((state) => state.addCategory);
+	const storeCategories = useCategoryStore();
+	const [categories, setCategories] = useState<Category[]>([]);
 	useEffect(() => {
-		fetchCategories();
-	}, [fetchCategories]);
+		setCategories(storeCategories.categories);
+	}, [storeCategories.categories]);
 
 	const dynamicCategories = (categories || []).map((c) => ({
 		key: c.id,

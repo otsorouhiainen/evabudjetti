@@ -4,15 +4,17 @@ import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore
 import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import i18next from 'i18next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, SizableText, Stack, XStack, YStack } from 'tamagui';
 
 export default function Landing() {
 	const storeBalance = useBalanceStore((state) => state.balance);
-	const setBalance = useBalanceStore((state) => state.change);
 	const storeDisposable = useBalanceStore((state) => state.disposable);
+	const setStoreBalance = useBalanceStore((state) => state.change);
+	const [balance, setBalance] = useState(0);
+	const [disposable, setDisposable] = useState(0);
 	const budgetCreated = usePlannedTransactionsStore(
 		(state) => state.transactions.length > 0,
 	);
@@ -21,6 +23,10 @@ export default function Landing() {
 	const [helpVisible, setHelpVisible] = useState(false);
 	const language = useLanguageStore((state) => state.language);
 	const change = useLanguageStore((state) => state.change);
+	useEffect(() => {
+		setBalance(storeBalance);
+		setDisposable(storeDisposable);
+	}, [storeBalance, storeDisposable]);
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
 			{/* Help Modal */}
@@ -205,7 +211,7 @@ export default function Landing() {
 											fontFamily="$body"
 											color="$primary100"
 										>
-											{storeBalance}€
+											{balance}€
 										</SizableText>
 									</YStack>
 
@@ -226,7 +232,7 @@ export default function Landing() {
 											fontFamily="$body"
 											color="$primary200"
 										>
-											{storeDisposable}€
+											{disposable}€
 										</SizableText>
 									</YStack>
 
@@ -331,7 +337,7 @@ export default function Landing() {
 									backgroundColor="$primary100"
 									width="100%"
 									onPress={() => {
-										setBalance(Number(initialBalance));
+										setStoreBalance(Number(initialBalance));
 										router.push('/budget_wizard');
 									}}
 									disabled={initialBalance === ''}

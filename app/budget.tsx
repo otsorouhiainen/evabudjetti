@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, Tabs, Text, XStack, YStack } from 'tamagui';
 import type { Item } from '../src/constants/wizardConfig';
-import { useTransactionStore } from '../src/store/transactionStore';
 import usePlannedTransactionsStore from '../src/store/usePlannedTransactionsStore';
 import BudgetDayView from './src/components/BudgetDayView';
 import BudgetMonthView from './src/components/BudgetMonthView';
@@ -15,8 +14,6 @@ export default function Budget() {
 	const storeTransactions = usePlannedTransactionsStore(
 		(state) => state.transactions,
 	);
-	const { transactions: realTransactions, fetchTransactions } =
-		useTransactionStore();
 
 	const [editOpen, setEditVisible] = useState(false);
 	const [editingTxn, setEditingTxn] = useState<Item | null>(null);
@@ -29,16 +26,13 @@ export default function Budget() {
 
 	const router = useRouter();
 
-	const fetchPlanned = usePlannedTransactionsStore((state) => state.fetch);
-
-	useEffect(() => {
-		fetchPlanned();
+	/*useEffect(() => {
 		fetchTransactions();
-	}, [fetchPlanned, fetchTransactions]);
+	}, [fetchPlanned, fetchTransactions]);*/
 
 	useEffect(() => {
-		setTransactions([...storeTransactions, ...realTransactions]);
-	}, [storeTransactions, realTransactions]);
+		setTransactions(storeTransactions);
+	}, [storeTransactions]);
 
 	const handleSave = () => {
 		if (!editingTxn) return;
@@ -132,9 +126,13 @@ export default function Budget() {
 								Day
 							</Text>
 						</StyledTab>
-						<StyledTab value="month" flex={1} borderRadius={0}>
+						<StyledTab
+							value="month"
+							flex={1}
+							borderTopLeftRadius={20}
+							borderBottomLeftRadius={20}
+						>
 							<Text
-								padding={'$2'}
 								color={
 									selectedTab === 'month'
 										? '$color.white'
@@ -151,7 +149,6 @@ export default function Budget() {
 							borderBottomRightRadius={20}
 						>
 							<Text
-								padding={10}
 								color={
 									selectedTab === 'year'
 										? '$color.white'

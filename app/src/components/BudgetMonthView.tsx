@@ -1,6 +1,13 @@
+import useBalanceStore from '@/src/store/useBalanceStore';
 import { ChevronLeft, ChevronRight, HelpCircle } from '@tamagui/lucide-icons';
 import i18next from 'i18next';
-import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
+import {
+	type Dispatch,
+	type SetStateAction,
+	useEffect,
+	useMemo,
+	useState,
+} from 'react';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
@@ -27,6 +34,10 @@ export default function BudgetMonthView({
 	setInputDate,
 	editOpen,
 }: BudgetMonthViewProps) {
+	const storeBalance = useBalanceStore((state) => state.balance);
+	const storeDisposable = useBalanceStore((state) => state.disposable);
+	const [currentBalance, setCurrentBalance] = useState(0);
+	const [disposable, setDisposable] = useState(0);
 	const [incomesOpen, setIncomesOpen] = useState(true);
 	const [expensesOpen, setExpensesOpen] = useState(true);
 	const [helpVisible, setHelpVisible] = useState(false);
@@ -39,11 +50,11 @@ export default function BudgetMonthView({
 	);
 
 	const POSITIVE_TX: Item[] = [...future, ...past].filter(
-		(ex) => Number(ex.amount) >= 0,
+		(ex) => ex.type === 'income',
 	);
 
 	const NEGATIVE_TX: Item[] = [...future, ...past].filter(
-		(ex) => Number(ex.amount) < 0,
+		(ex) => ex.type === 'expense',
 	);
 
 	const monthLabel = new Intl.DateTimeFormat(LOCALE, {
@@ -63,22 +74,10 @@ export default function BudgetMonthView({
 		onDateChange(newDate);
 	};
 
-	// Calculate totals based on current month transactions
-	const totals = useMemo(() => {
-		let income = 0;
-		let expenses = 0;
-
-		[...future, ...past].forEach((txn) => {
-			const amount = Number(txn.amount);
-			if (amount > 0) income += amount;
-			else expenses += Math.abs(amount);
-		});
-
-		return {
-			balance: income - expenses,
-			discretionary: Math.max(0, income - expenses), // Simplified calculation
-		};
-	}, [future, past]);
+	useEffect(() => {
+		setCurrentBalance(storeBalance);
+		setDisposable(storeDisposable);
+	}, [storeBalance, storeDisposable]);
 
 	return (
 		<YStack flex={1}>
@@ -147,7 +146,7 @@ export default function BudgetMonthView({
 						{i18next.t('Balance')}:
 						<Text fontSize={'$body'}>
 							{' '}
-							{formatCurrency(totals.balance)}
+							{formatCurrency(currentBalance)}
 						</Text>
 					</Text>
 					<XStack>
@@ -155,7 +154,7 @@ export default function BudgetMonthView({
 							{i18next.t('Disposable income')}:
 							<Text fontSize={'$body'}>
 								{' '}
-								{formatCurrency(totals.discretionary)}
+								{formatCurrency(disposable)}
 							</Text>
 						</Text>
 						<Button

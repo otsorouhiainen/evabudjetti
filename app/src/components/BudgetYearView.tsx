@@ -1,11 +1,11 @@
+import BudgetDropdown from '@/app/src/components/BudgetDropdown';
 import { ChevronLeft, ChevronRight, Pencil, X } from '@tamagui/lucide-icons';
 import i18next from 'i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { Button, ScrollView, Separator, Text, XStack, YStack } from 'tamagui';
-import BudgetDropdown from '@/app/src/components/BudgetDropdown';
 import type {
 	Item,
-	Reoccurence,
+	Recurrence,
 	TransactionType,
 } from '../../../src/constants/wizardConfig';
 import { formatCurrency } from '../utils/budgetUtils';
@@ -75,7 +75,9 @@ export default function BudgetYearView({
 	// 1. Filter transactions to only have the currently selected year
 	const yearTransactions = useMemo(() => {
 		return transactions.filter(
-			(t) => t.date.getFullYear() === currentDate.getFullYear(),
+			(t) =>
+				t.date instanceof Date &&
+				t.date.getFullYear() === currentDate.getFullYear(),
 		);
 	}, [transactions, currentDate]);
 
@@ -101,13 +103,13 @@ export default function BudgetYearView({
 			return (
 				Object.entries(map)
 					.map(([catName, totalAmount], index) => ({
-						id: index,
+						id: index.toString(),
 						name: catName,
 						amount: totalAmount,
 						date: currentDate,
 						category: catName,
 						type: 'income' as TransactionType,
-						reoccurence: 'none' as Reoccurence,
+						recurrence: 'none' as Recurrence,
 					}))
 					// This sorts the result highest value-first
 					.sort(
