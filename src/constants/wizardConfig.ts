@@ -1,4 +1,4 @@
-export type Reoccurence =
+export type Recurrence =
 	| 'none'
 	| 'daily'
 	| 'weekly'
@@ -7,13 +7,13 @@ export type Reoccurence =
 	| 'custom';
 export type TransactionType = 'income' | 'expense';
 export interface Item {
-	id: number;
+	id: string;
 	name: string;
 	category: string;
 	type: TransactionType;
 	amount: number;
-	reoccurence: Reoccurence;
-	reoccurenceInterval?: number;
+	recurrence: Recurrence;
+	recurrenceInterval?: number;
 	date: Date;
 }
 

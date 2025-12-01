@@ -1,50 +1,108 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { eq } from 'drizzle-orm';
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
 import type { Item } from '../constants/wizardConfig';
+import { db } from '../db/client';
+import { transactions } from '../db/schema';
 
 interface PlannedTransactionsState {
 	transactions: Item[];
-	add: (item: Item) => void;
-	remove: (item: Item) => void;
-	replaceAll: (items: Item[]) => void;
+	loading: boolean;
+	fetch: () => Promise<void>;
+	add: (item: Item) => Promise<void>;
+	remove: (item: Item) => Promise<void>;
+	replaceAll: (items: Item[]) => Promise<void>;
 	change: () => void;
 }
-const usePlannedTransactionsStore = create<PlannedTransactionsState>()(
-	persist(
-		(set) => ({
-			transactions: [],
-			add: (item: Item) => {
-				set((state) => ({
-					...state,
-					transactions: [...state.transactions, item],
+
+const usePlannedTransactionsStore = create<PlannedTransactionsState>(
+	(set, get) => ({
+		transactions: [],
+		loading: false,
+		fetch: async () => {
+			set({ loading: true });
+			try {
+				const data = await db
+					.select()
+					.from(transactions)
+					// biome-ignore lint/suspicious/noExplicitAny: Drizzle type mismatch workaround
+					.where(eq(transactions.isPlanned, true) as any);
+				const items: Item[] = data.map((t) => ({
+					id: t.id,
+					name: t.name,
+					amount: t.amount,
+					date: t.date,
+					category: t.categoryId || 'uncategorized',
+					type: t.type as Item['type'],
+					recurrence: t.recurrence as Item['recurrence'],
+					recurrenceInterval: t.recurrenceInterval || undefined,
 				}));
-			},
-			remove: (item: Item) => {
-				set((state) => {
-					// remove by matching id
-					const id = item.id;
-					if (id === undefined) return state;
-					const newTransactions = state.transactions.filter(
-						(t) => t.id !== id,
-					);
-					return { ...state, transactions: newTransactions };
-				});
-			},
-			change: () => {
-				set((state) => state);
-			},
-			replaceAll: (items: Item[]) => {
-				set((state) => ({
-					...state,
-					transactions: items,
-				}));
-			},
-		}),
-		{
-			name: 'planned-transactions-storage',
-			storage: createJSONStorage(() => AsyncStorage),
+				set({ transactions: items, loading: false });
+			} catch (e) {
+				console.error('Failed to fetch planned transactions:', e);
+				set({ loading: false });
+			}
 		},
-	),
+		add: async (item: Item) => {
+			try {
+				await db.insert(transactions).values({
+					id: item.id,
+					name: item.name,
+					amount: item.amount,
+					date: item.date,
+					categoryId: item.category,
+					type: item.type,
+					recurrence: item.recurrence,
+					recurrenceInterval: item.recurrenceInterval,
+					isPlanned: true,
+				});
+				get().fetch();
+			} catch (e) {
+				console.error('Failed to add planned transaction:', e);
+			}
+		},
+		remove: async (item: Item) => {
+			try {
+				await db
+					.delete(transactions)
+					// biome-ignore lint/suspicious/noExplicitAny: Drizzle type mismatch workaround
+					.where(eq(transactions.id, item.id) as any);
+				get().fetch();
+			} catch (e) {
+				console.error('Failed to remove planned transaction:', e);
+			}
+		},
+		replaceAll: async (items: Item[]) => {
+			try {
+				await db.transaction(async (tx) => {
+					await tx
+						.delete(transactions)
+						// biome-ignore lint/suspicious/noExplicitAny: Drizzle type mismatch workaround
+						.where(eq(transactions.isPlanned, true) as any);
+					if (items.length > 0) {
+						await tx.insert(transactions).values(
+							items.map((item) => ({
+								id: item.id,
+								name: item.name,
+								amount: item.amount,
+								date: item.date,
+								categoryId: item.category,
+								type: item.type,
+								recurrence: item.recurrence,
+								recurrenceInterval: item.recurrenceInterval,
+								isPlanned: true,
+							})),
+						);
+					}
+				});
+				get().fetch();
+			} catch (e) {
+				console.error('Failed to replace planned transactions:', e);
+			}
+		},
+		change: () => {
+			set((state) => state);
+		},
+	}),
 );
+
 export default usePlannedTransactionsStore;

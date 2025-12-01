@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, Tabs, Text, XStack, YStack } from 'tamagui';
 import type { Item } from '../src/constants/wizardConfig';
 import usePlannedTransactionsStore from '../src/store/usePlannedTransactionsStore';
+import useRealTransactionsStore from '../src/store/useRealTransactionsStore';
 import BudgetDayView from './src/components/BudgetDayView';
 import BudgetMonthView from './src/components/BudgetMonthView';
 import BudgetYearView from './src/components/BudgetYearView';
@@ -14,7 +15,10 @@ export default function Budget() {
 	const storeTransactions = usePlannedTransactionsStore(
 		(state) => state.transactions,
 	);
-	
+	const realTransactions = useRealTransactionsStore(
+		(state) => state.transactions,
+	);
+
 	const [editOpen, setEditVisible] = useState(false);
 	const [editingTxn, setEditingTxn] = useState<Item | null>(null);
 	const [currentDate, setcurrentDate] = useState(new Date());
@@ -26,9 +30,17 @@ export default function Budget() {
 
 	const router = useRouter();
 
+	const fetchPlanned = usePlannedTransactionsStore((state) => state.fetch);
+	const fetchReal = useRealTransactionsStore((state) => state.fetch);
+
 	useEffect(() => {
-		setTransactions(storeTransactions);
-	}, [storeTransactions]);
+		fetchPlanned();
+		fetchReal();
+	}, [fetchPlanned, fetchReal]);
+
+	useEffect(() => {
+		setTransactions([...storeTransactions, ...realTransactions]);
+	}, [storeTransactions, realTransactions]);
 
 	const handleSave = () => {
 		if (!editingTxn) return;
@@ -48,14 +60,15 @@ export default function Budget() {
 			return; // don’t touch txn.date
 		}
 
-		// Simple regex check for dd.mm.yyyy before parsing
 		const regex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
 		if (regex.test(text)) {
 			const newDate = parseTxnDate(text);
 			// Check if date is valid (not Invalid Date)
 			if (!Number.isNaN(newDate.getTime())) {
 				setError('');
-				setEditingTxn((prev) => (prev ? { ...prev, date: newDate } : prev));
+				setEditingTxn((prev) =>
+					prev ? { ...prev, date: newDate } : prev,
+				);
 			} else {
 				setError('Invalid date');
 			}
@@ -63,7 +76,9 @@ export default function Budget() {
 			if (isValidDate(text)) {
 				setError('');
 				const newDate = parseTxnDate(text);
-				setEditingTxn((prev) => (prev ? { ...prev, date: newDate } : prev));
+				setEditingTxn((prev) =>
+					prev ? { ...prev, date: newDate } : prev,
+				);
 			} else {
 				setError('Invalid date, use format: dd.mm.yyyy');
 			}

@@ -19,11 +19,7 @@ interface BudgetDayViewProps {
 
 // Helper to format date as "dd.mm.yyyy"
 const formatDate = (date: Date) => {
-	return new Intl.DateTimeFormat(LOCALE, {
-		day: '2-digit',
-		month: '2-digit',
-		year: 'numeric',
-	}).format(date);
+	return new Intl.DateTimeFormat(LOCALE, {}).format(date);
 };
 
 export default function BudgetDayView({

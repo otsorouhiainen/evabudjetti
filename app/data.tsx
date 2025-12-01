@@ -1,19 +1,25 @@
-import { YStack, View, Text} from 'tamagui';
-import { useState } from 'react';
-import { prisma } from '../prisma/prisma';
-
-//spending.transactions.slice(0, 5).map(() => {
+import { useEffect } from 'react';
+import { Text, View, YStack } from 'tamagui';
+import { useTransactionStore } from '../src/store/transactionStore';
 
 export default function Data() {
+	const { transactions, fetchTransactions, loading, error } =
+		useTransactionStore();
 
-	const transactions = prisma.spending.useFindFirst({
-		include: {
-    		transactions: true,
-		},
-	})?.transactions;
+	useEffect(() => {
+		fetchTransactions();
+	}, [fetchTransactions]);
 
-	if (!transactions) {
-		return null;
+	if (loading) {
+		return <Text>Loading...</Text>;
+	}
+
+	if (error) {
+		return <Text>Error: {error}</Text>;
+	}
+
+	if (!transactions || transactions.length === 0) {
+		return <Text>No transactions found.</Text>;
 	}
 
 	return (
@@ -25,13 +31,13 @@ export default function Data() {
 		>
 			<View>
 				{transactions.map((transaction, index) => (
-				<Text key={transaction.id}>
-					{index + 1}. {transaction.description}
-				</Text>
+					<Text key={transaction.id}>
+						{index + 1}. {transaction.description}
+					</Text>
 				))}
 			</View>
 
 			<YStack height={48} />
 		</YStack>
 	);
-} 
+}

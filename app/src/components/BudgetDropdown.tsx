@@ -1,8 +1,8 @@
-import StyledCard from '@/app/src/components/styledCard';
-import { LOCALE } from '@/app/src/constants';
 import { ChevronDown, ChevronRight, Pencil } from '@tamagui/lucide-icons';
 import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
+import StyledCard from '@/app/src/components/styledCard';
+import { LOCALE } from '@/app/src/constants';
 import type { Item } from '../../../src/constants/wizardConfig';
 
 interface Props {

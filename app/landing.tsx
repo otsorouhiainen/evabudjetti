@@ -1,12 +1,13 @@
-import useBalanceStore from '@/src/store/useBalanceStore';
-import useLanguageStore from '@/src/store/useLanguageStore';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import i18next from 'i18next';
 import { useState } from 'react';
 import { ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, SizableText, Stack, XStack, YStack } from 'tamagui';
+import useBalanceStore from '@/src/store/useBalanceStore';
+import useLanguageStore from '@/src/store/useLanguageStore';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 
 export default function Landing() {
 	const storeBalance = useBalanceStore((state) => state.balance);
@@ -21,7 +22,7 @@ export default function Landing() {
 	const language = useLanguageStore((state) => state.language);
 	const change = useLanguageStore((state) => state.change);
 	return (
-		<>
+		<SafeAreaView style={{ flex: 1 }}>
 			{/* Help Modal */}
 			{helpVisible && (
 				<Stack
@@ -306,11 +307,14 @@ export default function Landing() {
 									height={56}
 									value={initialBalance}
 									onChangeText={setInitialBalance}
+									borderColor="$black"
+									borderWidth={1}
+									backgroundColor="$white"
 								></Input>
 								<Button
 									marginTop={8}
 									size={64}
-									backgroundColor="$primary500"
+									backgroundColor="$primary100"
 									height={80}
 									onPress={() => {
 										setBalance(Number(initialBalance));
@@ -330,6 +334,6 @@ export default function Landing() {
 					</YStack>
 				</ScrollView>
 			</YStack>
-		</>
+		</SafeAreaView>
 	);
 }
