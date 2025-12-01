@@ -102,9 +102,9 @@ export default function BudgetYearView({
 				Object.entries(map)
 					.map(([catName, totalAmount], index) => ({
 						id: index,
-						name: catName, // <--- This sets the Title in the dropdown to the Category Name
+						name: catName,
 						amount: totalAmount,
-						date: currentDate, // Dummy date
+						date: currentDate,
 						category: catName,
 						type: 'income' as TransactionType,
 						reoccurence: 'none' as Reoccurence,

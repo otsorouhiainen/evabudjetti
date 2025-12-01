@@ -46,8 +46,7 @@
 				}
 			],
 			"expo-font",
-			"expo-web-browser",
-			"@prisma/react-native"
+			"expo-web-browser"
 		],
 		"experiments": {
 			"typedRoutes": true

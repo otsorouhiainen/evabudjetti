@@ -44,22 +44,18 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 				set({ transactions: parsedTransactions, loading: false });
 			} else {
 				// Native: Load from Drizzle
-				const data = await (db as any)
+				const data = await db
 					.select()
 					.from(transactionsSchema)
-					.where(
-						eq(transactionsSchema.isPlanned as any, false) as any,
-					)
-					.orderBy(desc(transactionsSchema.date as any) as any);
+					.where(eq(transactionsSchema.isPlanned, false))
+					.orderBy(desc(transactionsSchema.date));
 
-				const mappedTransactions: Transaction[] = data.map(
-					(t: any) => ({
-						id: t.id,
-						description: t.name,
-						amount: t.amount,
-						date: t.date,
-					}),
-				);
+				const mappedTransactions: Transaction[] = data.map((t) => ({
+					id: t.id,
+					description: t.name,
+					amount: t.amount,
+					date: t.date,
+				}));
 
 				set({
 					transactions: mappedTransactions,
@@ -96,8 +92,7 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 				set({ transactions: updatedTransactions, loading: false });
 			} else {
 				// Native: Save to Drizzle
-				// biome-ignore lint/suspicious/noExplicitAny: Drizzle type mismatch workaround
-				await (db as any).insert(transactionsSchema).values({
+				await db.insert(transactionsSchema).values({
 					id: newTransaction.id,
 					name: description,
 					amount: amount,

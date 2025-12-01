@@ -24,8 +24,7 @@ const usePlannedTransactionsStore = create<PlannedTransactionsState>(
 				const data = await db
 					.select()
 					.from(transactions)
-					// biome-ignore lint/suspicious/noExplicitAny: Drizzle type mismatch workaround
-					.where(eq(transactions.isPlanned, true) as any);
+					.where(eq(transactions.isPlanned, true));
 				const items: Item[] = data.map((t) => ({
 					id: t.id,
 					name: t.name,
@@ -64,8 +63,7 @@ const usePlannedTransactionsStore = create<PlannedTransactionsState>(
 			try {
 				await db
 					.delete(transactions)
-					// biome-ignore lint/suspicious/noExplicitAny: Drizzle type mismatch workaround
-					.where(eq(transactions.id, item.id) as any);
+					.where(eq(transactions.id, item.id));
 				get().fetch();
 			} catch (e) {
 				console.error('Failed to remove planned transaction:', e);
@@ -76,8 +74,7 @@ const usePlannedTransactionsStore = create<PlannedTransactionsState>(
 				await db.transaction(async (tx) => {
 					await tx
 						.delete(transactions)
-						// biome-ignore lint/suspicious/noExplicitAny: Drizzle type mismatch workaround
-						.where(eq(transactions.isPlanned, true) as any);
+						.where(eq(transactions.isPlanned, true));
 					if (items.length > 0) {
 						await tx.insert(transactions).values(
 							items.map((item) => ({

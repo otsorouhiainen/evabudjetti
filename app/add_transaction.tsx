@@ -4,6 +4,8 @@ import {
 	ChevronUp,
 	Plus,
 } from '@tamagui/lucide-icons';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import * as Crypto from 'expo-crypto';
 import i18next from 'i18next';
 import { useMemo, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -20,29 +22,18 @@ import {
 	YStack,
 } from 'tamagui';
 import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
-import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
+import { db } from '@/src/db/client';
+import { categories, transactions } from '@/src/db/schema';
 import {
 	TransactionType,
 	TransactionTypeSegment,
 } from '../src/components/TransactionTypeSegment';
 
-// TODO: categories to be dynamic from database
-export const CATEGORIES = [
-	{ key: 'benefit', label: 'Benefit', type: TransactionType.Income },
-	{ key: 'rent', label: 'Rent', type: TransactionType.Expense },
-	{ key: 'other', label: 'Other', type: TransactionType.Income },
-	{ key: 'electricity', label: 'Electricity', type: TransactionType.Expense },
-	{ key: 'water', label: 'Water', type: TransactionType.Expense },
-];
-
-export type CategoryKey = (typeof CATEGORIES)[number]['key'];
-
 export default function AddTransaction() {
-	const submitToStore = useRealTransactionsStore((state) => state.add);
 	const [type, setType] = useState<
 		TransactionType.Income | TransactionType.Expense
 	>(TransactionType.Income);
-	const [category, setCategory] = useState<CategoryKey | null>(null);
+	const [category, setCategory] = useState<string | null>(null);
 	const [name, setName] = useState('');
 	const [amount, setAmount] = useState('');
 	const [date, setDate] = useState<Date | null>(null);
@@ -63,13 +54,36 @@ export default function AddTransaction() {
 	const [newCategory, setNewCategory] = useState('');
 	const [showSuccess, setShowSuccess] = useState(false);
 
-	const visibleCategories = expanded ? CATEGORIES : CATEGORIES.slice(0, 3);
+	const categoriesData = useLiveQuery(db.select().from(categories));
+	const dynamicCategories = (categoriesData || []).map((c) => ({
+		key: c.id,
+		label: c.name,
+		type:
+			c.type === 'income'
+				? TransactionType.Income
+				: TransactionType.Expense,
+	}));
 
-	const handleAddCategory = () => {
-		//placeholder for adding category
+	const visibleCategories = expanded
+		? dynamicCategories
+		: dynamicCategories.slice(0, 3);
 
-		setNewCategory('');
-		setCategoryModalVisible(false);
+	const handleAddCategory = async () => {
+		if (!newCategory.trim()) return;
+
+		try {
+			await db.insert(categories).values({
+				id: Crypto.randomUUID(),
+				name: newCategory,
+				type: type === TransactionType.Income ? 'income' : 'expense',
+				color: '#000000', // Default color
+				icon: 'circle', // Default icon
+			});
+			setNewCategory('');
+			setCategoryModalVisible(false);
+		} catch (e) {
+			console.error('Failed to add category:', e);
+		}
 	};
 
 	const isValidSubmit = useMemo(
@@ -103,7 +117,7 @@ export default function AddTransaction() {
 		setErrors({});
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		// submit handler placeholder
 		const newErrors: typeof errors = {};
 
@@ -121,29 +135,34 @@ export default function AddTransaction() {
 		setErrors(newErrors);
 
 		if (Object.keys(newErrors).length === 0) {
-			submitToStore({
-				id: Math.random().toString(36).substring(2, 15),
-				type: type.toLowerCase() as Lowercase<typeof type>,
-				category: category ?? 'other',
-				name: name,
-				amount: Number(amount),
-				recurrence: repeatInterval,
-				recurrenceInterval:
-					repeatValue === '' ? undefined : Number(repeatValue),
-				date: date ?? new Date(),
-			});
-			console.log({
-				type,
-				category,
-				name,
-				amount,
-				date,
-				repeat,
-				description,
-				repeatInterval,
-				repeatValue,
-			});
-			setShowSuccess(true);
+			try {
+				await db.insert(transactions).values({
+					id: Math.random().toString(36).substring(2, 15),
+					name: name,
+					amount: Number(amount),
+					date: date ?? new Date(),
+					categoryId: category ?? 'other',
+					type: type.toLowerCase() as 'income' | 'expense',
+					recurrence: repeatInterval,
+					recurrenceInterval:
+						repeatValue === '' ? undefined : Number(repeatValue),
+					isPlanned: false,
+				});
+				console.log({
+					type,
+					category,
+					name,
+					amount,
+					date,
+					repeat,
+					description,
+					repeatInterval,
+					repeatValue,
+				});
+				setShowSuccess(true);
+			} catch (e) {
+				console.error('Failed to add transaction:', e);
+			}
 		}
 	};
 

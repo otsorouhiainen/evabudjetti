@@ -22,8 +22,7 @@ const useRealTransactionsStore = create<RealTransactionsState>((set, get) => ({
 			const data = await db
 				.select()
 				.from(transactions)
-				// biome-ignore lint/suspicious/noExplicitAny: Drizzle type mismatch workaround
-				.where(eq(transactions.isPlanned, false) as any);
+				.where(eq(transactions.isPlanned, false));
 			const items: Item[] = data.map((t) => ({
 				id: t.id,
 				name: t.name,
@@ -60,10 +59,7 @@ const useRealTransactionsStore = create<RealTransactionsState>((set, get) => ({
 	},
 	remove: async (item: Item) => {
 		try {
-			await db
-				.delete(transactions)
-				// biome-ignore lint/suspicious/noExplicitAny: Drizzle type mismatch workaround
-				.where(eq(transactions.id, item.id) as any);
+			await db.delete(transactions).where(eq(transactions.id, item.id));
 			get().fetch();
 		} catch (e) {
 			console.error('Failed to remove transaction:', e);
