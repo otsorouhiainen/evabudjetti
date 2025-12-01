@@ -1,19 +1,12 @@
 import { desc, eq } from 'drizzle-orm';
 import { Platform } from 'react-native';
 import { create } from 'zustand';
+import type { Item } from '../constants/wizardConfig';
 import { db } from '../db/client';
 import { transactions as transactionsSchema } from '../db/schema';
 
-// Define types based on your schema
-interface Transaction {
-	id: string;
-	description: string;
-	amount: number;
-	date: Date;
-}
-
 interface TransactionStore {
-	transactions: Transaction[];
+	transactions: Item[];
 	loading: boolean;
 	error: string | null;
 
@@ -35,12 +28,10 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 				const stored = localStorage.getItem('transactions');
 				const transactions = stored ? JSON.parse(stored) : [];
 				// Convert date strings back to Date objects
-				const parsedTransactions = transactions.map(
-					(t: { date: string | number | Date }) => ({
-						...t,
-						date: new Date(t.date),
-					}),
-				);
+				const parsedTransactions = transactions.map((t: any) => ({
+					...t,
+					date: new Date(t.date),
+				}));
 				set({ transactions: parsedTransactions, loading: false });
 			} else {
 				// Native: Load from Drizzle
@@ -50,11 +41,15 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 					.where(eq(transactionsSchema.isPlanned, false))
 					.orderBy(desc(transactionsSchema.date));
 
-				const mappedTransactions: Transaction[] = data.map((t) => ({
+				const mappedTransactions: Item[] = data.map((t) => ({
 					id: t.id,
-					description: t.name,
+					name: t.name,
 					amount: t.amount,
 					date: t.date,
+					category: t.categoryId || 'uncategorized',
+					type: t.type as Item['type'],
+					recurrence: t.recurrence as Item['recurrence'],
+					recurrenceInterval: t.recurrenceInterval || undefined,
 				}));
 
 				set({
@@ -68,14 +63,18 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 		}
 	},
 
-	addTransaction: async (description: string, amount: number) => {
+	addTransaction: async (transaction: Partial<Item>) => {
 		set({ loading: true, error: null });
 		try {
-			const newTransaction = {
-				id: Math.random().toString(36).substr(2, 9), // Simple ID
-				description,
-				amount,
-				date: new Date(),
+			const newTransaction: Item = {
+				id: transaction.id || Math.random().toString(36).substr(2, 9),
+				name: transaction.name || '',
+				amount: transaction.amount || 0,
+				date: transaction.date || new Date(),
+				category: transaction.category || 'uncategorized',
+				type: transaction.type || 'expense',
+				recurrence: transaction.recurrence || 'none',
+				recurrenceInterval: transaction.recurrenceInterval,
 			};
 
 			if (Platform.OS === 'web') {
@@ -94,13 +93,14 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 				// Native: Save to Drizzle
 				await db.insert(transactionsSchema).values({
 					id: newTransaction.id,
-					name: description,
-					amount: amount,
+					name: newTransaction.name,
+					amount: newTransaction.amount,
 					date: newTransaction.date,
-					type: 'expense', // Default to expense
-					recurrence: 'none',
+					type: newTransaction.type,
+					recurrence: newTransaction.recurrence,
+					recurrenceInterval: newTransaction.recurrenceInterval,
 					isPlanned: false,
-					categoryId: 'default-category-id', // Placeholder
+					categoryId: newTransaction.category,
 				});
 
 				// Refresh list

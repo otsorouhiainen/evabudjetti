@@ -32,7 +32,7 @@ export default function Data() {
 			<View>
 				{transactions.map((transaction, index) => (
 					<Text key={transaction.id}>
-						{index + 1}. {transaction.description}
+						{index + 1}. {transaction.name}
 					</Text>
 				))}
 			</View>

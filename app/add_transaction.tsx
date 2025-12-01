@@ -4,10 +4,9 @@ import {
 	ChevronUp,
 	Plus,
 } from '@tamagui/lucide-icons';
-import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import * as Crypto from 'expo-crypto';
 import i18next from 'i18next';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	AlertDialog,
@@ -22,8 +21,8 @@ import {
 	YStack,
 } from 'tamagui';
 import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
-import { db } from '@/src/db/client';
-import { categories, transactions } from '@/src/db/schema';
+import { useCategoryStore } from '@/src/store/categoryStore';
+import { useTransactionStore } from '@/src/store/transactionStore';
 import {
 	TransactionType,
 	TransactionTypeSegment,
@@ -54,8 +53,14 @@ export default function AddTransaction() {
 	const [newCategory, setNewCategory] = useState('');
 	const [showSuccess, setShowSuccess] = useState(false);
 
-	const categoriesData = useLiveQuery(db.select().from(categories));
-	const dynamicCategories = (categoriesData || []).map((c) => ({
+	const { categories, fetchCategories, addCategory } = useCategoryStore();
+	const { addTransaction } = useTransactionStore();
+
+	useEffect(() => {
+		fetchCategories();
+	}, [fetchCategories]);
+
+	const dynamicCategories = (categories || []).map((c) => ({
 		key: c.id,
 		label: c.name,
 		type:
@@ -72,7 +77,7 @@ export default function AddTransaction() {
 		if (!newCategory.trim()) return;
 
 		try {
-			await db.insert(categories).values({
+			await addCategory({
 				id: Crypto.randomUUID(),
 				name: newCategory,
 				type: type === TransactionType.Income ? 'income' : 'expense',
@@ -136,17 +141,16 @@ export default function AddTransaction() {
 
 		if (Object.keys(newErrors).length === 0) {
 			try {
-				await db.insert(transactions).values({
+				await addTransaction({
 					id: Crypto.randomUUID(),
 					name: name,
 					amount: Number(amount),
 					date: date ?? new Date(),
-					categoryId: category ?? 'other',
+					category: category ?? 'other',
 					type: type.toLowerCase() as 'income' | 'expense',
 					recurrence: repeatInterval,
 					recurrenceInterval:
 						repeatValue === '' ? undefined : Number(repeatValue),
-					isPlanned: false,
 				});
 				console.log({
 					type,

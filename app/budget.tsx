@@ -1,12 +1,9 @@
-import { desc, eq } from 'drizzle-orm';
-import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, Tabs, Text, XStack, YStack } from 'tamagui';
 import type { Item } from '../src/constants/wizardConfig';
-import { db } from '../src/db/client';
-import { transactions as transactionsSchema } from '../src/db/schema';
+import { useTransactionStore } from '../src/store/transactionStore';
 import usePlannedTransactionsStore from '../src/store/usePlannedTransactionsStore';
 import BudgetDayView from './src/components/BudgetDayView';
 import BudgetMonthView from './src/components/BudgetMonthView';
@@ -18,24 +15,8 @@ export default function Budget() {
 	const storeTransactions = usePlannedTransactionsStore(
 		(state) => state.transactions,
 	);
-	const realTransactionsData = useLiveQuery(
-		db
-			.select()
-			.from(transactionsSchema)
-			.where(eq(transactionsSchema.isPlanned, false))
-			.orderBy(desc(transactionsSchema.date)),
-	);
-
-	const realTransactions = (realTransactionsData || []).map((t) => ({
-		id: t.id,
-		name: t.name,
-		amount: t.amount,
-		date: t.date,
-		category: t.categoryId || 'uncategorized',
-		type: t.type,
-		recurrence: t.recurrence,
-		recurrenceInterval: t.recurrenceInterval || undefined,
-	}));
+	const { transactions: realTransactions, fetchTransactions } =
+		useTransactionStore();
 
 	const [editOpen, setEditVisible] = useState(false);
 	const [editingTxn, setEditingTxn] = useState<Item | null>(null);
@@ -52,7 +33,8 @@ export default function Budget() {
 
 	useEffect(() => {
 		fetchPlanned();
-	}, [fetchPlanned]);
+		fetchTransactions();
+	}, [fetchPlanned, fetchTransactions]);
 
 	useEffect(() => {
 		setTransactions([...storeTransactions, ...realTransactions]);
