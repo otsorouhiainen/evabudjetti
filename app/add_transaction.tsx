@@ -137,7 +137,7 @@ export default function AddTransaction() {
 		if (Object.keys(newErrors).length === 0) {
 			try {
 				await db.insert(transactions).values({
-					id: Math.random().toString(36).substring(2, 15),
+					id: Crypto.randomUUID(),
 					name: name,
 					amount: Number(amount),
 					date: date ?? new Date(),
