@@ -199,7 +199,7 @@ export default function AddTransaction() {
 								borderRadius={16}
 								padding={24}
 								width={'30%'}
-								gap={'$4'}
+								gap={20}
 							>
 								<SizableText size={'$title1'} marginBottom={8}>
 									{i18next.t('Add category')}

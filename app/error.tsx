@@ -18,7 +18,7 @@ export default function Err() {
 				alignItems="center"
 				marginTop={6}
 				justifyContent="space-between"
-				gap={'$2'}
+				gap={10}
 			>
 				<Button
 					disabled
@@ -36,7 +36,7 @@ export default function Err() {
 			{/* Primary CTA */}
 
 			<Button
-				size="$4"
+				size={20}
 				marginTop={8}
 				borderRadius={28}
 				paddingVertical={20}

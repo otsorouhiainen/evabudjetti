@@ -24,7 +24,7 @@ const BudgetEventList: React.FC<Props> = ({
 }) => {
 	return (
 		<YStack gap={8}>
-			<Text fontSize={'$title1'} fontWeight={'700'} mt={'$2'}>
+			<Text fontSize={'$title1'} fontWeight={'700'} mt={10}>
 				{title}
 			</Text>
 
@@ -47,7 +47,7 @@ const BudgetEventList: React.FC<Props> = ({
 						{new Date(txn.date).toLocaleDateString(LOCALE)}
 					</Text>
 					<XStack
-						gap="$2"
+						gap={10}
 						backgroundColor="transparent"
 						alignItems="center"
 						justifyContent="flex-end"
@@ -58,7 +58,7 @@ const BudgetEventList: React.FC<Props> = ({
 							{formatCurrency(Number(txn.amount))}
 						</Text>
 						<Button
-							size="$2"
+							size={10}
 							circular
 							chromeless
 							icon={<Pencil size={16} />}

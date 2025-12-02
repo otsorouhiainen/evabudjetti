@@ -129,9 +129,9 @@ export default function BudgetDayView({
 				contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
 				showsVerticalScrollIndicator={false}
 			>
-				<YStack paddingHorizontal="$1">
+				<YStack paddingHorizontal={5}>
 					{/* --- Navigation / Up Chevron --- */}
-					<YStack alignItems="center" marginBottom="$2">
+					<YStack alignItems="center" marginBottom={10}>
 						<Button
 							unstyled
 							onPress={handleUpChevronClick}
@@ -162,13 +162,13 @@ export default function BudgetDayView({
 					{/* --- Current Day Card (Center Focus) --- */}
 					<YStack
 						backgroundColor="$primary200"
-						borderRadius="$4"
-						paddingVertical="$6"
-						paddingHorizontal="$4"
-						marginVertical="$4"
+						borderRadius={20}
+						paddingVertical={30}
+						paddingHorizontal={20}
+						marginVertical={20}
 						alignItems="center"
 						justifyContent="center"
-						gap="$3"
+						gap={15}
 						shadowColor="$color.black"
 						shadowOffset={{ width: 0, height: 4 }}
 						shadowOpacity={0.1}
@@ -186,14 +186,14 @@ export default function BudgetDayView({
 
 						{/* Transactions or Empty State */}
 						{current.length > 0 ? (
-							<YStack width="100%" gap="$2">
+							<YStack width="100%" gap={10}>
 								{current.map((t) => (
 									<XStack
 										key={t.id}
 										justifyContent="space-between"
 										borderBottomWidth={1}
 										borderColor="$primary300"
-										pb="$2"
+										pb={10}
 									>
 										<Text color="$white">{t.name}</Text>
 										<Text color="$white">
@@ -215,12 +215,12 @@ export default function BudgetDayView({
 						{/* Add Button */}
 						<Button
 							backgroundColor="$white"
-							borderRadius="$4"
-							paddingHorizontal="$6"
+							borderRadius={20}
+							paddingHorizontal={30}
 							height="$buttons.lg"
 							onPress={onAddPress}
 							pressStyle={{ backgroundColor: '$primary300' }}
-							marginVertical="$2"
+							marginVertical={10}
 						>
 							<Text
 								color="$primary100"
@@ -233,7 +233,7 @@ export default function BudgetDayView({
 						</Button>
 
 						{/* Daily Stats */}
-						<YStack alignItems="center" gap="$1">
+						<YStack alignItems="center" gap={5}>
 							<Text color="$white" fontSize="$body">
 								{i18next.t('Account balance')}:{' '}
 								{formatCurrency(currentBalance)}
@@ -258,7 +258,7 @@ export default function BudgetDayView({
 					/>
 
 					{/* --- Navigation / Down Chevron --- */}
-					<YStack alignItems="center" marginTop="$2">
+					<YStack alignItems="center" marginTop={10}>
 						<Button
 							unstyled
 							onPress={handleDownChevronClick}

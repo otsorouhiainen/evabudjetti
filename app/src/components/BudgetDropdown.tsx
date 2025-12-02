@@ -1,8 +1,8 @@
+import StyledCard from '@/app/src/components/styledCard';
+import { LOCALE } from '@/app/src/constants';
 import { ChevronDown, ChevronRight, Pencil } from '@tamagui/lucide-icons';
 import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
-import StyledCard from '@/app/src/components/styledCard';
-import { LOCALE } from '@/app/src/constants';
 import type { Item } from '../../../src/constants/wizardConfig';
 
 interface Props {
@@ -31,19 +31,19 @@ const BudgetDropdown: React.FC<Props> = ({
 			{/* Header - Clickable */}
 			<StyledCard.Header
 				onPress={() => openDropdown((v) => !v)}
-				padding={'$1'}
+				padding={5}
 			>
 				<XStack justifyContent="space-between" alignItems="center">
 					<Text
 						fontSize="$body"
 						fontWeight="700"
 						color={'$color.white'}
-						ml="$2"
+						ml={10}
 					>
 						{name}
 					</Text>
 
-					<XStack alignItems="center" gap="$1">
+					<XStack alignItems="center" gap={5}>
 						<Text
 							fontSize="$title1"
 							fontWeight="600"
@@ -59,7 +59,7 @@ const BudgetDropdown: React.FC<Props> = ({
 						<Button
 							disabled
 							color={'$color.white'}
-							size="$6"
+							size={30}
 							backgroundColor="$transparent"
 							circular
 							icon={isOpen ? ChevronDown : ChevronRight}
@@ -70,20 +70,20 @@ const BudgetDropdown: React.FC<Props> = ({
 
 			{/* Dropdown Content */}
 			{isOpen && (
-				<YStack mb="$3" gap={'$1'}>
+				<YStack mb={15} gap={5}>
 					{txns.map((txn) => (
 						<XStack
 							key={txn.id}
 							justifyContent="space-between"
 							alignItems="center"
-							ml="$3"
-							mr={'$3'}
+							ml={15}
+							mr={15}
 						>
 							<Text flex={1} color={'$color.white'}>
 								{txn.name}
 							</Text>
 
-							<XStack alignItems="center" gap="$2">
+							<XStack alignItems="center" gap={10}>
 								<Text
 									fontSize="$title1"
 									minWidth={80}

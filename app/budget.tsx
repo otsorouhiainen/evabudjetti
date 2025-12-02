@@ -95,7 +95,7 @@ export default function Budget() {
 			<YStack
 				backgroundColor={'$color.white'}
 				paddingTop={'$paddingmd'}
-				paddingHorizontal={'$2'}
+				paddingHorizontal={10}
 				flex={1}
 			>
 				<Tabs
@@ -215,8 +215,8 @@ export default function Budget() {
 					<YStack
 						bottom={150}
 						backgroundColor="$color.white"
-						borderRadius="$2"
-						padding="$3"
+						borderRadius={10}
+						padding={15}
 						width="90%"
 						maxWidth="$popupMaxWidth"
 						shadowColor="$color.black"
@@ -229,10 +229,10 @@ export default function Budget() {
 						<Input
 							height={40}
 							maxLength={25}
-							borderRadius={'$2'}
-							px={'$2'}
+							borderRadius={10}
+							px={10}
 							value={editingTxn?.name}
-							marginVertical={'$2'}
+							marginVertical={10}
 							onChangeText={(text) =>
 								setEditingTxn((prev) =>
 									prev
@@ -247,8 +247,8 @@ export default function Budget() {
 						{editingTxn?.amount === 0 && (
 							<Text
 								color="$color.danger500"
-								fontSize="$2"
-								marginTop="$1"
+								fontSize={10}
+								marginTop={5}
 							>
 								Amount must be greater than zero
 							</Text>
@@ -256,10 +256,10 @@ export default function Budget() {
 
 						<Input
 							height={40}
-							px={'$2'}
+							px={10}
 							keyboardType="numeric"
 							maxLength={9}
-							borderRadius={'$2'}
+							borderRadius={10}
 							value={amountInput}
 							onChangeText={handleAmountChange}
 							borderColor={
@@ -267,13 +267,13 @@ export default function Budget() {
 									? '$color.danger500'
 									: '$color.black'
 							}
-							marginVertical={'$2'}
+							marginVertical={10}
 						/>
 						{!editingTxn?.name && (
 							<Text
 								color="$color.danger500"
-								fontSize="$2"
-								marginTop="$1"
+								fontSize={10}
+								marginTop={5}
 							>
 								Name is required
 							</Text>
@@ -281,26 +281,26 @@ export default function Budget() {
 
 						<Input
 							height={40}
-							px={'$2'}
+							px={10}
 							value={dateInput}
 							maxLength={10}
-							borderRadius={'$2'}
+							borderRadius={10}
 							onChangeText={handleDateChange}
 							borderColor={
 								error ? '$color.danger500' : '$color.black'
 							}
-							marginVertical={'$2'}
+							marginVertical={10}
 						/>
 						{error && (
 							<Text
 								color="$color.danger500"
-								fontSize="$2"
-								marginTop="$1"
+								fontSize={10}
+								marginTop={5}
 							>
 								Invalid date format
 							</Text>
 						)}
-						<XStack gap={'$3'}>
+						<XStack gap={15}>
 							<Button
 								onPress={() => handleSave()}
 								disabled={
@@ -308,7 +308,7 @@ export default function Budget() {
 								}
 								backgroundColor={'$color.primary200'}
 								size={'$buttons.md'}
-								borderRadius={'$4'}
+								borderRadius={20}
 							>
 								<Text color={'$color.white'}>SAVE</Text>
 							</Button>
@@ -319,7 +319,7 @@ export default function Budget() {
 								}}
 								backgroundColor={'$color.caution'}
 								size={'$buttons.md'}
-								borderRadius={'$4'}
+								borderRadius={20}
 							>
 								<Text>CLOSE</Text>
 							</Button>

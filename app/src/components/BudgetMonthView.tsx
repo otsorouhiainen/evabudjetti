@@ -82,14 +82,14 @@ export default function BudgetMonthView({
 	return (
 		<YStack flex={1}>
 			<ScrollView
-				paddingTop={'$3'}
-				paddingHorizontal={'$1'}
+				paddingTop={15}
+				paddingHorizontal={5}
 				contentContainerStyle={{ paddingBottom: 100 }}
 				scrollEnabled={!editOpen}
 				showsVerticalScrollIndicator={false}
 			>
 				{/* Month selector */}
-				<YStack marginBottom={'$2'}>
+				<YStack marginBottom={10}>
 					<XStack ai="center" jc="space-between" width={180}>
 						<Button
 							outlineColor={'$black'}
@@ -138,7 +138,7 @@ export default function BudgetMonthView({
 				/>
 
 				{/* Snapshot */}
-				<YStack marginBottom={'$3'}>
+				<YStack marginBottom={15}>
 					<Text fontSize={'$body'} fontWeight={'700'}>
 						{today.toLocaleDateString(LOCALE)}
 					</Text>
@@ -161,7 +161,7 @@ export default function BudgetMonthView({
 							outlineColor={'$black'}
 							onPress={() => setHelpVisible(true)}
 							icon={HelpCircle}
-							width={'$2'}
+							width={10}
 						/>
 					</XStack>
 				</YStack>
@@ -200,8 +200,8 @@ export default function BudgetMonthView({
 				>
 					<YStack
 						backgroundColor="$color.white"
-						borderRadius="$2"
-						padding="$3"
+						borderRadius={10}
+						padding={15}
 						width="90%"
 						maxWidth="$popupMaxWidth"
 						shadowColor="$color.black"
@@ -210,10 +210,10 @@ export default function BudgetMonthView({
 						shadowRadius={3}
 						elevation={3}
 					>
-						<Text fontSize={'$4'} mb={'$2'}>
+						<Text fontSize={20} mb={10}>
 							{i18next.t('Instructions')}
 						</Text>
-						<Text mb={'$2'}>
+						<Text mb={10}>
 							{i18next.t('Help Disposable income')}
 						</Text>
 						<Button

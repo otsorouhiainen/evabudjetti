@@ -176,8 +176,8 @@ export default function BudgetYearView({
 					backgroundColor="$color.white"
 					borderWidth={2}
 					borderColor="$primary200"
-					borderRadius="$2"
-					padding="$4"
+					borderRadius={10}
+					padding={20}
 					shadowColor="$color.black"
 					shadowRadius={10}
 					shadowOpacity={0.1}
@@ -187,9 +187,9 @@ export default function BudgetYearView({
 					<XStack
 						justifyContent="space-between"
 						alignItems="center"
-						marginBottom="$4"
+						marginBottom={20}
 					>
-						<XStack alignItems="center" gap="$2">
+						<XStack alignItems="center" gap={10}>
 							<Text fontSize="$title2" fontWeight="800">
 								{i18next.t(
 									MONTH_NAMES_FULL[selectedMonthIndex],
@@ -210,7 +210,7 @@ export default function BudgetYearView({
 						{/* Incomes */}
 						<XStack
 							justifyContent="space-between"
-							marginBottom="$2"
+							marginBottom={10}
 						>
 							<Text fontWeight="700" fontSize="$body">
 								{i18next.t('Incomes')}
@@ -220,27 +220,27 @@ export default function BudgetYearView({
 							</Text>
 						</XStack>
 
-						<YStack marginBottom="$4">
+						<YStack marginBottom={20}>
 							{incomeTxns.length > 0 ? (
 								incomeTxns.map((t) => (
 									<XStack
 										key={t.id}
 										justifyContent="space-between"
-										marginBottom="$1"
+										marginBottom={5}
 									>
 										<Text
-											fontSize="$3"
+											fontSize={15}
 											color="$color.disabled"
 										>
 											{t.name}
 										</Text>
-										<Text fontSize="$3">
+										<Text fontSize={15}>
 											{formatCurrency(Number(t.amount))}
 										</Text>
 									</XStack>
 								))
 							) : (
-								<Text fontSize="$2" color="$color.disabled">
+								<Text fontSize={10} color="$color.disabled">
 									{i18next.t('No income records')}
 								</Text>
 							)}
@@ -249,7 +249,7 @@ export default function BudgetYearView({
 						{/* Expenses */}
 						<XStack
 							justifyContent="space-between"
-							marginBottom="$2"
+							marginBottom={10}
 						>
 							<Text fontWeight="700" fontSize="$body">
 								{i18next.t('Expenses')}
@@ -259,21 +259,21 @@ export default function BudgetYearView({
 							</Text>
 						</XStack>
 
-						<YStack marginBottom="$4">
+						<YStack marginBottom={20}>
 							{expenseTxns.length > 0 ? (
 								expenseTxns.map((t) => (
 									<XStack
 										key={t.id}
 										justifyContent="space-between"
-										marginBottom="$1"
+										marginBottom={5}
 									>
 										<Text
-											fontSize="$3"
+											fontSize={15}
 											color="$color.disabled"
 										>
 											{t.name}
 										</Text>
-										<Text fontSize="$3">
+										<Text fontSize={15}>
 											{formatCurrency(
 												Math.abs(Number(t.amount)),
 											)}
@@ -281,19 +281,19 @@ export default function BudgetYearView({
 									</XStack>
 								))
 							) : (
-								<Text fontSize="$2" color="$color.disabled">
+								<Text fontSize={10} color="$color.disabled">
 									{i18next.t('No expense records')}
 								</Text>
 							)}
 						</YStack>
 
 						<Separator
-							marginVertical="$2"
+							marginVertical={10}
 							borderColor="$color.disabled"
 						/>
 
 						{/* Total */}
-						<XStack justifyContent="space-between" marginTop="$2">
+						<XStack justifyContent="space-between" marginTop={10}>
 							<Text fontWeight="800" fontSize="$body">
 								{i18next.t('Total')}
 							</Text>
@@ -312,11 +312,11 @@ export default function BudgetYearView({
 			<ScrollView
 				contentContainerStyle={{ paddingBottom: 50 }}
 				showsVerticalScrollIndicator={false}
-				paddingTop={'$3'}
-				paddingHorizontal={'$1'}
+				paddingTop={15}
+				paddingHorizontal={5}
 			>
 				{/* year selector */}
-				<YStack marginBottom={'$2'}>
+				<YStack marginBottom={10}>
 					<XStack ai="center" jc="space-between" width={180}>
 						<Button
 							outlineColor={'$black'}
@@ -357,10 +357,10 @@ export default function BudgetYearView({
 				/>
 
 				{/* Months Grid */}
-				<Text marginBottom="$2" fontSize="$body">
+				<Text marginBottom={10} fontSize="$body">
 					{i18next.t('Months')}
 				</Text>
-				<XStack flexWrap="wrap" gap="$2" justifyContent="space-between">
+				<XStack flexWrap="wrap" gap={10} justifyContent="space-between">
 					{Array.from({ length: 12 }).map((_, index) => {
 						const data = getMonthData(index);
 						// Logic for color: If balance is negative (Expenses > Income), use caution color
@@ -380,7 +380,7 @@ export default function BudgetYearView({
 								backgroundColor={
 									isAlert ? '$caution' : '$primary200'
 								}
-								borderRadius="$2"
+								borderRadius={10}
 								onPress={() => setSelectedMonthIndex(index)}
 								pressStyle={{ opacity: 0.8 }}
 								borderWidth={isCurrentMonth ? 2 : 0}

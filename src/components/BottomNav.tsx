@@ -23,9 +23,9 @@ const NavButton = ({
 		color={btnColor}
 		onPress={onPress}
 		borderColor={borderColor}
-		size="$5"
-		borderRadius="$4"
-		padding="$2"
+		size={25}
+		borderRadius={20}
+		padding={10}
 	/>
 );
 
@@ -65,8 +65,8 @@ export const BottomNav = () => {
 			bottom={insets.bottom}
 			left={0}
 			right={0}
-			paddingHorizontal="$4"
-			paddingVertical="$2"
+			paddingHorizontal={20}
+			paddingVertical={10}
 			justifyContent="space-between"
 			alignItems="center"
 			backgroundColor="$primary100"
