@@ -11,8 +11,8 @@ import StyledTab from './src/components/StyledTab';
 import { isValidDate, parseTxnDate } from './src/utils/budgetUtils';
 
 export default function Budget() {
-	const storeTransactions = usePlannedTransactionsStore(
-		(state) => state.transactions,
+	const storeTransactionsForTwoYears = usePlannedTransactionsStore(
+		(state) => state.transactionsForTwoYears,
 	);
 
 	const [editOpen, setEditVisible] = useState(false);
@@ -31,8 +31,8 @@ export default function Budget() {
 	}, [fetchPlanned, fetchTransactions]);*/
 
 	useEffect(() => {
-		setTransactions(storeTransactions);
-	}, [storeTransactions]);
+		setTransactions(storeTransactionsForTwoYears ?? []);
+	}, [storeTransactionsForTwoYears]);
 
 	const handleSave = () => {
 		if (!editingTxn) return;
@@ -163,7 +163,14 @@ export default function Budget() {
 					<Tabs.Content value="day" flex={1}>
 						<BudgetDayView
 							currentDate={currentDate}
-							transactions={transactions}
+							transactions={transactions.filter(
+								(t) =>
+									t.date.getDay() === currentDate.getDay() &&
+									t.date.getMonth() ===
+										currentDate.getMonth() &&
+									t.date.getFullYear() ===
+										currentDate.getFullYear(),
+							)}
 							setInputDate={setDateInput}
 							setEditVisible={setEditVisible}
 							setEditingTxn={setEditingTxn}
@@ -183,7 +190,13 @@ export default function Budget() {
 					<Tabs.Content value="month" flex={1}>
 						<BudgetMonthView
 							currentDate={currentDate}
-							transactions={transactions}
+							transactions={transactions.filter(
+								(t) =>
+									t.date.getMonth() ===
+										currentDate.getMonth() &&
+									t.date.getFullYear() ===
+										currentDate.getFullYear(),
+							)}
 							onDateChange={setcurrentDate}
 							setEditVisible={setEditVisible}
 							setEditingTxn={setEditingTxn}
@@ -194,7 +207,11 @@ export default function Budget() {
 					<Tabs.Content value="year" flex={1}>
 						<BudgetYearView
 							ReceivedCurrentDate={currentDate}
-							transactions={transactions}
+							transactions={transactions.filter(
+								(t) =>
+									t.date.getFullYear() ===
+									currentDate.getFullYear(),
+							)}
 						/>
 					</Tabs.Content>
 				</Tabs>

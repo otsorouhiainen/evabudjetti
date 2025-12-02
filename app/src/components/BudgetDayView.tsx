@@ -1,6 +1,4 @@
-import BudgetEventList from '@/app/src/components/BudgetEventList';
 import useBalanceStore from '@/src/store/useBalanceStore';
-import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
 import {
 	type Dispatch,
 	type SetStateAction,
@@ -130,7 +128,7 @@ export default function BudgetDayView({
 			>
 				<YStack paddingHorizontal={5}>
 					{/* --- Navigation / Up Chevron --- */}
-					<YStack alignItems="center" marginBottom={10}>
+					{/*<YStack alignItems="center" marginBottom={10}>
 						<Button
 							unstyled
 							onPress={handleUpChevronClick}
@@ -144,17 +142,17 @@ export default function BudgetDayView({
 						>
 							<ChevronUp size={24} color="$color.black" />
 						</Button>
-					</YStack>
+					</YStack>*/}
 
 					{/* --- Future Events --- */}
-					<BudgetEventList
+					{/*<BudgetEventList
 						txns={future}
 						title={`${futureCount} upcoming events`}
 						setInputDate={setInputDate}
 						formatCurrency={formatCurrency}
 						setEditVisible={setEditVisible}
 						setEditingTxn={setEditingTxn}
-					/>
+					/>*/}
 
 					{/* --- Current Day Card (Center Focus) --- */}
 					<YStack
@@ -243,17 +241,17 @@ export default function BudgetDayView({
 					</YStack>
 
 					{/* --- Past Events --- */}
-					<BudgetEventList
+					{/*<BudgetEventList
 						txns={past}
 						title={`${pastCount} past events`}
 						setInputDate={setInputDate}
 						formatCurrency={formatCurrency}
 						setEditVisible={setEditVisible}
 						setEditingTxn={setEditingTxn}
-					/>
+					/>*/}
 
 					{/* --- Navigation / Down Chevron --- */}
-					<YStack alignItems="center" marginTop={10}>
+					{/*<YStack alignItems="center" marginTop={10}>
 						<Button
 							unstyled
 							onPress={handleDownChevronClick}
@@ -267,7 +265,7 @@ export default function BudgetDayView({
 						>
 							<ChevronDown size={24} color="$color.black" />
 						</Button>
-					</YStack>
+					</YStack>*/}
 				</YStack>
 			</ScrollView>
 		</YStack>

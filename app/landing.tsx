@@ -8,9 +8,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, SizableText, Text, XStack, YStack } from 'tamagui';
 
 export default function Landing() {
+	const transactions = usePlannedTransactionsStore(
+		(state) => state.transactions,
+	);
 	const storeBalance = useBalanceStore((state) => state.balance);
 	const storeDisposable = useBalanceStore((state) => state.disposable);
 	const setStoreBalance = useBalanceStore((state) => state.change);
+	const recalcDisposable = useBalanceStore((state) => state.recalcDisposable);
 	const [balance, setBalance] = useState(0);
 	const [disposable, setDisposable] = useState(0);
 	const budgetCreated = usePlannedTransactionsStore(
@@ -24,7 +28,8 @@ export default function Landing() {
 	useEffect(() => {
 		setBalance(storeBalance);
 		setDisposable(storeDisposable);
-	}, [storeBalance, storeDisposable]);
+		recalcDisposable(transactions);
+	}, [storeBalance, storeDisposable, transactions, recalcDisposable]);
 	return (
 		<SafeAreaView style={{ flex: 1, height: '100%', width: '100%' }}>
 			{/* Help Modal */}
@@ -79,7 +84,7 @@ export default function Landing() {
 					paddingTop={20}
 					paddingHorizontal={10}
 					gap={5}
-					style={{ height: '30%', width: '100%' }}
+					style={{ height: '32%', width: '100%' }}
 					// keep overall maxWidth behavior but prefer percent-based outer padding above
 				>
 					{/* Header */}
@@ -145,7 +150,8 @@ export default function Landing() {
 										{new Date().toLocaleDateString('fi-FI')}
 									</Text>
 									<Text>Money in account</Text>
-									<Text>{balance}€ Disposable income</Text>
+									<Text>{balance}€</Text>
+									<Text>Disposable income</Text>
 									<Text>{disposable}€</Text>
 									<Button
 										backgroundColor="$primary200"
