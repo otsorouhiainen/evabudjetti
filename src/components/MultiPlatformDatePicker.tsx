@@ -75,7 +75,7 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 			<View style={styles.dateElementsContainer}>
 				<SizableText
 					style={{ height: '100%' }}
-					color="$primary300"
+					color="$primary100"
 					size="$title3"
 				>
 					Date: {editorDate}

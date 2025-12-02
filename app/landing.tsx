@@ -3,10 +3,9 @@ import useLanguageStore from '@/src/store/useLanguageStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
-import i18next from 'i18next';
 import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Input, SizableText, XStack, YStack } from 'tamagui';
+import { Button, Input, SizableText, Text, XStack, YStack } from 'tamagui';
 
 export default function Landing() {
 	const storeBalance = useBalanceStore((state) => state.balance);
@@ -48,19 +47,17 @@ export default function Landing() {
 					>
 						<SizableText
 							marginBottom={'1%'}
-							fontFamily="$heading"
 							textAlign="center"
 							style={{ height: '100%' }}
 						>
-							{i18next.t('Help')}
+							Help
 						</SizableText>
 						<SizableText
 							marginBottom={'2%'}
-							fontFamily="$body"
 							textAlign="center"
 							style={{ height: '100%' }}
 						>
-							{i18next.t('Help Disposable income')}
+							Help Disposable income
 						</SizableText>
 						<Button
 							onPress={() => setHelpVisible(false)}
@@ -68,13 +65,7 @@ export default function Landing() {
 							alignSelf="center"
 							style={{ width: '50%' }}
 						>
-							<SizableText
-								fontFamily="$body"
-								fontWeight="400"
-								color="$white"
-							>
-								{i18next.t('CLOSE')}
-							</SizableText>
+							<SizableText color="$white">CLOSE</SizableText>
 						</Button>
 					</YStack>
 				</YStack>
@@ -85,35 +76,23 @@ export default function Landing() {
 				alignItems="center"
 			>
 				<YStack
-					paddingTop={10}
+					paddingTop={20}
 					paddingHorizontal={10}
-					gap={10}
-					style={{ height: '55%', width: '100%' }}
+					gap={5}
+					style={{ height: '30%', width: '100%' }}
 					// keep overall maxWidth behavior but prefer percent-based outer padding above
 				>
 					{/* Header */}
 					<YStack
 						style={{
 							height: '100%',
-							gap: 10,
-							marginTop: 20,
+							gap: 5,
+							marginTop: 10,
 							alignItems: 'center',
 						}}
 					>
-						<SizableText
-							fontWeight="700"
-							fontFamily="$heading"
-							textAlign="center"
-						>
-							{i18next.t('EVA Personal Budget')}
-						</SizableText>
-						<SizableText
-							fontFamily="$body"
-							textAlign="center"
-							color="$gray11"
-						>
-							{i18next.t('Supporting your financial well-being')}
-						</SizableText>
+						<Text>EVA Personal Budget</Text>
+						<Text>Supporting your financial well-being</Text>
 
 						<XStack style={{ height: '10%', gap: 20 }}>
 							<Button
@@ -129,7 +108,7 @@ export default function Landing() {
 						</XStack>
 
 						{/* Piggy Bank Icon inside responsive container */}
-						<PiggyBank size={150} style={{ height: '100%' }} />
+						<PiggyBank size={70} style={{ height: '100%' }} />
 
 						{/* Help Icon positioned relative to the piggy bank */}
 						<Button
@@ -143,156 +122,103 @@ export default function Landing() {
 					</YStack>
 
 					{budgetCreated && (
-						<YStack gap={'4%'} width="100%">
+						<YStack
+							gap={30}
+							width="100%"
+							style={{ height: '100%' }}
+						>
 							<YStack
-								width="100%"
-								borderRadius={'4%'}
+								style={{ height: '100%', width: '100%' }}
 								alignItems="center"
-								paddingVertical={'4%'}
-								paddingHorizontal={'4%'}
-								gap={'2%'}
+								gap={5}
 								backgroundColor="$white"
 								borderColor="$gray5"
 								borderWidth={1}
 							>
-								<SizableText
-									fontWeight="600"
-									marginBottom={'1%'}
-									fontFamily="$heading"
-									color="$gray11"
-								>
-									{new Date().toLocaleDateString('fi-FI')}
-								</SizableText>
-
 								<YStack
 									alignItems="center"
-									gap={'1%'}
+									gap={5}
 									width="100%"
+									style={{ height: '13%' }}
 								>
-									<SizableText fontFamily="$body">
-										{i18next.t('Money in account')}
-									</SizableText>
-									<SizableText
-										fontWeight="700"
-										fontFamily="$body"
-										color="$primary100"
+									<Text>
+										{new Date().toLocaleDateString('fi-FI')}
+									</Text>
+									<Text>Money in account</Text>
+									<Text>{balance}€ Disposable income</Text>
+									<Text>{disposable}€</Text>
+									<Button
+										backgroundColor="$primary200"
+										width="50%"
+										style={{ height: '100%' }}
 									>
-										{balance}€
-									</SizableText>
+										VIEW DETAILS
+									</Button>
 								</YStack>
-
-								<YStack
-									alignItems="center"
-									gap={'1%'}
-									marginTop={'2%'}
-								>
-									<SizableText fontFamily="$body">
-										{i18next.t('Disposable income')}
-									</SizableText>
-									<SizableText
-										fontWeight="700"
-										fontFamily="$body"
-										color="$primary200"
-									>
-										{disposable}€
-									</SizableText>
-								</YStack>
-
-								<Button
-									marginTop={'3%'}
-									backgroundColor="$primary200"
-									width="50%"
-								>
-									<SizableText
-										fontFamily="$body"
-										fontWeight="600"
-										color="$white"
-									>
-										{i18next.t('VIEW DETAILS')}
-									</SizableText>
-								</Button>
 							</YStack>
-
-							<Button
-								backgroundColor="$primary200"
-								onPress={() => router.push('/add_transaction')}
-								width="100%"
-							>
-								<SizableText
-									fontFamily="$body"
-									color="$white"
-									fontWeight="600"
-								>
-									{i18next.t('ADD INCOME/EXPENSE')}
-								</SizableText>
-							</Button>
-
-							<XStack
-								gap={'3%'}
-								justifyContent="space-between"
-								width="100%"
-							>
+							<YStack style={{ height: '40%', gap: 10 }}>
 								<Button
-									backgroundColor="$primary200"
-									onPress={() => router.push('/budget')}
-								>
-									<SizableText
-										fontFamily="$body"
-										fontWeight="600"
-										color="$white"
-										textAlign="center"
-									>
-										{i18next.t('SHOW BUDGET')}
-									</SizableText>
-								</Button>
-								<Button
+									style={{ height: '100%' }}
 									backgroundColor="$primary200"
 									onPress={() =>
-										router.push('/budget_wizard')
+										router.push('/add_transaction')
 									}
+									width="100%"
 								>
-									<SizableText
-										fontFamily="$body"
-										fontWeight="600"
-										color="$white"
-										textAlign="center"
-									>
-										{i18next.t('EDIT BUDGET')}
-									</SizableText>
+									ADD INCOME/EXPENSE
 								</Button>
-							</XStack>
+
+								<XStack
+									gap={20}
+									justifyContent="space-between"
+									width="100%"
+									style={{ height: '100%' }}
+								>
+									<Button
+										style={{ height: '100%' }}
+										backgroundColor="$primary200"
+										onPress={() => router.push('/budget')}
+									>
+										SHOW BUDGET
+									</Button>
+									<Button
+										style={{ height: '100%' }}
+										backgroundColor="$primary200"
+										onPress={() =>
+											router.push('/budget_wizard')
+										}
+									>
+										EDIT BUDGET
+									</Button>
+								</XStack>
+							</YStack>
 						</YStack>
 					)}
 
 					{!budgetCreated && (
 						<YStack
-							gap={10}
+							gap={5}
 							style={{
-								height: '45%',
+								height: '70%',
 								width: '100%',
 								alignItems: 'center',
-								alignSelf: 'flex-end',
+								alignSelf: 'flex-start',
 							}}
 						>
-							<SizableText
-								style={{ height: '30%' }}
-								textAlign="center"
-								fontFamily="$body"
-							>
-								{i18next.t(
-									'No budget created yet. Enter your balance in € without commas and press the "Create budget" button below to get started!',
-								)}
-							</SizableText>
+							<Text>
+								No budget created yet. Enter your balance in €
+								without commas and press the "Create budget"
+								button below to get started!
+							</Text>
 							<Input
 								style={{ height: '30%' }}
 								width="100%"
 								value={initialBalance}
 								onChangeText={setInitialBalance}
 								borderColor="$black"
-								borderWidth={1}
 								backgroundColor="$white"
 								keyboardType="numeric"
-								placeholder="0"
+								fontSize={15}
 							/>
 							<Button
 								style={{ height: '30%' }}
@@ -305,13 +231,7 @@ export default function Landing() {
 								}}
 								disabled={initialBalance === ''}
 							>
-								<SizableText
-									fontFamily="$body"
-									color="$white"
-									fontWeight="600"
-								>
-									{i18next.t('CREATE BUDGET')}
-								</SizableText>
+								CREATE BUDGET
 							</Button>
 						</YStack>
 					)}

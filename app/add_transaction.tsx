@@ -8,7 +8,6 @@ import {
 	Plus,
 } from '@tamagui/lucide-icons';
 import * as Crypto from 'expo-crypto';
-import i18next from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -127,14 +126,14 @@ export default function AddTransaction() {
 		const newErrors: typeof errors = {};
 
 		if (amount.at(-1) === '.') {
-			newErrors.amount = i18next.t('Enter a valid amount');
+			newErrors.amount = 'Enter a valid amount';
 		}
 		if (
 			repeat === true &&
 			repeatInterval === 'custom' &&
 			repeatValue === ''
 		) {
-			newErrors.repeatValue = i18next.t('Enter the recurrence interval');
+			newErrors.repeatValue = 'Enter the recurrence interval';
 		}
 
 		setErrors(newErrors);
@@ -202,12 +201,12 @@ export default function AddTransaction() {
 								gap={20}
 							>
 								<SizableText size={'$title1'} marginBottom={8}>
-									{i18next.t('Add category')}
+									{'Add category'}
 								</SizableText>
 								<Input
 									value={newCategory}
 									onChangeText={setNewCategory}
-									placeholder={i18next.t('Enter category')}
+									placeholder={'Enter category'}
 									height={40}
 									borderRadius={6}
 									marginBottom={22}
@@ -232,7 +231,7 @@ export default function AddTransaction() {
 											size={'$title3'}
 											color={'$primary200'}
 										>
-											{i18next.t('Cancel')}
+											{'Cancel'}
 										</SizableText>
 									</Button>
 									<Button
@@ -247,7 +246,7 @@ export default function AddTransaction() {
 											size={'$title3'}
 											color={'$white'}
 										>
-											{i18next.t('Save')}
+											{'Save'}
 										</SizableText>
 									</Button>
 								</XStack>
@@ -270,7 +269,7 @@ export default function AddTransaction() {
 						>
 							{/* Top header */}
 							<SizableText size={'$title1'}>
-								{i18next.t('Add new')}
+								{'Add new'}
 							</SizableText>
 
 							{/* Segmented: Income / Expense */}
@@ -287,7 +286,7 @@ export default function AddTransaction() {
 								alignItems="center"
 							>
 								<SizableText size={'$title2'}>
-									{i18next.t('Category')}
+									{'Category'}
 								</SizableText>
 								<Button
 									onPress={() => setExpanded(!expanded)}
@@ -338,7 +337,7 @@ export default function AddTransaction() {
 												}
 											>
 												<SizableText size={'$title3'}>
-													{i18next.t(label)}
+													{label}
 												</SizableText>
 											</Button>
 										);
@@ -357,24 +356,8 @@ export default function AddTransaction() {
 								<YStack>
 									<SizableText size={'$title3'}>
 										{type === TransactionType.Income
-											? i18next.t(
-													'{{transactionType}} name',
-													{
-														transactionType:
-															i18next.t(
-																TransactionType.Income,
-															),
-													},
-												)
-											: i18next.t(
-													'{{transactionType}} name',
-													{
-														transactionType:
-															i18next.t(
-																TransactionType.Expense,
-															),
-													},
-												)}
+											? `${TransactionType.Income} name`
+											: `${TransactionType.Expense} name`}
 										<SizableText size={'$title3'}>
 											{' '}
 											*
@@ -383,13 +366,7 @@ export default function AddTransaction() {
 									<Input
 										value={name}
 										onChangeText={setName}
-										placeholder={i18next.t(
-											'{{transactionType}} name',
-											{
-												transactionType:
-													i18next.t(type),
-											},
-										)}
+										placeholder={`${type} name`}
 										height={40}
 										borderRadius={6}
 										focusStyle={{
@@ -402,7 +379,7 @@ export default function AddTransaction() {
 
 								<YStack>
 									<SizableText size={'$title3'}>
-										{i18next.t('Amount')}
+										{'Amount'}
 										<SizableText size={'$title3'}>
 											{' '}
 											*
@@ -438,7 +415,7 @@ export default function AddTransaction() {
 
 								<YStack>
 									<SizableText size={'$title3'}>
-										{i18next.t('Date')}
+										{'Date'}
 										<SizableText size={'$title3'}>
 											{' '}
 											*
@@ -467,7 +444,7 @@ export default function AddTransaction() {
 									</Checkbox>
 
 									<SizableText size={'$title3'}>
-										{i18next.t('Does the event repeat?')}
+										{'Does the event repeat?'}
 									</SizableText>
 								</XStack>
 
@@ -506,7 +483,7 @@ export default function AddTransaction() {
 												}
 											>
 												<SizableText size={'$title3'}>
-													{i18next.t(opt)}
+													{opt}
 												</SizableText>
 											</Button>
 										))}
@@ -516,16 +493,14 @@ export default function AddTransaction() {
 								{repeat && repeatInterval === 'custom' && (
 									<YStack>
 										<SizableText size={'$title3'}>
-											{i18next.t('Repeat interval')}
+											{'Repeat interval'}
 											<SizableText size={'$title3'}>
 												{' '}
 												*
 											</SizableText>
 										</SizableText>
 										<Input
-											placeholder={i18next.t(
-												'day intervals',
-											)}
+											placeholder={'day intervals'}
 											value={repeatValue}
 											onChangeText={setRepeatValue}
 											keyboardType="numeric"
@@ -570,16 +545,8 @@ export default function AddTransaction() {
 							>
 								<SizableText size={'$title3'} color={'$white'}>
 									{type === TransactionType.Income
-										? i18next.t('Add {{transactionType}}', {
-												transactionType: i18next.t(
-													TransactionType.Income,
-												),
-											})
-										: i18next.t('Add {{transactionType}}', {
-												transactionType: i18next.t(
-													TransactionType.Expense,
-												),
-											})}
+										? `Add ${TransactionType.Income}`
+										: `Add ${TransactionType.Expense}`}
 								</SizableText>
 							</Button>
 
@@ -601,28 +568,12 @@ export default function AddTransaction() {
 										borderRadius={16}
 									>
 										<SizableText size={'$title1'}>
-											{i18next.t('Saved')}
+											{'Saved'}
 										</SizableText>
 										<SizableText size={'$title3'}>
 											{type === TransactionType.Income
-												? i18next.t(
-														'{{transactionType}} added',
-														{
-															transactionType:
-																i18next.t(
-																	TransactionType.Income,
-																),
-														},
-													)
-												: i18next.t(
-														'{{transactionType}} added',
-														{
-															transactionType:
-																i18next.t(
-																	TransactionType.Expense,
-																),
-														},
-													)}
+												? `${TransactionType.Income} added`
+												: `${TransactionType.Expense} added`}
 										</SizableText>
 										<XStack
 											justifyContent="flex-end"
@@ -664,7 +615,7 @@ export default function AddTransaction() {
 									size={'$title3'}
 									color={'$primary200'}
 								>
-									{i18next.t('Cancel')}
+									{'Cancel'}
 								</SizableText>
 							</Button>
 						</YStack>

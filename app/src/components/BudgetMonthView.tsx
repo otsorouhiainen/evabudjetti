@@ -1,6 +1,5 @@
 import useBalanceStore from '@/src/store/useBalanceStore';
 import { ChevronLeft, ChevronRight, HelpCircle } from '@tamagui/lucide-icons';
-import i18next from 'i18next';
 import {
 	type Dispatch,
 	type SetStateAction,
@@ -116,7 +115,7 @@ export default function BudgetMonthView({
 				{/* Income dropdown */}
 				<BudgetDropdown
 					txns={POSITIVE_TX}
-					name={i18next.t('Incomes')}
+					name={'Incomes'}
 					setEditVisible={setEditVisible}
 					setEditingTxn={setEditingTxn}
 					setInputDate={setInputDate}
@@ -128,7 +127,7 @@ export default function BudgetMonthView({
 				{/* Expense dropdown */}
 				<BudgetDropdown
 					txns={NEGATIVE_TX}
-					name={i18next.t('Expenses')}
+					name={'Expenses'}
 					setEditVisible={setEditVisible}
 					setEditingTxn={setEditingTxn}
 					setInputDate={setInputDate}
@@ -143,7 +142,7 @@ export default function BudgetMonthView({
 						{today.toLocaleDateString(LOCALE)}
 					</Text>
 					<Text>
-						{i18next.t('Balance')}:
+						{'Balance'}:
 						<Text fontSize={'$body'}>
 							{' '}
 							{formatCurrency(currentBalance)}
@@ -151,7 +150,7 @@ export default function BudgetMonthView({
 					</Text>
 					<XStack>
 						<Text>
-							{i18next.t('Disposable income')}:
+							{'Disposable income'}:
 							<Text fontSize={'$body'}>
 								{' '}
 								{formatCurrency(disposable)}
@@ -169,7 +168,7 @@ export default function BudgetMonthView({
 				{/* Future events */}
 				<BudgetEventList
 					txns={future}
-					title={i18next.t('Future events')}
+					title={'Future events'}
 					setEditVisible={setEditVisible}
 					setEditingTxn={setEditingTxn}
 					setInputDate={setInputDate}
@@ -179,7 +178,7 @@ export default function BudgetMonthView({
 				{/* Past events */}
 				<BudgetEventList
 					txns={past}
-					title={i18next.t('Past events')}
+					title={'Past events'}
 					setEditVisible={setEditVisible}
 					setEditingTxn={setEditingTxn}
 					setInputDate={setInputDate}
@@ -211,18 +210,16 @@ export default function BudgetMonthView({
 						elevation={3}
 					>
 						<Text fontSize={20} mb={10}>
-							{i18next.t('Instructions')}
+							{'Instructions'}
 						</Text>
-						<Text mb={10}>
-							{i18next.t('Help Disposable income')}
-						</Text>
+						<Text mb={10}>{'Help Disposable income'}</Text>
 						<Button
 							onPress={() => setHelpVisible(false)}
 							backgroundColor={'$primary200'}
 							size={'$buttons.lg'}
 							width={'50%'}
 						>
-							<Text color={'$white'}>{i18next.t('Close')}</Text>
+							<Text color={'$white'}>{'Close'}</Text>
 						</Button>
 					</YStack>
 				</YStack>

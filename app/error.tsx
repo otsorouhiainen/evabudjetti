@@ -1,6 +1,5 @@
 import { PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
-import i18next from 'i18next';
 import { Button, SizableText, YStack } from 'tamagui';
 
 export default function Err() {
@@ -30,7 +29,7 @@ export default function Err() {
 				/>
 				<SizableText size={'$title2'}>404</SizableText>
 				<SizableText size={'$title2'} marginBottom={16}>
-					{i18next.t('Something went wrong.')}
+					{'Something went wrong.'}
 				</SizableText>
 			</YStack>
 			{/* Primary CTA */}
@@ -44,7 +43,7 @@ export default function Err() {
 				color="$white"
 				onPress={() => router.push('/landing')}
 			>
-				{i18next.t('Back to home')}
+				{'Back to home'}
 			</Button>
 			<YStack height={48} />
 		</YStack>

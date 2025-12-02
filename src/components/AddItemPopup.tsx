@@ -1,7 +1,8 @@
+import * as Crypto from 'expo-crypto';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Input, SizableText, YStack } from 'tamagui';
-import type { Item, Reoccurence } from '../constants/wizardConfig';
+import type { Item, Recurrence } from '../constants/wizardConfig';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type AddItemPopupProps = {
@@ -10,7 +11,7 @@ type AddItemPopupProps = {
 };
 
 const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
-	const REOCCURENCE_OPTIONS: Reoccurence[] = [
+	const REOCCURENCE_OPTIONS: Recurrence[] = [
 		'daily',
 		'weekly',
 		'monthly',
@@ -20,7 +21,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	const [name, setName] = useState<string>('');
 	const [amount, setAmount] = useState<number | null>(null);
 	const [date, setDate] = useState<Date>(new Date());
-	const [reoccurence, setReoccurence] = useState<Reoccurence>('daily');
+	const [reoccurence, setReoccurence] = useState<Recurrence>('daily');
 	const [reoccurenceInterval, setReoccurenceInterval] = useState<
 		number | undefined
 	>(undefined);
@@ -32,11 +33,13 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 
 	const handleAdd = () => {
 		onAdd({
+			id: Crypto.randomUUID(),
+			category: 'uncategorized',
 			name: name.trim(),
 			amount: amount,
-			reoccurence: reoccurence,
+			recurrence: reoccurence,
 			date: date,
-			reoccurenceInterval:
+			recurrenceInterval:
 				reoccurence === 'custom' ? reoccurenceInterval : undefined,
 		} as Item);
 		setName('');
@@ -99,7 +102,6 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 									key={opt}
 								>
 									<Button
-										borderRadius={20}
 										backgroundColor={
 											reoccurence === opt
 												? '$primary200'
@@ -108,8 +110,6 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 										onPress={() => setReoccurence(opt)}
 										style={{
 											height: '100%',
-											paddingHorizontal: 12,
-											paddingVertical: 8,
 										}}
 									>
 										<SizableText

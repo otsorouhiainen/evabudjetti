@@ -1,6 +1,5 @@
 import BudgetDropdown from '@/app/src/components/BudgetDropdown';
 import { ChevronLeft, ChevronRight, Pencil, X } from '@tamagui/lucide-icons';
-import i18next from 'i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { Button, ScrollView, Separator, Text, XStack, YStack } from 'tamagui';
 import type {
@@ -89,7 +88,7 @@ export default function BudgetYearView({
 		yearTransactions.forEach((t) => {
 			const amount = Number(t.amount);
 			// Use the category string, or fallback if empty
-			const category = t.category || i18next.t('Uncategorized');
+			const category = t.category || 'Uncategorized';
 
 			if (amount >= 0) {
 				incomeMap[category] = (incomeMap[category] || 0) + amount;
@@ -191,9 +190,7 @@ export default function BudgetYearView({
 					>
 						<XStack alignItems="center" gap={10}>
 							<Text fontSize="$title2" fontWeight="800">
-								{i18next.t(
-									MONTH_NAMES_FULL[selectedMonthIndex],
-								)}
+								{MONTH_NAMES_FULL[selectedMonthIndex]}
 							</Text>
 							<Pencil size={16} color="$color.black" />
 						</XStack>
@@ -213,7 +210,7 @@ export default function BudgetYearView({
 							marginBottom={10}
 						>
 							<Text fontWeight="700" fontSize="$body">
-								{i18next.t('Incomes')}
+								{'Incomes'}
 							</Text>
 							<Text fontWeight="700" fontSize="$body">
 								{formatCurrency(data.income)}
@@ -241,7 +238,7 @@ export default function BudgetYearView({
 								))
 							) : (
 								<Text fontSize={10} color="$color.disabled">
-									{i18next.t('No income records')}
+									{'No income records'}
 								</Text>
 							)}
 						</YStack>
@@ -252,7 +249,7 @@ export default function BudgetYearView({
 							marginBottom={10}
 						>
 							<Text fontWeight="700" fontSize="$body">
-								{i18next.t('Expenses')}
+								{'Expenses'}
 							</Text>
 							<Text fontWeight="700" fontSize="$body">
 								{formatCurrency(Math.abs(data.expenses))}
@@ -282,7 +279,7 @@ export default function BudgetYearView({
 								))
 							) : (
 								<Text fontSize={10} color="$color.disabled">
-									{i18next.t('No expense records')}
+									{'No expense records'}
 								</Text>
 							)}
 						</YStack>
@@ -295,7 +292,7 @@ export default function BudgetYearView({
 						{/* Total */}
 						<XStack justifyContent="space-between" marginTop={10}>
 							<Text fontWeight="800" fontSize="$body">
-								{i18next.t('Total')}
+								{'Total'}
 							</Text>
 							<Text fontWeight="800" fontSize="$body">
 								{data.balance > 0 ? '+' : ''}{' '}
@@ -341,7 +338,7 @@ export default function BudgetYearView({
 				</YStack>
 
 				<BudgetDropdown
-					name={i18next.t('Incomes')}
+					name={'Incomes'}
 					txns={incomeCategories}
 					isOpen={incomesOpen}
 					openDropdown={setIncomesOpen}
@@ -349,7 +346,7 @@ export default function BudgetYearView({
 				/>
 
 				<BudgetDropdown
-					name={i18next.t('Expenses')}
+					name={'Expenses'}
 					txns={expenseCategories}
 					isOpen={expensesOpen}
 					openDropdown={setExpensesOpen}
@@ -358,7 +355,7 @@ export default function BudgetYearView({
 
 				{/* Months Grid */}
 				<Text marginBottom={10} fontSize="$body">
-					{i18next.t('Months')}
+					{'Months'}
 				</Text>
 				<XStack flexWrap="wrap" gap={10} justifyContent="space-between">
 					{Array.from({ length: 12 }).map((_, index) => {
@@ -392,7 +389,7 @@ export default function BudgetYearView({
 									}
 									fontWeight="600"
 								>
-									{i18next.t(MONTH_NAMES_SHORT[index])}{' '}
+									{MONTH_NAMES_SHORT[index]}{' '}
 									{isAlert ? '!' : ''}
 								</Text>
 							</Button>

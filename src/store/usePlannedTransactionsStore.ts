@@ -42,7 +42,7 @@ const usePlannedTransactionsStore = create<PlannedTransactionsState>()(
 			},
 		}),
 		{
-			name: 'planneddd-transactions-storage',
+			name: 'planned-transactions-storage',
 			storage: createJSONStorage(() => AsyncStorage),
 		},
 	),

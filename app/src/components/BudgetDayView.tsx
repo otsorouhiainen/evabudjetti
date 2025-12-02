@@ -1,7 +1,6 @@
 import BudgetEventList from '@/app/src/components/BudgetEventList';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
-import i18next from 'i18next';
 import {
 	type Dispatch,
 	type SetStateAction,
@@ -150,9 +149,7 @@ export default function BudgetDayView({
 					{/* --- Future Events --- */}
 					<BudgetEventList
 						txns={future}
-						title={i18next.t('{{count}} upcoming events', {
-							count: futureCount,
-						})}
+						title={`${futureCount} upcoming events`}
 						setInputDate={setInputDate}
 						formatCurrency={formatCurrency}
 						setEditVisible={setEditVisible}
@@ -208,7 +205,7 @@ export default function BudgetDayView({
 								fontSize="$body"
 								fontWeight="500"
 							>
-								{i18next.t('No transactions')}
+								{'No transactions'}
 							</Text>
 						)}
 
@@ -228,18 +225,18 @@ export default function BudgetDayView({
 								fontSize="$buttons.md"
 								textTransform="uppercase"
 							>
-								{i18next.t('Add new')}
+								{'Add new'}
 							</Text>
 						</Button>
 
 						{/* Daily Stats */}
 						<YStack alignItems="center" gap={5}>
 							<Text color="$white" fontSize="$body">
-								{i18next.t('Account balance')}:{' '}
+								{'Account balance'}:{' '}
 								{formatCurrency(currentBalance)}
 							</Text>
 							<Text color="$white" fontSize="$body">
-								{i18next.t('Disposable income')}:{' '}
+								{'Disposable income'}:{' '}
 								{formatCurrency(disposable)}
 							</Text>
 						</YStack>
@@ -248,9 +245,7 @@ export default function BudgetDayView({
 					{/* --- Past Events --- */}
 					<BudgetEventList
 						txns={past}
-						title={i18next.t('{{count}} past events', {
-							count: pastCount,
-						})}
+						title={`${pastCount} past events`}
 						setInputDate={setInputDate}
 						formatCurrency={formatCurrency}
 						setEditVisible={setEditVisible}
