@@ -4,7 +4,7 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import { Button, Input, SizableText } from 'tamagui';
+import { Button, Input } from 'tamagui';
 
 type Props = {
 	value?: Date | null;
@@ -73,13 +73,6 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 				}}
 			/>
 			<View style={styles.dateElementsContainer}>
-				<SizableText
-					style={{ height: '100%' }}
-					color="$primary100"
-					size="$title3"
-				>
-					Date: {editorDate}
-				</SizableText>
 				<Button
 					style={{ height: '100%' }}
 					icon={Calendar}

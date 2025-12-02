@@ -100,7 +100,10 @@ export default function Budget() {
 			>
 				<Tabs
 					value={selectedTab}
-					onValueChange={setSelectedTab}
+					onValueChange={(value) => {
+						setSelectedTab(value);
+						setcurrentDate(new Date());
+					}}
 					backgroundColor="transparent"
 					f={1}
 					flexDirection="column"
@@ -162,6 +165,7 @@ export default function Budget() {
 					</Tabs.List>
 					<Tabs.Content value="day" flex={1}>
 						<BudgetDayView
+							onDateChange={setcurrentDate}
 							currentDate={currentDate}
 							transactions={transactions.filter(
 								(t) =>

@@ -1,4 +1,5 @@
 import useBalanceStore from '@/src/store/useBalanceStore';
+import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
 import {
 	type Dispatch,
 	type SetStateAction,
@@ -14,6 +15,7 @@ import { formatCurrency } from '../utils/budgetUtils';
 interface BudgetDayViewProps {
 	currentDate: Date;
 	transactions: Item[];
+	onDateChange: (date: Date) => void;
 	onAddPress?: () => void;
 	onEditPress?: (txn: Item) => void;
 	setEditVisible: (state: boolean) => void;
@@ -29,6 +31,7 @@ const formatDate = (date: Date) => {
 export default function BudgetDayView({
 	currentDate,
 	transactions,
+	onDateChange,
 	onAddPress,
 	setInputDate,
 	setEditingTxn,
@@ -41,15 +44,27 @@ export default function BudgetDayView({
 	const [pastCount, setPastCount] = useState(0);
 	const [currentBalance, setCurrentBalance] = useState(0);
 	const [disposable, setDisposable] = useState(0);
+
 	useEffect(() => {
 		setCurrentBalance(storeBalance);
 		setDisposable(storeDisposable);
 	}, [storeBalance, storeDisposable]);
 
+	const handlePrevDay = () => {
+		const newDate = new Date(currentDate);
+		newDate.setDate(newDate.getDate() - 1);
+		onDateChange(newDate);
+	};
+
+	const handleNextDay = () => {
+		const newDate = new Date(currentDate);
+		newDate.setDate(newDate.getDate() + 1);
+		onDateChange(newDate);
+	};
+
 	// --- Data Processing ---
 	const { past, current, future, futureTxns, pastTxns } = useMemo(() => {
 		const cDateStr = formatDate(currentDate);
-		console.log('ype', transactions);
 
 		// Normalize dates: ensure each txn.date is a Date object so getTime() is available
 		const normalizedTxns: Item[] = transactions.map((t) => {
@@ -102,22 +117,11 @@ export default function BudgetDayView({
 			pastTxns: pastTxns,
 		};
 	}, [transactions, currentDate, futureCount, pastCount]);
+
 	useEffect(() => {
 		setFutureCount(futureTxns.length);
 		setPastCount(pastTxns.length);
 	}, [futureTxns, pastTxns]);
-	// Handlers for chevron clicks
-	const handleUpChevronClick = () => {
-		if (futureTxns.length > futureCount) {
-			setFutureCount((prev) => Math.min(prev + 3, futureTxns.length));
-		}
-	};
-
-	const handleDownChevronClick = () => {
-		if (pastTxns.length > pastCount) {
-			setPastCount((prev) => Math.min(prev + 3, pastTxns.length));
-		}
-	};
 
 	return (
 		<YStack flex={1}>
@@ -127,33 +131,6 @@ export default function BudgetDayView({
 				showsVerticalScrollIndicator={false}
 			>
 				<YStack paddingHorizontal={5}>
-					{/* --- Navigation / Up Chevron --- */}
-					{/*<YStack alignItems="center" marginBottom={10}>
-						<Button
-							unstyled
-							onPress={handleUpChevronClick}
-							opacity={futureTxns.length > futureCount ? 1 : 0.3}
-							disabled={futureTxns.length <= futureCount}
-							cursor={
-								futureTxns.length > futureCount
-									? 'pointer'
-									: 'default'
-							}
-						>
-							<ChevronUp size={24} color="$color.black" />
-						</Button>
-					</YStack>*/}
-
-					{/* --- Future Events --- */}
-					{/*<BudgetEventList
-						txns={future}
-						title={`${futureCount} upcoming events`}
-						setInputDate={setInputDate}
-						formatCurrency={formatCurrency}
-						setEditVisible={setEditVisible}
-						setEditingTxn={setEditingTxn}
-					/>*/}
-
 					{/* --- Current Day Card (Center Focus) --- */}
 					<YStack
 						backgroundColor="$primary200"
@@ -170,14 +147,38 @@ export default function BudgetDayView({
 						shadowRadius={4}
 						elevation={4}
 					>
-						{/* Date Header */}
-						<Text
-							color="$white"
-							fontSize="$title1"
-							fontWeight="700"
+						{/* Date Header with Navigation */}
+						<XStack
+							alignItems="center"
+							justifyContent="center"
+							gap={15}
 						>
-							{formatDate(currentDate)}
-						</Text>
+							<Button
+								outlineColor="$white"
+								size="$buttons.md"
+								icon={ChevronLeft}
+								onPress={handlePrevDay}
+								backgroundColor="$transparent"
+								circular
+								iconAfter={undefined}
+							/>
+							<Text
+								color="$white"
+								fontSize="$title1"
+								fontWeight="700"
+							>
+								{formatDate(currentDate)}
+							</Text>
+							<Button
+								outlineColor="$white"
+								size="$buttons.md"
+								icon={ChevronRight}
+								onPress={handleNextDay}
+								backgroundColor="$transparent"
+								circular
+								iconAfter={undefined}
+							/>
+						</XStack>
 
 						{/* Transactions or Empty State */}
 						{current.length > 0 ? (
@@ -239,33 +240,6 @@ export default function BudgetDayView({
 							</Text>
 						</YStack>
 					</YStack>
-
-					{/* --- Past Events --- */}
-					{/*<BudgetEventList
-						txns={past}
-						title={`${pastCount} past events`}
-						setInputDate={setInputDate}
-						formatCurrency={formatCurrency}
-						setEditVisible={setEditVisible}
-						setEditingTxn={setEditingTxn}
-					/>*/}
-
-					{/* --- Navigation / Down Chevron --- */}
-					{/*<YStack alignItems="center" marginTop={10}>
-						<Button
-							unstyled
-							onPress={handleDownChevronClick}
-							opacity={pastTxns.length > pastCount ? 1 : 0.3}
-							disabled={pastTxns.length <= pastCount}
-							cursor={
-								pastTxns.length > pastCount
-									? 'pointer'
-									: 'default'
-							}
-						>
-							<ChevronDown size={24} color="$color.black" />
-						</Button>
-					</YStack>*/}
 				</YStack>
 			</ScrollView>
 		</YStack>

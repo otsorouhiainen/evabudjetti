@@ -158,7 +158,9 @@ export default function Landing() {
 										width="50%"
 										style={{ height: '100%' }}
 									>
-										VIEW DETAILS
+										<Text color={'$white'}>
+											VIEW DETAILS
+										</Text>
 									</Button>
 								</YStack>
 							</YStack>
@@ -171,7 +173,9 @@ export default function Landing() {
 									}
 									width="100%"
 								>
-									ADD INCOME/EXPENSE
+									<Text color={'$white'}>
+										ADD INCOME/EXPENSE
+									</Text>
 								</Button>
 
 								<XStack
@@ -185,7 +189,9 @@ export default function Landing() {
 										backgroundColor="$primary200"
 										onPress={() => router.push('/budget')}
 									>
-										SHOW BUDGET
+										<Text color={'$white'}>
+											SHOW BUDGET
+										</Text>
 									</Button>
 									<Button
 										style={{ height: '100%' }}
@@ -194,7 +200,9 @@ export default function Landing() {
 											router.push('/budget_wizard')
 										}
 									>
-										EDIT BUDGET
+										<Text color={'$white'}>
+											EDIT BUDGET
+										</Text>
 									</Button>
 								</XStack>
 							</YStack>
