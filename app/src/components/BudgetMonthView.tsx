@@ -1,7 +1,13 @@
 import { ChevronLeft, ChevronRight, HelpCircle } from '@tamagui/lucide-icons';
-import i18next from 'i18next';
-import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
+import {
+	type Dispatch,
+	type SetStateAction,
+	useEffect,
+	useMemo,
+	useState,
+} from 'react';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
+import useBalanceStore from '@/src/store/useBalanceStore';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
 import { formatCurrency, splitTransactions } from '../utils/budgetUtils';
@@ -24,6 +30,10 @@ export default function BudgetMonthView({
 	onDateChange,
 	editOpen,
 }: BudgetMonthViewProps) {
+	const storeBalance = useBalanceStore((state) => state.balance);
+	const storeDisposable = useBalanceStore((state) => state.disposable);
+	const [currentBalance, setCurrentBalance] = useState(0);
+	const [disposable, setDisposable] = useState(0);
 	const [incomesOpen, setIncomesOpen] = useState(true);
 	const [expensesOpen, setExpensesOpen] = useState(true);
 	const [helpVisible, setHelpVisible] = useState(false);
@@ -69,34 +79,22 @@ export default function BudgetMonthView({
 		onDateChange(newDate);
 	};
 
-	// Calculate totals based on current month transactions
-	const totals = useMemo(() => {
-		let income = 0;
-		let expenses = 0;
-
-		[...future, ...past].forEach((txn) => {
-			const amount = Number(txn.amount);
-			if (amount > 0) income += amount;
-			else expenses += Math.abs(amount);
-		});
-
-		return {
-			balance: income - expenses,
-			discretionary: Math.max(0, income - expenses), // Simplified calculation
-		};
-	}, [future, past]);
+	useEffect(() => {
+		setCurrentBalance(storeBalance);
+		setDisposable(storeDisposable);
+	}, [storeBalance, storeDisposable]);
 
 	return (
 		<YStack flex={1}>
 			<ScrollView
-				paddingTop={'$3'}
-				paddingHorizontal={'$1'}
+				paddingTop={15}
+				paddingHorizontal={5}
 				contentContainerStyle={{ paddingBottom: 100 }}
 				scrollEnabled={!editOpen}
 				showsVerticalScrollIndicator={false}
 			>
 				{/* Month selector */}
-				<YStack marginBottom={'$2'}>
+				<YStack marginBottom={10}>
 					<XStack ai="center" jc="space-between" width={180}>
 						<Button
 							outlineColor={'$black'}
@@ -123,7 +121,7 @@ export default function BudgetMonthView({
 				{/* Income dropdown */}
 				<BudgetDropdown
 					txns={POSITIVE_TX}
-					name={i18next.t('Incomes')}
+					name={('Incomes')}
 					openDropdown={setIncomesOpen}
 					router={router}
 					isOpen={incomesOpen}
@@ -133,7 +131,7 @@ export default function BudgetMonthView({
 				{/* Expense dropdown */}
 				<BudgetDropdown
 					txns={NEGATIVE_TX}
-					name={i18next.t('Expenses')}
+					name={('Expenses')}
 					openDropdown={setExpensesOpen}
 					router={router}
 					isOpen={expensesOpen}
@@ -141,30 +139,30 @@ export default function BudgetMonthView({
 				/>
 
 				{/* Snapshot */}
-				<YStack marginBottom={'$3'}>
+				<YStack marginBottom={15}>
 					<Text fontSize={'$body'} fontWeight={'700'}>
 						{today.toLocaleDateString(LOCALE)}
 					</Text>
 					<Text>
-						{i18next.t('Balance')}:
+						{'Balance'}:
 						<Text fontSize={'$body'}>
 							{' '}
-							{formatCurrency(totals.balance)}
+							{formatCurrency(currentBalance)}
 						</Text>
 					</Text>
 					<XStack>
 						<Text>
-							{i18next.t('Disposable income')}:
+							{'Disposable income'}:
 							<Text fontSize={'$body'}>
 								{' '}
-								{formatCurrency(totals.discretionary)}
+								{formatCurrency(disposable)}
 							</Text>
 						</Text>
 						<Button
 							outlineColor={'$black'}
 							onPress={() => setHelpVisible(true)}
 							icon={HelpCircle}
-							width={'$2'}
+							width={10}
 						/>
 					</XStack>
 				</YStack>
@@ -172,7 +170,7 @@ export default function BudgetMonthView({
 				{/* Future events */}
 				<BudgetEventList
 					txns={future}
-					title={i18next.t('Future events')}
+					title={('Future events')}
 					router={router}
 					formatCurrency={formatCurrency}
 				/>
@@ -180,7 +178,7 @@ export default function BudgetMonthView({
 				{/* Past events */}
 				<BudgetEventList
 					txns={past}
-					title={i18next.t('Past events')}
+					title={('Past events')}
 					router={router}
 					formatCurrency={formatCurrency}
 				/>
@@ -199,8 +197,8 @@ export default function BudgetMonthView({
 				>
 					<YStack
 						backgroundColor="$color.white"
-						borderRadius="$2"
-						padding="$3"
+						borderRadius={10}
+						padding={15}
 						width="90%"
 						maxWidth="$popupMaxWidth"
 						shadowColor="$color.black"
@@ -209,19 +207,17 @@ export default function BudgetMonthView({
 						shadowRadius={3}
 						elevation={3}
 					>
-						<Text fontSize={'$4'} mb={'$2'}>
-							{i18next.t('Instructions')}
+						<Text fontSize={20} mb={10}>
+							{'Instructions'}
 						</Text>
-						<Text mb={'$2'}>
-							{i18next.t('Help Disposable income')}
-						</Text>
+						<Text mb={10}>{'Help Disposable income'}</Text>
 						<Button
 							onPress={() => setHelpVisible(false)}
 							backgroundColor={'$primary200'}
 							size={'$buttons.lg'}
 							width={'50%'}
 						>
-							<Text color={'$white'}>{i18next.t('Close')}</Text>
+							<Text color={'$white'}>{'Close'}</Text>
 						</Button>
 					</YStack>
 				</YStack>

@@ -1,16 +1,23 @@
-import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
-import i18next from 'i18next';
-import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from '@tamagui/lucide-icons';
+import {
+	type Dispatch,
+	type SetStateAction,
+	useEffect,
+	useMemo,
+	useState,
+} from 'react';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
-import BudgetEventList from '@/app/src/components/BudgetEventList';
+import useBalanceStore from '@/src/store/useBalanceStore';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
 import { formatCurrency } from '../utils/budgetUtils';
 import StyledCard from './styledCard';
+import BudgetEventList from './BudgetEventList';
 
 interface BudgetDayViewProps {
 	currentDate: Date;
 	transactions: Item[];
+	onDateChange: (date: Date) => void;
 	onAddPress?: () => void;
 	onEditPress?: (txn: Item) => void;
 	setEditVisible: (state: boolean) => void;
@@ -20,31 +27,59 @@ interface BudgetDayViewProps {
 
 // Helper to format date as "dd.mm.yyyy"
 const formatDate = (date: Date) => {
-	return new Intl.DateTimeFormat(LOCALE, {
-		day: '2-digit',
-		month: '2-digit',
-		year: 'numeric',
-	}).format(date);
+	return new Intl.DateTimeFormat(LOCALE, {}).format(date);
 };
 
 export default function BudgetDayView({
 	currentDate,
 	transactions,
+	onDateChange,
 	onAddPress,
 	setInputDate,
 	setEditingTxn,
 	setEditVisible,
 }: BudgetDayViewProps) {
 	// State to track how many transactions to show
-	const [futureCount, setFutureCount] = useState(3);
-	const [pastCount, setPastCount] = useState(4);
+	const storeBalance = useBalanceStore((state) => state.balance);
+	const storeDisposable = useBalanceStore((state) => state.disposable);
+	const [futureCount, setFutureCount] = useState(0);
+	const [pastCount, setPastCount] = useState(0);
+	const [currentBalance, setCurrentBalance] = useState(0);
+	const [disposable, setDisposable] = useState(0);
+
+	useEffect(() => {
+		setCurrentBalance(storeBalance);
+		setDisposable(storeDisposable);
+	}, [storeBalance, storeDisposable]);
+
+	const handlePrevDay = () => {
+		const newDate = new Date(currentDate);
+		newDate.setDate(newDate.getDate() - 1);
+		onDateChange(newDate);
+	};
+
+	const handleNextDay = () => {
+		const newDate = new Date(currentDate);
+		newDate.setDate(newDate.getDate() + 1);
+		onDateChange(newDate);
+	};
 
 	// --- Data Processing ---
 	const { past, current, future, futureTxns, pastTxns } = useMemo(() => {
 		const cDateStr = formatDate(currentDate);
 
+		// Normalize dates: ensure each txn.date is a Date object so getTime() is available
+		const normalizedTxns: Item[] = transactions.map((t) => {
+			const parsedDate =
+				// if already a Date keep it, otherwise create a Date from the value
+				t.date instanceof Date
+					? t.date
+					: new Date(t.date as unknown as string);
+			return { ...t, date: parsedDate };
+		});
+
 		// Sort all transactions by date descending (Newest first)
-		const sorted = [...transactions].sort(
+		const sorted = [...normalizedTxns].sort(
 			(a, b) => b.date.getTime() - a.date.getTime(),
 		);
 
@@ -85,7 +120,7 @@ export default function BudgetDayView({
 		};
 	}, [transactions, currentDate, futureCount, pastCount]);
 
-	// Handlers for chevron clicks
+		// Handlers for chevron clicks
 	const handleUpChevronClick = () => {
 		if (futureTxns.length > futureCount) {
 			setFutureCount((prev) => Math.min(prev + 3, futureTxns.length));
@@ -98,9 +133,10 @@ export default function BudgetDayView({
 		}
 	};
 
-	// Mock Totals for the center card (In a real app, calculate these based on history)
-	const currentBalance = 200.0;
-	const disposable = 6.0;
+	useEffect(() => {
+		setFutureCount(futureTxns.length);
+		setPastCount(pastTxns.length);
+	}, [futureTxns, pastTxns]);
 
 	return (
 		<YStack flex={1}>
@@ -131,10 +167,7 @@ export default function BudgetDayView({
 					<BudgetEventList
 						txns={future}
 						title={""}
-						setInputDate={setInputDate}
 						formatCurrency={formatCurrency}
-						setEditVisible={setEditVisible}
-						setEditingTxn={setEditingTxn}
 					/>
 
 					{/* --- Current Day Card (Center Focus) --- */}
@@ -144,26 +177,50 @@ export default function BudgetDayView({
 						marginVertical="$4"
 						alignItems="center"
 						justifyContent="center"
-					>
-						{/* Date Header */}
-						<Text
-							color="$white"
-							fontSize="$5"
-							fontWeight="700"							
+					>					
+						{/* Date Header with Navigation */}
+						<XStack
+							alignItems="center"
+							justifyContent="center"
+							gap={15}
 						>
-							{formatDate(currentDate)}
-						</Text>
+							<Button
+								outlineColor="$white"
+								size="$buttons.md"
+								icon={ChevronLeft}
+								onPress={handlePrevDay}
+								backgroundColor="$transparent"
+								circular
+								iconAfter={undefined}
+							/>
+							<Text
+								color="$white"
+								fontSize="$title1"
+								fontWeight="700"
+							>
+								{formatDate(currentDate)}
+							</Text>
+							<Button
+								outlineColor="$white"
+								size="$buttons.md"
+								icon={ChevronRight}
+								onPress={handleNextDay}
+								backgroundColor="$transparent"
+								circular
+								iconAfter={undefined}
+							/>
+						</XStack>
 
 						{/* Transactions or Empty State */}
 						{current.length > 0 ? (
-							<YStack width="100%" gap="$2">
+							<YStack width="100%" gap={10}>
 								{current.map((t) => (
 									<XStack
 										key={t.id}
 										justifyContent="space-between"
 										borderBottomWidth={1}
 										borderColor="$primary300"
-										pb="$2"
+										pb={10}
 									>
 										<Text color="$white">{t.name}</Text>
 										<Text color="$white">
@@ -180,7 +237,7 @@ export default function BudgetDayView({
 								fontStyle='italic'
 								marginTop={"$4"}
 							>
-								{i18next.t('No transactions')}
+								{'No transactions'}
 							</Text>
 						)}
 
@@ -192,7 +249,7 @@ export default function BudgetDayView({
 							height='wrap-content'
 							onPress={onAddPress}
 							pressStyle={{ backgroundColor: '$primary300' }}
-							marginVertical="$2"
+							marginVertical={10}
 						>
 							<Text
 								color="$primary100"
@@ -200,18 +257,18 @@ export default function BudgetDayView({
 								fontSize="$buttons.sm"
 								textTransform="uppercase"
 							>
-								{i18next.t('Add new')}
+								{'Add new'}
 							</Text>
 						</Button>
 
 						{/* Daily Stats */}
-						<YStack alignItems="center" gap="$1">
+						<YStack alignItems="center" gap={5}>
 							<Text color="$white" fontSize="$body">
-								{i18next.t('Account balance')}:{' '}
+								{'Account balance'}:{' '}
 								{formatCurrency(currentBalance)}
 							</Text>
 							<Text color="$white" fontSize="$body">
-								{i18next.t('Disposable income')}:{' '}
+								{'Disposable income'}:{' '}
 								{formatCurrency(disposable)}
 							</Text>
 						</YStack>
@@ -221,10 +278,7 @@ export default function BudgetDayView({
 					<BudgetEventList
 						txns={past}
 						title={""}
-						setInputDate={setInputDate}
 						formatCurrency={formatCurrency}
-						setEditVisible={setEditVisible}
-						setEditingTxn={setEditingTxn}
 					/>
 
 					{/* --- Navigation / Down Chevron --- */}

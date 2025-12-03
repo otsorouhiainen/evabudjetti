@@ -10,7 +10,7 @@ const StyledCard = Object.assign(
 		shadowOpacity: 0.25,
 		shadowRadius: 3,
 		elevation: 3,
-		marginBottom: '$3',
+		marginBottom: 15,
 
 		variants: {
 			size: {

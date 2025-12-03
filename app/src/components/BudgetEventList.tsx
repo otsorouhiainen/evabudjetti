@@ -27,17 +27,31 @@ const BudgetEventList: React.FC<Props> = ({
 
 			{txns.map((txn) => (
 				<StyledListItem key={txn.id}>
-					<Text width={100}>{txn.name}</Text>
-					<Text f={1} fontWeight={'$1'} textAlign="center">
-						{txn.date.toLocaleDateString(LOCALE)}
+					<Text
+						flex={1}
+						numberOfLines={1}
+						ellipsizeMode="tail"
+						fontSize="$body"
+					>
+						{txn.name}
+					</Text>
+					<Text
+						flex={1}
+						fontWeight="400"
+						textAlign="center"
+						fontSize="$body"
+					>
+						{new Date(txn.date).toLocaleDateString(LOCALE)}
 					</Text>
 					<XStack
-						gap={8}
-						backgroundColor={'transparent'}
+						gap={10}
+						backgroundColor="transparent"
 						alignItems="center"
+						justifyContent="flex-end"
+						minWidth={100}
 					>
-						<Text>
-							{Number(txn.amount) > 0 ? '+' : ''}
+						<Text fontSize="$body" fontWeight="600">
+							{txn.type === 'income' ? '+' : '-'}
 							{formatCurrency(Number(txn.amount))}
 						</Text>
 						{/* Edit button rendered only if router exists */}

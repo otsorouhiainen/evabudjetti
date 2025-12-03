@@ -1,53 +1,44 @@
+import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
+import { type Category, useCategoryStore } from '@/src/store/categoryStore';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import {
 	Check as CheckIcon,
 	ChevronDown,
 	ChevronUp,
 	Plus,
 } from '@tamagui/lucide-icons';
-import { format, isValid, parse } from 'date-fns';
-import i18next from 'i18next';
-import { useMemo, useState } from 'react';
+import * as Crypto from 'expo-crypto';
+import { useEffect, useMemo, useState } from 'react';
 import {
 	AlertDialog,
 	Button,
 	Checkbox,
 	Input,
-	PortalProvider,
 	ScrollView,
 	SizableText,
 	Stack,
 	XStack,
-	YStack,
+	YStack
 } from 'tamagui';
 import {
 	TransactionType,
 	TransactionTypeSegment,
 } from '../src/components/TransactionTypeSegment';
-
-// TODO: categories to be dynamic from database
-export const CATEGORIES = [
-	{ key: 'benefit', label: 'Benefit', type: TransactionType.Income },
-	{ key: 'rent', label: 'Rent', type: TransactionType.Expense },
-	{ key: 'other', label: 'Other', type: TransactionType.Income },
-	{ key: 'electricity', label: 'Electricity', type: TransactionType.Expense },
-	{ key: 'water', label: 'Water', type: TransactionType.Expense },
-] as const;
-
-export type CategoryKey = (typeof CATEGORIES)[number]['key'];
+import type { Item } from '../src/constants/wizardConfig';
 
 export default function AddTransaction() {
 	const [type, setType] = useState<
 		TransactionType.Income | TransactionType.Expense
 	>(TransactionType.Income);
-	const [category, setCategory] = useState<CategoryKey | null>(null);
+	const [category, setCategory] = useState<string | null>(null);
 	const [name, setName] = useState('');
 	const [amount, setAmount] = useState('');
 	const [date, setDate] = useState<Date | null>(null);
-	const [dateText, setDateText] = useState('');
-	const [dateError, setDateError] = useState<string | null>(null);
+
 	const [repeat, setRepeat] = useState(false);
 	const [repeatInterval, setRepeatInterval] = useState<
-		'monthly' | 'custom interval'
+		'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
 	>('monthly');
 	const [repeatValue, setRepeatValue] = useState('');
 	const [errors, setErrors] = useState<{
@@ -58,16 +49,95 @@ export default function AddTransaction() {
 	const [description, setDescription] = useState('');
 	const [expanded, setExpanded] = useState(false);
 	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+	const [plannedModalVisible, setPlannedModalVisible] = useState(false);
+	const [selectedPlannedTxn, setSelectedPlannedTxn] = useState<Item | null>(
+		null,
+	);
+	const [allocationAmount, setAllocationAmount] = useState('');
+
 	const [newCategory, setNewCategory] = useState('');
 	const [showSuccess, setShowSuccess] = useState(false);
+	const addTransaction = useRealTransactionsStore((state) => state.add);
+	const addCategory = useCategoryStore((state) => state.addCategory);
+	const storeCategories = useCategoryStore();
+	const plannedTransactions = usePlannedTransactionsStore(
+		(state) => state.transactionsForTwoYears,
+	);
 
-	const visibleCategories = expanded ? CATEGORIES : CATEGORIES.slice(0, 3);
+	const [categories, setCategories] = useState<Category[]>([]);
+	useEffect(() => {
+		setCategories(storeCategories.categories);
+	}, [storeCategories.categories]);
 
-	const handleAddCategory = () => {
-		//placeholder for adding category
+	const dynamicCategories = (categories || []).map((c) => ({
+		key: c.id,
+		label: c.name,
+		type:
+			c.type === 'income'
+				? TransactionType.Income
+				: TransactionType.Expense,
+	}));
 
-		setNewCategory('');
-		setCategoryModalVisible(false);
+	const visibleCategories = expanded
+		? dynamicCategories
+		: dynamicCategories.slice(0, 3);
+
+	const upcomingPlannedTransactions = useMemo(() => {
+		if (!plannedTransactions) return [];
+		const now = new Date();
+		now.setHours(0, 0, 0, 0);
+		return plannedTransactions
+			.filter((t) => new Date(t.date) >= now)
+			.sort(
+				(a, b) =>
+					new Date(a.date).getTime() - new Date(b.date).getTime(),
+			)
+			.slice(0, 20); // Limit to next 20 occurrences
+	}, [plannedTransactions]);
+
+	const handleAddCategory = async () => {
+		if (!newCategory.trim()) return;
+
+		try {
+			await addCategory({
+				id: Crypto.randomUUID(),
+				name: newCategory,
+				type: type === TransactionType.Income ? 'income' : 'expense',
+				color: '#000000', // Default color
+				icon: 'circle', // Default icon
+			});
+			setNewCategory('');
+			setCategoryModalVisible(false);
+		} catch (e) {
+			console.error('Failed to add category:', e);
+		}
+	};
+
+	const handleSelectPlanned = (txn: Item) => {
+		setSelectedPlannedTxn(txn);
+		setAllocationAmount(txn.amount.toString());
+	};
+
+	const confirmPlannedAllocation = () => {
+		if (selectedPlannedTxn) {
+			setName(selectedPlannedTxn.name);
+			setAmount(allocationAmount);
+			setDate(new Date(selectedPlannedTxn.date));
+			setCategory(selectedPlannedTxn.category);
+			setType(
+				selectedPlannedTxn.type === 'income'
+					? TransactionType.Income
+					: TransactionType.Expense,
+			);
+			// Reset repeat settings as this is a single allocation
+			setRepeat(false);
+			setRepeatInterval('monthly');
+			setRepeatValue('');
+
+			setPlannedModalVisible(false);
+			setSelectedPlannedTxn(null);
+			setAllocationAmount('');
+		}
 	};
 
 	const isValidSubmit = useMemo(
@@ -88,25 +158,16 @@ export default function AddTransaction() {
 		}
 	};
 
-	const handleDateChange = (newDate: string) => {
-		setDateText(newDate);
-		const parsed = parse(newDate, 'd.M.yyyy', new Date());
-
-		if (isValid(parsed)) {
-			setDate(parsed);
+	const handleAllocationAmountChange = (newValue: string) => {
+		const numeric = newValue.replace(/[^0-9.,]/g, '');
+		const dotSeparators = numeric.replace(',', '.');
+		const parts = dotSeparators.split('.');
+		if (parts.length === 1) {
+			setAllocationAmount(parts[0]);
 		} else {
-			setDate(null);
-		}
-	};
-
-	const handleDateBlur = () => {
-		if (date) {
-			setDateText(format(date, 'dd.MM.yyyy'));
-			setDateError(null);
-		} else {
-			setDateError(
-				i18next.t('Enter correct date in the format dd.mm.yyyy'),
-			);
+			const integer = parts[0];
+			const decimal = parts.slice(1).join('').slice(0, 2);
+			setAllocationAmount(`${integer}.${decimal}`);
 		}
 	};
 
@@ -115,7 +176,7 @@ export default function AddTransaction() {
 		setName('');
 		setAmount('');
 		setDate(null);
-		setDateText('');
+
 		setRepeat(false);
 		setRepeatInterval('monthly');
 		setRepeatValue('');
@@ -123,36 +184,51 @@ export default function AddTransaction() {
 		setErrors({});
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		// submit handler placeholder
 		const newErrors: typeof errors = {};
 
 		if (amount.at(-1) === '.') {
-			newErrors.amount = i18next.t('Enter a valid amount');
+			newErrors.amount = 'Enter a valid amount';
 		}
 		if (
 			repeat === true &&
-			repeatInterval === 'custom interval' &&
+			repeatInterval === 'custom' &&
 			repeatValue === ''
 		) {
-			newErrors.repeatValue = i18next.t('Enter the recurrence interval');
+			newErrors.repeatValue = 'Enter the recurrence interval';
 		}
 
 		setErrors(newErrors);
 
 		if (Object.keys(newErrors).length === 0) {
-			console.log({
-				type,
-				category,
-				name,
-				amount,
-				date,
-				repeat,
-				description,
-				repeatInterval,
-				repeatValue,
-			});
-			setShowSuccess(true);
+			try {
+				await addTransaction({
+					id: Crypto.randomUUID(),
+					name: name,
+					amount: Number(amount),
+					date: date ?? new Date(),
+					category: category ?? 'other',
+					type: type.toLowerCase() as 'income' | 'expense',
+					recurrence: repeatInterval,
+					recurrenceInterval:
+						repeatValue === '' ? undefined : Number(repeatValue),
+				});
+				console.log({
+					type,
+					category,
+					name,
+					amount,
+					date,
+					repeat,
+					description,
+					repeatInterval,
+					repeatValue,
+				});
+				setShowSuccess(true);
+			} catch (e) {
+				console.error('Failed to add transaction:', e);
+			}
 		}
 	};
 
@@ -185,12 +261,12 @@ export default function AddTransaction() {
 							gap={'$4'}
 						>
 							<SizableText size={'$title1'} marginBottom={8}>
-								{i18next.t('Add category')}
+								{'Add category'}
 							</SizableText>
 							<Input
 								value={newCategory}
 								onChangeText={setNewCategory}
-								placeholder={i18next.t('Enter category')}
+								placeholder={('Enter category')}
 								height={40}
 								borderRadius={6}
 								marginBottom={22}
@@ -212,7 +288,7 @@ export default function AddTransaction() {
 										size={'$title3'}
 										color={'$white'}
 									>
-										{i18next.t('Save')}
+										{('Save')}
 									</SizableText>
 								</Button>
 																<Button
@@ -228,7 +304,7 @@ export default function AddTransaction() {
 										size={'$title3'}
 										color={'$primary200'}
 									>
-										{i18next.t('Cancel')}
+										{('Cancel')}
 									</SizableText>
 								</Button>
 							</XStack>
@@ -236,47 +312,61 @@ export default function AddTransaction() {
 					</Stack>
 				)}
 
-				<YStack
-					flex={1}
-					justifyContent="center"
-					alignItems="center"
-					overflow="scroll"
-				>
 					<YStack
 						flex={1}
-						paddingTop={24}
-						paddingHorizontal={20}
-						gap={18}
-						width={'100%'}
+						justifyContent="center"
+						alignItems="center"
+						overflow="scroll"
 					>
-						{/* Top header */}
-						<SizableText size={'$title1'}>
-							{i18next.t('Add new')}
-						</SizableText>
-
-						{/* Segmented: Income / Expense */}
-						<XStack justifyContent="center">
-							<TransactionTypeSegment
-								type={type}
-								setType={setType}
-							/>
-						</XStack>
-
-						{/* Category chips */}
-						<XStack
-							justifyContent="space-between"
-							alignItems="center"
+						<YStack
+							flex={1}
+							paddingTop={24}
+							paddingHorizontal={20}
+							gap={18}
+							width={'100%'}
 						>
-							<SizableText size={'$title2'}>
-								{i18next.t('Category')}
-							</SizableText>
-							<Button
-								onPress={() => setExpanded(!expanded)}
-								icon={expanded ? ChevronUp : ChevronDown}
-								height="100%"
-								background={'$transparent'}
-							></Button>
-						</XStack>
+							{/* Top header */}
+							<XStack
+								justifyContent="space-between"
+								alignItems="center"
+							>
+								<SizableText size={'$title1'}>
+									{'Add new'}
+								</SizableText>
+								<Button
+									size="$3"
+									backgroundColor="$primary200"
+									onPress={() => setPlannedModalVisible(true)}
+								>
+									<SizableText color="$white">
+										Pick Planned
+									</SizableText>
+								</Button>
+							</XStack>
+
+							{/* Segmented: Income / Expense */}
+							<XStack justifyContent="center">
+								<TransactionTypeSegment
+									type={type}
+									setType={setType}
+								/>
+							</XStack>
+
+							{/* Category chips */}
+							<XStack
+								justifyContent="space-between"
+								alignItems="center"
+							>
+								<SizableText size={'$title2'}>
+									{'Category'}
+								</SizableText>
+								<Button
+									onPress={() => setExpanded(!expanded)}
+									icon={expanded ? ChevronUp : ChevronDown}
+									height="100%"
+									background={'$transparent'}
+								></Button>
+							</XStack>
 
 						{/* Add category button */}
 						<XStack>
@@ -315,207 +405,63 @@ export default function AddTransaction() {
 											}
 										>
 											<SizableText size={'$title3'}>
-												{i18next.t(label)}
+												{(label)}
 											</SizableText>
 										</Button>
 									);
 								})}
 						</XStack>
 
-						{/* Form */}
-						<YStack
-							alignSelf="center"
-							width={'100%'}
-							borderRadius={16}
-							padding={16}
-							gap={6}
-							backgroundColor={'$white'}
-						>
-							<YStack>
-								<SizableText size={'$title3'}>
-									{type === TransactionType.Income
-										? i18next.t(
-												'{{transactionType}} name',
-												{
-													transactionType: i18next.t(
-														TransactionType.Income,
-													),
-												},
-											)
-										: i18next.t(
-												'{{transactionType}} name',
-												{
-													transactionType: i18next.t(
-														TransactionType.Expense,
-													),
-												},
-											)}
-									<SizableText size={'$title3'}>
-										{' '}
-										*
-									</SizableText>
-								</SizableText>
-								<Input
-									value={name}
-									onChangeText={setName}
-									placeholder={i18next.t(
-										'{{transactionType}} name',
-										{ transactionType: i18next.t(type) },
-									)}
-									height={40}
-									borderRadius={6}
-									focusStyle={{
-										outlineColor: 'transparent',
-									}}
-									fontSize={'$title3'}
-									px="10px"
-								/>
-							</YStack>
-
-							<YStack>
-								<SizableText size={'$title3'}>
-									{i18next.t('Amount')}
-									<SizableText size={'$title3'}>
-										{' '}
-										*
-									</SizableText>
-								</SizableText>
-								<Input
-									value={amount}
-									onChangeText={handleAmountChange}
-									keyboardType="decimal-pad"
-									placeholder="000,00 €"
-									height={40}
-									borderRadius={6}
-									borderColor={
-										errors.amount ? '$danger500' : '$black'
-									}
-									focusStyle={{
-										outlineColor: 'transparent',
-									}}
-									px="10px"
-									fontSize={'$title3'}
-								/>
-								{errors.amount && (
-									<SizableText
-										size={'$title3'}
-										color="$danger500"
-									>
-										{errors.amount}
-									</SizableText>
-								)}
-							</YStack>
-
-							<YStack>
-								<SizableText size={'$title3'}>
-									{i18next.t('Date')}
-									<SizableText size={'$title3'}>
-										{' '}
-										*
-									</SizableText>
-								</SizableText>
-
-								<Input
-									value={dateText}
-									onChangeText={handleDateChange}
-									onBlur={handleDateBlur}
-									placeholder={i18next.t('dd.mm.yyyy')}
-									keyboardType="numeric"
-									height={40}
-									borderRadius={6}
-									borderColor={
-										dateError ? '$danger500' : '$black'
-									}
-									focusStyle={{
-										outlineColor: 'transparent',
-									}}
-									px="10px"
-									fontSize={'$title3'}
-								/>
-								{dateError && (
-									<SizableText
-										size={'$title3'}
-										color="$danger500"
-									>
-										{dateError}
-									</SizableText>
-								)}
-							</YStack>
-
-							<XStack alignItems="center">
-								<Checkbox
-									size={44}
-									padding={8}
-									marginRight={10}
-									checked={repeat}
-									onCheckedChange={(checked) =>
-										setRepeat(checked === true)
-									}
-								>
-									<Checkbox.Indicator>
-										<CheckIcon size={14} />
-									</Checkbox.Indicator>
-								</Checkbox>
-
-								<SizableText size={'$title3'}>
-									{i18next.t('Does the event repeat?')}
-								</SizableText>
-							</XStack>
-
-							{/* Repeat */}
-							{repeat && (
-								<XStack
-									alignSelf="center"
-									borderRadius={10}
-									padding={4}
-									gap={6}
-									backgroundColor="$primary300"
-								>
-									{(
-										['monthly', 'custom interval'] as const
-									).map((opt) => (
-										<Button
-											key={opt}
-											pressStyle={{ opacity: 0.8 }}
-											borderRadius={10}
-											size={"$buttons.md"}
-											onPress={() => {
-												setRepeatInterval(opt);
-												if (opt !== 'custom interval')
-													setRepeatValue('');
-											}}
-											backgroundColor={
-												opt === repeatInterval
-													? '$primary200'
-													: '$white'
-											}
-										>
-											<SizableText size={'$title3'}>
-												{i18next.t(opt)}
-											</SizableText>
-										</Button>
-									))}
-								</XStack>
-							)}
-
-							{repeat && repeatInterval === 'custom interval' && (
+							{/* Form */}
+							<YStack
+								alignSelf="center"
+								width={'100%'}
+								borderRadius={16}
+								padding={16}
+								gap={6}
+								backgroundColor={'$white'}
+							>
 								<YStack>
 									<SizableText size={'$title3'}>
-										{i18next.t('Repeat interval')}
+										{type === TransactionType.Income
+											? `${TransactionType.Income} name`
+											: `${TransactionType.Expense} name`}
 										<SizableText size={'$title3'}>
 											{' '}
 											*
 										</SizableText>
 									</SizableText>
 									<Input
-										placeholder={i18next.t('day intervals')}
-										value={repeatValue}
-										onChangeText={setRepeatValue}
-										keyboardType="numeric"
+										value={name}
+										onChangeText={setName}
+										placeholder={`${type} name`}
+										height={40}
+										borderRadius={6}
+										focusStyle={{
+											outlineColor: 'transparent',
+										}}
+										fontSize={'$title3'}
+										px="10px"
+									/>
+								</YStack>
+
+								<YStack>
+									<SizableText size={'$title3'}>
+										{'Amount'}
+										<SizableText size={'$title3'}>
+											{' '}
+											*
+										</SizableText>
+									</SizableText>
+									<Input
+										value={amount}
+										onChangeText={handleAmountChange}
+										keyboardType="decimal-pad"
+										placeholder="000,00 €"
 										height={40}
 										borderRadius={6}
 										borderColor={
-											errors.repeatValue
+											errors.amount
 												? '$danger500'
 												: '$black'
 										}
@@ -525,137 +471,203 @@ export default function AddTransaction() {
 										px="10px"
 										fontSize={'$title3'}
 									/>
-									{errors.repeatValue && (
+									{errors.amount && (
 										<SizableText
 											size={'$title3'}
 											color="$danger500"
 										>
-											{errors.repeatValue}
+											{errors.amount}
 										</SizableText>
 									)}
 								</YStack>
-							)}
 
-							<YStack>
-								<SizableText size={'$title3'}>
-									{i18next.t('Additional information')}
-								</SizableText>
-								<Input
-									value={description}
-									onChangeText={setDescription}
-									placeholder={i18next.t(
-										'Write additional information',
-									)}
-									height={40}
-									borderRadius={6}
-									focusStyle={{
-										outlineColor: 'transparent',
-									}}
-									px="10px"
-									fontSize={'$title3'}
-								/>
-							</YStack>
-						</YStack>
-
-						{/* Submit */}
-						<Button
-							marginTop={8}
-							borderRadius={28}
-							size={"$10"}
-							backgroundColor="$primary200"
-							color="$white"
-							disabled={!isValidSubmit}
-							disabledStyle={{
-								opacity: 0.5,
-							}}
-							onPress={handleSubmit}
-							fontSize={'$title3'}
-						>
-							<SizableText size={'$title3'} color={'$white'}>
-								{type === TransactionType.Income
-									? i18next
-											.t('Add {{transactionType}}', {
-												transactionType: i18next.t(
-													TransactionType.Income,
-												),
-											})
-											.toUpperCase()
-									: i18next
-											.t('Add {{transactionType}}', {
-												transactionType: i18next.t(
-													TransactionType.Expense,
-												),
-											})
-											.toUpperCase()}
-							</SizableText>
-						</Button>
-
-						{/* Success alert */}
-						<AlertDialog
-							open={showSuccess}
-							onOpenChange={setShowSuccess}
-						>
-							<AlertDialog.Portal>
-								<AlertDialog.Overlay
-									opacity={0.5}
-									backgroundColor={'$black'}
-								/>
-								<AlertDialog.Content
-									bordered
-									elevate
-									width={'25%'}
-									padding={24}
-									borderRadius={16}
-								>
-									<SizableText size={'$title1'}>
-										{i18next.t('Saved')}
-									</SizableText>
+								<YStack>
 									<SizableText size={'$title3'}>
-										{type === TransactionType.Income
-											? i18next.t(
-													'{{transactionType}} added',
-													{
-														transactionType:
-															i18next.t(
-																TransactionType.Income,
-															),
-													},
-												)
-											: i18next.t(
-													'{{transactionType}} added',
-													{
-														transactionType:
-															i18next.t(
-																TransactionType.Expense,
-															),
-													},
-												)}
+										{'Date'}
+										<SizableText size={'$title3'}>
+											{' '}
+											*
+										</SizableText>
 									</SizableText>
-									<XStack
-										justifyContent="flex-end"
-										marginTop="15"
+
+									<MultiPlatformDatePicker
+										value={date}
+										onChange={setDate}
+									/>
+								</YStack>
+
+								<XStack alignItems="center">
+									<Checkbox
+										size={44}
+										padding={8}
+										marginRight={10}
+										checked={repeat}
+										onCheckedChange={(checked) =>
+											setRepeat(checked === true)
+										}
 									>
-										<Button
-											backgroundColor={'$primary200'}
-											size={"$6"}
-											color={'$white'}
-											alignSelf="center"
-											onPress={() =>
-												setShowSuccess(false)
+										<Checkbox.Indicator>
+											<CheckIcon size={14} />
+										</Checkbox.Indicator>
+									</Checkbox>
+
+									<SizableText size={'$title3'}>
+										{'Does the event repeat?'}
+									</SizableText>
+								</XStack>
+
+								{/* Repeat */}
+								{repeat && (
+									<XStack
+										alignSelf="center"
+										borderRadius={10}
+										padding={4}
+										gap={6}
+										backgroundColor="$primary300"
+									>
+										{(
+											[
+												'daily',
+												'weekly',
+												'monthly',
+												'yearly',
+												'custom',
+											] as const
+										).map((opt) => (
+											<Button
+												key={opt}
+												pressStyle={{ opacity: 0.8 }}
+													borderRadius={10}
+											size={"$buttons.md"}
+												onPress={() => {
+													setRepeatInterval(opt);
+													if (opt !== 'custom')
+														setRepeatValue('');
+												}}
+												backgroundColor={
+													opt === repeatInterval
+														? '$primary200'
+														: '$white'
+												}
+											>
+												<SizableText size={'$title3'}>
+													{opt}
+												</SizableText>
+											</Button>
+										))}
+									</XStack>
+								)}
+
+								{repeat && repeatInterval === 'custom' && (
+									<YStack>
+										<SizableText size={'$title3'}>
+											{'Repeat interval'}
+											<SizableText size={'$title3'}>
+												{' '}
+												*
+											</SizableText>
+										</SizableText>
+										<Input
+											placeholder={'day intervals'}
+											value={repeatValue}
+											onChangeText={setRepeatValue}
+											keyboardType="numeric"
+											height={40}
+											borderRadius={6}
+											borderColor={
+												errors.repeatValue
+													? '$danger500'
+													: '$black'
 											}
+											focusStyle={{
+												outlineColor: 'transparent',
+											}}
+											px="10px"
 											fontSize={'$title3'}
-										>
+										/>
+										{errors.repeatValue && (
 											<SizableText
 												size={'$title3'}
-												color={'$white'}
+												color="$danger500"
 											>
-												OK
+												{errors.repeatValue}
 											</SizableText>
-										</Button>
-									</XStack>
-								</AlertDialog.Content>
-							</AlertDialog.Portal>
-						</AlertDialog>
+										)}
+									</YStack>
+								)}
+							</YStack>
+
+							{/* Submit */}
+							<Button
+								marginTop={8}
+								borderRadius={28}
+								size={"$10"}
+								backgroundColor="$primary200"
+								color="$white"
+								disabled={!isValidSubmit}
+								disabledStyle={{
+									opacity: 0.5,
+								}}
+								onPress={handleSubmit}
+								fontSize={'$title3'}
+							>
+								<SizableText size={'$title3'} color={'$white'}>
+									{type === TransactionType.Income
+										? `Add ${TransactionType.Income}`
+										: `Add ${TransactionType.Expense}`}
+								</SizableText>
+							</Button>
+
+							{/* Success alert */}
+							<AlertDialog
+								open={showSuccess}
+								onOpenChange={setShowSuccess}
+							>
+								<AlertDialog.Portal>
+									<AlertDialog.Overlay
+										opacity={0.5}
+										backgroundColor={'$black'}
+									/>
+									<AlertDialog.Content
+										bordered
+										elevate
+										width={'25%'}
+										padding={24}
+										borderRadius={16}
+									>
+										<SizableText size={'$title1'}>
+											{'Saved'}
+										</SizableText>
+										<SizableText size={'$title3'}>
+											{type === TransactionType.Income
+												? `${TransactionType.Income} added`
+												: `${TransactionType.Expense} added`}
+										</SizableText>
+										<XStack
+											justifyContent="flex-end"
+											marginTop="15"
+										>
+											<Button
+												backgroundColor={'$primary200'}
+												size={"$6"}
+												color={'$white'}
+													alignSelf="center"
+												onPress={() =>
+													setShowSuccess(false)
+												}
+												fontSize={'$title3'}
+											>
+												<SizableText
+													size={'$title3'}
+													color={'$white'}
+												>
+													OK
+												</SizableText>
+											</Button>
+										</XStack>
+									</AlertDialog.Content>
+								</AlertDialog.Portal>
+							</AlertDialog>
 
 						{/* Cancel */}
 						<Button
@@ -666,7 +678,7 @@ export default function AddTransaction() {
 							fontSize={'$title3'}
 						>
 							<SizableText size={'$title3'} color={'$primary200'}>
-								{i18next.t('Cancel').toUpperCase()}
+								{('Cancel').toUpperCase()}
 							</SizableText>
 						</Button>
 					</YStack>

@@ -1,26 +1,24 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, Tabs, Text, XStack, YStack } from 'tamagui';
 import type { Item } from '../src/constants/wizardConfig';
-import  useRealTransactionsStore from '../src/store/useRealTransactionsStore';
+import usePlannedTransactionsStore from '../src/store/usePlannedTransactionsStore';
 import BudgetDayView from './src/components/BudgetDayView';
 import BudgetMonthView from './src/components/BudgetMonthView';
 import BudgetYearView from './src/components/BudgetYearView';
 import StyledTab from './src/components/StyledTab';
 import { isValidDate, parseTxnDate } from './src/utils/budgetUtils';
-import i18next from 'i18next';
 
 export default function Budget() {
-
-	const MOCK_TX: Item[] = useRealTransactionsStore(
-		(state) => state.transactions,
+	const storeTransactionsForTwoYears = usePlannedTransactionsStore(
+		(state) => state.transactionsForTwoYears,
 	);
 
 	const [editOpen, setEditVisible] = useState(false);
 	const [editingTxn, setEditingTxn] = useState<Item | null>(null);
 	const [currentDate, setcurrentDate] = useState(new Date());
-	const [transactions, setTransactions] = useState<Item[]>(MOCK_TX);
+	const [transactions, setTransactions] = useState<Item[]>([]);
 	const [selectedTab, setSelectedTab] = useState('day');
 	const [error, setError] = useState('');
 	const [dateInput, setDateInput] = useState('');
@@ -28,11 +26,20 @@ export default function Budget() {
 
 	const router = useRouter();
 
+	/*useEffect(() => {
+		fetchTransactions();
+	}, [fetchPlanned, fetchTransactions]);*/
+
+	useEffect(() => {
+		setTransactions(storeTransactionsForTwoYears ?? []);
+	}, [storeTransactionsForTwoYears]);
+
 	const handleSave = () => {
 		if (!editingTxn) return;
 		setTransactions((prev) =>
 			prev.map((tx) => (tx.id === editingTxn.id ? editingTxn : tx)),
 		);
+		// TODO: Update store here if needed
 		setEditVisible(false);
 		setEditingTxn(null);
 	};
@@ -45,19 +52,34 @@ export default function Budget() {
 			return; // don’t touch txn.date
 		}
 
-		if (isValidDate(text)) {
-			setError('');
+		const regex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+		if (regex.test(text)) {
 			const newDate = parseTxnDate(text);
-			setEditingTxn((prev) => (prev ? { ...prev, date: newDate } : prev));
+			// Check if date is valid (not Invalid Date)
+			if (!Number.isNaN(newDate.getTime())) {
+				setError('');
+				setEditingTxn((prev) =>
+					prev ? { ...prev, date: newDate } : prev,
+				);
+			} else {
+				setError('Invalid date');
+			}
 		} else {
-			setError(i18next.t('Invalid date, use format: dd.mm.yyyy'));
+			if (isValidDate(text)) {
+				setError('');
+				const newDate = parseTxnDate(text);
+				setEditingTxn((prev) =>
+					prev ? { ...prev, date: newDate } : prev,
+				);
+			} else {
+				setError('Invalid date, use format: dd.mm.yyyy');
+			}
 		}
 	};
 
 	const handleAmountChange = (text: string) => {
-		setAmountInput(text); // Store the input string
+		setAmountInput(text);
 
-		// Allow empty string or just "-" without updating the transaction
 		if (text === '' || text === '-') {
 			return;
 		}
@@ -71,14 +93,18 @@ export default function Budget() {
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
 			<YStack
-				backgroundColor={"$transparent"}				
-				paddingHorizontal={'$3'}
-				f={1}
+				backgroundColor={'$color.white'}
+				paddingTop={'$paddingmd'}
+				paddingHorizontal={10}
+				flex={1}
 			>
 				<Tabs
 					value={selectedTab}
-					onValueChange={setSelectedTab}
-					backgroundColor="$transparent"
+					onValueChange={(value) => {
+						setSelectedTab(value);
+						setcurrentDate(new Date());
+					}}
+					backgroundColor="transparent"
 					f={1}
 					flexDirection="column"
 				>
@@ -100,19 +126,23 @@ export default function Budget() {
 										: '$color.black'
 								}
 							>
-								{i18next.t('Day')}
+								{('Day')}
 							</Text>
 						</StyledTab>
-						<StyledTab value="month" flex={1} borderRadius={0}>
+						<StyledTab
+							value="month"
+							flex={1}
+							borderTopLeftRadius={20}
+							borderBottomLeftRadius={20}
+						>
 							<Text
-								padding={'$2'}
 								color={
 									selectedTab === 'month'
 										? '$color.white'
 										: '$color.black'
 								}
 							>
-								{i18next.t('Month')}
+								{('Month')}
 							</Text>
 						</StyledTab>
 						<StyledTab
@@ -122,7 +152,6 @@ export default function Budget() {
 							borderBottomRightRadius={20}
 						>
 							<Text
-								padding={10}
 								color={
 									selectedTab === 'year'
 										? '$color.white'
@@ -130,14 +159,22 @@ export default function Budget() {
 								}
 								borderRadius={15}
 							>
-								{i18next.t('Year')}
+								{('Year')}
 							</Text>
 						</StyledTab>
 					</Tabs.List>
 					<Tabs.Content value="day" flex={1}>
 						<BudgetDayView
+							onDateChange={setcurrentDate}
 							currentDate={currentDate}
-							transactions={transactions}
+							transactions={transactions.filter(
+								(t) =>
+									t.date.getDay() === currentDate.getDay() &&
+									t.date.getMonth() ===
+										currentDate.getMonth() &&
+									t.date.getFullYear() ===
+										currentDate.getFullYear(),
+							)}
 							setInputDate={setDateInput}
 							setEditVisible={setEditVisible}
 							setEditingTxn={setEditingTxn}
@@ -150,14 +187,20 @@ export default function Budget() {
 								setDateInput(
 									txn.date.toLocaleDateString('fi-FI'),
 								);
-								setAmountInput(String(txn.amount)); // Initialize amount input
+								setAmountInput(String(txn.amount));
 							}}
 						/>
 					</Tabs.Content>
 					<Tabs.Content value="month" flex={1}>
 						<BudgetMonthView
 							currentDate={currentDate}
-							transactions={transactions}
+							transactions={transactions.filter(
+								(t) =>
+									t.date.getMonth() ===
+										currentDate.getMonth() &&
+									t.date.getFullYear() ===
+										currentDate.getFullYear(),
+							)}
 							router={router}
 							onDateChange={setcurrentDate}
 							editOpen={editOpen}
@@ -165,8 +208,13 @@ export default function Budget() {
 					</Tabs.Content>
 					<Tabs.Content value="year" flex={1}>
 						<BudgetYearView
-							ReceivedCurrentDate={currentDate}
-							transactions={transactions}
+							onDateChange={setcurrentDate}
+							currentDate={currentDate}
+							transactions={transactions.filter(
+								(t) =>
+									t.date.getFullYear() ===
+									currentDate.getFullYear(),
+							)}
 						/>
 					</Tabs.Content>
 				</Tabs>
@@ -187,8 +235,8 @@ export default function Budget() {
 					<YStack
 						bottom={150}
 						backgroundColor="$color.white"
-						borderRadius="$2"
-						padding="$3"
+						borderRadius={10}
+						padding={15}
 						width="90%"
 						maxWidth="$popupMaxWidth"
 						shadowColor="$color.black"
@@ -197,14 +245,14 @@ export default function Budget() {
 						shadowRadius={3}
 						elevation={3}
 					>
-						<Text>{i18next.t('Edit Transaction')}</Text>
+						<Text>{('Edit Transaction')}</Text>
 						<Input
 							height={40}
 							maxLength={25}
-							borderRadius={'$2'}
-							px={'$2'}
+							borderRadius={10}
+							px={10}
 							value={editingTxn?.name}
-							marginVertical={'$2'}
+							marginVertical={10}
 							onChangeText={(text) =>
 								setEditingTxn((prev) =>
 									prev
@@ -219,8 +267,8 @@ export default function Budget() {
 						{editingTxn?.amount === 0 && (
 							<Text
 								color="$color.danger500"
-								fontSize="$2"
-								marginTop="$1"
+								fontSize={10}
+								marginTop={5}
 							>
 								Amount must be greater than zero
 							</Text>
@@ -228,24 +276,24 @@ export default function Budget() {
 
 						<Input
 							height={40}
-							px={'$2'}
+							px={10}
 							keyboardType="numeric"
 							maxLength={9}
-							borderRadius={'$2'}
-							value={amountInput} // Use amountInput state
+							borderRadius={10}
+							value={amountInput}
 							onChangeText={handleAmountChange}
 							borderColor={
 								editingTxn?.amount === 0
 									? '$color.danger500'
 									: '$color.black'
 							}
-							marginVertical={'$2'}
+							marginVertical={10}
 						/>
 						{!editingTxn?.name && (
 							<Text
 								color="$color.danger500"
-								fontSize="$2"
-								marginTop="$1"
+								fontSize={10}
+								marginTop={5}
 							>
 								Name is required
 							</Text>
@@ -253,26 +301,26 @@ export default function Budget() {
 
 						<Input
 							height={40}
-							px={'$2'}
+							px={10}
 							value={dateInput}
 							maxLength={10}
-							borderRadius={'$2'}
+							borderRadius={10}
 							onChangeText={handleDateChange}
 							borderColor={
 								error ? '$color.danger500' : '$color.black'
 							}
-							marginVertical={'$2'}
+							marginVertical={10}
 						/>
 						{error && (
 							<Text
 								color="$color.danger500"
-								fontSize="$2"
-								marginTop="$1"
+								fontSize={10}
+								marginTop={5}
 							>
 								Invalid date format
 							</Text>
 						)}
-						<XStack gap={'$3'}>
+						<XStack gap={15}>
 							<Button
 								onPress={() => handleSave()}
 								disabled={
@@ -282,7 +330,7 @@ export default function Budget() {
 								size={'wrap-content'}
 								borderRadius={'$4'}
 							>
-								<Text color={'$color.white'}>{i18next.t('SAVE')}</Text>
+								<Text color={'$color.white'}>{('SAVE')}</Text>
 							</Button>
 							<Button
 								onPress={() => {
@@ -291,9 +339,9 @@ export default function Budget() {
 								}}
 								backgroundColor={'$color.caution'}
 								size={'$buttons.md'}
-								borderRadius={'$4'}
+								borderRadius={20}
 							>
-								<Text color={"$color.black"}>{i18next.t('CLOSE')}</Text>
+								<Text color={"$color.black"}>{('CLOSE')}</Text>
 							</Button>
 						</XStack>
 					</YStack>

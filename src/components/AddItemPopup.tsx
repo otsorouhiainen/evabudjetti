@@ -1,7 +1,8 @@
+import * as Crypto from 'expo-crypto';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Input, SizableText, YStack } from 'tamagui';
-import type { Item, Reoccurence } from '../constants/wizardConfig';
+import { Button, Input, SizableText, Text, XStack, YStack } from 'tamagui';
+import type { Item, Recurrence } from '../constants/wizardConfig';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type AddItemPopupProps = {
@@ -10,7 +11,7 @@ type AddItemPopupProps = {
 };
 
 const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
-	const REOCCURENCE_OPTIONS: Reoccurence[] = [
+	const REOCCURENCE_OPTIONS: Recurrence[] = [
 		'daily',
 		'weekly',
 		'monthly',
@@ -20,7 +21,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	const [name, setName] = useState<string>('');
 	const [amount, setAmount] = useState<number | null>(null);
 	const [date, setDate] = useState<Date>(new Date());
-	const [reoccurence, setReoccurence] = useState<Reoccurence>('daily');
+	const [reoccurence, setReoccurence] = useState<Recurrence>('daily');
 	const [reoccurenceInterval, setReoccurenceInterval] = useState<
 		number | undefined
 	>(undefined);
@@ -32,11 +33,13 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 
 	const handleAdd = () => {
 		onAdd({
+			id: Crypto.randomUUID(),
+			category: 'uncategorized',
 			name: name.trim(),
 			amount: amount,
-			reoccurence: reoccurence,
+			recurrence: reoccurence,
 			date: date,
-			reoccurenceInterval:
+			recurrenceInterval:
 				reoccurence === 'custom' ? reoccurenceInterval : undefined,
 		} as Item);
 		setName('');
@@ -77,7 +80,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							onChangeText={(text) => setAmount(Number(text))}
 						/>
 					</View>
-					<View style={styles.reoccurenceContainer}>
+					<View>
 						<SizableText color="$black" size="$title3">
 							Reoccurence
 						</SizableText>
@@ -86,6 +89,9 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 								flexDirection: 'row',
 								gap: 12,
 								alignItems: 'center',
+								width: '100%',
+								height: '25%',
+								flexWrap: 'wrap',
 							}}
 						>
 							{REOCCURENCE_OPTIONS.map((opt) => (
@@ -99,7 +105,6 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 									key={opt}
 								>
 									<Button
-										borderRadius={20}
 										backgroundColor={
 											reoccurence === opt
 												? '$primary200'
@@ -108,8 +113,6 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 										onPress={() => setReoccurence(opt)}
 										style={{
 											height: '100%',
-											paddingHorizontal: 12,
-											paddingVertical: 8,
 										}}
 									>
 										<SizableText
@@ -124,36 +127,34 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 												opt.slice(1)}
 										</SizableText>
 									</Button>
-									{opt === 'custom' &&
-										reoccurence === 'custom' && (
-											<Input
-												style={{ height: '100%' }}
-												placeholder="Interval (days)"
-												keyboardType="numeric"
-												onChangeText={(text) => {
-													const interval =
-														Number(text);
-													if (
-														!Number.isNaN(
-															interval,
-														) &&
-														interval > 0
-													) {
-														setReoccurenceInterval(
-															interval,
-														);
-													}
-												}}
-											/>
-										)}
 								</View>
 							))}
+							{reoccurence === 'custom' && (
+								<XStack gap={10} alignItems="center">
+									<Text>Interval (days)</Text>
+									<Input
+										style={{ height: '50%' }}
+										placeholder="Interval (days)"
+										keyboardType="numeric"
+										onChangeText={(text) => {
+											const interval = Number(text);
+											if (
+												!Number.isNaN(interval) &&
+												interval > 0
+											) {
+												setReoccurenceInterval(
+													interval,
+												);
+											}
+										}}
+									/>
+								</XStack>
+							)}
 						</View>
 					</View>
-					<View
+					<XStack
 						style={{
 							height: '10%',
-							flexDirection: 'row',
 							alignItems: 'center',
 							gap: 10,
 						}}
@@ -169,7 +170,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							value={date}
 							onChange={setDate}
 						/>
-					</View>
+					</XStack>
 				</View>
 
 				<View style={styles.buttonRow}>
@@ -207,13 +208,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	singleItemContainer: {
-		height: '20%',
+		height: '13%',
 	},
 	dateInput: {
 		height: '60%',
 		width: '30%',
 	},
-	reoccurenceContainer: {},
 	dateContainer: {
 		flexDirection: 'row',
 		height: '20%',
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
 	card: {
 		width: '90%',
 		padding: 20,
-		height: '60%',
+		height: '70%',
 	},
 	input: {
 		height: '100%',
