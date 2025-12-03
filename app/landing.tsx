@@ -1,11 +1,11 @@
-import useBalanceStore from '@/src/store/useBalanceStore';
-import useLanguageStore from '@/src/store/useLanguageStore';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, SizableText, Text, XStack, YStack } from 'tamagui';
+import useBalanceStore from '@/src/store/useBalanceStore';
+import useLanguageStore from '@/src/store/useLanguageStore';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 
 export default function Landing() {
 	const transactions = usePlannedTransactionsStore(

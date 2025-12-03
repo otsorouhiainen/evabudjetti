@@ -1,7 +1,7 @@
-import BudgetDropdown from '@/app/src/components/BudgetDropdown';
 import { ChevronLeft, ChevronRight, Pencil, X } from '@tamagui/lucide-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, ScrollView, Separator, Text, XStack, YStack } from 'tamagui';
+import BudgetDropdown from '@/app/src/components/BudgetDropdown';
 import type {
 	Item,
 	Recurrence,

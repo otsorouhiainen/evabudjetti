@@ -1,4 +1,3 @@
-import useBalanceStore from '@/src/store/useBalanceStore';
 import { ChevronLeft, ChevronRight, HelpCircle } from '@tamagui/lucide-icons';
 import {
 	type Dispatch,
@@ -8,6 +7,7 @@ import {
 	useState,
 } from 'react';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
+import useBalanceStore from '@/src/store/useBalanceStore';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
 import { formatCurrency, splitTransactions } from '../utils/budgetUtils';

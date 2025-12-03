@@ -3,9 +3,11 @@ import { create } from 'zustand';
 import type { Item } from '../constants/wizardConfig';
 import { db } from '../db/client';
 import { transactions } from '../db/schema';
+import { generateTransactionsForTwoYears } from '../utils/transactionUtils';
 
 interface RealTransactionsState {
 	transactions: Item[];
+	transactionsForTwoYears?: Item[];
 	loading: boolean;
 	fetch: () => Promise<void>;
 	add: (item: Item) => Promise<void>;
@@ -15,6 +17,7 @@ interface RealTransactionsState {
 
 const useRealTransactionsStore = create<RealTransactionsState>((set, get) => ({
 	transactions: [],
+	transactionsForTwoYears: [],
 	loading: false,
 	fetch: async () => {
 		set({ loading: true });
@@ -33,7 +36,11 @@ const useRealTransactionsStore = create<RealTransactionsState>((set, get) => ({
 				recurrence: t.recurrence as Item['recurrence'],
 				recurrenceInterval: t.recurrenceInterval || undefined,
 			}));
-			set({ transactions: items, loading: false });
+			set({
+				transactions: items,
+				transactionsForTwoYears: generateTransactionsForTwoYears(items),
+				loading: false,
+			});
 		} catch (e) {
 			console.error('Failed to fetch transactions:', e);
 			set({ loading: false });
@@ -66,7 +73,12 @@ const useRealTransactionsStore = create<RealTransactionsState>((set, get) => ({
 		}
 	},
 	change: () => {
-		set((state) => state);
+		set((state) => ({
+			...state,
+			transactionsForTwoYears: generateTransactionsForTwoYears(
+				state.transactions,
+			),
+		}));
 	},
 }));
 

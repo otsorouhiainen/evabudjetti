@@ -1,6 +1,3 @@
-import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
-import { type Category, useCategoryStore } from '@/src/store/categoryStore';
-import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import {
 	Check as CheckIcon,
 	ChevronDown,
@@ -22,10 +19,15 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
+import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
+import { type Category, useCategoryStore } from '@/src/store/categoryStore';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import {
 	TransactionType,
 	TransactionTypeSegment,
 } from '../src/components/TransactionTypeSegment';
+import type { Item } from '../src/constants/wizardConfig';
 
 export default function AddTransaction() {
 	const [type, setType] = useState<
@@ -49,11 +51,21 @@ export default function AddTransaction() {
 	const [description, setDescription] = useState('');
 	const [expanded, setExpanded] = useState(false);
 	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+	const [plannedModalVisible, setPlannedModalVisible] = useState(false);
+	const [selectedPlannedTxn, setSelectedPlannedTxn] = useState<Item | null>(
+		null,
+	);
+	const [allocationAmount, setAllocationAmount] = useState('');
+
 	const [newCategory, setNewCategory] = useState('');
 	const [showSuccess, setShowSuccess] = useState(false);
 	const addTransaction = useRealTransactionsStore((state) => state.add);
 	const addCategory = useCategoryStore((state) => state.addCategory);
 	const storeCategories = useCategoryStore();
+	const plannedTransactions = usePlannedTransactionsStore(
+		(state) => state.transactionsForTwoYears,
+	);
+
 	const [categories, setCategories] = useState<Category[]>([]);
 	useEffect(() => {
 		setCategories(storeCategories.categories);
@@ -71,6 +83,19 @@ export default function AddTransaction() {
 	const visibleCategories = expanded
 		? dynamicCategories
 		: dynamicCategories.slice(0, 3);
+
+	const upcomingPlannedTransactions = useMemo(() => {
+		if (!plannedTransactions) return [];
+		const now = new Date();
+		now.setHours(0, 0, 0, 0);
+		return plannedTransactions
+			.filter((t) => new Date(t.date) >= now)
+			.sort(
+				(a, b) =>
+					new Date(a.date).getTime() - new Date(b.date).getTime(),
+			)
+			.slice(0, 20); // Limit to next 20 occurrences
+	}, [plannedTransactions]);
 
 	const handleAddCategory = async () => {
 		if (!newCategory.trim()) return;
@@ -90,6 +115,33 @@ export default function AddTransaction() {
 		}
 	};
 
+	const handleSelectPlanned = (txn: Item) => {
+		setSelectedPlannedTxn(txn);
+		setAllocationAmount(txn.amount.toString());
+	};
+
+	const confirmPlannedAllocation = () => {
+		if (selectedPlannedTxn) {
+			setName(selectedPlannedTxn.name);
+			setAmount(allocationAmount);
+			setDate(new Date(selectedPlannedTxn.date));
+			setCategory(selectedPlannedTxn.category);
+			setType(
+				selectedPlannedTxn.type === 'income'
+					? TransactionType.Income
+					: TransactionType.Expense,
+			);
+			// Reset repeat settings as this is a single allocation
+			setRepeat(false);
+			setRepeatInterval('monthly');
+			setRepeatValue('');
+
+			setPlannedModalVisible(false);
+			setSelectedPlannedTxn(null);
+			setAllocationAmount('');
+		}
+	};
+
 	const isValidSubmit = useMemo(
 		() => name.trim().length > 0 && !!date && !!amount,
 		[name, amount, date],
@@ -105,6 +157,19 @@ export default function AddTransaction() {
 			const integer = parts[0];
 			const decimal = parts.slice(1).join('').slice(0, 2);
 			setAmount(`${integer}.${decimal}`);
+		}
+	};
+
+	const handleAllocationAmountChange = (newValue: string) => {
+		const numeric = newValue.replace(/[^0-9.,]/g, '');
+		const dotSeparators = numeric.replace(',', '.');
+		const parts = dotSeparators.split('.');
+		if (parts.length === 1) {
+			setAllocationAmount(parts[0]);
+		} else {
+			const integer = parts[0];
+			const decimal = parts.slice(1).join('').slice(0, 2);
+			setAllocationAmount(`${integer}.${decimal}`);
 		}
 	};
 
@@ -197,7 +262,7 @@ export default function AddTransaction() {
 								opacity={1}
 								borderRadius={16}
 								padding={24}
-								width={'30%'}
+								width={'80%'}
 								gap={20}
 							>
 								<SizableText size={'$title1'} marginBottom={8}>
@@ -254,6 +319,155 @@ export default function AddTransaction() {
 						</Stack>
 					)}
 
+					{/* Pick from Planned Modal */}
+					{plannedModalVisible && (
+						<Stack
+							position="absolute"
+							top={0}
+							bottom={0}
+							left={0}
+							right={0}
+							backgroundColor="rgba(0, 0, 0, 0.4)"
+							justifyContent="center"
+							alignItems="center"
+							zIndex={10}
+						>
+							<YStack
+								backgroundColor="$white"
+								borderColor={'$black'}
+								borderWidth={2}
+								opacity={1}
+								borderRadius={16}
+								padding={24}
+								width={'90%'}
+								height={'80%'}
+								gap={20}
+							>
+								<SizableText size={'$title1'} marginBottom={8}>
+									{selectedPlannedTxn
+										? 'Allocate Amount'
+										: 'Pick Planned Transaction'}
+								</SizableText>
+
+								{!selectedPlannedTxn ? (
+									<ScrollView>
+										<YStack gap={10}>
+											{upcomingPlannedTransactions.length ===
+											0 ? (
+												<SizableText>
+													No upcoming planned
+													transactions found.
+												</SizableText>
+											) : (
+												upcomingPlannedTransactions.map(
+													(txn) => (
+														<Button
+															key={txn.id}
+															onPress={() =>
+																handleSelectPlanned(
+																	txn,
+																)
+															}
+															padding={16}
+															backgroundColor="$gray100"
+															pressStyle={{
+																backgroundColor:
+																	'$gray200',
+															}}
+															justifyContent="space-between"
+														>
+															<YStack>
+																<SizableText fontWeight="bold">
+																	{txn.name}
+																</SizableText>
+																<SizableText
+																	size="$body"
+																	color="$gray500"
+																>
+																	{new Date(
+																		txn.date,
+																	).toLocaleDateString()}
+																</SizableText>
+															</YStack>
+															<SizableText>
+																{txn.amount} €
+															</SizableText>
+														</Button>
+													),
+												)
+											)}
+										</YStack>
+									</ScrollView>
+								) : (
+									<YStack gap={20}>
+										<SizableText>
+											Allocating for:{' '}
+											<SizableText fontWeight="bold">
+												{selectedPlannedTxn.name}
+											</SizableText>
+										</SizableText>
+										<Input
+											value={allocationAmount}
+											onChangeText={
+												handleAllocationAmountChange
+											}
+											keyboardType="decimal-pad"
+											placeholder="Amount to allocate"
+											height={40}
+											borderRadius={6}
+											px="10px"
+											fontSize={'$title3'}
+										/>
+										<XStack
+											justifyContent="space-between"
+											marginTop={20}
+										>
+											<Button
+												onPress={() =>
+													setSelectedPlannedTxn(null)
+												}
+												borderColor={'$primary200'}
+												padding={10}
+											>
+												<SizableText
+													color={'$primary200'}
+												>
+													Back
+												</SizableText>
+											</Button>
+											<Button
+												onPress={
+													confirmPlannedAllocation
+												}
+												backgroundColor={'$primary200'}
+												padding={10}
+											>
+												<SizableText color={'$white'}>
+													Confirm
+												</SizableText>
+											</Button>
+										</XStack>
+									</YStack>
+								)}
+
+								{!selectedPlannedTxn && (
+									<Button
+										onPress={() =>
+											setPlannedModalVisible(false)
+										}
+										borderColor={'$primary200'}
+										padding={10}
+										marginTop={10}
+									>
+										<SizableText color={'$primary200'}>
+											Close
+										</SizableText>
+									</Button>
+								)}
+							</YStack>
+						</Stack>
+					)}
+
 					<YStack
 						flex={1}
 						justifyContent="center"
@@ -268,9 +482,23 @@ export default function AddTransaction() {
 							width={'100%'}
 						>
 							{/* Top header */}
-							<SizableText size={'$title1'}>
-								{'Add new'}
-							</SizableText>
+							<XStack
+								justifyContent="space-between"
+								alignItems="center"
+							>
+								<SizableText size={'$title1'}>
+									{'Add new'}
+								</SizableText>
+								<Button
+									size="$3"
+									backgroundColor="$primary200"
+									onPress={() => setPlannedModalVisible(true)}
+								>
+									<SizableText color="$white">
+										Pick Planned
+									</SizableText>
+								</Button>
+							</XStack>
 
 							{/* Segmented: Income / Expense */}
 							<XStack justifyContent="center">

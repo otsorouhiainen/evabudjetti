@@ -1,7 +1,7 @@
-import StyledListItem from '@/app/src/components/StyledListItem';
 import { Pencil } from '@tamagui/lucide-icons';
 import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
+import StyledListItem from '@/app/src/components/StyledListItem';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
 

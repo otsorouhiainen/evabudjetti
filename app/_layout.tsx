@@ -1,7 +1,7 @@
-import { BottomNav } from '@/src/components/BottomNav';
 import { TamaguiProvider, Theme } from '@tamagui/core';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { BottomNav } from '@/src/components/BottomNav';
 import config from '../tamagui.config';
 
 export default function RootLayout() {
