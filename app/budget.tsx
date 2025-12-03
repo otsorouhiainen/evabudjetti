@@ -210,7 +210,8 @@ export default function Budget() {
 					</Tabs.Content>
 					<Tabs.Content value="year" flex={1}>
 						<BudgetYearView
-							ReceivedCurrentDate={currentDate}
+							onDateChange={setcurrentDate}
+							currentDate={currentDate}
 							transactions={transactions.filter(
 								(t) =>
 									t.date.getFullYear() ===

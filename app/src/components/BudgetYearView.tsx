@@ -10,8 +10,9 @@ import type {
 import { formatCurrency } from '../utils/budgetUtils';
 
 interface BudgetYearViewProps {
-	ReceivedCurrentDate: Date;
+	currentDate: Date;
 	transactions: Item[];
+	onDateChange: (date: Date) => void;
 }
 
 // Finnish short month names for the grid
@@ -47,10 +48,10 @@ const MONTH_NAMES_FULL = [
 ];
 
 export default function BudgetYearView({
-	ReceivedCurrentDate,
+	currentDate,
 	transactions,
+	onDateChange,
 }: BudgetYearViewProps) {
-	const [currentDate, setcurrentDate] = useState(ReceivedCurrentDate);
 	const [incomesOpen, setIncomesOpen] = useState(false);
 	const [expensesOpen, setExpensesOpen] = useState(false);
 	const [selectedMonthIndex, setSelectedMonthIndex] = useState<number | null>(
@@ -61,13 +62,13 @@ export default function BudgetYearView({
 	const handlePrev = () => {
 		const newDate = new Date(currentDate);
 		newDate.setFullYear(newDate.getFullYear() - 1);
-		setcurrentDate(newDate);
+		onDateChange(newDate);
 	};
 
 	const handleNext = () => {
 		const newDate = new Date(currentDate);
 		newDate.setFullYear(newDate.getFullYear() + 1);
-		setcurrentDate(newDate);
+		onDateChange(newDate);
 	};
 
 	const yearLabel = currentDate.getFullYear();
