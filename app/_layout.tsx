@@ -3,10 +3,13 @@ import { TamaguiProvider, Theme } from '@tamagui/core';
 import { Stack } from 'expo-router';
 import { BottomNav } from '@/src/components/BottomNav';
 import config from '../tamagui.config';
+import { PortalProvider } from 'tamagui';
 
 export default function RootLayout() {
 	return (
 		<TamaguiProvider config={config} defaultTheme={'light'}>
+		{/* PortalProvider is neseccary for Tamagui Dialog components */}
+		<PortalProvider>
 			<Theme name={'light'}>
 				<Stack>
 					<Stack.Screen
@@ -20,6 +23,7 @@ export default function RootLayout() {
 				</Stack>
 				<BottomNav />
 			</Theme>
+		</PortalProvider>
 		</TamaguiProvider>
 	);
 }

@@ -157,7 +157,6 @@ export default function AddTransaction() {
 	};
 
 	return (
-		<PortalProvider>
 			<ScrollView
 				contentContainerStyle={{
 					paddingBottom: 70,
@@ -182,8 +181,7 @@ export default function AddTransaction() {
 							borderWidth={2}
 							opacity={1}
 							borderRadius={16}
-							padding={24}
-							width={'30%'}
+							padding={"$5"}
 							gap={'$4'}
 						>
 							<SizableText size={'$title1'} marginBottom={8}>
@@ -204,11 +202,24 @@ export default function AddTransaction() {
 							/>
 							<XStack justifyContent="space-between">
 								<Button
+									onPress={handleAddCategory}
+									backgroundColor={'$primary200'}
+									size={42}
+									alignSelf="center"
+									fontSize={'$title3'}
+								>
+									<SizableText
+										size={'$title3'}
+										color={'$white'}
+									>
+										{i18next.t('Save')}
+									</SizableText>
+								</Button>
+																<Button
 									onPress={() =>
 										setCategoryModalVisible(false)
 									}
 									borderColor={'$primary200'}
-									padding={22}
 									alignSelf="center"
 									size={42}
 									fontSize={'$title3'}
@@ -218,21 +229,6 @@ export default function AddTransaction() {
 										color={'$primary200'}
 									>
 										{i18next.t('Cancel')}
-									</SizableText>
-								</Button>
-								<Button
-									onPress={handleAddCategory}
-									backgroundColor={'$primary200'}
-									size={42}
-									padding={22}
-									alignSelf="center"
-									fontSize={'$title3'}
-								>
-									<SizableText
-										size={'$title3'}
-										color={'$white'}
-									>
-										{i18next.t('Save')}
 									</SizableText>
 								</Button>
 							</XStack>
@@ -287,8 +283,7 @@ export default function AddTransaction() {
 							<Button
 								onPress={() => setCategoryModalVisible(true)}
 								icon={Plus}
-								size={26}
-								padding={14}
+								size={"$6"}
 								marginRight={8}
 							></Button>
 
@@ -311,8 +306,7 @@ export default function AddTransaction() {
 											onPress={() => {
 												setCategory(key);
 											}}
-											size={28}
-											padding={14}
+											size={"$6"}
 											marginRight={8}
 											backgroundColor={
 												selected
@@ -483,8 +477,8 @@ export default function AddTransaction() {
 										<Button
 											key={opt}
 											pressStyle={{ opacity: 0.8 }}
-											padding={15}
 											borderRadius={10}
+											size={"$buttons.md"}
 											onPress={() => {
 												setRepeatInterval(opt);
 												if (opt !== 'custom interval')
@@ -567,7 +561,7 @@ export default function AddTransaction() {
 						<Button
 							marginTop={8}
 							borderRadius={28}
-							paddingVertical={20}
+							size={"$10"}
 							backgroundColor="$primary200"
 							color="$white"
 							disabled={!isValidSubmit}
@@ -643,9 +637,8 @@ export default function AddTransaction() {
 									>
 										<Button
 											backgroundColor={'$primary200'}
-											size={42}
+											size={"$6"}
 											color={'$white'}
-											padding={22}
 											alignSelf="center"
 											onPress={() =>
 												setShowSuccess(false)
@@ -666,9 +659,8 @@ export default function AddTransaction() {
 
 						{/* Cancel */}
 						<Button
-							marginTop={8}
 							borderRadius={28}
-							paddingVertical={20}
+							size={"$10"}
 							borderColor={'$primary200'}
 							onPress={handleCancel}
 							fontSize={'$title3'}
@@ -680,6 +672,5 @@ export default function AddTransaction() {
 					</YStack>
 				</YStack>
 			</ScrollView>
-		</PortalProvider>
 	);
 }

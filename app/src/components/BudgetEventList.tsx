@@ -1,32 +1,29 @@
 import { Pencil } from '@tamagui/lucide-icons';
-import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import StyledListItem from '@/app/src/components/StyledListItem';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
+import type { Router } from 'expo-router';
 
 interface Props {
 	txns: Item[];
 	title: string;
-	setEditVisible: (state: boolean) => void;
-	setEditingTxn: (txn: Item) => void;
-	setInputDate: Dispatch<SetStateAction<string>>;
+	router?: Router;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
 
 const BudgetEventList: React.FC<Props> = ({
 	txns,
 	title,
-	setEditVisible,
-	setEditingTxn,
-	setInputDate,
+	router,
 	formatCurrency,
 }) => {
 	return (
 		<YStack gap={8}>
+			{title !== "" && (
 			<Text fontSize={'$title1'} fontWeight={'700'} mt={'$2'}>
 				{title}
-			</Text>
+			</Text>)}
 
 			{txns.map((txn) => (
 				<StyledListItem key={txn.id}>
@@ -43,19 +40,18 @@ const BudgetEventList: React.FC<Props> = ({
 							{Number(txn.amount) > 0 ? '+' : ''}
 							{formatCurrency(Number(txn.amount))}
 						</Text>
-						<Button
-							size="$buttons.sm"
-							circular
-							backgroundColor="transparent"
-							icon={Pencil}
-							onPress={() => {
-								setEditVisible(true);
-								setEditingTxn(txn);
-								setInputDate(
-									txn.date.toLocaleDateString(LOCALE),
-								);
-							}}
-						/>
+						{/* Edit button rendered only if router exists */}
+						{router && (
+							<Button
+								size="$buttons.sm"
+								circular
+								backgroundColor="transparent"
+								icon={Pencil}
+								onPress={() => {
+									router.push('/budget_wizard');
+								}}
+							/>
+						)}
 					</XStack>
 				</StyledListItem>
 			))}

@@ -3,120 +3,20 @@ import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, Tabs, Text, XStack, YStack } from 'tamagui';
 import type { Item } from '../src/constants/wizardConfig';
+import  useRealTransactionsStore from '../src/store/useRealTransactionsStore';
 import BudgetDayView from './src/components/BudgetDayView';
 import BudgetMonthView from './src/components/BudgetMonthView';
 import BudgetYearView from './src/components/BudgetYearView';
 import StyledTab from './src/components/StyledTab';
 import { isValidDate, parseTxnDate } from './src/utils/budgetUtils';
-
-const currentYear = new Date().getFullYear();
-const getDate = (day: string, month: string) =>
-	parseTxnDate(`${day}.${month}.${currentYear}`);
-
-const MOCK_TX: Item[] = [
-	{
-		id: 1,
-		name: 'Rent',
-		category: 'Housing',
-		type: 'expense',
-		date: getDate('22', '12'),
-		amount: -830.5,
-		reoccurence: 'monthly',
-		reoccurenceInterval: 1,
-	},
-	{
-		id: 2,
-		name: 'Study benefit',
-		category: 'Benefits',
-		type: 'income',
-		date: getDate('25', '12'),
-		amount: 280,
-		reoccurence: 'monthly',
-		reoccurenceInterval: 1,
-	},
-	{
-		id: 3,
-		name: 'Study loan',
-		category: 'Loans',
-		type: 'income',
-		date: getDate('06', '12'),
-		amount: 300,
-		reoccurence: 'monthly',
-		reoccurenceInterval: 1,
-	},
-	{
-		id: 4,
-		name: 'Pet food',
-		category: 'Pets',
-		type: 'expense',
-		date: getDate('20', '12'),
-		amount: -60,
-		reoccurence: 'monthly',
-		reoccurenceInterval: 1,
-	},
-	{
-		id: 5,
-		name: 'Phone bill',
-		category: 'Communication',
-		type: 'expense',
-		date: getDate('01', '12'),
-		amount: -27,
-		reoccurence: 'monthly',
-		reoccurenceInterval: 1,
-	},
-	{
-		id: 6,
-		name: 'Netflix',
-		category: 'Entertainment',
-		type: 'expense',
-		date: getDate('22', '12'),
-		amount: -12.99,
-		reoccurence: 'monthly',
-		reoccurenceInterval: 1,
-	},
-	{
-		id: 7,
-		name: 'Spotify',
-		category: 'Entertainment',
-		type: 'expense',
-		date: getDate('13', '10'),
-		amount: -15.99,
-		reoccurence: 'monthly',
-		reoccurenceInterval: 1,
-	},
-	{
-		id: 8,
-		name: 'Water',
-		category: 'Utilities',
-		type: 'expense',
-		date: getDate('11', '10'),
-		amount: -25,
-		reoccurence: 'monthly',
-		reoccurenceInterval: 1,
-	},
-	{
-		id: 9,
-		name: 'Salary',
-		category: 'Income',
-		type: 'income',
-		date: getDate('15', '10'),
-		amount: 340.79,
-		reoccurence: 'monthly',
-		reoccurenceInterval: 1,
-	},
-	{
-		id: 10,
-		name: 'Housing Benefit',
-		category: 'Benefits',
-		type: 'income',
-		date: getDate('01', '10'),
-		amount: 150,
-		reoccurence: 'monthly',
-		reoccurenceInterval: 1,
-	},
-];
+import i18next from 'i18next';
 
 export default function Budget() {
+
+	const MOCK_TX: Item[] = useRealTransactionsStore(
+		(state) => state.transactions,
+	);
+
 	const [editOpen, setEditVisible] = useState(false);
 	const [editingTxn, setEditingTxn] = useState<Item | null>(null);
 	const [currentDate, setcurrentDate] = useState(new Date());
@@ -124,7 +24,7 @@ export default function Budget() {
 	const [selectedTab, setSelectedTab] = useState('day');
 	const [error, setError] = useState('');
 	const [dateInput, setDateInput] = useState('');
-	const [amountInput, setAmountInput] = useState(''); // Add this new state
+	const [amountInput, setAmountInput] = useState('');
 
 	const router = useRouter();
 
@@ -150,7 +50,7 @@ export default function Budget() {
 			const newDate = parseTxnDate(text);
 			setEditingTxn((prev) => (prev ? { ...prev, date: newDate } : prev));
 		} else {
-			setError('Invalid date, use format: dd.mm.yyyy');
+			setError(i18next.t('Invalid date, use format: dd.mm.yyyy'));
 		}
 	};
 
@@ -171,26 +71,25 @@ export default function Budget() {
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
 			<YStack
-				backgroundColor={'$color.white'}
-				paddingTop={'$paddingmd'}
-				paddingHorizontal={'$2'}
-				flex={1}
+				backgroundColor={"$transparent"}				
+				paddingHorizontal={'$3'}
+				f={1}
 			>
 				<Tabs
 					value={selectedTab}
 					onValueChange={setSelectedTab}
-					backgroundColor="transparent"
+					backgroundColor="$transparent"
 					f={1}
 					flexDirection="column"
 				>
 					<Tabs.List
 						flexDirection="row"
 						height={'$tabItemHeight'}
-						backgroundColor="transparent"
+						backgroundColor="$transparent"
 					>
 						<StyledTab
 							value="day"
-							flex={1} // You can conditionally set this
+							flex={1}
 							borderTopLeftRadius={20}
 							borderBottomLeftRadius={20}
 						>
@@ -201,7 +100,7 @@ export default function Budget() {
 										: '$color.black'
 								}
 							>
-								Day
+								{i18next.t('Day')}
 							</Text>
 						</StyledTab>
 						<StyledTab value="month" flex={1} borderRadius={0}>
@@ -213,7 +112,7 @@ export default function Budget() {
 										: '$color.black'
 								}
 							>
-								Month
+								{i18next.t('Month')}
 							</Text>
 						</StyledTab>
 						<StyledTab
@@ -231,7 +130,7 @@ export default function Budget() {
 								}
 								borderRadius={15}
 							>
-								Year
+								{i18next.t('Year')}
 							</Text>
 						</StyledTab>
 					</Tabs.List>
@@ -259,10 +158,8 @@ export default function Budget() {
 						<BudgetMonthView
 							currentDate={currentDate}
 							transactions={transactions}
+							router={router}
 							onDateChange={setcurrentDate}
-							setEditVisible={setEditVisible}
-							setEditingTxn={setEditingTxn}
-							setInputDate={setDateInput}
 							editOpen={editOpen}
 						/>
 					</Tabs.Content>
@@ -274,7 +171,7 @@ export default function Budget() {
 					</Tabs.Content>
 				</Tabs>
 			</YStack>
-			{/* Edit modal*/}
+			{/* Edit modal
 			{editOpen && (
 				<YStack
 					position="absolute"
@@ -300,7 +197,7 @@ export default function Budget() {
 						shadowRadius={3}
 						elevation={3}
 					>
-						<Text>Edit Transaction</Text>
+						<Text>{i18next.t('Edit Transaction')}</Text>
 						<Input
 							height={40}
 							maxLength={25}
@@ -382,10 +279,10 @@ export default function Budget() {
 									error !== '' || editingTxn?.amount === 0
 								}
 								backgroundColor={'$color.primary200'}
-								size={'$buttons.md'}
+								size={'wrap-content'}
 								borderRadius={'$4'}
 							>
-								<Text color={'$color.white'}>SAVE</Text>
+								<Text color={'$color.white'}>{i18next.t('SAVE')}</Text>
 							</Button>
 							<Button
 								onPress={() => {
@@ -396,12 +293,12 @@ export default function Budget() {
 								size={'$buttons.md'}
 								borderRadius={'$4'}
 							>
-								<Text>CLOSE</Text>
+								<Text color={"$color.black"}>{i18next.t('CLOSE')}</Text>
 							</Button>
 						</XStack>
 					</YStack>
 				</YStack>
-			)}
+			)}*/}
 		</SafeAreaView>
 	);
 }

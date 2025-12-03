@@ -6,6 +6,7 @@ import BudgetEventList from '@/app/src/components/BudgetEventList';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
 import { formatCurrency } from '../utils/budgetUtils';
+import StyledCard from './styledCard';
 
 interface BudgetDayViewProps {
 	currentDate: Date;
@@ -77,9 +78,9 @@ export default function BudgetDayView({
 					futureTxns.length,
 				)
 				.reverse()
-				.slice(0, futureCount), // Get closest N
+				.slice(0, futureCount),
 			current: currentTxns,
-			past: pastTxns.slice(0, pastCount), // Get closest N
+			past: pastTxns.slice(0, pastCount),
 			pastTxns: pastTxns,
 		};
 	}, [transactions, currentDate, futureCount, pastCount]);
@@ -105,12 +106,12 @@ export default function BudgetDayView({
 		<YStack flex={1}>
 			<ScrollView
 				flex={1}
-				contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
+				contentContainerStyle={{ paddingBottom: 50, paddingTop: 10 }}
 				showsVerticalScrollIndicator={false}
 			>
 				<YStack paddingHorizontal="$1">
 					{/* --- Navigation / Up Chevron --- */}
-					<YStack alignItems="center" marginBottom="$2">
+					<YStack alignItems="center" marginBottom={"$2"}>
 						<Button
 							unstyled
 							onPress={handleUpChevronClick}
@@ -122,14 +123,14 @@ export default function BudgetDayView({
 									: 'default'
 							}
 						>
-							<ChevronUp size={24} color="$color.black" />
+							<ChevronUp size={"$buttons.md"} color="$color.black" />
 						</Button>
 					</YStack>
 
 					{/* --- Future Events --- */}
 					<BudgetEventList
 						txns={future}
-						title={i18next.t('3 Upcoming events')}
+						title={""}
 						setInputDate={setInputDate}
 						formatCurrency={formatCurrency}
 						setEditVisible={setEditVisible}
@@ -137,26 +138,18 @@ export default function BudgetDayView({
 					/>
 
 					{/* --- Current Day Card (Center Focus) --- */}
-					<YStack
-						backgroundColor="$primary200"
-						borderRadius="$4"
-						paddingVertical="$6"
+					<StyledCard
+						paddingVertical="$2"
 						paddingHorizontal="$4"
 						marginVertical="$4"
 						alignItems="center"
 						justifyContent="center"
-						gap="$3"
-						shadowColor="$color.black"
-						shadowOffset={{ width: 0, height: 4 }}
-						shadowOpacity={0.1}
-						shadowRadius={4}
-						elevation={4}
 					>
 						{/* Date Header */}
 						<Text
 							color="$white"
-							fontSize="$title1"
-							fontWeight="700"
+							fontSize="$5"
+							fontWeight="700"							
 						>
 							{formatDate(currentDate)}
 						</Text>
@@ -182,8 +175,10 @@ export default function BudgetDayView({
 						) : (
 							<Text
 								color="$white"
-								fontSize="$body"
+								fontSize="$3"
 								fontWeight="500"
+								fontStyle='italic'
+								marginTop={"$4"}
 							>
 								{i18next.t('No transactions')}
 							</Text>
@@ -194,7 +189,7 @@ export default function BudgetDayView({
 							backgroundColor="$white"
 							borderRadius="$4"
 							paddingHorizontal="$6"
-							height="$buttons.lg"
+							height='wrap-content'
 							onPress={onAddPress}
 							pressStyle={{ backgroundColor: '$primary300' }}
 							marginVertical="$2"
@@ -202,7 +197,7 @@ export default function BudgetDayView({
 							<Text
 								color="$primary100"
 								fontWeight="800"
-								fontSize="$buttons.md"
+								fontSize="$buttons.sm"
 								textTransform="uppercase"
 							>
 								{i18next.t('Add new')}
@@ -220,12 +215,12 @@ export default function BudgetDayView({
 								{formatCurrency(disposable)}
 							</Text>
 						</YStack>
-					</YStack>
+					</StyledCard>
 
 					{/* --- Past Events --- */}
 					<BudgetEventList
 						txns={past}
-						title={i18next.t('4 past events')}
+						title={""}
 						setInputDate={setInputDate}
 						formatCurrency={formatCurrency}
 						setEditVisible={setEditVisible}
@@ -245,7 +240,7 @@ export default function BudgetDayView({
 									: 'default'
 							}
 						>
-							<ChevronDown size={24} color="$color.black" />
+							<ChevronDown size={"$buttons.md"} color="$color.black" />
 						</Button>
 					</YStack>
 				</YStack>

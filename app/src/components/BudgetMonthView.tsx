@@ -7,24 +7,21 @@ import { LOCALE } from '../constants';
 import { formatCurrency, splitTransactions } from '../utils/budgetUtils';
 import BudgetDropdown from './BudgetDropdown';
 import BudgetEventList from './BudgetEventList';
+import type { Router } from 'expo-router';
 
 interface BudgetMonthViewProps {
 	currentDate: Date;
+	router: Router;
 	transactions: Item[];
 	onDateChange: (date: Date) => void;
-	setEditVisible: (visible: boolean) => void;
-	setEditingTxn: (txn: Item) => void;
-	setInputDate: Dispatch<SetStateAction<string>>;
 	editOpen: boolean;
 }
 
 export default function BudgetMonthView({
 	currentDate,
 	transactions,
+	router,
 	onDateChange,
-	setEditVisible,
-	setEditingTxn,
-	setInputDate,
 	editOpen,
 }: BudgetMonthViewProps) {
 	const [incomesOpen, setIncomesOpen] = useState(true);
@@ -33,24 +30,33 @@ export default function BudgetMonthView({
 
 	const today = new Date();
 
+	const MonthTransactions = useMemo(() => {
+	return transactions.filter(
+		(t) => t.date.getMonth() === currentDate.getMonth(),
+	);
+	}, [transactions, currentDate]);
+
+	// These used for rendering transacrions
 	const { past, future } = useMemo(
-		() => splitTransactions(transactions, currentDate),
-		[transactions, currentDate],
+		() => splitTransactions(MonthTransactions, currentDate),
+		[MonthTransactions, currentDate],
 	);
 
-	const POSITIVE_TX: Item[] = [...future, ...past].filter(
+	const POSITIVE_TX: Item[] = MonthTransactions.filter(
 		(ex) => Number(ex.amount) >= 0,
 	);
 
-	const NEGATIVE_TX: Item[] = [...future, ...past].filter(
+	const NEGATIVE_TX: Item[] = MonthTransactions.filter(
 		(ex) => Number(ex.amount) < 0,
 	);
 
+	// Label for month selector
 	const monthLabel = new Intl.DateTimeFormat(LOCALE, {
 		month: 'long',
 		year: 'numeric',
 	}).format(currentDate);
 
+	// Handler functions for month selector
 	const handlePrev = () => {
 		const newDate = new Date(currentDate);
 		newDate.setMonth(newDate.getMonth() - 1);
@@ -118,10 +124,8 @@ export default function BudgetMonthView({
 				<BudgetDropdown
 					txns={POSITIVE_TX}
 					name={i18next.t('Incomes')}
-					setEditVisible={setEditVisible}
-					setEditingTxn={setEditingTxn}
-					setInputDate={setInputDate}
 					openDropdown={setIncomesOpen}
+					router={router}
 					isOpen={incomesOpen}
 					formatCurrency={formatCurrency}
 				/>
@@ -130,10 +134,8 @@ export default function BudgetMonthView({
 				<BudgetDropdown
 					txns={NEGATIVE_TX}
 					name={i18next.t('Expenses')}
-					setEditVisible={setEditVisible}
-					setEditingTxn={setEditingTxn}
-					setInputDate={setInputDate}
 					openDropdown={setExpensesOpen}
+					router={router}
 					isOpen={expensesOpen}
 					formatCurrency={formatCurrency}
 				/>
@@ -171,9 +173,7 @@ export default function BudgetMonthView({
 				<BudgetEventList
 					txns={future}
 					title={i18next.t('Future events')}
-					setEditVisible={setEditVisible}
-					setEditingTxn={setEditingTxn}
-					setInputDate={setInputDate}
+					router={router}
 					formatCurrency={formatCurrency}
 				/>
 
@@ -181,9 +181,7 @@ export default function BudgetMonthView({
 				<BudgetEventList
 					txns={past}
 					title={i18next.t('Past events')}
-					setEditVisible={setEditVisible}
-					setEditingTxn={setEditingTxn}
-					setInputDate={setInputDate}
+					router={router}
 					formatCurrency={formatCurrency}
 				/>
 			</ScrollView>

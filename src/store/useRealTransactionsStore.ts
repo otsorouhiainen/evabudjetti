@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { Item } from '../constants/wizardConfig';
+import { isValidDate, parseTxnDate } from '../../app/src/utils/budgetUtils.ts';
 
 interface RealTransactionsState {
 	transactions: Item[];
@@ -9,10 +10,17 @@ interface RealTransactionsState {
 	remove: (item: Item) => void;
 	change: () => void;
 }
+
+const currentYear = new Date().getFullYear();
+const getDate = (day: string, month: string) =>
+	parseTxnDate(`${day}.${month}.${currentYear}`);
+
+
+
 const useRealTransactionsStore = create<RealTransactionsState>()(
 	persist(
 		(set) => ({
-			transactions: [],
+	transactions: [],
 			add: (item: Item) => {
 				set((state) => ({
 					...state,

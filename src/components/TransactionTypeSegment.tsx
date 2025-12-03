@@ -28,8 +28,7 @@ export const TransactionTypeSegment: React.FC<TransactionTypeSegmentProps> = ({
 				onPress={() => setType(opt)}
 				backgroundColor={opt === type ? '$primary200' : '$white'}
 				borderRadius={20}
-				padding={16}
-				paddingHorizontal={16}
+				size="$buttons.md"
 			>
 				<SizableText fontWeight="700">
 					{i18next.t(opt).toUpperCase()}

@@ -15,8 +15,8 @@ const firaFont = createFont({
 		1: 11,
 		2: 12,
 		3: 13,
-		4: 14, // ADDED - was causing warning
-		true: 16, // CHANGED - this is the default
+		4: 14,
+		true: 16,
 		5: 17,
 		6: 18,
 		7: 20,
@@ -100,6 +100,10 @@ const color = {
 
 	backgroundColor: '#fff',
 	borderColor: '#000',
+
+	backgroundFocus: '#fff',
+	// Input border highlight color
+	borderColorFocus: '$primary200',
 
 	// Required for button states on Android
 	transparent: 'rgba(0,0,0,0)',
