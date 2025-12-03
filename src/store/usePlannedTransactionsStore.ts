@@ -5,7 +5,7 @@ import type { Item } from '../constants/wizardConfig';
 
 interface PlannedTransactionsState {
 	transactions: Item[];
-	transactionsForTwoYears?: Item[];
+	transactionsForTwoYears: Item[];
 	add: (item: Item) => void;
 	remove: (item: Item) => void;
 	replaceAll: (items: Item[]) => void;
