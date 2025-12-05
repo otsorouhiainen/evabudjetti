@@ -2,22 +2,17 @@ import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicke
 import { type Category, useCategoryStore } from '@/src/store/categoryStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
-import {
-	Check as CheckIcon,
-	ChevronDown,
-	ChevronUp,
-	Plus,
-} from '@tamagui/lucide-icons';
 import * as Crypto from 'expo-crypto';
 import { useEffect, useMemo, useState } from 'react';
 import {
 	AlertDialog,
 	Button,
-	Checkbox,
 	Input,
+	PortalProvider,
 	ScrollView,
 	SizableText,
 	Stack,
+	Text,
 	XStack,
 	YStack
 } from 'tamagui';
@@ -26,6 +21,7 @@ import {
 	TransactionTypeSegment,
 } from '../src/components/TransactionTypeSegment';
 import type { Item } from '../src/constants/wizardConfig';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function AddTransaction() {
 	const [type, setType] = useState<
@@ -35,18 +31,11 @@ export default function AddTransaction() {
 	const [name, setName] = useState('');
 	const [amount, setAmount] = useState('');
 	const [date, setDate] = useState<Date | null>(null);
-
-	const [repeat, setRepeat] = useState(false);
-	const [repeatInterval, setRepeatInterval] = useState<
-		'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
-	>('monthly');
-	const [repeatValue, setRepeatValue] = useState('');
 	const [errors, setErrors] = useState<{
 		amount?: string;
 		repeatValue?: string;
 	}>({});
 
-	const [description, setDescription] = useState('');
 	const [expanded, setExpanded] = useState(false);
 	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [plannedModalVisible, setPlannedModalVisible] = useState(false);
@@ -63,6 +52,8 @@ export default function AddTransaction() {
 	const plannedTransactions = usePlannedTransactionsStore(
 		(state) => state.transactionsForTwoYears,
 	);
+	const [upcomingPlannedTransactions, setUpcomingPlannedTransactions] =
+		useState<Item[]>([]);
 
 	const [categories, setCategories] = useState<Category[]>([]);
 	useEffect(() => {
@@ -82,17 +73,20 @@ export default function AddTransaction() {
 		? dynamicCategories
 		: dynamicCategories.slice(0, 3);
 
-	const upcomingPlannedTransactions = useMemo(() => {
-		if (!plannedTransactions) return [];
-		const now = new Date();
-		now.setHours(0, 0, 0, 0);
-		return plannedTransactions
-			.filter((t) => new Date(t.date) >= now)
-			.sort(
-				(a, b) =>
-					new Date(a.date).getTime() - new Date(b.date).getTime(),
-			)
-			.slice(0, 20); // Limit to next 20 occurrences
+	useEffect(() => {
+		const upcomingTxns = (plannedTransactions || []).filter((t) => {
+			const txnDate = new Date(t.date);
+			const now = new Date();
+			now.setHours(0, 0, 0, 0);
+			return txnDate >= now;
+		});
+		const twentyUpComingTxns = upcomingTxns
+			.sort((a, b) => {
+				return new Date(a.date).getTime() - new Date(b.date).getTime();
+			})
+			.slice(0, 20);
+		setUpcomingPlannedTransactions(twentyUpComingTxns);
+		console.log('Upcoming planned txns updated', twentyUpComingTxns);
 	}, [plannedTransactions]);
 
 	const handleAddCategory = async () => {
@@ -129,10 +123,6 @@ export default function AddTransaction() {
 					? TransactionType.Income
 					: TransactionType.Expense,
 			);
-			// Reset repeat settings as this is a single allocation
-			setRepeat(false);
-			setRepeatInterval('monthly');
-			setRepeatValue('');
 
 			setPlannedModalVisible(false);
 			setSelectedPlannedTxn(null);
@@ -176,11 +166,6 @@ export default function AddTransaction() {
 		setName('');
 		setAmount('');
 		setDate(null);
-
-		setRepeat(false);
-		setRepeatInterval('monthly');
-		setRepeatValue('');
-		setDescription('');
 		setErrors({});
 	};
 
@@ -191,55 +176,43 @@ export default function AddTransaction() {
 		if (amount.at(-1) === '.') {
 			newErrors.amount = 'Enter a valid amount';
 		}
-		if (
-			repeat === true &&
-			repeatInterval === 'custom' &&
-			repeatValue === ''
-		) {
-			newErrors.repeatValue = 'Enter the recurrence interval';
-		}
 
 		setErrors(newErrors);
 
-		if (Object.keys(newErrors).length === 0) {
-			try {
-				await addTransaction({
-					id: Crypto.randomUUID(),
-					name: name,
-					amount: Number(amount),
-					date: date ?? new Date(),
-					category: category ?? 'other',
-					type: type.toLowerCase() as 'income' | 'expense',
-					recurrence: repeatInterval,
-					recurrenceInterval:
-						repeatValue === '' ? undefined : Number(repeatValue),
-				});
-				console.log({
-					type,
-					category,
-					name,
-					amount,
-					date,
-					repeat,
-					description,
-					repeatInterval,
-					repeatValue,
-				});
-				setShowSuccess(true);
-			} catch (e) {
-				console.error('Failed to add transaction:', e);
-			}
-		}
+		/*if (Object.keys(newErrors).length === 0) {*/
+		addTransaction({
+			id: Crypto.randomUUID(),
+			name: name,
+			amount: Number(amount),
+			date: date ?? new Date(),
+			category: category ?? 'uncategorized',
+			type: type.toLowerCase() as 'income' | 'expense',
+			recurrence: 'none',
+		});
+		console.log({
+			type,
+			category,
+			name,
+			amount,
+			date,
+		});
+		setShowSuccess(true);
+		setName('');
+		setAmount('');
+		setDate(null);
+		setCategory(null);
+		/*}*/
 	};
 
 	return (
-			<ScrollView
-				contentContainerStyle={{
-					paddingBottom: 70,
-				}}
-			>
-				{/* Add Category Modal */}
-				{categoryModalVisible && (
+		<SafeAreaView style={{ flex: 1 }}>
+			<PortalProvider>
+				<YStack
+					style={{ height: '100%', paddingTop: 100 }}
+					backgroundColor="$background"
+				>
+					{/* Add Category Modal */}
+					{/*{categoryModalVisible && (
 					<Stack
 						position="absolute"
 						top={0}
@@ -257,8 +230,9 @@ export default function AddTransaction() {
 							borderWidth={2}
 							opacity={1}
 							borderRadius={16}
-							padding={"$5"}
-							gap={'$4'}
+							padding={24}
+							width={'80%'}
+							gap={20}
 						>
 							<SizableText size={'$title1'} marginBottom={8}>
 								{'Add category'}
@@ -266,7 +240,7 @@ export default function AddTransaction() {
 							<Input
 								value={newCategory}
 								onChangeText={setNewCategory}
-								placeholder={('Enter category')}
+								placeholder={'Enter category'}
 								height={40}
 								borderRadius={6}
 								marginBottom={22}
@@ -278,24 +252,11 @@ export default function AddTransaction() {
 							/>
 							<XStack justifyContent="space-between">
 								<Button
-									onPress={handleAddCategory}
-									backgroundColor={'$primary200'}
-									size={42}
-									alignSelf="center"
-									fontSize={'$title3'}
-								>
-									<SizableText
-										size={'$title3'}
-										color={'$white'}
-									>
-										{('Save')}
-									</SizableText>
-								</Button>
-																<Button
 									onPress={() =>
 										setCategoryModalVisible(false)
 									}
 									borderColor={'$primary200'}
+									padding={22}
 									alignSelf="center"
 									size={42}
 									fontSize={'$title3'}
@@ -304,81 +265,256 @@ export default function AddTransaction() {
 										size={'$title3'}
 										color={'$primary200'}
 									>
-										{('Cancel')}
+										{'Cancel'}
+									</SizableText>
+								</Button>
+								<Button
+									onPress={handleAddCategory}
+									backgroundColor={'$primary200'}
+									size={42}
+									padding={22}
+									alignSelf="center"
+									fontSize={'$title3'}
+								>
+									<SizableText
+										size={'$title3'}
+										color={'$white'}
+									>
+										{'Save'}
 									</SizableText>
 								</Button>
 							</XStack>
 						</YStack>
 					</Stack>
-				)}
+					)}*/}
 
-					<YStack
-						flex={1}
-						justifyContent="center"
-						alignItems="center"
-						overflow="scroll"
-					>
+					{/* Pick from Planned Modal */}
+					{plannedModalVisible && (
+						<Stack
+							position="absolute"
+							top={0}
+							bottom={0}
+							left={0}
+							right={0}
+							backgroundColor="rgba(0, 0, 0, 0.4)"
+							justifyContent="center"
+							alignItems="center"
+							zIndex={10}
+						>
+							<YStack
+								backgroundColor="$white"
+								borderColor={'$black'}
+								borderWidth={2}
+								opacity={1}
+								borderRadius={16}
+								padding={24}
+								width={'90%'}
+								height={'80%'}
+								gap={20}
+							>
+								<SizableText size={'$title1'} marginBottom={8}>
+									{selectedPlannedTxn
+										? 'Allocate Amount'
+										: 'Select a planned transaction'}
+								</SizableText>
+
+								{!selectedPlannedTxn ? (
+									<ScrollView>
+										<YStack gap={10}>
+											{upcomingPlannedTransactions.length ===
+											0 ? (
+												<SizableText>
+													No upcoming planned
+													transactions found.
+												</SizableText>
+											) : (
+												upcomingPlannedTransactions.map(
+													(txn) => (
+														<Button
+															style={{
+																height: 'auto',
+															}}
+															key={`${txn.id}-${txn.date}`}
+															onPress={() =>
+																handleSelectPlanned(
+																	txn,
+																)
+															}
+															padding={5}
+															borderWidth={1}
+															borderColor="$black"
+															backgroundColor="$gray100"
+															pressStyle={{
+																backgroundColor:
+																	'$gray200',
+															}}
+															justifyContent="space-between"
+														>
+															<YStack>
+																<SizableText fontWeight="bold">
+																	{txn.name}
+																</SizableText>
+																<SizableText
+																	size="$body"
+																	color="$gray500"
+																>
+																	{new Date(
+																		txn.date,
+																	).toLocaleDateString()}
+																</SizableText>
+															</YStack>
+															<SizableText>
+																{txn.type ===
+																'income'
+																	? 'Income'
+																	: 'Expense'}
+															</SizableText>
+															<SizableText>
+																{txn.amount} €
+															</SizableText>
+														</Button>
+													),
+												)
+											)}
+										</YStack>
+									</ScrollView>
+								) : (
+									<YStack gap={20}>
+										<SizableText>
+											Allocating for:{' '}
+											<SizableText fontWeight="bold">
+												{selectedPlannedTxn.name}
+											</SizableText>
+										</SizableText>
+										<Input
+											value={allocationAmount}
+											onChangeText={
+												handleAllocationAmountChange
+											}
+											keyboardType="decimal-pad"
+											placeholder="Amount to allocate"
+											height={40}
+											borderRadius={6}
+											px="10px"
+											fontSize={'$title3'}
+										/>
+										<XStack
+											justifyContent="space-between"
+											marginTop={20}
+										>
+											<Button
+												style={{ height: '100%' }}
+												onPress={() =>
+													setSelectedPlannedTxn(null)
+												}
+												borderColor={'$primary200'}
+											>
+												<SizableText
+													color={'$primary200'}
+												>
+													Back
+												</SizableText>
+											</Button>
+											<Button
+												style={{ height: '100%' }}
+												onPress={
+													confirmPlannedAllocation
+												}
+												backgroundColor={'$primary200'}
+											>
+												<SizableText color={'$white'}>
+													Confirm
+												</SizableText>
+											</Button>
+										</XStack>
+									</YStack>
+								)}
+
+								{!selectedPlannedTxn && (
+									<Button
+										onPress={() =>
+											setPlannedModalVisible(false)
+										}
+										borderColor={'$primary200'}
+										style={{ height: '10%' }}
+									>
+										<SizableText
+											style={{ height: '50%' }}
+											color={'$primary200'}
+										>
+											Close
+										</SizableText>
+									</Button>
+								)}
+							</YStack>
+						</Stack>
+					)}
+
+					<YStack style={{ height: '100%' }} alignItems="center">
 						<YStack
-							flex={1}
+							height="60%"
 							paddingTop={24}
 							paddingHorizontal={20}
 							gap={18}
+							justifyContent="center"
 							width={'100%'}
 						>
 							{/* Top header */}
-							<XStack
-								justifyContent="space-between"
-								alignItems="center"
-							>
+							<XStack alignItems="center" justifyContent="center">
 								<SizableText size={'$title1'}>
-									{'Add new'}
+									{'Add a real transaction'}
 								</SizableText>
+							</XStack>
+
+							{/* Segmented: Income / Expense */}
+							<YStack alignItems="center" width={'100%'} gap={10}>
 								<Button
+									width={'40%'}
+									height={'25%'}
 									size="$3"
 									backgroundColor="$primary200"
 									onPress={() => setPlannedModalVisible(true)}
 								>
-									<SizableText color="$white">
-										Pick Planned
+									<SizableText height={'100%'} color="$white">
+										Select planned
 									</SizableText>
 								</Button>
-							</XStack>
-
-							{/* Segmented: Income / Expense */}
-							<XStack justifyContent="center">
-								<TransactionTypeSegment
-									type={type}
-									setType={setType}
-								/>
-							</XStack>
+								<XStack justifyContent="center">
+									<TransactionTypeSegment
+										type={type}
+										setType={setType}
+									/>
+								</XStack>
+							</YStack>
 
 							{/* Category chips */}
-							<XStack
-								justifyContent="space-between"
-								alignItems="center"
-							>
-								<SizableText size={'$title2'}>
-									{'Category'}
-								</SizableText>
-								<Button
-									onPress={() => setExpanded(!expanded)}
-									icon={expanded ? ChevronUp : ChevronDown}
-									height="100%"
-									background={'$transparent'}
-								></Button>
-							</XStack>
+							{/*<XStack
+							justifyContent="space-between"
+							alignItems="center"
+						>
+							<SizableText size={'$title2'}>
+								{'Category'}
+							</SizableText>
+							<Button
+								onPress={() => setExpanded(!expanded)}
+								icon={expanded ? ChevronUp : ChevronDown}
+								height="100%"
+								background={'$transparent'}
+							></Button>
+						</XStack>
 
 						{/* Add category button */}
-						<XStack>
+							{/*<XStack>
 							<Button
 								onPress={() => setCategoryModalVisible(true)}
 								icon={Plus}
-								size={"$6"}
+								size={26}
+								padding={14}
 								marginRight={8}
-							></Button>
+							></Button>*/}
 
 							{/* Visible Category Chips */}
-							{visibleCategories
+							{/*{visibleCategories
 								.filter(
 									(category) =>
 										(type === TransactionType.Income &&
@@ -396,7 +532,8 @@ export default function AddTransaction() {
 											onPress={() => {
 												setCategory(key);
 											}}
-											size={"$6"}
+											size={28}
+											padding={14}
 											marginRight={8}
 											backgroundColor={
 												selected
@@ -405,16 +542,16 @@ export default function AddTransaction() {
 											}
 										>
 											<SizableText size={'$title3'}>
-												{(label)}
+												{label}
 											</SizableText>
 										</Button>
 									);
 								})}
-						</XStack>
+						</XStack>*/}
 
 							{/* Form */}
 							<YStack
-								alignSelf="center"
+								height={'75%'}
 								width={'100%'}
 								borderRadius={16}
 								padding={16}
@@ -481,7 +618,7 @@ export default function AddTransaction() {
 									)}
 								</YStack>
 
-								<YStack>
+								<XStack>
 									<SizableText size={'$title3'}>
 										{'Date'}
 										<SizableText size={'$title3'}>
@@ -494,114 +631,13 @@ export default function AddTransaction() {
 										value={date}
 										onChange={setDate}
 									/>
-								</YStack>
-
-								<XStack alignItems="center">
-									<Checkbox
-										size={44}
-										padding={8}
-										marginRight={10}
-										checked={repeat}
-										onCheckedChange={(checked) =>
-											setRepeat(checked === true)
-										}
-									>
-										<Checkbox.Indicator>
-											<CheckIcon size={14} />
-										</Checkbox.Indicator>
-									</Checkbox>
-
-									<SizableText size={'$title3'}>
-										{'Does the event repeat?'}
-									</SizableText>
 								</XStack>
-
-								{/* Repeat */}
-								{repeat && (
-									<XStack
-										alignSelf="center"
-										borderRadius={10}
-										padding={4}
-										gap={6}
-										backgroundColor="$primary300"
-									>
-										{(
-											[
-												'daily',
-												'weekly',
-												'monthly',
-												'yearly',
-												'custom',
-											] as const
-										).map((opt) => (
-											<Button
-												key={opt}
-												pressStyle={{ opacity: 0.8 }}
-													borderRadius={10}
-											size={"$buttons.md"}
-												onPress={() => {
-													setRepeatInterval(opt);
-													if (opt !== 'custom')
-														setRepeatValue('');
-												}}
-												backgroundColor={
-													opt === repeatInterval
-														? '$primary200'
-														: '$white'
-												}
-											>
-												<SizableText size={'$title3'}>
-													{opt}
-												</SizableText>
-											</Button>
-										))}
-									</XStack>
-								)}
-
-								{repeat && repeatInterval === 'custom' && (
-									<YStack>
-										<SizableText size={'$title3'}>
-											{'Repeat interval'}
-											<SizableText size={'$title3'}>
-												{' '}
-												*
-											</SizableText>
-										</SizableText>
-										<Input
-											placeholder={'day intervals'}
-											value={repeatValue}
-											onChangeText={setRepeatValue}
-											keyboardType="numeric"
-											height={40}
-											borderRadius={6}
-											borderColor={
-												errors.repeatValue
-													? '$danger500'
-													: '$black'
-											}
-											focusStyle={{
-												outlineColor: 'transparent',
-											}}
-											px="10px"
-											fontSize={'$title3'}
-										/>
-										{errors.repeatValue && (
-											<SizableText
-												size={'$title3'}
-												color="$danger500"
-											>
-												{errors.repeatValue}
-											</SizableText>
-										)}
-									</YStack>
-								)}
 							</YStack>
 
 							{/* Submit */}
 							<Button
 								marginTop={8}
 								borderRadius={28}
-								size={"$10"}
 								backgroundColor="$primary200"
 								color="$white"
 								disabled={!isValidSubmit}
@@ -609,13 +645,9 @@ export default function AddTransaction() {
 									opacity: 0.5,
 								}}
 								onPress={handleSubmit}
-								fontSize={'$title3'}
+								style={{ height: '10%' }}
 							>
-								<SizableText size={'$title3'} color={'$white'}>
-									{type === TransactionType.Income
-										? `Add ${TransactionType.Income}`
-										: `Add ${TransactionType.Expense}`}
-								</SizableText>
+								<Text color={'$white'}>Submit</Text>
 							</Button>
 
 							{/* Success alert */}
@@ -631,7 +663,7 @@ export default function AddTransaction() {
 									<AlertDialog.Content
 										bordered
 										elevate
-										width={'25%'}
+										width={'55%'}
 										padding={24}
 										borderRadius={16}
 									>
@@ -649,9 +681,9 @@ export default function AddTransaction() {
 										>
 											<Button
 												backgroundColor={'$primary200'}
-												size={"$6"}
+												style={{ height: '100%' }}
 												color={'$white'}
-													alignSelf="center"
+												alignSelf="center"
 												onPress={() =>
 													setShowSuccess(false)
 												}
@@ -669,20 +701,20 @@ export default function AddTransaction() {
 								</AlertDialog.Portal>
 							</AlertDialog>
 
-						{/* Cancel */}
-						<Button
-							borderRadius={28}
-							size={"$10"}
-							borderColor={'$primary200'}
-							onPress={handleCancel}
-							fontSize={'$title3'}
-						>
-							<SizableText size={'$title3'} color={'$primary200'}>
-								{('Cancel').toUpperCase()}
-							</SizableText>
-						</Button>
+							{/* Cancel */}
+							<Button
+								marginTop={8}
+								borderColor={'$primary200'}
+								onPress={handleCancel}
+								fontSize={'$title3'}
+								style={{ height: '10%' }}
+							>
+								<Text color={'$primary200'}>{'Cancel'}</Text>
+							</Button>
+						</YStack>
 					</YStack>
 				</YStack>
-			</ScrollView>
+			</PortalProvider>
+		</SafeAreaView>
 	);
 }
