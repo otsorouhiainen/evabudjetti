@@ -42,11 +42,15 @@ export default function BudgetMonthView({
 
 	const MonthTransactions = useMemo(() => {
 	return transactions.filter(
-		(t) => t.date.getMonth() === currentDate.getMonth(),
+		(t) => {
+			const parsedDate = t.date instanceof Date ? t.date
+				: new Date(t.date as string);
+			return parsedDate.getMonth() === currentDate.getMonth()
+		}
 	);
 	}, [transactions, currentDate]);
 
-	// These used for rendering transacrions
+	// These used for rendering transactions
 	const { past, future } = useMemo(
 		() => splitTransactions(MonthTransactions, currentDate),
 		[MonthTransactions, currentDate],

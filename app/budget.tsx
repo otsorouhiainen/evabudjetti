@@ -114,7 +114,7 @@ export default function Budget() {
 						backgroundColor="$transparent"
 					>
 						<StyledTab
-							value="day"
+							value="day"							
 							flex={1}
 							borderTopLeftRadius={20}
 							borderBottomLeftRadius={20}
@@ -132,8 +132,6 @@ export default function Budget() {
 						<StyledTab
 							value="month"
 							flex={1}
-							borderTopLeftRadius={20}
-							borderBottomLeftRadius={20}
 						>
 							<Text
 								color={
@@ -167,17 +165,7 @@ export default function Budget() {
 						<BudgetDayView
 							onDateChange={setcurrentDate}
 							currentDate={currentDate}
-							transactions={transactions.filter(
-								(t) =>
-									t.date.getDay() === currentDate.getDay() &&
-									t.date.getMonth() ===
-										currentDate.getMonth() &&
-									t.date.getFullYear() ===
-										currentDate.getFullYear(),
-							)}
-							setInputDate={setDateInput}
-							setEditVisible={setEditVisible}
-							setEditingTxn={setEditingTxn}
+							transactions={transactions}
 							onAddPress={() => {
 								router.push('/add_transaction');
 							}}
@@ -194,13 +182,7 @@ export default function Budget() {
 					<Tabs.Content value="month" flex={1}>
 						<BudgetMonthView
 							currentDate={currentDate}
-							transactions={transactions.filter(
-								(t) =>
-									t.date.getMonth() ===
-										currentDate.getMonth() &&
-									t.date.getFullYear() ===
-										currentDate.getFullYear(),
-							)}
+							transactions={transactions}
 							router={router}
 							onDateChange={setcurrentDate}
 							editOpen={editOpen}
@@ -210,11 +192,7 @@ export default function Budget() {
 						<BudgetYearView
 							onDateChange={setcurrentDate}
 							currentDate={currentDate}
-							transactions={transactions.filter(
-								(t) =>
-									t.date.getFullYear() ===
-									currentDate.getFullYear(),
-							)}
+							transactions={transactions}
 						/>
 					</Tabs.Content>
 				</Tabs>

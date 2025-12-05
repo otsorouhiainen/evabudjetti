@@ -20,9 +20,6 @@ interface BudgetDayViewProps {
 	onDateChange: (date: Date) => void;
 	onAddPress?: () => void;
 	onEditPress?: (txn: Item) => void;
-	setEditVisible: (state: boolean) => void;
-	setEditingTxn: (txn: Item) => void;
-	setInputDate: Dispatch<SetStateAction<string>>;
 }
 
 // Helper to format date as "dd.mm.yyyy"
@@ -35,15 +32,14 @@ export default function BudgetDayView({
 	transactions,
 	onDateChange,
 	onAddPress,
-	setInputDate,
-	setEditingTxn,
-	setEditVisible,
 }: BudgetDayViewProps) {
 	// State to track how many transactions to show
 	const storeBalance = useBalanceStore((state) => state.balance);
 	const storeDisposable = useBalanceStore((state) => state.disposable);
-	const [futureCount, setFutureCount] = useState(0);
-	const [pastCount, setPastCount] = useState(0);
+	// When first rendered, show only 3 future txs
+	const [futureCount, setFutureCount] = useState(3); 
+	// When first rendered, show only 4 past txs
+	const [pastCount, setPastCount] = useState(4);
 	const [currentBalance, setCurrentBalance] = useState(0);
 	const [disposable, setDisposable] = useState(0);
 
@@ -102,9 +98,7 @@ export default function BudgetDayView({
 			}
 		});
 
-		// Future events: We want the ones CLOSEST to the future.
-		// The sorted array is Descending (Aug 3, Aug 2, Aug 1).
-
+		// Future events: We want the ones CLOSEST to today
 		return {
 			futureTxns: futureTxns,
 			future: futureTxns
@@ -112,7 +106,6 @@ export default function BudgetDayView({
 					Math.max(0, futureTxns.length - futureCount),
 					futureTxns.length,
 				)
-				.reverse()
 				.slice(0, futureCount),
 			current: currentTxns,
 			past: pastTxns.slice(0, pastCount),
@@ -120,23 +113,18 @@ export default function BudgetDayView({
 		};
 	}, [transactions, currentDate, futureCount, pastCount]);
 
-		// Handlers for chevron clicks
+	// Display 2 more transactions per chevron click
+
 	const handleUpChevronClick = () => {
 		if (futureTxns.length > futureCount) {
-			setFutureCount((prev) => Math.min(prev + 3, futureTxns.length));
+			setFutureCount((prev) => prev + 2);
 		}
 	};
-
 	const handleDownChevronClick = () => {
 		if (pastTxns.length > pastCount) {
-			setPastCount((prev) => Math.min(prev + 3, pastTxns.length));
+			setPastCount((prev) => prev + 2);
 		}
 	};
-
-	useEffect(() => {
-		setFutureCount(futureTxns.length);
-		setPastCount(pastTxns.length);
-	}, [futureTxns, pastTxns]);
 
 	return (
 		<YStack flex={1}>
