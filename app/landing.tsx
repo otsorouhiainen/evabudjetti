@@ -31,7 +31,190 @@ export default function Landing() {
 		recalcDisposable(transactions);
 	}, [storeBalance, storeDisposable, transactions, recalcDisposable]);
 	return (
-		<SafeAreaView style={{ flex: 1, height: '100%', width: '100%' }}>
+		<SafeAreaView style={{ flex: 1}} edges={['left','right','bottom']}>
+			<YStack
+				f={1}
+				backgroundColor="$background"
+			>
+				<YStack
+					paddingHorizontal={10}
+					backgroundColor={"$caution"}
+					f={1}
+					// keep overall maxWidth behavior but prefer percent-based outer padding above
+				>
+					{/* Header */}
+					<YStack
+						style={{
+							gap: 5,
+							marginTop: 10,
+							alignItems: 'center',
+						}}
+					>
+						<Text
+							fontSize={"$7"}
+							fontWeight={"500"}
+						>EVA Personal Budget</Text>
+						<Text>Supporting your financial well-being</Text>
+
+						<XStack style={{ height: '10%', gap: 20 }}
+							mt="$1"
+							>
+							<Button
+								backgroundColor="$primary200"
+								borderRadius={40}
+								size="$5"
+								color="white"
+								icon={Globe}
+								chromeless
+								onPress={() =>
+									change(language === 'en' ? 'fi' : 'en')
+								}
+							>
+								{language === 'fi' ? 'Suomi' : 'English'}
+							</Button>
+						</XStack>
+						<XStack
+							ac="unset"
+							ai="flex-start"
+							jc="space-between"
+							>
+							{/* Piggy Bank Icon inside responsive container */}
+							<PiggyBank
+								size={110}
+								style={{ height: '100%' }}
+								color={"$primary100"}
+								/>
+
+							{/* Help Icon positioned relative to the piggy bank */}
+							<Button
+								size={50}
+								style={{ height: '100%' }}
+								circular
+								chromeless
+								onPress={() => setHelpVisible(true)}
+								icon={<MessageCircleQuestion color="$black" />}
+							/>
+						</XStack>
+					</YStack>
+
+					{budgetCreated && (
+						<YStack
+						f={1}
+						ai={"center"}
+						>
+							<YStack
+								backgroundColor="$white"
+								borderColor="$primary200"
+								borderRadius={20}
+								borderWidth={2}
+								padding={10}
+							>
+								<YStack
+									alignItems="center"
+									gap={5}
+									width="100%"
+								>
+									<Text>
+										{new Date().toLocaleDateString('fi-FI')}
+									</Text>
+									<Text>Money in account</Text>
+									<Text>{balance}€</Text>
+									<Text>Disposable income</Text>
+									<Text>{disposable}€</Text>
+									<Button
+										backgroundColor="$primary200"
+										width="50%"
+										size={"$buttons.lg"}
+									>
+										<Text color={'$white'}>
+											VIEW DETAILS
+										</Text>
+									</Button>
+								</YStack>
+							</YStack>
+							<YStack
+								ai="center"
+								paddingHorizontal={10}
+								>
+								<Button
+									backgroundColor="$primary200"
+									onPress={() =>
+										router.push('/add_transaction')
+									}
+									size={"$buttons.lg"}
+								>
+									<Text color={'$white'}>
+										ADD INCOME/EXPENSE
+									</Text>
+								</Button>
+
+								<XStack
+									justifyContent="space-between"
+								>
+									<Button
+										backgroundColor="$primary200"
+										onPress={() => router.push('/budget')}
+										size={"$buttons.lg"}
+									>
+										<Text color={'$white'}>
+											SHOW BUDGET
+										</Text>
+									</Button>
+									<Button
+										backgroundColor="$primary200"
+										onPress={() =>
+											router.push('/budget_wizard')
+										}
+										size={"$buttons.lg"}
+									>
+										<Text color={'$white'}>
+											EDIT BUDGET
+										</Text>
+									</Button>
+								</XStack>
+							</YStack>
+						</YStack>
+					)}
+
+					{!budgetCreated && (
+						<YStack
+							gap={5}
+							paddingHorizontal={25}
+						>
+							<Text>
+								No budget created yet. Enter your balance in €
+								without commas and press the "Create budget"
+								button below to get started!
+							</Text>
+							<Input
+								style={{ height: '30%' }}
+								width="100%"
+								value={initialBalance}
+								onChangeText={setInitialBalance}
+								borderColor="$black"
+								backgroundColor="$white"
+								keyboardType="numeric"
+								fontSize={15}
+							/>
+							<Button
+								style={{ height: '30%' }}
+								marginTop={10}
+								borderRadius={40}
+								backgroundColor="$primary200"
+								width="100%"
+								color={"white"}
+								onPress={() => {
+									setStoreBalance(Number(initialBalance));
+									router.push('/budget_wizard');
+								}}
+								disabled={initialBalance === ''}
+							>
+								CREATE BUDGET
+							</Button>
+						</YStack>
+					)}
+				</YStack>
+			</YStack>
 			{/* Help Modal */}
 			{helpVisible && (
 				<YStack
@@ -75,182 +258,6 @@ export default function Landing() {
 					</YStack>
 				</YStack>
 			)}
-			<YStack
-				backgroundColor="$background"
-				height="100%"
-				alignItems="center"
-			>
-				<YStack
-					paddingTop={20}
-					paddingHorizontal={10}
-					gap={5}
-					style={{ height: '32%', width: '100%' }}
-					// keep overall maxWidth behavior but prefer percent-based outer padding above
-				>
-					{/* Header */}
-					<YStack
-						style={{
-							height: '100%',
-							gap: 5,
-							marginTop: 10,
-							alignItems: 'center',
-						}}
-					>
-						<Text>EVA Personal Budget</Text>
-						<Text>Supporting your financial well-being</Text>
-
-						<XStack style={{ height: '10%', gap: 20 }}>
-							<Button
-								style={{ height: '100%' }}
-								icon={Globe}
-								chromeless
-								onPress={() =>
-									change(language === 'en' ? 'fi' : 'en')
-								}
-							>
-								{language === 'fi' ? 'Suomi' : 'English'}
-							</Button>
-						</XStack>
-
-						{/* Piggy Bank Icon inside responsive container */}
-						<PiggyBank size={70} style={{ height: '100%' }} />
-
-						{/* Help Icon positioned relative to the piggy bank */}
-						<Button
-							size={50}
-							style={{ height: '100%' }}
-							circular
-							chromeless
-							onPress={() => setHelpVisible(true)}
-							icon={<MessageCircleQuestion color="$black" />}
-						/>
-					</YStack>
-
-					{budgetCreated && (
-						<YStack
-							gap={30}
-							width="100%"
-							style={{ height: '100%' }}
-						>
-							<YStack
-								style={{ height: '100%', width: '100%' }}
-								alignItems="center"
-								gap={5}
-								backgroundColor="$white"
-								borderColor="$gray5"
-								borderWidth={1}
-							>
-								<YStack
-									alignItems="center"
-									gap={5}
-									width="100%"
-									style={{ height: '13%' }}
-								>
-									<Text>
-										{new Date().toLocaleDateString('fi-FI')}
-									</Text>
-									<Text>Money in account</Text>
-									<Text>{balance}€</Text>
-									<Text>Disposable income</Text>
-									<Text>{disposable}€</Text>
-									<Button
-										backgroundColor="$primary200"
-										width="50%"
-										style={{ height: '100%' }}
-									>
-										<Text color={'$white'}>
-											VIEW DETAILS
-										</Text>
-									</Button>
-								</YStack>
-							</YStack>
-							<YStack style={{ height: '40%', gap: 10 }}>
-								<Button
-									style={{ height: '100%' }}
-									backgroundColor="$primary200"
-									onPress={() =>
-										router.push('/add_transaction')
-									}
-									width="100%"
-								>
-									<Text color={'$white'}>
-										ADD INCOME/EXPENSE
-									</Text>
-								</Button>
-
-								<XStack
-									gap={20}
-									justifyContent="space-between"
-									width="100%"
-									style={{ height: '100%' }}
-								>
-									<Button
-										style={{ height: '100%' }}
-										backgroundColor="$primary200"
-										onPress={() => router.push('/budget')}
-									>
-										<Text color={'$white'}>
-											SHOW BUDGET
-										</Text>
-									</Button>
-									<Button
-										style={{ height: '100%' }}
-										backgroundColor="$primary200"
-										onPress={() =>
-											router.push('/budget_wizard')
-										}
-									>
-										<Text color={'$white'}>
-											EDIT BUDGET
-										</Text>
-									</Button>
-								</XStack>
-							</YStack>
-						</YStack>
-					)}
-
-					{!budgetCreated && (
-						<YStack
-							gap={5}
-							style={{
-								height: '70%',
-								width: '100%',
-								alignItems: 'center',
-								alignSelf: 'flex-start',
-							}}
-						>
-							<Text>
-								No budget created yet. Enter your balance in €
-								without commas and press the "Create budget"
-								button below to get started!
-							</Text>
-							<Input
-								style={{ height: '30%' }}
-								width="100%"
-								value={initialBalance}
-								onChangeText={setInitialBalance}
-								borderColor="$black"
-								backgroundColor="$white"
-								keyboardType="numeric"
-								fontSize={15}
-							/>
-							<Button
-								style={{ height: '30%' }}
-								marginTop={10}
-								backgroundColor="$primary100"
-								width="100%"
-								onPress={() => {
-									setStoreBalance(Number(initialBalance));
-									router.push('/budget_wizard');
-								}}
-								disabled={initialBalance === ''}
-							>
-								CREATE BUDGET
-							</Button>
-						</YStack>
-					)}
-				</YStack>
-			</YStack>
 		</SafeAreaView>
 	);
 }

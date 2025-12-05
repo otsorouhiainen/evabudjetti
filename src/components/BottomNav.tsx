@@ -22,8 +22,8 @@ const NavButton = ({
 		icon={btnIcon}
 		color={btnColor}
 		onPress={onPress}
-		borderColor={borderColor}
-		size={25}
+		//borderColor={borderColor}
+		size={40}
 		borderRadius={20}
 		padding={10}
 	/>

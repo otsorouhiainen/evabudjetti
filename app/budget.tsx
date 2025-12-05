@@ -91,7 +91,7 @@ export default function Budget() {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }}>
+		<SafeAreaView style={{ flex: 1 }} edges={['left','right','bottom']}>
 			<YStack
 				backgroundColor={'$color.white'}
 				paddingTop={'$paddingmd'}

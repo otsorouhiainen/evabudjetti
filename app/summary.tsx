@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import React, { useEffect, useState } from 'react';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, {
 	FadeInLeft,
 	FadeInRight,
@@ -106,19 +106,22 @@ export default function Summary() {
 		.onEnd(() => handlePrevScene());
 
 	const composed = Gesture.Simultaneous(swipeLeft, swipeRight);
-	useEffect(() => {
-		const handleKeyPress = (event: KeyboardEvent) => {
-			if (event.key === 'ArrowRight') {
-				handleNextScene();
-			} else if (event.key === 'ArrowLeft') {
-				handlePrevScene();
-			}
-		};
-		window.addEventListener('keydown', handleKeyPress);
-		return () => window.removeEventListener('keydown', handleKeyPress);
-	});
+	/* Is causing error on mobile
+		useEffect(() => {
+			const handleKeyPress = (event: KeyboardEvent) => {
+				if (event.key === 'ArrowRight') {
+					handleNextScene();
+				} else if (event.key === 'ArrowLeft') {
+					handlePrevScene();
+				}
+			};
+			window.addEventListener('keydown', handleKeyPress);
+			return () => window.removeEventListener('keydown', handleKeyPress);
+		});
+	*/
 
 	return (
+		<GestureHandlerRootView>
 		<GestureDetector gesture={composed}>
 			<YStack
 				flex={1}
@@ -186,5 +189,6 @@ export default function Summary() {
 				<YStack height={48} />
 			</YStack>
 		</GestureDetector>
+		</GestureHandlerRootView>
 	);
 }

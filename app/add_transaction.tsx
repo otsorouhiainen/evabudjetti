@@ -205,7 +205,7 @@ export default function AddTransaction() {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }}>
+		<SafeAreaView style={{ flex: 1 }} edges={['left','right','bottom']}>
 			<PortalProvider>
 				<YStack
 					style={{ height: '100%', paddingTop: 100 }}
