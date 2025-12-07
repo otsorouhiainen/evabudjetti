@@ -2,7 +2,15 @@ import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Input, SizableText, Text, XStack, YStack } from 'tamagui';
+import {
+	Button,
+	Input,
+	SizableText,
+	Spacer,
+	Text,
+	XStack,
+	YStack,
+} from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import useLanguageStore from '@/src/store/useLanguageStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
@@ -39,13 +47,7 @@ export default function Landing() {
 					// keep overall maxWidth behavior but prefer percent-based outer padding above
 				>
 					{/* Header */}
-					<YStack
-						style={{
-							gap: 5,
-							marginTop: 10,
-							alignItems: 'center',
-						}}
-					>
+					<YStack gap="5" marginTop={10} alignItems="center">
 						<Text fontSize={'$7'} fontWeight={'500'}>
 							EVA Personal Budget
 						</Text>
@@ -67,7 +69,8 @@ export default function Landing() {
 							</Button>
 						</XStack>
 						<XStack mt={'$5'}>
-							{/* Piggy Bank Icon inside responsive container */}
+							<Spacer size={'10%'} />
+							{/* Piggy Bank Icon */}
 							<PiggyBank
 								size={110}
 								style={{ height: '100%' }}

@@ -90,7 +90,7 @@ export default function BudgetYearView({
 			// Use the category string, or fallback if empty
 			const category = t.category || 'Uncategorized';
 
-			if (amount >= 0) {
+			if (t.type === 'income') {
 				incomeMap[category] = (incomeMap[category] || 0) + amount;
 			} else {
 				expenseMap[category] = (expenseMap[category] || 0) + amount;

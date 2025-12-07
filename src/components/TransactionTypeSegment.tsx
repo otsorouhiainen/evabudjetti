@@ -29,7 +29,11 @@ export const TransactionTypeSegment: React.FC<TransactionTypeSegmentProps> = ({
 				borderRadius={20}
 				size="$buttons.md"
 			>
-				<SizableText height={24} fontWeight="700">
+				<SizableText
+					height={24}
+					fontWeight="700"
+					color={opt === type ? '$white' : '$black'}
+				>
 					{opt}
 				</SizableText>
 			</Button>

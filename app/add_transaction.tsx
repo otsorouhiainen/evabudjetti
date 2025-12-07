@@ -463,7 +463,11 @@ export default function AddTransaction() {
 							width={'100%'}
 						>
 							{/* Top header */}
-							<XStack alignItems="center" justifyContent="center">
+							<XStack
+								mt={'$7'}
+								alignItems="center"
+								justifyContent="center"
+							>
 								<SizableText size={'$title1'}>
 									{'Add a real transaction'}
 								</SizableText>

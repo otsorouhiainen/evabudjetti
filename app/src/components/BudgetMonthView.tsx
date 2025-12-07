@@ -36,7 +36,10 @@ export default function BudgetMonthView({
 		return transactions.filter((t) => {
 			const parsedDate =
 				t.date instanceof Date ? t.date : new Date(t.date as string);
-			return parsedDate.getMonth() === currentDate.getMonth();
+			return (
+				parsedDate.getMonth() === currentDate.getMonth() &&
+				parsedDate.getFullYear() === currentDate.getFullYear()
+			);
 		});
 	}, [transactions, currentDate]);
 
@@ -46,12 +49,12 @@ export default function BudgetMonthView({
 		[MonthTransactions, currentDate],
 	);
 
-	const POSITIVE_TX: Item[] = MonthTransactions.filter(
-		(ex) => Number(ex.amount) >= 0,
+	const IncomeTxns: Item[] = MonthTransactions.filter(
+		(txn) => txn.type === 'income',
 	);
 
-	const NEGATIVE_TX: Item[] = MonthTransactions.filter(
-		(ex) => Number(ex.amount) < 0,
+	const ExpenseTxns: Item[] = MonthTransactions.filter(
+		(txn) => txn.type === 'expense',
 	);
 
 	// Label for month selector
@@ -113,7 +116,7 @@ export default function BudgetMonthView({
 
 				{/* Income dropdown */}
 				<BudgetDropdown
-					txns={POSITIVE_TX}
+					txns={IncomeTxns}
 					name={'Incomes'}
 					openDropdown={setIncomesOpen}
 					router={router}
@@ -123,7 +126,7 @@ export default function BudgetMonthView({
 
 				{/* Expense dropdown */}
 				<BudgetDropdown
-					txns={NEGATIVE_TX}
+					txns={ExpenseTxns}
 					name={'Expenses'}
 					openDropdown={setExpensesOpen}
 					router={router}
