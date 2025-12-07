@@ -1,9 +1,6 @@
-import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
-import { type Category, useCategoryStore } from '@/src/store/categoryStore';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
-import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import * as Crypto from 'expo-crypto';
-import { useEffect, useMemo, useState } from 'react';
+import { /*useEffect,*/ useMemo, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	AlertDialog,
 	Button,
@@ -14,14 +11,17 @@ import {
 	Stack,
 	Text,
 	XStack,
-	YStack
+	YStack,
 } from 'tamagui';
+import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
+//import { type Category, useCategoryStore } from '@/src/store/categoryStore';
+//import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import {
 	TransactionType,
 	TransactionTypeSegment,
 } from '../src/components/TransactionTypeSegment';
 import type { Item } from '../src/constants/wizardConfig';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function AddTransaction() {
 	const [type, setType] = useState<
@@ -36,30 +36,33 @@ export default function AddTransaction() {
 		repeatValue?: string;
 	}>({});
 
-	const [expanded, setExpanded] = useState(false);
-	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+	//const [expanded, setExpanded] = useState(false);
+	//const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [plannedModalVisible, setPlannedModalVisible] = useState(false);
 	const [selectedPlannedTxn, setSelectedPlannedTxn] = useState<Item | null>(
 		null,
 	);
 	const [allocationAmount, setAllocationAmount] = useState('');
 
-	const [newCategory, setNewCategory] = useState('');
+	//const [newCategory, setNewCategory] = useState('');
 	const [showSuccess, setShowSuccess] = useState(false);
 	const addTransaction = useRealTransactionsStore((state) => state.add);
-	const addCategory = useCategoryStore((state) => state.addCategory);
-	const storeCategories = useCategoryStore();
-	const plannedTransactions = usePlannedTransactionsStore(
+	//const addCategory = useCategoryStore((state) => state.addCategory);
+	//const storeCategories = useCategoryStore();
+	/*const plannedTransactions = usePlannedTransactionsStore(
 		(state) => state.transactionsForTwoYears,
-	);
-	const [upcomingPlannedTransactions, setUpcomingPlannedTransactions] =
-		useState<Item[]>([]);
+	);*/
 
+	/* const [upcomingPlannedTransactions, setUpcomingPlannedTransactions] =
+		useState<Item[]>([]);*/
+
+	const [upcomingPlannedTransactions] = useState<Item[]>([]);
+	/*
 	const [categories, setCategories] = useState<Category[]>([]);
 	useEffect(() => {
 		setCategories(storeCategories.categories);
 	}, [storeCategories.categories]);
-
+	
 	const dynamicCategories = (categories || []).map((c) => ({
 		key: c.id,
 		label: c.name,
@@ -68,7 +71,7 @@ export default function AddTransaction() {
 				? TransactionType.Income
 				: TransactionType.Expense,
 	}));
-
+	
 	const visibleCategories = expanded
 		? dynamicCategories
 		: dynamicCategories.slice(0, 3);
@@ -105,7 +108,7 @@ export default function AddTransaction() {
 		} catch (e) {
 			console.error('Failed to add category:', e);
 		}
-	};
+	};*/
 
 	const handleSelectPlanned = (txn: Item) => {
 		setSelectedPlannedTxn(txn);
@@ -205,7 +208,7 @@ export default function AddTransaction() {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={['left','right','bottom']}>
+		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
 			<PortalProvider>
 				<YStack
 					style={{ height: '100%', paddingTop: 100 }}
@@ -475,7 +478,7 @@ export default function AddTransaction() {
 									backgroundColor="$primary200"
 									onPress={() => setPlannedModalVisible(true)}
 								>
-									<SizableText height={'100%'} color="$white">
+									<SizableText color="$white">
 										Select planned
 									</SizableText>
 								</Button>
@@ -623,7 +626,7 @@ export default function AddTransaction() {
 										{'Date'}
 										<SizableText size={'$title3'}>
 											{' '}
-											*
+											*{' '}
 										</SizableText>
 									</SizableText>
 

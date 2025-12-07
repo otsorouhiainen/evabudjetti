@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight, Pencil, X } from '@tamagui/lucide-icons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Button, ScrollView, Separator, Text, XStack, YStack } from 'tamagui';
 import BudgetDropdown from '@/app/src/components/BudgetDropdown';
 import type {
@@ -73,13 +73,11 @@ export default function BudgetYearView({
 	const yearLabel = currentDate.getFullYear();
 	// 1. Filter transactions to only have the currently selected year
 	const yearTransactions = useMemo(() => {
-		return transactions.filter(
-			(t) => {
-				const parsedDate = t.date instanceof Date ? t.date
-					: new Date(t.date as string);
-				return parsedDate.getFullYear() === currentDate.getFullYear()
-			}
-		);
+		return transactions.filter((t) => {
+			const parsedDate =
+				t.date instanceof Date ? t.date : new Date(t.date as string);
+			return parsedDate.getFullYear() === currentDate.getFullYear();
+		});
 	}, [transactions, currentDate]);
 
 	// 2. Arrange transactions by Category for the Dropdowns
@@ -130,14 +128,13 @@ export default function BudgetYearView({
 	// Helper to get data for a specific month index (0-11) for the month grid
 	const getMonthData = useCallback(
 		(monthIndex: number) => {
-			const monthTxns = yearTransactions.filter(
-				(t) => 
-			{
-				const parsedDate = t.date instanceof Date ? t.date
-					: new Date(t.date as string);
+			const monthTxns = yearTransactions.filter((t) => {
+				const parsedDate =
+					t.date instanceof Date
+						? t.date
+						: new Date(t.date as string);
 				return parsedDate.getMonth() === monthIndex;
-			}
-			);
+			});
 
 			let income = 0;
 			let expenses = 0;

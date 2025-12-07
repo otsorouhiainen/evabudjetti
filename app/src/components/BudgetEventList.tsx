@@ -1,9 +1,9 @@
 import { Pencil } from '@tamagui/lucide-icons';
+import type { Router } from 'expo-router';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import StyledListItem from '@/app/src/components/StyledListItem';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
-import type { Router } from 'expo-router';
 
 interface Props {
 	txns: Item[];
@@ -20,10 +20,11 @@ const BudgetEventList: React.FC<Props> = ({
 }) => {
 	return (
 		<YStack gap={8}>
-			{title !== "" && (
-			<Text fontSize={'$title1'} fontWeight={'700'} mt={'$2'}>
-				{title}
-			</Text>)}
+			{title !== '' && (
+				<Text fontSize={'$title1'} fontWeight={'700'} mt={'$2'}>
+					{title}
+				</Text>
+			)}
 
 			{txns.map((txn) => (
 				<StyledListItem key={txn.id}>

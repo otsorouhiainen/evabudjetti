@@ -1,18 +1,17 @@
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from '@tamagui/lucide-icons';
 import {
-	type Dispatch,
-	type SetStateAction,
-	useEffect,
-	useMemo,
-	useState,
-} from 'react';
+	ChevronDown,
+	ChevronLeft,
+	ChevronRight,
+	ChevronUp,
+} from '@tamagui/lucide-icons';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
 import { formatCurrency } from '../utils/budgetUtils';
-import StyledCard from './styledCard';
 import BudgetEventList from './BudgetEventList';
+import StyledCard from './styledCard';
 
 interface BudgetDayViewProps {
 	currentDate: Date;
@@ -37,7 +36,7 @@ export default function BudgetDayView({
 	const storeBalance = useBalanceStore((state) => state.balance);
 	const storeDisposable = useBalanceStore((state) => state.disposable);
 	// When first rendered, show only 3 future txs
-	const [futureCount, setFutureCount] = useState(3); 
+	const [futureCount, setFutureCount] = useState(3);
 	// When first rendered, show only 4 past txs
 	const [pastCount, setPastCount] = useState(4);
 	const [currentBalance, setCurrentBalance] = useState(0);
@@ -135,7 +134,7 @@ export default function BudgetDayView({
 			>
 				<YStack paddingHorizontal="$1">
 					{/* --- Navigation / Up Chevron --- */}
-					<YStack alignItems="center" marginBottom={"$2"}>
+					<YStack alignItems="center" marginBottom={'$2'}>
 						<Button
 							unstyled
 							onPress={handleUpChevronClick}
@@ -147,14 +146,17 @@ export default function BudgetDayView({
 									: 'default'
 							}
 						>
-							<ChevronUp size={"$buttons.md"} color="$color.black" />
+							<ChevronUp
+								size={'$buttons.md'}
+								color="$color.black"
+							/>
 						</Button>
 					</YStack>
 
 					{/* --- Future Events --- */}
 					<BudgetEventList
 						txns={future}
-						title={""}
+						title={''}
 						formatCurrency={formatCurrency}
 					/>
 
@@ -165,7 +167,7 @@ export default function BudgetDayView({
 						marginVertical="$4"
 						alignItems="center"
 						justifyContent="center"
-					>					
+					>
 						{/* Date Header with Navigation */}
 						<XStack
 							alignItems="center"
@@ -222,8 +224,8 @@ export default function BudgetDayView({
 								color="$white"
 								fontSize="$3"
 								fontWeight="500"
-								fontStyle='italic'
-								marginTop={"$4"}
+								fontStyle="italic"
+								marginTop={'$4'}
 							>
 								{'No transactions'}
 							</Text>
@@ -234,7 +236,7 @@ export default function BudgetDayView({
 							backgroundColor="$white"
 							borderRadius="$4"
 							paddingHorizontal="$6"
-							height='wrap-content'
+							height="wrap-content"
 							onPress={onAddPress}
 							pressStyle={{ backgroundColor: '$primary300' }}
 							marginVertical={10}
@@ -265,7 +267,7 @@ export default function BudgetDayView({
 					{/* --- Past Events --- */}
 					<BudgetEventList
 						txns={past}
-						title={""}
+						title={''}
 						formatCurrency={formatCurrency}
 					/>
 
@@ -282,7 +284,10 @@ export default function BudgetDayView({
 									: 'default'
 							}
 						>
-							<ChevronDown size={"$buttons.md"} color="$color.black" />
+							<ChevronDown
+								size={'$buttons.md'}
+								color="$color.black"
+							/>
 						</Button>
 					</YStack>
 				</YStack>

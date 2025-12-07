@@ -1,28 +1,22 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Input, Tabs, Text, XStack, YStack } from 'tamagui';
+import { Tabs, Text, YStack } from 'tamagui';
 import type { Item } from '../src/constants/wizardConfig';
 import usePlannedTransactionsStore from '../src/store/usePlannedTransactionsStore';
 import BudgetDayView from './src/components/BudgetDayView';
 import BudgetMonthView from './src/components/BudgetMonthView';
 import BudgetYearView from './src/components/BudgetYearView';
 import StyledTab from './src/components/StyledTab';
-import { isValidDate, parseTxnDate } from './src/utils/budgetUtils';
 
 export default function Budget() {
 	const storeTransactionsForTwoYears = usePlannedTransactionsStore(
 		(state) => state.transactionsForTwoYears,
 	);
 
-	const [editOpen, setEditVisible] = useState(false);
-	const [editingTxn, setEditingTxn] = useState<Item | null>(null);
 	const [currentDate, setcurrentDate] = useState(new Date());
 	const [transactions, setTransactions] = useState<Item[]>([]);
 	const [selectedTab, setSelectedTab] = useState('day');
-	const [error, setError] = useState('');
-	const [dateInput, setDateInput] = useState('');
-	const [amountInput, setAmountInput] = useState('');
 
 	const router = useRouter();
 
@@ -34,64 +28,8 @@ export default function Budget() {
 		setTransactions(storeTransactionsForTwoYears ?? []);
 	}, [storeTransactionsForTwoYears]);
 
-	const handleSave = () => {
-		if (!editingTxn) return;
-		setTransactions((prev) =>
-			prev.map((tx) => (tx.id === editingTxn.id ? editingTxn : tx)),
-		);
-		// TODO: Update store here if needed
-		setEditVisible(false);
-		setEditingTxn(null);
-	};
-
-	const handleDateChange = (text: string) => {
-		setDateInput(text);
-
-		if (text === '') {
-			setError('');
-			return; // don’t touch txn.date
-		}
-
-		const regex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
-		if (regex.test(text)) {
-			const newDate = parseTxnDate(text);
-			// Check if date is valid (not Invalid Date)
-			if (!Number.isNaN(newDate.getTime())) {
-				setError('');
-				setEditingTxn((prev) =>
-					prev ? { ...prev, date: newDate } : prev,
-				);
-			} else {
-				setError('Invalid date');
-			}
-		} else {
-			if (isValidDate(text)) {
-				setError('');
-				const newDate = parseTxnDate(text);
-				setEditingTxn((prev) =>
-					prev ? { ...prev, date: newDate } : prev,
-				);
-			} else {
-				setError('Invalid date, use format: dd.mm.yyyy');
-			}
-		}
-	};
-
-	const handleAmountChange = (text: string) => {
-		setAmountInput(text);
-
-		if (text === '' || text === '-') {
-			return;
-		}
-
-		const num = Number(text);
-		if (Number.isFinite(num) && num !== 0) {
-			setEditingTxn((prev) => (prev ? { ...prev, amount: num } : prev));
-		}
-	};
-
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={['left','right','bottom']}>
+		<SafeAreaView style={{ flex: 1 }}>
 			<YStack
 				backgroundColor={'$color.white'}
 				paddingTop={'$paddingmd'}
@@ -114,7 +52,7 @@ export default function Budget() {
 						backgroundColor="$transparent"
 					>
 						<StyledTab
-							value="day"							
+							value="day"
 							flex={1}
 							borderTopLeftRadius={20}
 							borderBottomLeftRadius={20}
@@ -126,13 +64,10 @@ export default function Budget() {
 										: '$color.black'
 								}
 							>
-								{('Day')}
+								{'Day'}
 							</Text>
 						</StyledTab>
-						<StyledTab
-							value="month"
-							flex={1}
-						>
+						<StyledTab value="month" flex={1}>
 							<Text
 								color={
 									selectedTab === 'month'
@@ -140,7 +75,7 @@ export default function Budget() {
 										: '$color.black'
 								}
 							>
-								{('Month')}
+								{'Month'}
 							</Text>
 						</StyledTab>
 						<StyledTab
@@ -157,7 +92,7 @@ export default function Budget() {
 								}
 								borderRadius={15}
 							>
-								{('Year')}
+								{'Year'}
 							</Text>
 						</StyledTab>
 					</Tabs.List>
@@ -169,14 +104,6 @@ export default function Budget() {
 							onAddPress={() => {
 								router.push('/add_transaction');
 							}}
-							onEditPress={(txn) => {
-								setEditingTxn(txn);
-								setEditVisible(true);
-								setDateInput(
-									txn.date.toLocaleDateString('fi-FI'),
-								);
-								setAmountInput(String(txn.amount));
-							}}
 						/>
 					</Tabs.Content>
 					<Tabs.Content value="month" flex={1}>
@@ -185,7 +112,6 @@ export default function Budget() {
 							transactions={transactions}
 							router={router}
 							onDateChange={setcurrentDate}
-							editOpen={editOpen}
 						/>
 					</Tabs.Content>
 					<Tabs.Content value="year" flex={1}>

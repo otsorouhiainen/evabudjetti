@@ -20,7 +20,7 @@ export function splitTransactions(transactions: Item[], referenceDate: Date) {
 		}
 	}
 	// Get only 7 past and future txns
-	return { past: past.slice(0, 7), future: future.slice(0,7) };
+	return { past: past.slice(0, 7), future: future.slice(0, 7) };
 }
 
 export function formatCurrency(value: number, hideSign?: boolean) {

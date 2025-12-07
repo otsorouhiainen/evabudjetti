@@ -1,11 +1,6 @@
 import { ChevronLeft, ChevronRight, HelpCircle } from '@tamagui/lucide-icons';
-import {
-	type Dispatch,
-	type SetStateAction,
-	useEffect,
-	useMemo,
-	useState,
-} from 'react';
+import type { Router } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import type { Item } from '../../../src/constants/wizardConfig';
@@ -13,14 +8,12 @@ import { LOCALE } from '../constants';
 import { formatCurrency, splitTransactions } from '../utils/budgetUtils';
 import BudgetDropdown from './BudgetDropdown';
 import BudgetEventList from './BudgetEventList';
-import type { Router } from 'expo-router';
 
 interface BudgetMonthViewProps {
 	currentDate: Date;
 	router: Router;
 	transactions: Item[];
 	onDateChange: (date: Date) => void;
-	editOpen: boolean;
 }
 
 export default function BudgetMonthView({
@@ -28,26 +21,23 @@ export default function BudgetMonthView({
 	transactions,
 	router,
 	onDateChange,
-	editOpen,
 }: BudgetMonthViewProps) {
 	const storeBalance = useBalanceStore((state) => state.balance);
 	const storeDisposable = useBalanceStore((state) => state.disposable);
 	const [currentBalance, setCurrentBalance] = useState(0);
 	const [disposable, setDisposable] = useState(0);
-	const [incomesOpen, setIncomesOpen] = useState(true);
-	const [expensesOpen, setExpensesOpen] = useState(true);
+	const [incomesOpen, setIncomesOpen] = useState(false);
+	const [expensesOpen, setExpensesOpen] = useState(false);
 	const [helpVisible, setHelpVisible] = useState(false);
 
 	const today = new Date();
 
 	const MonthTransactions = useMemo(() => {
-	return transactions.filter(
-		(t) => {
-			const parsedDate = t.date instanceof Date ? t.date
-				: new Date(t.date as string);
-			return parsedDate.getMonth() === currentDate.getMonth()
-		}
-	);
+		return transactions.filter((t) => {
+			const parsedDate =
+				t.date instanceof Date ? t.date : new Date(t.date as string);
+			return parsedDate.getMonth() === currentDate.getMonth();
+		});
 	}, [transactions, currentDate]);
 
 	// These used for rendering transactions
@@ -94,7 +84,6 @@ export default function BudgetMonthView({
 				paddingTop={15}
 				paddingHorizontal={5}
 				contentContainerStyle={{ paddingBottom: 100 }}
-				scrollEnabled={!editOpen}
 				showsVerticalScrollIndicator={false}
 			>
 				{/* Month selector */}
@@ -125,7 +114,7 @@ export default function BudgetMonthView({
 				{/* Income dropdown */}
 				<BudgetDropdown
 					txns={POSITIVE_TX}
-					name={('Incomes')}
+					name={'Incomes'}
 					openDropdown={setIncomesOpen}
 					router={router}
 					isOpen={incomesOpen}
@@ -135,7 +124,7 @@ export default function BudgetMonthView({
 				{/* Expense dropdown */}
 				<BudgetDropdown
 					txns={NEGATIVE_TX}
-					name={('Expenses')}
+					name={'Expenses'}
 					openDropdown={setExpensesOpen}
 					router={router}
 					isOpen={expensesOpen}
@@ -174,7 +163,7 @@ export default function BudgetMonthView({
 				{/* Future events */}
 				<BudgetEventList
 					txns={future}
-					title={('Future events')}
+					title={'Future events'}
 					router={router}
 					formatCurrency={formatCurrency}
 				/>
@@ -182,7 +171,7 @@ export default function BudgetMonthView({
 				{/* Past events */}
 				<BudgetEventList
 					txns={past}
-					title={('Past events')}
+					title={'Past events'}
 					router={router}
 					formatCurrency={formatCurrency}
 				/>

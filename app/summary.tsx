@@ -1,6 +1,10 @@
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useState } from 'react';
+import {
+	Gesture,
+	GestureDetector,
+	GestureHandlerRootView,
+} from 'react-native-gesture-handler';
 import Animated, {
 	FadeInLeft,
 	FadeInRight,
@@ -122,73 +126,73 @@ export default function Summary() {
 
 	return (
 		<GestureHandlerRootView>
-		<GestureDetector gesture={composed}>
-			<YStack
-				flex={1}
-				overflow="scroll"
-				paddingTop={24}
-				paddingHorizontal={20}
-				gap={18}
-			>
-				{/* Header */}
-				<XStack
-					flexDirection="row"
-					alignItems="center"
-					marginTop={6}
-					justifyContent="space-between"
-					gap={'$2'}
-				>
-					<Button
-						size="$4"
-						marginTop={8}
-						borderRadius={8}
-						paddingVertical={20}
-						backgroundColor="$primary300"
-						color="$white"
-						onPress={() => router.push('/landing')}
-					>
-						{'< Back'}
-					</Button>
-					<SizableText
-						size={'$title2'}
-						position="absolute"
-						left={0}
-						right={0}
-						textAlign="center"
-						fontWeight="400"
-					>
-						Summary
-					</SizableText>
-				</XStack>
-
-				{/*seperator*/}
-				<Separator
-					borderColor="#ccc"
-					borderWidth={1}
-					borderRadius={10}
-				/>
-				{/*body*/}
+			<GestureDetector gesture={composed}>
 				<YStack
 					flex={1}
-					justifyContent="center"
-					alignItems="center"
-					width="100%"
+					overflow="scroll"
+					paddingTop={24}
+					paddingHorizontal={20}
+					gap={18}
 				>
-					<Animated.View
-						key={currentScene}
-						entering={
-							direction
-								? FadeInRight.delay(200)
-								: FadeInLeft.delay(200)
-						}
-						exiting={direction ? FadeOutLeft : FadeOutRight}
+					{/* Header */}
+					<XStack
+						flexDirection="row"
+						alignItems="center"
+						marginTop={6}
+						justifyContent="space-between"
+						gap={'$2'}
 					>
-						<CurrentScene {...CurrentArguments} />
-					</Animated.View>
+						<Button
+							size="$4"
+							marginTop={8}
+							borderRadius={8}
+							paddingVertical={20}
+							backgroundColor="$primary300"
+							color="$white"
+							onPress={() => router.push('/landing')}
+						>
+							{'< Back'}
+						</Button>
+						<SizableText
+							size={'$title2'}
+							position="absolute"
+							left={0}
+							right={0}
+							textAlign="center"
+							fontWeight="400"
+						>
+							Summary
+						</SizableText>
+					</XStack>
+
+					{/*seperator*/}
+					<Separator
+						borderColor="#ccc"
+						borderWidth={1}
+						borderRadius={10}
+					/>
+					{/*body*/}
+					<YStack
+						flex={1}
+						justifyContent="center"
+						alignItems="center"
+						width="100%"
+					>
+						<Animated.View
+							key={currentScene}
+							entering={
+								direction
+									? FadeInRight.delay(200)
+									: FadeInLeft.delay(200)
+							}
+							exiting={direction ? FadeOutLeft : FadeOutRight}
+						>
+							<CurrentScene {...CurrentArguments} />
+						</Animated.View>
+					</YStack>
+					<YStack height={48} />
 				</YStack>
-				<YStack height={48} />
-			</YStack>
-		</GestureDetector>
+			</GestureDetector>
 		</GestureHandlerRootView>
 	);
 }

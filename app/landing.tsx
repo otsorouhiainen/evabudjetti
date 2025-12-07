@@ -31,15 +31,11 @@ export default function Landing() {
 		recalcDisposable(transactions);
 	}, [storeBalance, storeDisposable, transactions, recalcDisposable]);
 	return (
-		<SafeAreaView style={{ flex: 1}} edges={['left','right','bottom']}>
-			<YStack
-				f={1}
-				backgroundColor="$background"
-			>
+		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
+			<YStack f={1} backgroundColor="$background">
 				<YStack
-					paddingHorizontal={10}
-					backgroundColor={"$caution"}
 					f={1}
+					paddingHorizontal={10}
 					// keep overall maxWidth behavior but prefer percent-based outer padding above
 				>
 					{/* Header */}
@@ -50,15 +46,12 @@ export default function Landing() {
 							alignItems: 'center',
 						}}
 					>
-						<Text
-							fontSize={"$7"}
-							fontWeight={"500"}
-						>EVA Personal Budget</Text>
+						<Text fontSize={'$7'} fontWeight={'500'}>
+							EVA Personal Budget
+						</Text>
 						<Text>Supporting your financial well-being</Text>
 
-						<XStack style={{ height: '10%', gap: 20 }}
-							mt="$1"
-							>
+						<XStack mt="$1">
 							<Button
 								backgroundColor="$primary200"
 								borderRadius={40}
@@ -73,17 +66,13 @@ export default function Landing() {
 								{language === 'fi' ? 'Suomi' : 'English'}
 							</Button>
 						</XStack>
-						<XStack
-							ac="unset"
-							ai="flex-start"
-							jc="space-between"
-							>
+						<XStack mt={'$5'}>
 							{/* Piggy Bank Icon inside responsive container */}
 							<PiggyBank
 								size={110}
 								style={{ height: '100%' }}
-								color={"$primary100"}
-								/>
+								color={'$primary100'}
+							/>
 
 							{/* Help Icon positioned relative to the piggy bank */}
 							<Button
@@ -92,39 +81,40 @@ export default function Landing() {
 								circular
 								chromeless
 								onPress={() => setHelpVisible(true)}
-								icon={<MessageCircleQuestion color="$black" />}
+								icon={
+									<MessageCircleQuestion color="$primary100" />
+								}
 							/>
 						</XStack>
 					</YStack>
 
 					{budgetCreated && (
-						<YStack
-						f={1}
-						ai={"center"}
-						>
+						<YStack f={1} ai={'center'}>
+							{/* balance snapshot */}
 							<YStack
+								width={'70%'}
 								backgroundColor="$white"
 								borderColor="$primary200"
 								borderRadius={20}
 								borderWidth={2}
 								padding={10}
+								mt={'$2'}
+								mb={'$8'}
 							>
 								<YStack
 									alignItems="center"
-									gap={5}
+									gap={10}
 									width="100%"
 								>
-									<Text>
+									<Text fontWeight={'700'} fontSize={'$3'}>
 										{new Date().toLocaleDateString('fi-FI')}
 									</Text>
-									<Text>Money in account</Text>
-									<Text>{balance}€</Text>
-									<Text>Disposable income</Text>
-									<Text>{disposable}€</Text>
+									<Text>Money in account {balance}€</Text>
+									<Text>Disposable income {disposable}€</Text>
 									<Button
+										borderRadius={40}
 										backgroundColor="$primary200"
-										width="50%"
-										size={"$buttons.lg"}
+										size={'$buttons.lg'}
 									>
 										<Text color={'$white'}>
 											VIEW DETAILS
@@ -132,32 +122,41 @@ export default function Landing() {
 									</Button>
 								</YStack>
 							</YStack>
-							<YStack
-								ai="center"
-								paddingHorizontal={10}
-								>
+							{/* Buttons */}
+							<YStack f={1} ai="center">
 								<Button
 									backgroundColor="$primary200"
 									onPress={() =>
 										router.push('/add_transaction')
 									}
-									size={"$buttons.lg"}
+									minWidth={'85%'}
+									height={70}
+									borderRadius={40}
 								>
-									<Text color={'$white'}>
+									<Text
+										color={'$white'}
+										fontWeight={'700'}
+										fontSize={'$4'}
+									>
 										ADD INCOME/EXPENSE
 									</Text>
 								</Button>
 
-								<XStack
-									justifyContent="space-between"
-								>
+								<XStack mt={'$3'} gap={'$3'} minWidth={'85%'}>
 									<Button
 										backgroundColor="$primary200"
 										onPress={() => router.push('/budget')}
-										size={"$buttons.lg"}
+										height={80}
+										f={1}
+										borderRadius={40}
 									>
-										<Text color={'$white'}>
-											SHOW BUDGET
+										<Text
+											color={'$white'}
+											fontWeight={'700'}
+											fontSize={'$3'}
+											ta={'center'}
+										>
+											SHOW{'\n'}BUDGET
 										</Text>
 									</Button>
 									<Button
@@ -165,10 +164,17 @@ export default function Landing() {
 										onPress={() =>
 											router.push('/budget_wizard')
 										}
-										size={"$buttons.lg"}
+										height={80}
+										f={1}
+										borderRadius={40}
 									>
-										<Text color={'$white'}>
-											EDIT BUDGET
+										<Text
+											color={'$white'}
+											fontWeight={'700'}
+											fontSize={'$3'}
+											ta={'center'}
+										>
+											EDIT{'\n'} BUDGET
 										</Text>
 									</Button>
 								</XStack>
@@ -177,10 +183,7 @@ export default function Landing() {
 					)}
 
 					{!budgetCreated && (
-						<YStack
-							gap={5}
-							paddingHorizontal={25}
-						>
+						<YStack gap={5} paddingHorizontal={25}>
 							<Text>
 								No budget created yet. Enter your balance in €
 								without commas and press the "Create budget"
@@ -191,7 +194,7 @@ export default function Landing() {
 								width="100%"
 								value={initialBalance}
 								onChangeText={setInitialBalance}
-								borderColor="$black"
+								borderColor="$primary100"
 								backgroundColor="$white"
 								keyboardType="numeric"
 								fontSize={15}
@@ -202,7 +205,7 @@ export default function Landing() {
 								borderRadius={40}
 								backgroundColor="$primary200"
 								width="100%"
-								color={"white"}
+								color={'white'}
 								onPress={() => {
 									setStoreBalance(Number(initialBalance));
 									router.push('/budget_wizard');
@@ -215,43 +218,38 @@ export default function Landing() {
 					)}
 				</YStack>
 			</YStack>
+
 			{/* Help Modal */}
 			{helpVisible && (
 				<YStack
+					position="absolute"
+					top={0}
+					left={0}
+					right={0}
+					bottom={0}
 					backgroundColor="rgba(0,0,0,0.5)"
 					justifyContent="center"
 					alignItems="center"
-					style={{ height: '100%', width: '100%' }}
 				>
 					<YStack
 						backgroundColor="$white"
 						borderColor="$black"
 						borderWidth={2}
-						borderRadius={'4%'}
-						padding={'5%'}
-						width={'85%'}
+						borderRadius={10}
+						width={'70%'}
 						shadowColor="$black"
 						gap={'3%'}
+						padding={20}
 					>
-						<SizableText
-							marginBottom={'1%'}
-							textAlign="center"
-							style={{ height: '100%' }}
-						>
-							Help
-						</SizableText>
-						<SizableText
-							marginBottom={'2%'}
-							textAlign="center"
-							style={{ height: '100%' }}
-						>
+						<SizableText textAlign="center">Help</SizableText>
+						<SizableText textAlign="center">
 							Help Disposable income
 						</SizableText>
 						<Button
 							onPress={() => setHelpVisible(false)}
-							backgroundColor="$primary300"
+							backgroundColor="$primary200"
+							borderRadius={40}
 							alignSelf="center"
-							style={{ width: '50%' }}
 						>
 							<SizableText color="$white">CLOSE</SizableText>
 						</Button>

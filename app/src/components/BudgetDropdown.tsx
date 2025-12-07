@@ -1,9 +1,9 @@
 import { ChevronDown, ChevronRight, Pencil } from '@tamagui/lucide-icons';
+import type { Router } from 'expo-router';
 import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import StyledCard from '@/app/src/components/styledCard';
 import type { Item } from '../../../src/constants/wizardConfig';
-import type { Router } from 'expo-router';
 
 interface Props {
 	name: string;
@@ -27,7 +27,7 @@ const BudgetDropdown: React.FC<Props> = ({
 			{/* Header - Clickable */}
 			<StyledCard.Header
 				onPress={() => openDropdown((v) => !v)}
-				padding={5}
+				padding={15}
 			>
 				<XStack justifyContent="space-between" alignItems="center">
 					<Text
@@ -89,18 +89,18 @@ const BudgetDropdown: React.FC<Props> = ({
 									{formatCurrency(Number(txn.amount))}
 								</Text>
 								{/* Edit button rendered only if router exists */}
-									{router && (
-										<Button
-											size="$buttons.sm"
-											color={'$color.white'}
-											circular
-											icon={Pencil}
-											onPress={() => {
-												router.push('/budget_wizard');
-											}}
-											chromeless
-										/>
-									)}									
+								{router && (
+									<Button
+										size="$buttons.sm"
+										color={'$color.white'}
+										circular
+										icon={Pencil}
+										onPress={() => {
+											router.push('/budget_wizard');
+										}}
+										chromeless
+									/>
+								)}
 							</XStack>
 						</XStack>
 					))}
