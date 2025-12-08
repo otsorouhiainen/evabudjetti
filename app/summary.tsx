@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> test-demo-again
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -12,6 +8,10 @@ import Animated, {
 	FadeOutRight,
 } from 'react-native-reanimated';
 import { Button, Separator, SizableText, XStack, YStack } from 'tamagui';
+import useBalanceStore from '@/src/store/useBalanceStore';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import { TransactionStore, useTransactionStore } from '@/src/store/transactionStore';
+
 
 import { Scene1 } from '../src/components/summary/scene1';
 import { Scene2 } from '../src/components/summary/scene2';
@@ -25,19 +25,36 @@ export type Expense = {
 	amount: number;
 };
 
+//https://www.geeksforgeeks.org/javascript/sorting-array-of-number-by-increasing-frequency-using-javascript/
+//edited some
+function sortDecreaseFreq(tr: TransactionStore) {
+	const arr = tr.transactions;
+	const freqMap: Record<string, number> = {};
+    arr.forEach(num => {
+        freqMap[num.category] = 
+                (freqMap[num.category] || 0) + 1;
+    });
+
+    const uniqueCategories = [...new Set(arr.map(t => t.category))];
+    return uniqueCategories.sort((a, b) => {
+        return freqMap[b] - freqMap[a];
+	});
+}
+
 export default function Summary() {
 	const router = useRouter();
 
 	//hardcoded values
 	//dynamic ones should just replace these and the page SHOULD work
-	const budget_total = 4200;
-	const budget_month = 1200;
-	const spent_total = 1200;
-	const spent_month = 1051;
+	const budget_total = useBalanceStore((state) => state.balance);
+	const balance_total = useBalanceStore((state) => state.disposable);
+	const transactions = useTransactionStore((state) => state);
+	const transactions_sorted = sortDecreaseFreq(transactions);
+	const upcoming = usePlannedTransactionsStore((state) => state.transactionsForTwoYears);
+
 
 	const current_month = 10;
 
-	//modifying the Expense type might be neccessary before adding these dynamically
 	const expense1: Expense = {
 		name: 'Bus card',
 		date: '01.08.2025',
@@ -60,9 +77,7 @@ export default function Summary() {
 		'Hobbies',
 		'Transportation',
 		'Savings',
-	];
-
-	//variables used to change the 'scene' dynamically,
+	];	//variables used to change the 'scene' dynamically,
 	const [currentScene, setCurrentScene] = useState<number>(0);
 	const [direction, setDirection] = useState<boolean>(true);
 
@@ -70,12 +85,13 @@ export default function Summary() {
 	//the purpose is to make switching to dynamic values easier
 	const Arguments = {
 		budget: budget_total,
-		expected: budget_month,
-		spent: spent_month,
-		balance: budget_total - spent_total,
-		months: (current_month + Math.round(budget_total / budget_month)) % 12,
+		spent: budget_total-balance_total,
+		balance: balance_total,
+		months: 2,
 		categories: expense_categories,
 		upcoming: expenses,
+		//categories: transactions_sorted,
+		//upcoming: upcoming,
 	};
 
 	//each scene is a predefined react node
@@ -192,30 +208,3 @@ export default function Summary() {
 		</GestureDetector>
 	);
 }
-<<<<<<< HEAD
-=======
-import { StyleSheet, Text, View } from 'react-native';
-
-export default function Summary() {
-	return (
-		<View style={styles.container}>
-			<Text style={styles.text}>TODO: Summary page</Text>
-		</View>
-	);
-}
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-		padding: 16,
-	},
-	text: {
-		fontSize: 16,
-		fontWeight: '700',
-	},
-});
->>>>>>> main
-=======
->>>>>>> test-demo-again

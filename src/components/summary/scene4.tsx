@@ -7,7 +7,7 @@ export const Scene4 = ({
 	upcoming,
 }: {
 	categories: string[];
-	upcoming: Expense[];
+	upcoming: typeof Expense[];
 }) => {
 	const font = 12;
 

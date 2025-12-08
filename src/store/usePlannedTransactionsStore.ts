@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { Item } from '../constants/wizardConfig';
 
-interface PlannedTransactionsState {
+export interface PlannedTransactionsState {
 	transactions: Item[];
 	transactionsForTwoYears: Item[];
 	add: (item: Item) => void;
@@ -11,7 +11,7 @@ interface PlannedTransactionsState {
 	replaceAll: (items: Item[]) => void;
 	change: () => void;
 }
-const usePlannedTransactionsStore = create<PlannedTransactionsState>()(
+export const usePlannedTransactionsStore = create<PlannedTransactionsState>()(
 	persist(
 		(set) => ({
 			transactions: [],

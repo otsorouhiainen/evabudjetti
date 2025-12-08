@@ -5,7 +5,7 @@ import type { Item } from '../constants/wizardConfig';
 import { db } from '../db/client';
 import { transactions as transactionsSchema } from '../db/schema';
 
-interface TransactionStore {
+export interface TransactionStore {
 	transactions: Item[];
 	loading: boolean;
 	error: string | null;
