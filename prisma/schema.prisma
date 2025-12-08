@@ -33,6 +33,7 @@ model Budget {
 
   // Planned transactions
   plannedTransactions RecurringTransaction[]
+  TransactionTarget   TransactionTarget[]
 }
 
 // Realized transactions
@@ -56,6 +57,7 @@ model Category {
   // All transactions that use this category.
   recurringTransactions RecurringTransaction[]
   oneTimeTransactions   OneTimeTransaction[]
+  TransactionTarget     TransactionTarget[]
 
   @@unique([name])
 }
@@ -72,6 +74,26 @@ model RecurringTransaction {
   updatedAt   DateTime @updatedAt
 
   // All recurring transactions belong to the single budget.
+  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  budgetId Int    @default(1) // Always links to the Budget with id = 1.
+
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  categoryId String
+
+  @@index([budgetId])
+  @@index([categoryId])
+}
+
+// This is used for budgeting dynamic transactions with a certain
+// e.g 'I aim to spend 300 on groceries'. But the real amount might differ
+model TransactionTarget {
+  id          String   @id @default(cuid())
+  description String
+  amount      Int
+  rrule       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
   budgetId Int    @default(1) // Always links to the Budget with id = 1.
 

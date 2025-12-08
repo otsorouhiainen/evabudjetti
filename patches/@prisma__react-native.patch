@@ -1,0 +1,13 @@
+diff --git a/android/CMakeLists.txt b/android/CMakeLists.txt
+index 65ad3a332fa6b168377b1d506d27f2d6dad5c6dd..9c52f7135578ba55f74b13b73d2271020a639a51 100644
+--- a/android/CMakeLists.txt
++++ b/android/CMakeLists.txt
+@@ -48,7 +48,6 @@ target_link_libraries(
+   query_engine
+   fbjni::fbjni
+   ReactAndroid::jsi
+-  ReactAndroid::turbomodulejsijni
+-  ReactAndroid::react_nativemodule_core
++  ReactAndroid::reactnative
+   android
+ )
