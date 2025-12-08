@@ -46,3 +46,7 @@ tamagui-web.css
 **/*.db
 
 app-example
+
+test-results/
+playwright-report/
+coverage/
