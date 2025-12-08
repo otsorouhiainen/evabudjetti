@@ -1,7 +1,3 @@
-import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
-import { type Category, useCategoryStore } from '@/src/store/categoryStore';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
-import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import * as Crypto from 'expo-crypto';
 import { useEffect, useMemo, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,6 +13,10 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
+import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
+import { type Category, useCategoryStore } from '@/src/store/categoryStore';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import {
 	TransactionType,
 	TransactionTypeSegment,
@@ -36,8 +36,8 @@ export default function AddTransaction() {
 		repeatValue?: string;
 	}>({});
 
-	const [expanded, setExpanded] = useState(false);
-	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+	const [expanded, _setExpanded] = useState(false);
+	const [_categoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [plannedModalVisible, setPlannedModalVisible] = useState(false);
 	const [selectedPlannedTxn, setSelectedPlannedTxn] = useState<Item | null>(
 		null,
@@ -69,7 +69,7 @@ export default function AddTransaction() {
 				: TransactionType.Expense,
 	}));
 
-	const visibleCategories = expanded
+	const _visibleCategories = expanded
 		? dynamicCategories
 		: dynamicCategories.slice(0, 3);
 
@@ -89,7 +89,7 @@ export default function AddTransaction() {
 		console.log('Upcoming planned txns updated', twentyUpComingTxns);
 	}, [plannedTransactions]);
 
-	const handleAddCategory = async () => {
+	const _handleAddCategory = async () => {
 		if (!newCategory.trim()) return;
 
 		try {

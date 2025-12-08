@@ -59,7 +59,7 @@ describe('budgetUtils', () => {
 
 		it('should hide sign/symbol if requested or behave according to spec', () => {
 			// Looking at implementation: signDisplay: hideSign ? 'never' : 'auto'
-			const result = formatCurrency(1234, true);
+			const _result = formatCurrency(1234, true);
 			// It's still currency style, but sign (plus/minus) might be affected.
 			// Actually signDisplay 'never' suppresses the sign for negative numbers too? or just the +?
 			// Let's test negative.
