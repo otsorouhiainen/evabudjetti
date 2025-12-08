@@ -10,6 +10,7 @@ module.exports = (api) => {
 			],
 		],
 		plugins: [
+			['babel-plugin-inline-import', { extensions: ['.sql'] }],
 			[
 				'@tamagui/babel-plugin',
 				{

@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> test-demo-again
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -65,25 +68,21 @@ export default function Summary() {
 
 	//each argument for each scene is given here
 	//the purpose is to make switching to dynamic values easier
-	const Arguments = [
-		{ budget: budget_total, expected: budget_month, spent: spent_month },
-		{ balance: budget_total - spent_total },
-		{
-			months:
-				(current_month + Math.round(budget_total / budget_month)) % 12,
-		},
-		{
-			categories: expense_categories,
-			upcoming: expenses,
-		},
-		{},
-	];
+	const Arguments = {
+		budget: budget_total,
+		expected: budget_month,
+		spent: spent_month,
+		balance: budget_total - spent_total,
+		months: (current_month + Math.round(budget_total / budget_month)) % 12,
+		categories: expense_categories,
+		upcoming: expenses,
+	};
 
 	//each scene is a predefined react node
 	//scenes are changed dynamically to avoid re-loading anything unneccessary
 	const Scenes = [Scene1, Scene2, Scene3, Scene4, Scene5];
 	const CurrentScene = Scenes[currentScene];
-	const CurrentArguments = Arguments[currentScene];
+	const CurrentArguments = Arguments;
 
 	//the rest of the consts here define ways to navigate through scenes
 	//the only current ways are to swipe either left or right or to use the arrow keys
@@ -112,7 +111,7 @@ export default function Summary() {
 
 	const composed = Gesture.Simultaneous(swipeLeft, swipeRight);
 	useEffect(() => {
-		const handleKeyPress = (event) => {
+		const handleKeyPress = (event: KeyboardEvent) => {
 			if (event.key === 'ArrowRight') {
 				handleNextScene();
 			} else if (event.key === 'ArrowLeft') {
@@ -193,6 +192,7 @@ export default function Summary() {
 		</GestureDetector>
 	);
 }
+<<<<<<< HEAD
 =======
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -217,3 +217,5 @@ const styles = StyleSheet.create({
 	},
 });
 >>>>>>> main
+=======
+>>>>>>> test-demo-again
