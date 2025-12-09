@@ -7,13 +7,11 @@ import { Button, useTheme, XStack } from 'tamagui';
 interface NavButtonProps {
 	iconColor?: string;
 	btnColor?: string;
-	borderColor?: string;
 	btnIcon: ReactElement;
 }
 
 const NavButton = ({
 	btnColor,
-	borderColor,
 	btnIcon,
 	onPress,
 }: NavButtonProps & { onPress?: () => void }) => (
@@ -22,10 +20,9 @@ const NavButton = ({
 		icon={btnIcon}
 		color={btnColor}
 		onPress={onPress}
-		borderColor={borderColor}
-		size={25}
-		borderRadius={20}
-		padding={10}
+		size={60}
+		width={'25%'}
+		borderRadius={10}
 	/>
 );
 
@@ -65,25 +62,15 @@ export const BottomNav = () => {
 			bottom={insets.bottom}
 			left={0}
 			right={0}
-			paddingHorizontal={20}
-			paddingVertical={10}
-			justifyContent="space-between"
 			alignItems="center"
 			backgroundColor="$primary100"
-			borderTopLeftRadius={6}
-			borderTopRightRadius={6}
-			elevation={10}
-			shadowColor="$black"
-			shadowOffset={{ width: 0, height: -2 }}
-			shadowOpacity={0.1}
-			shadowRadius={4}
+			justifyContent="space-evenly"
 		>
 			{bottomNavOptions.map((option) => (
 				<NavButton
 					key={option.route}
 					btnIcon={option.icon}
 					btnColor={theme.white.val}
-					borderColor={theme.primary200.val}
 					onPress={() => router.push(option.route)}
 				/>
 			))}

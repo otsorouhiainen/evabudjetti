@@ -1,16 +1,17 @@
-import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
 import {
-	type Dispatch,
-	type SetStateAction,
-	useEffect,
-	useMemo,
-	useState,
-} from 'react';
+	ChevronDown,
+	ChevronLeft,
+	ChevronRight,
+	ChevronUp,
+} from '@tamagui/lucide-icons';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import type { Item } from '../../../src/constants/wizardConfig';
 import { LOCALE } from '../constants';
 import { formatCurrency } from '../utils/budgetUtils';
+import BudgetEventList from './BudgetEventList';
+import StyledCard from './styledCard';
 
 interface BudgetDayViewProps {
 	currentDate: Date;
@@ -18,9 +19,6 @@ interface BudgetDayViewProps {
 	onDateChange: (date: Date) => void;
 	onAddPress?: () => void;
 	onEditPress?: (txn: Item) => void;
-	setEditVisible: (state: boolean) => void;
-	setEditingTxn: (txn: Item) => void;
-	setInputDate: Dispatch<SetStateAction<string>>;
 }
 
 // Helper to format date as "dd.mm.yyyy"
@@ -33,15 +31,14 @@ export default function BudgetDayView({
 	transactions,
 	onDateChange,
 	onAddPress,
-	setInputDate,
-	setEditingTxn,
-	setEditVisible,
 }: BudgetDayViewProps) {
 	// State to track how many transactions to show
 	const storeBalance = useBalanceStore((state) => state.balance);
 	const storeDisposable = useBalanceStore((state) => state.disposable);
-	const [futureCount, setFutureCount] = useState(0);
-	const [pastCount, setPastCount] = useState(0);
+	// When first rendered, show only 3 future txs
+	const [futureCount, setFutureCount] = useState(3);
+	// When first rendered, show only 4 past txs
+	const [pastCount, setPastCount] = useState(4);
 	const [currentBalance, setCurrentBalance] = useState(0);
 	const [disposable, setDisposable] = useState(0);
 
@@ -100,9 +97,7 @@ export default function BudgetDayView({
 			}
 		});
 
-		// Future events: We want the ones CLOSEST to the future.
-		// The sorted array is Descending (Aug 3, Aug 2, Aug 1).
-
+		// Future events: We want the ones CLOSEST to today
 		return {
 			futureTxns: futureTxns,
 			future: futureTxns
@@ -110,42 +105,68 @@ export default function BudgetDayView({
 					Math.max(0, futureTxns.length - futureCount),
 					futureTxns.length,
 				)
-				.reverse()
-				.slice(0, futureCount), // Get closest N
+				.slice(0, futureCount),
 			current: currentTxns,
-			past: pastTxns.slice(0, pastCount), // Get closest N
+			past: pastTxns.slice(0, pastCount),
 			pastTxns: pastTxns,
 		};
 	}, [transactions, currentDate, futureCount, pastCount]);
 
-	useEffect(() => {
-		setFutureCount(futureTxns.length);
-		setPastCount(pastTxns.length);
-	}, [futureTxns, pastTxns]);
+	// Display 2 more transactions per chevron click
+
+	const handleUpChevronClick = () => {
+		if (futureTxns.length > futureCount) {
+			setFutureCount((prev) => prev + 2);
+		}
+	};
+	const handleDownChevronClick = () => {
+		if (pastTxns.length > pastCount) {
+			setPastCount((prev) => prev + 2);
+		}
+	};
 
 	return (
 		<YStack flex={1}>
 			<ScrollView
 				flex={1}
-				contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
+				contentContainerStyle={{ paddingBottom: 50, paddingTop: 10 }}
 				showsVerticalScrollIndicator={false}
 			>
-				<YStack paddingHorizontal={5}>
+				<YStack paddingHorizontal="$1">
+					{/* --- Navigation / Up Chevron --- */}
+					<YStack alignItems="center" marginBottom={'$2'}>
+						<Button
+							unstyled
+							onPress={handleUpChevronClick}
+							opacity={futureTxns.length > futureCount ? 1 : 0.3}
+							disabled={futureTxns.length <= futureCount}
+							cursor={
+								futureTxns.length > futureCount
+									? 'pointer'
+									: 'default'
+							}
+						>
+							<ChevronUp
+								size={'$buttons.md'}
+								color="$color.black"
+							/>
+						</Button>
+					</YStack>
+
+					{/* --- Future Events --- */}
+					<BudgetEventList
+						txns={future}
+						title={''}
+						formatCurrency={formatCurrency}
+					/>
+
 					{/* --- Current Day Card (Center Focus) --- */}
-					<YStack
-						backgroundColor="$primary200"
-						borderRadius={20}
-						paddingVertical={30}
-						paddingHorizontal={20}
-						marginVertical={20}
+					<StyledCard
+						paddingVertical="$2"
+						paddingHorizontal="$4"
+						marginVertical="$4"
 						alignItems="center"
 						justifyContent="center"
-						gap={15}
-						shadowColor="$color.black"
-						shadowOffset={{ width: 0, height: 4 }}
-						shadowOpacity={0.1}
-						shadowRadius={4}
-						elevation={4}
 					>
 						{/* Date Header with Navigation */}
 						<XStack
@@ -201,8 +222,10 @@ export default function BudgetDayView({
 						) : (
 							<Text
 								color="$white"
-								fontSize="$body"
+								fontSize="$3"
 								fontWeight="500"
+								fontStyle="italic"
+								marginTop={'$4'}
 							>
 								{'No transactions'}
 							</Text>
@@ -211,9 +234,9 @@ export default function BudgetDayView({
 						{/* Add Button */}
 						<Button
 							backgroundColor="$white"
-							borderRadius={20}
-							paddingHorizontal={30}
-							height="$buttons.lg"
+							borderRadius="$4"
+							paddingHorizontal="$6"
+							height="wrap-content"
 							onPress={onAddPress}
 							pressStyle={{ backgroundColor: '$primary300' }}
 							marginVertical={10}
@@ -221,7 +244,7 @@ export default function BudgetDayView({
 							<Text
 								color="$primary100"
 								fontWeight="800"
-								fontSize="$buttons.md"
+								fontSize="$buttons.sm"
 								textTransform="uppercase"
 							>
 								{'Add new'}
@@ -239,6 +262,33 @@ export default function BudgetDayView({
 								{formatCurrency(disposable)}
 							</Text>
 						</YStack>
+					</StyledCard>
+
+					{/* --- Past Events --- */}
+					<BudgetEventList
+						txns={past}
+						title={''}
+						formatCurrency={formatCurrency}
+					/>
+
+					{/* --- Navigation / Down Chevron --- */}
+					<YStack alignItems="center" marginTop="$2">
+						<Button
+							unstyled
+							onPress={handleDownChevronClick}
+							opacity={pastTxns.length > pastCount ? 1 : 0.3}
+							disabled={pastTxns.length <= pastCount}
+							cursor={
+								pastTxns.length > pastCount
+									? 'pointer'
+									: 'default'
+							}
+						>
+							<ChevronDown
+								size={'$buttons.md'}
+								color="$color.black"
+							/>
+						</Button>
 					</YStack>
 				</YStack>
 			</ScrollView>

@@ -1,10 +1,12 @@
+import DateTimePicker, {
+	type DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
 import { Calendar } from '@tamagui/lucide-icons';
 import { format, parse } from 'date-fns';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
-import DatePicker from 'react-native-date-picker';
-import { Button, Input } from 'tamagui';
+import { Button, Input, SizableText, XStack } from 'tamagui';
 
 type Props = {
 	value?: Date | null;
@@ -43,11 +45,28 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 		}
 	}, [editorDate, onChange, date]);
 
+	const handleDateChange = (
+		event: DateTimePickerEvent,
+		selectedDate?: Date,
+	) => {
+		// On Android, picker closes automatically on any action
+		// On iOS, we need to handle it differently
+		if (Platform.OS === 'android') {
+			setDatePickerOpen(false);
+		}
+
+		if (event.type === 'set' && selectedDate) {
+			setDate(selectedDate);
+			setEditorDate(format(selectedDate, 'dd-MM-yyyy'));
+			onChange(selectedDate);
+		}
+	};
+
 	if (Platform.OS === 'web') {
 		return (
 			<View style={styles.dateElementsContainer}>
 				<Input
-					style={{ height: '100%' }}
+					flex={1}
 					placeholder="Write the date here (DD-MM-YYYY)"
 					value={editorDate}
 					onChangeText={setEditorDate}
@@ -57,35 +76,36 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 	}
 
 	return (
-		<>
-			<DatePicker
-				modal
-				open={datePickerOpen}
-				mode="date"
-				date={date instanceof Date ? date : new Date()}
-				onConfirm={(selectedDate) => {
-					setDatePickerOpen(false);
-					setDate(selectedDate);
-					onChange(selectedDate);
-				}}
-				onCancel={() => {
-					setDatePickerOpen(false);
-				}}
+		<XStack f={1} ai={'center'}>
+			{/* Display selected date */}
+			<SizableText size="$body">
+				{date ? format(date, 'dd-MM-yyyy') : 'dd-mm-yyyy'}
+			</SizableText>
+
+			{/* Calendar button */}
+			<Button
+				size="$3"
+				icon={Calendar}
+				onPress={() => setDatePickerOpen(true)}
+				chromeless
 			/>
-			<View style={styles.dateElementsContainer}>
-				<Button
-					style={{ height: '100%' }}
-					icon={Calendar}
-					onPress={() => setDatePickerOpen(true)}
+
+			{/* Date Picker - only rendered when open */}
+			{datePickerOpen && (
+				<DateTimePicker
+					value={date instanceof Date ? date : new Date()}
+					mode="date"
+					display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+					onChange={handleDateChange}
 				/>
-			</View>
-		</>
+			)}
+		</XStack>
 	);
 };
 
 const styles = StyleSheet.create({
 	dateElementsContainer: {
-		height: '100%',
+		flex: 1,
 		flexDirection: 'row',
 		alignItems: 'center',
 		gap: 10,

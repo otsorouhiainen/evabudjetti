@@ -11,7 +11,7 @@ if (Platform.OS !== 'web') {
 		schema,
 	});
 } else {
-	db = {} as any;
+	db = {} as ExpoSQLiteDatabase<typeof schema>;
 }
 
 export { db };

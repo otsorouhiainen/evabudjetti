@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight, Pencil, X } from '@tamagui/lucide-icons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Button, ScrollView, Separator, Text, XStack, YStack } from 'tamagui';
 import BudgetDropdown from '@/app/src/components/BudgetDropdown';
 import type {
@@ -57,7 +57,6 @@ export default function BudgetYearView({
 	const [selectedMonthIndex, setSelectedMonthIndex] = useState<number | null>(
 		null,
 	);
-	const [transactionsForYear, setTransactionsForYear] = useState<Item[]>([]);
 
 	const handlePrev = () => {
 		const newDate = new Date(currentDate);
@@ -72,19 +71,13 @@ export default function BudgetYearView({
 	};
 
 	const yearLabel = currentDate.getFullYear();
-	useEffect(() => {
-		const txns = transactions.filter(
-			(t) => t.date.getFullYear() === currentDate.getFullYear(),
-		);
-		setTransactionsForYear(txns);
-	}, [transactions, currentDate]);
 	// 1. Filter transactions to only have the currently selected year
 	const yearTransactions = useMemo(() => {
-		return transactions.filter(
-			(t) =>
-				t.date instanceof Date &&
-				t.date.getFullYear() === currentDate.getFullYear(),
-		);
+		return transactions.filter((t) => {
+			const parsedDate =
+				t.date instanceof Date ? t.date : new Date(t.date as string);
+			return parsedDate.getFullYear() === currentDate.getFullYear();
+		});
 	}, [transactions, currentDate]);
 
 	// 2. Arrange transactions by Category for the Dropdowns
@@ -97,7 +90,7 @@ export default function BudgetYearView({
 			// Use the category string, or fallback if empty
 			const category = t.category || 'Uncategorized';
 
-			if (amount >= 0) {
+			if (t.type === 'income') {
 				incomeMap[category] = (incomeMap[category] || 0) + amount;
 			} else {
 				expenseMap[category] = (expenseMap[category] || 0) + amount;
@@ -135,9 +128,13 @@ export default function BudgetYearView({
 	// Helper to get data for a specific month index (0-11) for the month grid
 	const getMonthData = useCallback(
 		(monthIndex: number) => {
-			const monthTxns = transactionsForYear.filter(
-				(t) => t.date.getMonth() === monthIndex,
-			);
+			const monthTxns = yearTransactions.filter((t) => {
+				const parsedDate =
+					t.date instanceof Date
+						? t.date
+						: new Date(t.date as string);
+				return parsedDate.getMonth() === monthIndex;
+			});
 
 			let income = 0;
 			let expenses = 0;
@@ -154,7 +151,7 @@ export default function BudgetYearView({
 				txns: monthTxns,
 			};
 		},
-		[transactionsForYear],
+		[yearTransactions],
 	);
 
 	// overlay thay shows when a grid card is clicked
@@ -345,9 +342,7 @@ export default function BudgetYearView({
 
 				<BudgetDropdown
 					name={'Incomes'}
-					txns={transactionsForYear.filter(
-						(t) => t.type === 'income',
-					)}
+					txns={incomeCategories}
 					isOpen={incomesOpen}
 					openDropdown={setIncomesOpen}
 					formatCurrency={formatCurrency}
@@ -355,9 +350,7 @@ export default function BudgetYearView({
 
 				<BudgetDropdown
 					name={'Expenses'}
-					txns={transactionsForYear.filter(
-						(t) => t.type === 'expense',
-					)}
+					txns={expenseCategories}
 					isOpen={expensesOpen}
 					openDropdown={setExpensesOpen}
 					formatCurrency={formatCurrency}

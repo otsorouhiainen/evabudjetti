@@ -21,7 +21,7 @@ const useRealTransactionsStore = create<RealTransactionsState>()(
 				}));
 			},
 			remove: (item: Item) => {
-				set((state) => { 
+				set((state) => {
 					const id = item.id;
 					if (id === undefined) return state;
 					return {

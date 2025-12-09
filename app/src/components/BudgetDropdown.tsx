@@ -1,17 +1,15 @@
 import { ChevronDown, ChevronRight, Pencil } from '@tamagui/lucide-icons';
+import type { Router } from 'expo-router';
 import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import StyledCard from '@/app/src/components/styledCard';
-import { LOCALE } from '@/app/src/constants';
 import type { Item } from '../../../src/constants/wizardConfig';
 
 interface Props {
 	name: string;
 	txns: Item[];
 	isOpen: boolean;
-	setEditVisible?: (state: boolean) => void;
-	setEditingTxn?: (txn: Item) => void;
-	setInputDate?: Dispatch<SetStateAction<string>>;
+	router?: Router;
 	openDropdown: Dispatch<SetStateAction<boolean>>;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
@@ -19,9 +17,7 @@ interface Props {
 const BudgetDropdown: React.FC<Props> = ({
 	txns,
 	name,
-	setEditVisible,
-	setEditingTxn,
-	setInputDate,
+	router,
 	openDropdown,
 	isOpen,
 	formatCurrency,
@@ -31,7 +27,7 @@ const BudgetDropdown: React.FC<Props> = ({
 			{/* Header - Clickable */}
 			<StyledCard.Header
 				onPress={() => openDropdown((v) => !v)}
-				padding={5}
+				padding={15}
 			>
 				<XStack justifyContent="space-between" alignItems="center">
 					<Text
@@ -71,9 +67,9 @@ const BudgetDropdown: React.FC<Props> = ({
 			{/* Dropdown Content */}
 			{isOpen && (
 				<YStack mb={15} gap={5}>
-					{txns.map((txn) => (
+					{txns.map((txn, index) => (
 						<XStack
-							key={txn.id}
+							key={`${txn.id}-${index}`}
 							justifyContent="space-between"
 							alignItems="center"
 							ml={15}
@@ -92,26 +88,19 @@ const BudgetDropdown: React.FC<Props> = ({
 								>
 									{formatCurrency(Number(txn.amount))}
 								</Text>
-								{setEditVisible &&
-									setEditingTxn &&
-									setInputDate && (
-										<Button
-											size="$buttons.sm"
-											color={'$color.white'}
-											circular
-											icon={Pencil}
-											onPress={() => {
-												setEditVisible(true);
-												setEditingTxn(txn);
-												setInputDate(
-													txn.date.toLocaleDateString(
-														LOCALE,
-													),
-												);
-											}}
-											chromeless
-										/>
-									)}
+								{/* Edit button rendered only if router exists */}
+								{router && (
+									<Button
+										size="$buttons.sm"
+										color={'$color.white'}
+										circular
+										icon={Pencil}
+										onPress={() => {
+											router.push('/budget_wizard');
+										}}
+										chromeless
+									/>
+								)}
 							</XStack>
 						</XStack>
 					))}

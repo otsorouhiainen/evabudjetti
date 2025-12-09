@@ -1,11 +1,6 @@
 import { ChevronLeft, ChevronRight, HelpCircle } from '@tamagui/lucide-icons';
-import {
-	type Dispatch,
-	type SetStateAction,
-	useEffect,
-	useMemo,
-	useState,
-} from 'react';
+import type { Router } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import type { Item } from '../../../src/constants/wizardConfig';
@@ -16,51 +11,59 @@ import BudgetEventList from './BudgetEventList';
 
 interface BudgetMonthViewProps {
 	currentDate: Date;
+	router: Router;
 	transactions: Item[];
 	onDateChange: (date: Date) => void;
-	setEditVisible: (visible: boolean) => void;
-	setEditingTxn: (txn: Item) => void;
-	setInputDate: Dispatch<SetStateAction<string>>;
-	editOpen: boolean;
 }
 
 export default function BudgetMonthView({
 	currentDate,
 	transactions,
+	router,
 	onDateChange,
-	setEditVisible,
-	setEditingTxn,
-	setInputDate,
-	editOpen,
 }: BudgetMonthViewProps) {
 	const storeBalance = useBalanceStore((state) => state.balance);
 	const storeDisposable = useBalanceStore((state) => state.disposable);
 	const [currentBalance, setCurrentBalance] = useState(0);
 	const [disposable, setDisposable] = useState(0);
-	const [incomesOpen, setIncomesOpen] = useState(true);
-	const [expensesOpen, setExpensesOpen] = useState(true);
+	const [incomesOpen, setIncomesOpen] = useState(false);
+	const [expensesOpen, setExpensesOpen] = useState(false);
 	const [helpVisible, setHelpVisible] = useState(false);
 
 	const today = new Date();
 
+	const MonthTransactions = useMemo(() => {
+		return transactions.filter((t) => {
+			const parsedDate =
+				t.date instanceof Date ? t.date : new Date(t.date as string);
+			return (
+				parsedDate.getMonth() === currentDate.getMonth() &&
+				parsedDate.getFullYear() === currentDate.getFullYear()
+			);
+		});
+	}, [transactions, currentDate]);
+
+	// These used for rendering transactions
 	const { past, future } = useMemo(
-		() => splitTransactions(transactions, currentDate),
-		[transactions, currentDate],
+		() => splitTransactions(MonthTransactions, currentDate),
+		[MonthTransactions, currentDate],
 	);
 
-	const POSITIVE_TX: Item[] = [...future, ...past].filter(
-		(ex) => ex.type === 'income',
+	const IncomeTxns: Item[] = MonthTransactions.filter(
+		(txn) => txn.type === 'income',
 	);
 
-	const NEGATIVE_TX: Item[] = [...future, ...past].filter(
-		(ex) => ex.type === 'expense',
+	const ExpenseTxns: Item[] = MonthTransactions.filter(
+		(txn) => txn.type === 'expense',
 	);
 
+	// Label for month selector
 	const monthLabel = new Intl.DateTimeFormat(LOCALE, {
 		month: 'long',
 		year: 'numeric',
 	}).format(currentDate);
 
+	// Handler functions for month selector
 	const handlePrev = () => {
 		const newDate = new Date(currentDate);
 		newDate.setMonth(newDate.getMonth() - 1);
@@ -84,7 +87,6 @@ export default function BudgetMonthView({
 				paddingTop={15}
 				paddingHorizontal={5}
 				contentContainerStyle={{ paddingBottom: 100 }}
-				scrollEnabled={!editOpen}
 				showsVerticalScrollIndicator={false}
 			>
 				{/* Month selector */}
@@ -114,24 +116,20 @@ export default function BudgetMonthView({
 
 				{/* Income dropdown */}
 				<BudgetDropdown
-					txns={POSITIVE_TX}
+					txns={IncomeTxns}
 					name={'Incomes'}
-					setEditVisible={setEditVisible}
-					setEditingTxn={setEditingTxn}
-					setInputDate={setInputDate}
 					openDropdown={setIncomesOpen}
+					router={router}
 					isOpen={incomesOpen}
 					formatCurrency={formatCurrency}
 				/>
 
 				{/* Expense dropdown */}
 				<BudgetDropdown
-					txns={NEGATIVE_TX}
+					txns={ExpenseTxns}
 					name={'Expenses'}
-					setEditVisible={setEditVisible}
-					setEditingTxn={setEditingTxn}
-					setInputDate={setInputDate}
 					openDropdown={setExpensesOpen}
+					router={router}
 					isOpen={expensesOpen}
 					formatCurrency={formatCurrency}
 				/>
@@ -169,9 +167,7 @@ export default function BudgetMonthView({
 				<BudgetEventList
 					txns={future}
 					title={'Future events'}
-					setEditVisible={setEditVisible}
-					setEditingTxn={setEditingTxn}
-					setInputDate={setInputDate}
+					router={router}
 					formatCurrency={formatCurrency}
 				/>
 
@@ -179,9 +175,7 @@ export default function BudgetMonthView({
 				<BudgetEventList
 					txns={past}
 					title={'Past events'}
-					setEditVisible={setEditVisible}
-					setEditingTxn={setEditingTxn}
-					setInputDate={setInputDate}
+					router={router}
 					formatCurrency={formatCurrency}
 				/>
 			</ScrollView>

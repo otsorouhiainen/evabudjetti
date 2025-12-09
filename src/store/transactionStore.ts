@@ -28,7 +28,7 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
 				const stored = localStorage.getItem('transactions');
 				const transactions = stored ? JSON.parse(stored) : [];
 				// Convert date strings back to Date objects
-				const parsedTransactions = transactions.map((t: any) => ({
+				const parsedTransactions = transactions.map((t: Item) => ({
 					...t,
 					date: new Date(t.date),
 				}));
