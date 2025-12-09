@@ -16,7 +16,6 @@ export const Scene1 = ({
 
 	return (
 		<View>
-
 			<View style={styles.container} padding={16} marginBottom={16}>
 				<Text> Total budget </Text>
 
@@ -45,21 +44,21 @@ export const Scene1 = ({
 				<Text> {spent}€ </Text>
 
 				<Progress
-				  value={spentPercent}
-				  size="$4"
-				  height={progressHeight}
-				  backgroundColor="#4CAF50"
-				  borderWidth={2}
-				  borderColor="black"
-				  borderRadius={2}
-				  width="100%"
-				>
-				  <Progress.Indicator
-					backgroundColor="#800020"
+					value={spentPercent}
+					size="$4"
 					height={progressHeight}
-					width={`${100}%`}  // Cap it at 100%
-					// Don't set width here - let Progress component control it via the value prop
-				  />
+					backgroundColor="#4CAF50"
+					borderWidth={2}
+					borderColor="black"
+					borderRadius={2}
+					width="100%"
+				>
+					<Progress.Indicator
+						backgroundColor="#800020"
+						height={progressHeight}
+						width={`${100}%`} // Cap it at 100%
+						// Don't set width here - let Progress component control it via the value prop
+					/>
 				</Progress>
 				<Text>{} </Text>
 				<Text> Vs total budget {budget} </Text>
@@ -72,9 +71,7 @@ export const Scene1 = ({
 
 				<XStack width="50%" justifyContent="center" alignItems="center">
 					<Text flexWrap="wrap">
-						{isPositive
-							? 'Left of budget'
-							: 'Over budget'}
+						{isPositive ? 'Left of budget' : 'Over budget'}
 					</Text>
 				</XStack>
 			</XStack>

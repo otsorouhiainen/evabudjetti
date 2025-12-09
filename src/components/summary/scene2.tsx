@@ -18,7 +18,7 @@ export const Scene2 = ({ balance }: { balance: number }) => {
 				marginTop={-64}
 				icon={<PiggyBank />}
 				size={300}
-				color={'$primary300'}
+				color={'$primary200'}
 			/>
 		</View>
 	);

@@ -1,3 +1,4 @@
+import useBalanceStore from '@/src/store/useBalanceStore';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -8,10 +9,9 @@ import Animated, {
 	FadeOutRight,
 } from 'react-native-reanimated';
 import { Button, Separator, SizableText, XStack, YStack } from 'tamagui';
-import useBalanceStore from '@/src/store/useBalanceStore';
-import {usePlannedTransactionsStore, PlannedTransactionsState} from '@/src/store/usePlannedTransactionsStore';
-import generateTransactionsForTwoYears from '@/src/store/usePlannedTransactionsStore';
+
 import type { Item } from '@/src/constants/wizardConfig';
+import { test_transactions } from '@/src/utils/fakeTransactions';
 
 import { Scene1 } from '../src/components/summary/scene1';
 import { Scene2 } from '../src/components/summary/scene2';
@@ -19,55 +19,36 @@ import { Scene3 } from '../src/components/summary/scene3';
 import { Scene4 } from '../src/components/summary/scene4';
 import { Scene5 } from '../src/components/summary/scene5';
 
-export type Expense = {
-	name: string;
-	date: string;
-	amount: number;
-};
-
-/*export interface Item {
-	id: string;
-	name: string;
-	category: string;
-	type: TransactionType;
-	amount: number;
-	recurrence: Recurrence;
-	recurrenceInterval?: number;
-	date: Date;
-}*/
-
 function sortDecreaseFreq(): string[] {
-	const transactions: Item[] = generateTransactionsForTwoYears().transactionsForTwoYears;
+	const transactions: Item[] = test_transactions;
 
 	//array of categories
-	const cat_arr : string[] = transactions
-		.filter(t => t.type === "expense")
-		.map(t => t.category) 
-	
-	//	map where key is the name of the category 
+	const cat_arr: string[] = transactions
+		.filter((t) => t.type === 'expense')
+		.map((t) => t.category);
+
+	//	map where key is the name of the category
 	// 	and payload is the number of occurrences
-	const cat_map : Record<string, number> = {};
-	cat_arr.forEach(c => {
-		cat_map[c] = (cat_map[c] ||0) + 1;	
+	const cat_map: Record<string, number> = {};
+	cat_arr.forEach((c) => {
+		cat_map[c] = (cat_map[c] || 0) + 1;
 	});
-	
+
 	//returns the categories sorted based on occurrences
-	return Object.keys(cat_map)
-    	.sort((a, b) => cat_map[b] - cat_map[a]);
+	return Object.keys(cat_map).sort((a, b) => cat_map[b] - cat_map[a]);
 }
 
 export default function Summary() {
 	const router = useRouter();
 
+	// HARDCODED VALUES for testing
+
 	//hardcoded values
 	//dynamic ones should just replace these and the page SHOULD work
 	const budget_total = useBalanceStore((state) => state.balance);
 	const balance_total = useBalanceStore((state) => state.disposable);
-	const upcoming = usePlannedTransactionsStore((state) => state.transactions);
-	const categories_sorted : string[] = sortDecreaseFreq();
-
-	const current_month = 10;
-
+	const test_categories = sortDecreaseFreq();
+	//variables used to change the 'scene' dynamically,
 	const [currentScene, setCurrentScene] = useState<number>(0);
 	const [direction, setDirection] = useState<boolean>(true);
 
@@ -75,11 +56,11 @@ export default function Summary() {
 	//the purpose is to make switching to dynamic values easier
 	const Arguments = {
 		budget: budget_total,
-		spent: budget_total-balance_total,
+		spent: budget_total - balance_total,
 		balance: balance_total,
 		months: 2,
-		upcoming: upcoming,
-		categories: categories_sorted,
+		upcoming: test_transactions,
+		categories: test_categories,
 	};
 
 	//each scene is a predefined react node
@@ -148,7 +129,7 @@ export default function Summary() {
 						marginTop={8}
 						borderRadius={8}
 						paddingVertical={20}
-						backgroundColor="$primary300"
+						backgroundColor="$primary200"
 						color="$white"
 						onPress={() => router.push('/landing')}
 					>

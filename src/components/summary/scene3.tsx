@@ -1,7 +1,13 @@
 import { Calendar } from '@tamagui/lucide-icons';
 import { Stack, Text, View } from 'tamagui';
 
-export const Scene3 = ({ months }: { months: number }) => {
+export const Scene3 = ({
+	budget,
+	spent,
+}: {
+	budget: number;
+	spent: number;
+}) => {
 	const kuukaudet = [
 		'Joulukuu',
 		'Tammikuu',
@@ -17,6 +23,8 @@ export const Scene3 = ({ months }: { months: number }) => {
 		'Marraskuu',
 	];
 
+	const is_good = 0.5 < spent / budget;
+	const today = new Date();
 	return (
 		<View>
 			<Text textAlign="center" marginBottom={60} fontSize={24}>
@@ -26,7 +34,9 @@ export const Scene3 = ({ months }: { months: number }) => {
 
 			<Text fontSize={18} marginBottom={20}>
 				{' '}
-				Your money will last until...{' '}
+				{is_good
+					? 'You have over half your budget left! You will last until...'
+					: 'You have under half your budget left! You will last until...'}{' '}
 			</Text>
 
 			<Stack
@@ -34,9 +44,11 @@ export const Scene3 = ({ months }: { months: number }) => {
 				justifyContent="center"
 				position="relative"
 			>
-				<Calendar size={200} color="$primary300" />
+				<Calendar size={200} color="$primary200" />
 				<Text position="absolute" fontSize={16} marginTop={48}>
-					{kuukaudet[months]}
+					{is_good
+						? kuukaudet[(today.getMonth() + 3) % 12]
+						: kuukaudet[(today.getMonth() + 2) % 12]}
 				</Text>
 			</Stack>
 		</View>
