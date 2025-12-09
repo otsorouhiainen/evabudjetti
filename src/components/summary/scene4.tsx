@@ -1,13 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { Text, View, XStack } from 'tamagui';
-import type Expense from '@/app/summary';
-
+import type { Item } from '@/src/constants/wizardConfig';
 export const Scene4 = ({
 	categories,
 	upcoming,
 }: {
 	categories: string[];
-	upcoming: typeof Expense[];
+	upcoming: Item[];
 }) => {
 	const font = 12;
 

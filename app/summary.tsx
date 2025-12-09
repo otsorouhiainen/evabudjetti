@@ -9,9 +9,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Button, Separator, SizableText, XStack, YStack } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
-import { TransactionStore, useTransactionStore } from '@/src/store/transactionStore';
-
+import {usePlannedTransactionsStore, PlannedTransactionsState} from '@/src/store/usePlannedTransactionsStore';
+import generateTransactionsForTwoYears from '@/src/store/usePlannedTransactionsStore';
+import type { Item } from '@/src/constants/wizardConfig';
 
 import { Scene1 } from '../src/components/summary/scene1';
 import { Scene2 } from '../src/components/summary/scene2';
@@ -25,20 +25,35 @@ export type Expense = {
 	amount: number;
 };
 
-//https://www.geeksforgeeks.org/javascript/sorting-array-of-number-by-increasing-frequency-using-javascript/
-//edited some
-function sortDecreaseFreq(tr: TransactionStore) {
-	const arr = tr.transactions;
-	const freqMap: Record<string, number> = {};
-    arr.forEach(num => {
-        freqMap[num.category] = 
-                (freqMap[num.category] || 0) + 1;
-    });
+/*export interface Item {
+	id: string;
+	name: string;
+	category: string;
+	type: TransactionType;
+	amount: number;
+	recurrence: Recurrence;
+	recurrenceInterval?: number;
+	date: Date;
+}*/
 
-    const uniqueCategories = [...new Set(arr.map(t => t.category))];
-    return uniqueCategories.sort((a, b) => {
-        return freqMap[b] - freqMap[a];
+function sortDecreaseFreq(): string[] {
+	const transactions: Item[] = generateTransactionsForTwoYears().transactionsForTwoYears;
+
+	//array of categories
+	const cat_arr : string[] = transactions
+		.filter(t => t.type === "expense")
+		.map(t => t.category) 
+	
+	//	map where key is the name of the category 
+	// 	and payload is the number of occurrences
+	const cat_map : Record<string, number> = {};
+	cat_arr.forEach(c => {
+		cat_map[c] = (cat_map[c] ||0) + 1;	
 	});
+	
+	//returns the categories sorted based on occurrences
+	return Object.keys(cat_map)
+    	.sort((a, b) => cat_map[b] - cat_map[a]);
 }
 
 export default function Summary() {
@@ -48,36 +63,11 @@ export default function Summary() {
 	//dynamic ones should just replace these and the page SHOULD work
 	const budget_total = useBalanceStore((state) => state.balance);
 	const balance_total = useBalanceStore((state) => state.disposable);
-	const transactions = useTransactionStore((state) => state);
-	const transactions_sorted = sortDecreaseFreq(transactions);
-	const upcoming = usePlannedTransactionsStore((state) => state.transactionsForTwoYears);
-
+	const upcoming = usePlannedTransactionsStore((state) => state.transactions);
+	const categories_sorted : string[] = sortDecreaseFreq();
 
 	const current_month = 10;
 
-	const expense1: Expense = {
-		name: 'Bus card',
-		date: '01.08.2025',
-		amount: -50,
-	};
-	const expense2: Expense = {
-		name: 'Netflix',
-		date: '03.08.2025',
-		amount: -15.99,
-	};
-	const expense3: Expense = {
-		name: 'Electricity bill',
-		date: '03.08.2025',
-		amount: -30,
-	};
-	const expenses: Expense[] = [expense1, expense2, expense3];
-	const expense_categories = [
-		'Living',
-		'Groceries',
-		'Hobbies',
-		'Transportation',
-		'Savings',
-	];	//variables used to change the 'scene' dynamically,
 	const [currentScene, setCurrentScene] = useState<number>(0);
 	const [direction, setDirection] = useState<boolean>(true);
 
@@ -88,10 +78,8 @@ export default function Summary() {
 		spent: budget_total-balance_total,
 		balance: balance_total,
 		months: 2,
-		categories: expense_categories,
-		upcoming: expenses,
-		//categories: transactions_sorted,
-		//upcoming: upcoming,
+		upcoming: upcoming,
+		categories: categories_sorted,
 	};
 
 	//each scene is a predefined react node
