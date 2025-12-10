@@ -113,7 +113,7 @@ export default function Landing() {
 										{new Date().toLocaleDateString('fi-FI')}
 									</Text>
 									<Text>Money in account {balance}€</Text>
-									<Text>Disposable income {disposable}€</Text>
+									{/*<Text>Disposable income {disposable}€</Text>*/}
 									<Button
 										borderRadius={40}
 										backgroundColor="$primary200"

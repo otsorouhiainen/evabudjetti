@@ -23,14 +23,14 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 
 	useEffect(() => {
 		setDate(value || null);
-		setEditorDate(value ? format(value, 'dd-MM-yyyy') : '');
+		setEditorDate(value ? format(value, 'dd/MM/yyyy') : '');
 	}, [value]);
 
 	// Only update date when editorDate is valid and different
 	useEffect(() => {
 		const isValidDateFormat = /^\d{2}-\d{2}-\d{4}$/.test(editorDate);
 		if (isValidDateFormat) {
-			const parsedDate = parse(editorDate, 'dd-MM-yyyy', new Date());
+			const parsedDate = parse(editorDate, 'dd/MM/yyyy', new Date());
 			if (!Number.isNaN(parsedDate.getTime())) {
 				const parsedTime = parsedDate.getTime();
 				let currentTime = NaN;
@@ -57,7 +57,7 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 
 		if (event.type === 'set' && selectedDate) {
 			setDate(selectedDate);
-			setEditorDate(format(selectedDate, 'dd-MM-yyyy'));
+			setEditorDate(format(selectedDate, 'dd/MM/yyyy'));
 			onChange(selectedDate);
 		}
 	};
@@ -79,7 +79,7 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 		<XStack f={1} ai={'center'}>
 			{/* Display selected date */}
 			<SizableText size="$body">
-				{date ? format(date, 'dd-MM-yyyy') : 'dd-mm-yyyy'}
+				{date ? format(date, 'd.MM.yy') : 'd.mm.yy'}
 			</SizableText>
 
 			{/* Calendar button */}

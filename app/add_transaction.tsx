@@ -14,14 +14,14 @@ import {
 	YStack,
 } from 'tamagui';
 import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
-//import { type Category, useCategoryStore } from '@/src/store/categoryStore';
+import { type Category, useCategoryStore } from '@/src/store/categoryStore';
 //import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
-import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import {
 	TransactionType,
 	TransactionTypeSegment,
 } from '../src/components/TransactionTypeSegment';
 import type { Item } from '../src/constants/wizardConfig';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 
 export default function AddTransaction() {
 	const [type, setType] = useState<
@@ -46,7 +46,7 @@ export default function AddTransaction() {
 
 	//const [newCategory, setNewCategory] = useState('');
 	const [showSuccess, setShowSuccess] = useState(false);
-	const addTransaction = useRealTransactionsStore((state) => state.add);
+	const addTransaction = usePlannedTransactionsStore((state) => state.add);
 	//const addCategory = useCategoryStore((state) => state.addCategory);
 	//const storeCategories = useCategoryStore();
 	/*const plannedTransactions = usePlannedTransactionsStore(

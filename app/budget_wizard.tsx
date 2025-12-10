@@ -9,6 +9,7 @@ import AddItemPopup from '../src/components/AddItemPopup';
 import { MultiPlatformDatePicker } from '../src/components/MultiPlatformDatePicker';
 import {
 	BUDGET_WIZARD_STEPS,
+	type Recurrence,
 	type BudgetWizardStep,
 	type Item,
 } from '../src/constants/wizardConfig';
@@ -86,6 +87,55 @@ export default function BudgetWizard() {
 		);
 	}
 
+	function shortenRecVisual(rec: Recurrence): string {
+		switch (rec) {
+			case 'daily':
+				return 'd';
+			case 'monthly':
+				return 'm';
+			case 'yearly':
+				return 'y';
+			case 'weekly':
+				return 'w';
+			// case custom for default
+			default:
+				return 'c';
+		}
+	}
+
+	function nextOccurence(rec: Recurrence) {
+		switch (rec) {
+			case 'daily':
+				return 'weekly';
+			case 'weekly':
+				return 'monthly';
+			case 'monthly':
+				return 'yearly';
+			case 'yearly':
+				return 'daily';
+			// case weekly, also default
+			default:
+				return 'custom';
+		}
+	}
+
+	function reoccurenceChange(item: Item): BudgetWizardStep[] {
+		return wizardData.map((step, sIdx) =>
+			sIdx === stepIndex
+				? {
+						...step,
+						items: step.items.map((it) => {
+							if (it.name === item.name) {
+								const newRec = nextOccurence(it.recurrence);
+								it.recurrence = newRec;
+							}
+							return it;
+						}),
+					}
+				: step,
+		);
+	}
+
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
 			<View style={styles.container}>
@@ -137,7 +187,7 @@ export default function BudgetWizard() {
 						>
 							<SizableText
 								color="$black"
-								size="$title3"
+								size="$body"
 								style={styles.itemName}
 							>
 								{item.name}
@@ -188,14 +238,19 @@ export default function BudgetWizard() {
 										);
 									}}
 								/>
-								<SizableText
-									color="$black"
-									style={styles.recurrenceText}
-									size="$title3"
+								<Button
+									backgroundColor={'$primary200'}
+									size={'$5'}
+									onPress={() => {
+										setWizardData(reoccurenceChange(item));
+									}}
 								>
-									{item.recurrence}
-									{/* Need to make display enum for this later "/mo, /d, /a, etc" */}
-								</SizableText>
+									<SizableText color="$white" size={'$body'}>
+										{shortenRecVisual(item.recurrence)}
+										{/* Need to make display enum for this later "/mo, /d, /a, etc" */}
+									</SizableText>
+								</Button>
+
 								<Button
 									color="$black"
 									transparent
@@ -290,12 +345,11 @@ const styles = StyleSheet.create({
 	itemContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'space-evenly',
 		padding: 5,
 		marginTop: 5,
 	},
 	amountInput: {
-		width: '38%',
+		width: '28%',
 		height: '100%',
 	},
 	dateInput: {
@@ -312,11 +366,11 @@ const styles = StyleSheet.create({
 		marginTop: 40,
 	},
 	itemContent: {
-		width: '70%',
+		width: '80%',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'flex-end',
-		gap: 10,
+		gap: 5,
 	},
 	calendarIcon: {
 		width: '5%',
@@ -332,14 +386,11 @@ const styles = StyleSheet.create({
 		height: '9%',
 	},
 	itemName: {
-		width: '30%',
+		width: '20%',
 	},
 	trashIcon: {
-		width: '15%',
+		width: '1%',
 		height: '100%',
-	},
-	recurrenceText: {
-		width: '15%',
 	},
 	pageHeader: {
 		marginTop: 20,

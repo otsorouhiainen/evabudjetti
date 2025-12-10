@@ -26,8 +26,8 @@ const BudgetEventList: React.FC<Props> = ({
 				</Text>
 			)}
 
-			{txns.map((txn) => (
-				<StyledListItem key={txn.id}>
+			{txns.map((txn, index) => (
+				<StyledListItem key={`${txn.id}-${index}`}>
 					<Text
 						flex={1}
 						numberOfLines={1}

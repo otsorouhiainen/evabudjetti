@@ -187,11 +187,11 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 					</Button>
 					<Button
 						borderRadius={28}
-						backgroundColor="$primary200"
+						backgroundColor="$caution"
 						style={styles.button}
 						onPress={onClose}
 					>
-						<SizableText color="$white" size="$title3">
+						<SizableText color="$black" size="$title3">
 							Cancel
 						</SizableText>
 					</Button>
