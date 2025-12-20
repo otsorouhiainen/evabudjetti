@@ -1,82 +1,82 @@
-# Budjettieva
+R# **Budjettieva**
 
-A simple budgeting and expense tracking software to help you manage your finances
+**Budjettieva** is a modern, cross-platform budgeting and expense tracking application designed to help you manage your personal finances with ease. Built with performance and scalability in mind using React Native and Expo.
 
-## Features
-- You can create your own budget
-- Add planned expenses and income
-- Add "ad-hoc" one time transactions
-- See your spending over time, see how long your money will last
+## **✨ Features**
 
-## Technologies
-- **TypeScript**: For strong typing and scalable development.
-- **Expo**: Framework used for cross-platform mobile applications.
-- **Zustand**: For state management.
-- **PNPM**: Used as the package manager.
-- **ESLint**: For linting and code style consistency.
-- **Jest/Vitest**: For testing.
+* **📊 Comprehensive Budgeting**: Create and customize your own budgets.  
+* **🧙‍♂️ Budget Wizard**: Step-by-step wizard to easily set up your initial budget preferences.  
+* **💸 Transaction Tracking**: Log both planned expenses/income and "ad-hoc" one-time transactions.  
+* **📈 Visual Analytics**: Visualize spending over time and forecast financial longevity.  
+* **🌍 Multi-language Support**: Fully localized interface (En/Fi).  
+* **📱 Cross-Platform**: Seamless experience on both Android and iOS.
 
-## Get started on development
+## **🛠 Technologies**
 
-1. Install pnpm and modules
+This project leverages a modern stack for robust mobile development:
 
-Read though the [pnpm install guide](https://pnpm.io/installation)
+* [**React Native**](https://reactnative.dev/) **& [Expo](https://expo.dev/)**: For cross-platform mobile development.  
+* [**TypeScript**](https://www.typescriptlang.org/): Ensures type safety and scalable code.  
+* [**Tamagui**](https://tamagui.dev/): For highly performant and consistent UI components.  
+* [**Zustand**](https://github.com/pmndrs/zustand): A small, fast, and scalable bearbones state management solution.  
+* [**Prisma**](https://www.prisma.io/): Next-generation Node.js and TypeScript ORM for SQLite.  
+* [**i18next**](https://www.i18next.com/): For internationalization.  
+* [**PNPM**](https://pnpm.io/): Fast, disk space efficient package manager.  
+* [**Biome**](https://biomejs.dev/): Fast formatter and linter.
 
-Then run
+## **🚀 Get Started**
 
-```bash
-pnpm install
-```
+### **Prerequisites**
 
-2.a Start the app in the browser
+* Node.js (LTS recommended)  
+* [PNPM](https://pnpm.io/installation) installed globally.
 
-   Run in terminal
-   ```bash
-   pnpm run web
-   ```
-2.b Android startup
+### **Installation**
 
-   Run in terminal
-   ```bash
-   pnpm expo start
-   ```
-   then start Expo Go on your Android device (download latest Expo Go version from Google Play)
-   Read QR Code from terminal with Expo Go (NOTE! Both devices need to be in the same Wi-fi network)
+1. **Clone the repository**  
+   git clone \[https://github.com/Samu-K/evabudjetti.git\](https://github.com/Samu-K/evabudjetti.git)  
+   cd evabudjetti
 
-2.c Ios startup
+2. **Install dependencies**  
+   pnpm install
 
-   Run in terminal
-   ```bash
-   pnpm expo start
-   ```
-   then start Expo Go on your Ios device (download latest Expo Go version from App Store)
-   Connect the device to the same Wi-fi network as the PC, the application should show up in the list in the application
+3. Initialize Database (Prisma)  
+   Ensure your local database is set up correctly.  
+   npx prisma generate  
+   npx prisma db push
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### **Running the App**
 
-## Contributing to Git
+**Android**  
+pnpm expo start  
+\# Press 'a' to open on Android Emulator or scan QR code with Expo Go
 
-### !!! PLEASE FOLLOW THE BELOW GUIDELINES TO SUBMIT CODE
+**iOS**  
+pnpm expo start  
+\# Press 'i' to open on iOS Simulator or scan QR code with Expo Go
 
-#### Starting a new feature
+**Web**  
+pnpm run web
 
-As you begin work on a new feature for the app, first make a new branch from 'nightly'
+## **🤝 Contributing**
 
-Also open a pull-request on that branch, **AS SOON AS YOU START WORK ON IT**
+We welcome contributions\! Please follow these guidelines to ensure a smooth workflow.
 
-##### Why?
+### **Starting a New Feature**
 
-1. This ensures project managers have an easy time following development progress
-2. Makes it easy for us to merge new features, without breaking the existing application fully
-3. Ensures we always have a functioning version to demo for customers
+1. Create a new branch from nightly (or main if nightly is not active).  
+2. Open a **Draft Pull Request** immediately to signal work in progress.
 
-#### Getting your changes approved
+### **Workflow**
 
-Once you have finished working on your feature, first check that all github checks have passed.
+1. **Development**: Edit files in the app/ directory (Expo Router).  
+2. **Testing**: Run tests if available.  
+3. **Linting**: Ensure code quality by running pnpm run lint.  
+4. **Review**: Request a review from a senior developer.  
+5. **Merge**: Once approved and checks pass, your code will be merged.
 
-After that, request review from one of the senior developers. If they approve the changes, they will be merged. If not, you will be notified on what to change.
+Need help? Open a [GitHub Issue](https://github.com/Samu-K/evabudjetti/issues).
 
-#### Need help?
+## **📄 License**
 
-If anything here is unfamiliar to you, or you need help, please open a GitHub issue [here](https://github.com/Samu-K/evabudjetti/issues).
-
+Distributed under the MIT License. See LICENSE for more information.
