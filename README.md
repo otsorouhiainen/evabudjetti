@@ -2,6 +2,20 @@
 
 A simple budgeting and expense tracking software to help you manage your finances
 
+## Features
+- You can create your own budget
+- Add planned expenses and income
+- Add "ad-hoc" one time transactions
+- See your spending over time, see how long your money will last
+
+## Technologies
+- **TypeScript**: For strong typing and scalable development.
+- **Expo**: Framework used for cross-platform mobile applications.
+- **Zustand**: For state management.
+- **PNPM**: Used as the package manager.
+- **ESLint**: For linting and code style consistency.
+- **Jest/Vitest**: For testing.
+
 ## Get started on development
 
 1. Install pnpm and modules
@@ -64,4 +78,5 @@ After that, request review from one of the senior developers. If they approve th
 
 #### Need help?
 
-If anything here is unfamiliar to you, or you need help, feel free to contact @SamuKar on telegram.
+If anything here is unfamiliar to you, or you need help, please open a GitHub issue [here](https://github.com/Samu-K/evabudjetti/issues).
+
