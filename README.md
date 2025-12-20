@@ -1,4 +1,4 @@
-R# **Budjettieva**
+# **Budjettieva**
 
 **Budjettieva** is a modern, cross-platform budgeting and expense tracking application designed to help you manage your personal finances with ease. Built with performance and scalability in mind using React Native and Expo.
 
