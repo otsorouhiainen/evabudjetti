@@ -1,1 +1,1 @@
-export const LOCALE = 'en-US'; // locale const for budget page, can be deleted if declared elsewhere
+export const LOCALE = 'fi-FI'; // locale const for budget page, can be deleted if declared elsewhere

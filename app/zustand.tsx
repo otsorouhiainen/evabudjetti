@@ -1,6 +1,6 @@
 import { Button, StyleSheet, Text, View } from 'react-native';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
-import useCounterStore from '../src/store/useCounterStore'; // Adjust the import path
+import useCounterStore from '../src/store/useCounterStore';
 import usePersistantCounterStore from '../src/store/usePersistantCounterStore';
 
 const CounterDisplay = () => {
