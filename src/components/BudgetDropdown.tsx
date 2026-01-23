@@ -1,22 +1,16 @@
+import { StyledCard } from '@/app/src/components/styledCard';
+import { LOCALE } from '@/app/src/constants';
 import { ChevronDown, ChevronRight, Pencil } from '@tamagui/lucide-icons';
 import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
-import { StyledCard } from '@/app/src/components/styledCard';
-import { LOCALE } from '@/app/src/constants';
-
-type Txn = {
-	id: string;
-	name: string;
-	date: Date; // dd.mm.yyyy
-	amount: number | string; // string essential for input rendering
-};
+import type { Item } from '../constants/wizardConfig';
 
 interface Props {
 	name: string;
-	txns: Txn[];
+	txns: Item[];
 	isOpen: boolean;
 	setEditVisible: (state: boolean) => void;
-	setEditingTxn: (txn: Txn) => void;
+	setEditingTxn: (txn: Item) => void;
 	setInputDate: Dispatch<SetStateAction<string>>;
 	openDropdown: Dispatch<SetStateAction<boolean>>;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
@@ -107,7 +101,11 @@ export const BudgetDropdown: React.FC<Props> = ({
 										setEditVisible(true);
 										setEditingTxn(txn);
 										setInputDate(
-											txn.date.toLocaleString(LOCALE),
+											txn.date
+												? txn.date.toLocaleString(
+														LOCALE,
+													)
+												: '',
 										);
 									}}
 									chromeless

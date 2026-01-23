@@ -1,3 +1,4 @@
+import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import {
 	Check as CheckIcon,
 	ChevronDown,
@@ -31,11 +32,12 @@ export const CATEGORIES = [
 	{ key: 'other', label: 'Other', type: TransactionType.Income },
 	{ key: 'electricity', label: 'Electricity', type: TransactionType.Expense },
 	{ key: 'water', label: 'Water', type: TransactionType.Expense },
-] as const;
+];
 
 export type CategoryKey = (typeof CATEGORIES)[number]['key'];
 
 export default function AddTransaction() {
+	const submitToStore = useRealTransactionsStore((state) => state.add);
 	const [type, setType] = useState<
 		TransactionType.Income | TransactionType.Expense
 	>(TransactionType.Income);
@@ -47,7 +49,7 @@ export default function AddTransaction() {
 	const [dateError, setDateError] = useState<string | null>(null);
 	const [repeat, setRepeat] = useState(false);
 	const [repeatInterval, setRepeatInterval] = useState<
-		'monthly' | 'custom interval'
+		'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
 	>('monthly');
 	const [repeatValue, setRepeatValue] = useState('');
 	const [errors, setErrors] = useState<{
@@ -132,7 +134,7 @@ export default function AddTransaction() {
 		}
 		if (
 			repeat === true &&
-			repeatInterval === 'custom interval' &&
+			repeatInterval === 'custom' &&
 			repeatValue === ''
 		) {
 			newErrors.repeatValue = i18next.t('Enter the recurrence interval');
@@ -141,6 +143,17 @@ export default function AddTransaction() {
 		setErrors(newErrors);
 
 		if (Object.keys(newErrors).length === 0) {
+			submitToStore({
+				id: 1,
+				type: type.toLowerCase() as Lowercase<typeof type>,
+				category: category ?? 'other',
+				name: name,
+				amount: Number(amount),
+				reoccurence: repeatInterval,
+				reoccurenceInterval:
+					repeatValue === '' ? undefined : Number(repeatValue),
+				date: date ?? new Date(),
+			});
 			console.log({
 				type,
 				category,
@@ -478,7 +491,13 @@ export default function AddTransaction() {
 									backgroundColor="$primary300"
 								>
 									{(
-										['monthly', 'custom interval'] as const
+										[
+											'daily',
+											'weekly',
+											'monthly',
+											'yearly',
+											'custom',
+										] as const
 									).map((opt) => (
 										<Button
 											key={opt}
@@ -487,7 +506,7 @@ export default function AddTransaction() {
 											borderRadius={10}
 											onPress={() => {
 												setRepeatInterval(opt);
-												if (opt !== 'custom interval')
+												if (opt !== 'custom')
 													setRepeatValue('');
 											}}
 											backgroundColor={
@@ -504,7 +523,7 @@ export default function AddTransaction() {
 								</XStack>
 							)}
 
-							{repeat && repeatInterval === 'custom interval' && (
+							{repeat && repeatInterval === 'custom' && (
 								<YStack>
 									<SizableText size={'$title3'}>
 										{i18next.t('Repeat interval')}
@@ -541,26 +560,6 @@ export default function AddTransaction() {
 									)}
 								</YStack>
 							)}
-
-							<YStack>
-								<SizableText size={'$title3'}>
-									{i18next.t('Additional information')}
-								</SizableText>
-								<Input
-									value={description}
-									onChangeText={setDescription}
-									placeholder={i18next.t(
-										'Write additional information',
-									)}
-									height={40}
-									borderRadius={6}
-									focusStyle={{
-										outlineColor: 'transparent',
-									}}
-									px="10px"
-									fontSize={'$title3'}
-								/>
-							</YStack>
 						</YStack>
 
 						{/* Submit */}
@@ -579,20 +578,16 @@ export default function AddTransaction() {
 						>
 							<SizableText size={'$title3'} color={'$white'}>
 								{type === TransactionType.Income
-									? i18next
-											.t('Add {{transactionType}}', {
-												transactionType: i18next.t(
-													TransactionType.Income,
-												),
-											})
-											.toUpperCase()
-									: i18next
-											.t('Add {{transactionType}}', {
-												transactionType: i18next.t(
-													TransactionType.Expense,
-												),
-											})
-											.toUpperCase()}
+									? i18next.t('Add {{transactionType}}', {
+											transactionType: i18next.t(
+												TransactionType.Income,
+											),
+										})
+									: i18next.t('Add {{transactionType}}', {
+											transactionType: i18next.t(
+												TransactionType.Expense,
+											),
+										})}
 							</SizableText>
 						</Button>
 
@@ -674,7 +669,7 @@ export default function AddTransaction() {
 							fontSize={'$title3'}
 						>
 							<SizableText size={'$title3'} color={'$primary200'}>
-								{i18next.t('Cancel').toUpperCase()}
+								{i18next.t('Cancel')}
 							</SizableText>
 						</Button>
 					</YStack>

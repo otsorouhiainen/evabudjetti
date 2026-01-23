@@ -1,21 +1,17 @@
-import { ChevronLeft, ChevronRight, HelpCircle } from '@tamagui/lucide-icons';
-import { useMemo, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Input, ScrollView, Tabs, Text, XStack, YStack } from 'tamagui';
 import { BudgetDropdown } from '@/src/components/BudgetDropdown';
 import { BudgetEventList } from '@/src/components/BudgetEventList';
+import { ChevronLeft, ChevronRight, HelpCircle } from '@tamagui/lucide-icons';
+import { useEffect, useMemo, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Button, Input, ScrollView, Tabs, Text, XStack, YStack } from 'tamagui';
+import type { Item } from '../src/constants/wizardConfig';
+import useBalanceStore from '../src/store/useBalanceStore';
+import usePlannedTransactionsStore from '../src/store/usePlannedTransactionsStore';
 import { StyledTab } from './src/components/StyledTab';
 import { LOCALE } from './src/constants/';
 
 // Possibly removed later if declared for whole project
 const today = new Date(Date.now());
-
-type Txn = {
-	id: string;
-	name: string;
-	date: Date; // dd.mm.yyyy
-	amount: number | string; // string essential for input rendering
-};
 
 function parseTxnDate(dateStr: string): Date {
 	// "dd.mm.yyyy" → Date
@@ -23,12 +19,12 @@ function parseTxnDate(dateStr: string): Date {
 	return new Date(year, month - 1, day);
 }
 
-function splitTransactions(transactions: Txn[], referenceDate: Date = today) {
+function splitTransactions(transactions: Item[], referenceDate: Date = today) {
 	const normalizedDate = new Date(referenceDate);
 	normalizedDate.setHours(0, 0, 0, 0);
 
-	const past: Txn[] = [];
-	const future: Txn[] = [];
+	const past: Item[] = [];
+	const future: Item[] = [];
 
 	for (const tx of transactions) {
 		const txDate = tx.date;
@@ -41,54 +37,6 @@ function splitTransactions(transactions: Txn[], referenceDate: Date = today) {
 
 	return { past, future };
 }
-
-const MOCK_TX: Txn[] = [
-	{ id: '1', name: 'Rent', date: parseTxnDate('22.10.2026'), amount: -830.5 },
-	{
-		id: '2',
-		name: 'Study benefit',
-		date: parseTxnDate('25.10.2025'),
-		amount: +280,
-	},
-	{
-		id: '3',
-		name: 'Study loan',
-		date: parseTxnDate('06.10.2025'),
-		amount: +300,
-	},
-	{ id: '4', name: 'Pet', date: parseTxnDate('20.10.2026'), amount: -60 },
-	{
-		id: '5',
-		name: 'Phone bill',
-		date: parseTxnDate('01.10.2026'),
-		amount: -27,
-	},
-	{
-		id: '6',
-		name: 'Netflix',
-		date: parseTxnDate('22.10.2025'),
-		amount: -12.99,
-	},
-	{
-		id: '7',
-		name: 'Spotify',
-		date: parseTxnDate('13.10.2025'),
-		amount: -15.99,
-	},
-	{ id: '8', name: 'Water', date: parseTxnDate('11.10.2025'), amount: -25 },
-	{
-		id: '9',
-		name: 'Salary',
-		date: parseTxnDate('15.10.2025'),
-		amount: 340.79,
-	},
-	{
-		id: '10',
-		name: 'additional benefit',
-		date: parseTxnDate('01.10.2025'),
-		amount: 150,
-	},
-];
 
 function formatCurrency(value: number, hideSign?: boolean) {
 	// Formats given currency to a locale (currently finnish)
@@ -104,28 +52,54 @@ function formatCurrency(value: number, hideSign?: boolean) {
 }
 
 export default function Budget() {
+	const storeTransactions = usePlannedTransactionsStore(
+		(state) => state.transactions,
+	);
+	const storeBalance = useBalanceStore((state) => state.balance);
+	const storeDisposable = useBalanceStore((state) => state.disposable);
 	const [incomesOpen, setIncomesOpen] = useState(true);
 	const [expensesOpen, setExpensesOpen] = useState(true);
 	const [helpVisible, setHelpVisible] = useState(false);
 	const [editOpen, setEditVisible] = useState(false);
-	const [editingTxn, setEditingTxn] = useState<Txn | null>(null);
+	const [editingTxn, setEditingTxn] = useState<Item | null>(null);
 	const [currentDate, setcurrentDate] = useState(new Date());
-	const [transactions, setTransactions] = useState<Txn[]>(MOCK_TX);
+	const [transactions, setTransactions] = useState<Item[]>([
+		{
+			id: 0,
+			name: '',
+			amount: 0,
+			date: new Date(),
+			type: 'income',
+			category: 'uncategorized',
+			reoccurence: 'none',
+		},
+	]);
 	const [selectedTab, setSelectedTab] = useState('day');
 	const [error, setError] = useState('');
 	const [dateInput, setDateInput] = useState('');
-
+	const [totals, setTotals] = useState({
+		balance: 1,
+		discretionary: 1,
+	});
 	const { past, future } = useMemo(
 		() => splitTransactions(transactions),
 		[transactions],
 	);
-
-	const POSITIVE_TX: Txn[] = [...future, ...past].filter(
-		(ex) => Number(ex.amount) >= 0,
+	useEffect(() => {
+		setTransactions(storeTransactions.map((tx) => tx));
+	}, [storeTransactions]);
+	const POSITIVE_TX: Item[] = [...future, ...past].filter(
+		(ex) => ex.type === 'income',
 	);
+	useEffect(() => {
+		setTotals({
+			balance: storeBalance,
+			discretionary: storeDisposable,
+		});
+	}, [storeBalance, storeDisposable]);
 
-	const NEGATIVE_TX: Txn[] = [...future, ...past].filter(
-		(ex) => Number(ex.amount) < 0,
+	const NEGATIVE_TX: Item[] = [...future, ...past].filter(
+		(ex) => ex.type === 'expense',
 	);
 
 	const monthLabel = new Intl.DateTimeFormat(LOCALE, {
@@ -152,11 +126,6 @@ export default function Budget() {
 		);
 		setEditVisible(false);
 		setEditingTxn(null);
-	};
-
-	const totals = {
-		balance: 111,
-		discretionary: 6,
 	};
 
 	const isValidDate = (text: string) => {
@@ -204,7 +173,7 @@ export default function Budget() {
 
 			// Allow empty string or just "-" without forcing a number
 			if (text === '' || text === '-') {
-				return { ...prev, amount: text }; // or add a separate `amountInput` field
+				return prev; // Keep previous value, don't update amount field
 			}
 
 			const num = Number(text);
@@ -317,8 +286,6 @@ export default function Budget() {
 									/>
 								</XStack>
 							</YStack>
-
-							{/* income dropdown */}
 							<BudgetDropdown
 								txns={POSITIVE_TX}
 								name={'Incomes'}
@@ -330,7 +297,6 @@ export default function Budget() {
 								formatCurrency={formatCurrency}
 							/>
 
-							{/* expense dropdown */}
 							<BudgetDropdown
 								txns={NEGATIVE_TX}
 								name={'Expenses'}
@@ -341,7 +307,6 @@ export default function Budget() {
 								isOpen={expensesOpen}
 								formatCurrency={formatCurrency}
 							/>
-
 							{/* Snapshot */}
 							<YStack marginBottom={'$3'}>
 								<Text fontSize={'$body'} fontWeight={'700'}>
@@ -419,8 +384,6 @@ export default function Budget() {
 									</YStack>
 								</YStack>
 							)}
-
-							{/* Future events */}
 							<BudgetEventList
 								txns={future}
 								title={'Future events'}
@@ -429,8 +392,6 @@ export default function Budget() {
 								setInputDate={setDateInput}
 								formatCurrency={formatCurrency}
 							/>
-
-							{/* Past events */}
 							<BudgetEventList
 								txns={past}
 								title={'Past events'}
