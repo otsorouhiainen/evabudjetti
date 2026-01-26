@@ -1,13 +1,12 @@
+import type { Item } from '@/src/constants/wizardConfig';
 import { StyleSheet } from 'react-native';
 import { Text, View, XStack } from 'tamagui';
-import type Expense from '@/app/summary';
-
 export const Scene4 = ({
 	categories,
 	upcoming,
 }: {
 	categories: string[];
-	upcoming: Expense[];
+	upcoming: Item[];
 }) => {
 	const font = 12;
 
@@ -31,25 +30,37 @@ export const Scene4 = ({
 
 			<View style={styles.container} padding={16} marginBottom={16}>
 				<Text> Upcoming expenses </Text>
-				{upcoming.map((e) => (
-					<XStack
-						style={styles.subContainer}
-						key={e.name}
-						width="100%"
-					>
-						<Text width="33.33%" fontSize={font}>
-							{e.name}
-						</Text>
+				{upcoming
+					.filter((t) => t.type === 'expense')
+					.filter((t) => t.recurrence !== 'none')
+					.slice(0, 5)
+					.map((e) => (
+						<XStack
+							style={styles.subContainer}
+							key={e.name}
+							width="100%"
+						>
+							<Text width="33.33%" fontSize={font}>
+								{e.name}
+							</Text>
 
-						<Text width="33.33%" fontSize={font} textAlign="center">
-							{e.date}
-						</Text>
+							<Text
+								width="33.33%"
+								fontSize={font}
+								textAlign="center"
+							>
+								{e.date.toDateString()}
+							</Text>
 
-						<Text width="33.33%" fontSize={font} textAlign="right">
-							{e.amount}
-						</Text>
-					</XStack>
-				))}
+							<Text
+								width="33.33%"
+								fontSize={font}
+								textAlign="right"
+							>
+								{e.amount}
+							</Text>
+						</XStack>
+					))}
 			</View>
 		</View>
 	);

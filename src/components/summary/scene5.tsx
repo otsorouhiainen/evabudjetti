@@ -11,7 +11,7 @@ export const Scene5 = () => {
 				marginTop={8}
 				borderRadius={8}
 				paddingVertical={20}
-				backgroundColor="$primary300"
+				backgroundColor="$primary200"
 				color="$white"
 				onPress={() => router.push('/budget')}
 			>
@@ -22,7 +22,7 @@ export const Scene5 = () => {
 				marginTop={8}
 				borderRadius={8}
 				paddingVertical={20}
-				backgroundColor="$primary300"
+				backgroundColor="$primary200"
 				color="$white"
 				onPress={() => router.push('/add_transaction')}
 			>
@@ -34,7 +34,7 @@ export const Scene5 = () => {
 				marginTop={8}
 				borderRadius={8}
 				paddingVertical={20}
-				backgroundColor="$primary300"
+				backgroundColor="$primary200"
 				color="$white"
 				onPress={() => router.push('/summary')}
 			>

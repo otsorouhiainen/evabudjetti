@@ -12,6 +12,9 @@ import Animated, {
 	FadeOutRight,
 } from 'react-native-reanimated';
 import { Button, Separator, SizableText, XStack, YStack } from 'tamagui';
+import type { Item } from '@/src/constants/wizardConfig';
+import useBalanceStore from '@/src/store/useBalanceStore';
+import { test_transactions } from '@/src/utils/fakeTransactions';
 
 import { Scene1 } from '../src/components/summary/scene1';
 import { Scene2 } from '../src/components/summary/scene2';
@@ -19,49 +22,35 @@ import { Scene3 } from '../src/components/summary/scene3';
 import { Scene4 } from '../src/components/summary/scene4';
 import { Scene5 } from '../src/components/summary/scene5';
 
-export type Expense = {
-	name: string;
-	date: string;
-	amount: number;
-};
+function sortDecreaseFreq(): string[] {
+	const transactions: Item[] = test_transactions;
+
+	//array of categories
+	const cat_arr: string[] = transactions
+		.filter((t) => t.type === 'expense')
+		.map((t) => t.category);
+
+	//	map where key is the name of the category
+	// 	and payload is the number of occurrences
+	const cat_map: Record<string, number> = {};
+	cat_arr.forEach((c) => {
+		cat_map[c] = (cat_map[c] || 0) + 1;
+	});
+
+	//returns the categories sorted based on occurrences
+	return Object.keys(cat_map).sort((a, b) => cat_map[b] - cat_map[a]);
+}
 
 export default function Summary() {
 	const router = useRouter();
 
+	// HARDCODED VALUES for testing
+
 	//hardcoded values
 	//dynamic ones should just replace these and the page SHOULD work
-	const budget_total = 4200;
-	const budget_month = 1200;
-	const spent_total = 1200;
-	const spent_month = 1051;
-
-	const current_month = 10;
-
-	//modifying the Expense type might be neccessary before adding these dynamically
-	const expense1: Expense = {
-		name: 'Bus card',
-		date: '01.08.2025',
-		amount: -50,
-	};
-	const expense2: Expense = {
-		name: 'Netflix',
-		date: '03.08.2025',
-		amount: -15.99,
-	};
-	const expense3: Expense = {
-		name: 'Electricity bill',
-		date: '03.08.2025',
-		amount: -30,
-	};
-	const expenses: Expense[] = [expense1, expense2, expense3];
-	const expense_categories = [
-		'Living',
-		'Groceries',
-		'Hobbies',
-		'Transportation',
-		'Savings',
-	];
-
+	const budget_total = useBalanceStore((state) => state.balance);
+	const balance_total = useBalanceStore((state) => state.disposable);
+	const test_categories = sortDecreaseFreq();
 	//variables used to change the 'scene' dynamically,
 	const [currentScene, setCurrentScene] = useState<number>(0);
 	const [direction, setDirection] = useState<boolean>(true);
@@ -70,12 +59,11 @@ export default function Summary() {
 	//the purpose is to make switching to dynamic values easier
 	const Arguments = {
 		budget: budget_total,
-		expected: budget_month,
-		spent: spent_month,
-		balance: budget_total - spent_total,
-		months: (current_month + Math.round(budget_total / budget_month)) % 12,
-		categories: expense_categories,
-		upcoming: expenses,
+		spent: budget_total - balance_total,
+		balance: balance_total,
+		months: 2,
+		upcoming: test_transactions,
+		categories: test_categories,
 	};
 
 	//each scene is a predefined react node
@@ -147,7 +135,7 @@ export default function Summary() {
 							marginTop={8}
 							borderRadius={8}
 							paddingVertical={20}
-							backgroundColor="$primary300"
+							backgroundColor="$primary200"
 							color="$white"
 							onPress={() => router.push('/landing')}
 						>
