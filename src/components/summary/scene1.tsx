@@ -11,7 +11,6 @@ export const Scene1 = ({
 	const spentPercent = budget === 0 ? 0 : Math.round((spent / budget) * 100);
 
 	const progressHeight = 20;
-	const isNegative = spentPercent < 0;
 	const isPositive = spentPercent > 0;
 
 	return (

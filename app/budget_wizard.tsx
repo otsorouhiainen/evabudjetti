@@ -9,9 +9,9 @@ import AddItemPopup from '../src/components/AddItemPopup';
 import { MultiPlatformDatePicker } from '../src/components/MultiPlatformDatePicker';
 import {
 	BUDGET_WIZARD_STEPS,
-	type Recurrence,
 	type BudgetWizardStep,
 	type Item,
+	type Recurrence,
 } from '../src/constants/wizardConfig';
 
 export default function BudgetWizard() {

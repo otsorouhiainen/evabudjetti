@@ -24,7 +24,7 @@ export default function Landing() {
 	const setStoreBalance = useBalanceStore((state) => state.change);
 	const recalcDisposable = useBalanceStore((state) => state.recalcDisposable);
 	const [balance, setBalance] = useState(0);
-	const [disposable, setDisposable] = useState(0);
+	const [_disposable, setDisposable] = useState(0);
 	const budgetCreated = usePlannedTransactionsStore(
 		(state) => state.transactions.length > 0,
 	);

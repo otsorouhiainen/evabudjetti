@@ -14,9 +14,9 @@ import {
 	YStack,
 } from 'tamagui';
 import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
-import { type Category, useCategoryStore } from '@/src/store/categoryStore';
+//import { type Category, useCategoryStore } from '@/src/store/categoryStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
-import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
+//import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import {
 	TransactionType,
 	TransactionTypeSegment,

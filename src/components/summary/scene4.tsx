@@ -1,6 +1,6 @@
-import type { Item } from '@/src/constants/wizardConfig';
 import { StyleSheet } from 'react-native';
 import { Text, View, XStack } from 'tamagui';
+import type { Item } from '@/src/constants/wizardConfig';
 export const Scene4 = ({
 	categories,
 	upcoming,
