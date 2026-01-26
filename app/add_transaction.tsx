@@ -15,13 +15,13 @@ import {
 } from 'tamagui';
 import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
 import { type Category, useCategoryStore } from '@/src/store/categoryStore';
-//import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import {
 	TransactionType,
 	TransactionTypeSegment,
 } from '../src/components/TransactionTypeSegment';
 import type { Item } from '../src/constants/wizardConfig';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 
 export default function AddTransaction() {
 	const [type, setType] = useState<
@@ -36,8 +36,8 @@ export default function AddTransaction() {
 		repeatValue?: string;
 	}>({});
 
-	//const [expanded, setExpanded] = useState(false);
-	//const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+	//const [expanded, _setExpanded] = useState(false);
+	//const [_categoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [plannedModalVisible, setPlannedModalVisible] = useState(false);
 	const [selectedPlannedTxn, setSelectedPlannedTxn] = useState<Item | null>(
 		null,
@@ -71,8 +71,8 @@ export default function AddTransaction() {
 				? TransactionType.Income
 				: TransactionType.Expense,
 	}));
-	
-	const visibleCategories = expanded
+
+	const _visibleCategories = expanded
 		? dynamicCategories
 		: dynamicCategories.slice(0, 3);
 
@@ -92,7 +92,7 @@ export default function AddTransaction() {
 		console.log('Upcoming planned txns updated', twentyUpComingTxns);
 	}, [plannedTransactions]);
 
-	const handleAddCategory = async () => {
+	const _handleAddCategory = async () => {
 		if (!newCategory.trim()) return;
 
 		try {
