@@ -46,8 +46,7 @@
 				}
 			],
 			"expo-font",
-			"expo-web-browser",
-			"@prisma/react-native"
+			"expo-web-browser"
 		],
 		"experiments": {
 			"typedRoutes": true
@@ -55,7 +54,7 @@
 		"extra": {
 			"router": {},
 			"eas": {
-				"projectId": "3561faf9-3b82-4d98-a851-cbf7a79500f2"
+				"projectId": "787a8ae7-02d5-4368-a1a0-64cfc030dea7"
 			}
 		}
 	}
