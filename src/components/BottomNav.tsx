@@ -1,6 +1,7 @@
 import { ChartColumn, Home, PlusCircle, Wallet } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import type { ReactElement } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, useTheme, XStack } from 'tamagui';
 
 interface NavButtonProps {
@@ -17,15 +18,14 @@ const NavButton = ({
 	onPress,
 }: NavButtonProps & { onPress?: () => void }) => (
 	<Button
-		transparent
+		chromeless
 		icon={btnIcon}
 		color={btnColor}
 		onPress={onPress}
 		borderColor={borderColor}
-		size={'$buttons.md'}
-		borderRadius={32}
-		paddingVertical={20}
-		paddingHorizontal={22}
+		size={25}
+		borderRadius={20}
+		padding={10}
 	/>
 );
 
@@ -56,21 +56,27 @@ const bottomNavOptions: BottomNavOption[] = [
 ];
 
 export const BottomNav = () => {
+	const insets = useSafeAreaInsets();
 	const theme = useTheme();
 	const router = useRouter();
 	return (
 		<XStack
 			position="absolute"
-			bottom={0}
+			bottom={insets.bottom}
 			left={0}
 			right={0}
-			paddingHorizontal={22}
-			height={52}
-			justifyContent={'space-between'}
+			paddingHorizontal={20}
+			paddingVertical={10}
+			justifyContent="space-between"
 			alignItems="center"
-			backgroundColor={'$primary100'}
+			backgroundColor="$primary100"
 			borderTopLeftRadius={6}
 			borderTopRightRadius={6}
+			elevation={10}
+			shadowColor="$black"
+			shadowOffset={{ width: 0, height: -2 }}
+			shadowOpacity={0.1}
+			shadowRadius={4}
 		>
 			{bottomNavOptions.map((option) => (
 				<NavButton
