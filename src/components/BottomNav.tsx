@@ -1,31 +1,28 @@
 import { ChartColumn, Home, PlusCircle, Wallet } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import type { ReactElement } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, useTheme, XStack } from 'tamagui';
 
 interface NavButtonProps {
 	iconColor?: string;
 	btnColor?: string;
-	borderColor?: string;
 	btnIcon: ReactElement;
 }
 
 const NavButton = ({
 	btnColor,
-	borderColor,
 	btnIcon,
 	onPress,
 }: NavButtonProps & { onPress?: () => void }) => (
 	<Button
-		transparent
+		chromeless
 		icon={btnIcon}
 		color={btnColor}
 		onPress={onPress}
-		borderColor={borderColor}
-		size={'$buttons.md'}
-		borderRadius={32}
-		paddingVertical={20}
-		paddingHorizontal={22}
+		size={60}
+		width={'25%'}
+		borderRadius={10}
 	/>
 );
 
@@ -56,28 +53,24 @@ const bottomNavOptions: BottomNavOption[] = [
 ];
 
 export const BottomNav = () => {
+	const insets = useSafeAreaInsets();
 	const theme = useTheme();
 	const router = useRouter();
 	return (
 		<XStack
 			position="absolute"
-			bottom={0}
+			bottom={insets.bottom}
 			left={0}
 			right={0}
-			paddingHorizontal={22}
-			height={52}
-			justifyContent={'space-between'}
 			alignItems="center"
-			backgroundColor={'$primary100'}
-			borderTopLeftRadius={6}
-			borderTopRightRadius={6}
+			backgroundColor="$primary100"
+			justifyContent="space-evenly"
 		>
 			{bottomNavOptions.map((option) => (
 				<NavButton
 					key={option.route}
 					btnIcon={option.icon}
 					btnColor={theme.white.val}
-					borderColor={theme.primary200.val}
 					onPress={() => router.push(option.route)}
 				/>
 			))}

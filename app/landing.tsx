@@ -1,286 +1,264 @@
 import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
-import i18next from 'i18next';
-import { useState } from 'react';
-import { ScrollView } from 'react-native';
-import { Button, SizableText, Stack, XStack, YStack } from 'tamagui';
+import { useEffect, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+	Button,
+	Input,
+	SizableText,
+	Spacer,
+	Text,
+	XStack,
+	YStack,
+} from 'tamagui';
+import useBalanceStore from '@/src/store/useBalanceStore';
 import useLanguageStore from '@/src/store/useLanguageStore';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 
 export default function Landing() {
+	const transactions = usePlannedTransactionsStore(
+		(state) => state.transactions,
+	);
+	const storeBalance = useBalanceStore((state) => state.balance);
+	const storeDisposable = useBalanceStore((state) => state.disposable);
+	const setStoreBalance = useBalanceStore((state) => state.change);
+	const recalcDisposable = useBalanceStore((state) => state.recalcDisposable);
+	const [balance, setBalance] = useState(0);
+	const [_disposable, setDisposable] = useState(0);
+	const budgetCreated = usePlannedTransactionsStore(
+		(state) => state.transactions.length > 0,
+	);
 	const router = useRouter();
+	const [initialBalance, setInitialBalance] = useState('');
 	const [helpVisible, setHelpVisible] = useState(false);
 	const language = useLanguageStore((state) => state.language);
 	const change = useLanguageStore((state) => state.change);
+	useEffect(() => {
+		setBalance(storeBalance);
+		setDisposable(storeDisposable);
+		recalcDisposable(transactions);
+	}, [storeBalance, storeDisposable, transactions, recalcDisposable]);
 	return (
-		<>
+		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
+			<YStack f={1} backgroundColor="$background">
+				<YStack
+					f={1}
+					paddingHorizontal={10}
+					// keep overall maxWidth behavior but prefer percent-based outer padding above
+				>
+					{/* Header */}
+					<YStack gap="5" marginTop={10} alignItems="center">
+						<Text fontSize={'$7'} fontWeight={'500'}>
+							EVA Personal Budget
+						</Text>
+						<Text>Supporting your financial well-being</Text>
+
+						<XStack mt="$1">
+							<Button
+								backgroundColor="$primary200"
+								borderRadius={40}
+								size="$5"
+								color="white"
+								icon={Globe}
+								chromeless
+								onPress={() =>
+									change(language === 'en' ? 'fi' : 'en')
+								}
+							>
+								{language === 'fi' ? 'Suomi' : 'English'}
+							</Button>
+						</XStack>
+						<XStack mt={'$5'}>
+							<Spacer size={'10%'} />
+							{/* Piggy Bank Icon */}
+							<PiggyBank
+								size={110}
+								style={{ height: '100%' }}
+								color={'$primary100'}
+							/>
+
+							{/* Help Icon positioned relative to the piggy bank */}
+							<Button
+								size={50}
+								style={{ height: '100%' }}
+								circular
+								chromeless
+								onPress={() => setHelpVisible(true)}
+								icon={
+									<MessageCircleQuestion color="$primary100" />
+								}
+							/>
+						</XStack>
+					</YStack>
+
+					{budgetCreated && (
+						<YStack f={1} ai={'center'}>
+							{/* balance snapshot */}
+							<YStack
+								width={'70%'}
+								backgroundColor="$white"
+								borderColor="$primary200"
+								borderRadius={20}
+								borderWidth={2}
+								padding={10}
+								mt={'$2'}
+								mb={'$8'}
+							>
+								<YStack
+									alignItems="center"
+									gap={10}
+									width="100%"
+								>
+									<Text fontWeight={'700'} fontSize={'$3'}>
+										{new Date().toLocaleDateString('fi-FI')}
+									</Text>
+									<Text>Money in account {balance}€</Text>
+									{/*<Text>Disposable income {disposable}€</Text>*/}
+									<Button
+										borderRadius={40}
+										backgroundColor="$primary200"
+										size={'$buttons.lg'}
+									>
+										<Text color={'$white'}>
+											VIEW DETAILS
+										</Text>
+									</Button>
+								</YStack>
+							</YStack>
+							{/* Buttons */}
+							<YStack f={1} ai="center">
+								<Button
+									backgroundColor="$primary200"
+									onPress={() =>
+										router.push('/add_transaction')
+									}
+									minWidth={'85%'}
+									height={70}
+									borderRadius={40}
+								>
+									<Text
+										color={'$white'}
+										fontWeight={'700'}
+										fontSize={'$4'}
+									>
+										ADD INCOME/EXPENSE
+									</Text>
+								</Button>
+
+								<XStack mt={'$3'} gap={'$3'} minWidth={'85%'}>
+									<Button
+										backgroundColor="$primary200"
+										onPress={() => router.push('/budget')}
+										height={80}
+										f={1}
+										borderRadius={40}
+									>
+										<Text
+											color={'$white'}
+											fontWeight={'700'}
+											fontSize={'$3'}
+											ta={'center'}
+										>
+											SHOW{'\n'}BUDGET
+										</Text>
+									</Button>
+									<Button
+										backgroundColor="$primary200"
+										onPress={() =>
+											router.push('/budget_wizard')
+										}
+										height={80}
+										f={1}
+										borderRadius={40}
+									>
+										<Text
+											color={'$white'}
+											fontWeight={'700'}
+											fontSize={'$3'}
+											ta={'center'}
+										>
+											EDIT{'\n'} BUDGET
+										</Text>
+									</Button>
+								</XStack>
+							</YStack>
+						</YStack>
+					)}
+
+					{!budgetCreated && (
+						<YStack gap={5} paddingHorizontal={25}>
+							<Text>
+								No budget created yet. Enter your balance in €
+								without commas and press the "Create budget"
+								button below to get started!
+							</Text>
+							<Input
+								style={{ height: '30%' }}
+								width="100%"
+								value={initialBalance}
+								onChangeText={setInitialBalance}
+								borderColor="$primary100"
+								backgroundColor="$white"
+								keyboardType="numeric"
+								fontSize={15}
+							/>
+							<Button
+								style={{ height: '30%' }}
+								marginTop={10}
+								borderRadius={40}
+								backgroundColor="$primary200"
+								width="100%"
+								color={'white'}
+								onPress={() => {
+									setStoreBalance(Number(initialBalance));
+									router.push('/budget_wizard');
+								}}
+								disabled={initialBalance === ''}
+							>
+								CREATE BUDGET
+							</Button>
+						</YStack>
+					)}
+				</YStack>
+			</YStack>
+
 			{/* Help Modal */}
 			{helpVisible && (
-				<Stack
+				<YStack
 					position="absolute"
 					top={0}
-					bottom={0}
 					left={0}
 					right={0}
-					backgroundColor="$black"
+					bottom={0}
+					backgroundColor="rgba(0,0,0,0.5)"
 					justifyContent="center"
 					alignItems="center"
-					zIndex={10}
 				>
 					<YStack
 						backgroundColor="$white"
-						borderColor={'$black'}
+						borderColor="$black"
 						borderWidth={2}
-						opacity={1}
-						borderRadius={16}
-						padding={24}
-						width="80%"
-						minWidth={220}
+						borderRadius={10}
+						width={'70%'}
 						shadowColor="$black"
-						shadowOffset={{ width: 0, height: 2 }}
-						shadowOpacity={0.18}
-						shadowRadius={8}
-						elevation={8}
-						gap={'$4'}
+						gap={'3%'}
+						padding={20}
 					>
-						<SizableText
-							size={'$title1'}
-							marginBottom={8}
-							fontFamily="$heading"
-						>
-							{i18next.t('Help')}
-						</SizableText>
-						<SizableText
-							size={'$title2'}
-							marginBottom={16}
-							fontFamily="$body"
-						>
-							{i18next.t('Help Disposable income')}
+						<SizableText textAlign="center">Help</SizableText>
+						<SizableText textAlign="center">
+							Help Disposable income
 						</SizableText>
 						<Button
 							onPress={() => setHelpVisible(false)}
-							backgroundColor={'$primary300'}
-							size={64}
-							padding={22}
+							backgroundColor="$primary200"
+							borderRadius={40}
 							alignSelf="center"
-							height={70}
 						>
-							<SizableText
-								fontFamily="$body"
-								fontWeight="400"
-								color="$white"
-							>
-								{i18next.t('CLOSE')}
-							</SizableText>
+							<SizableText color="$white">CLOSE</SizableText>
 						</Button>
 					</YStack>
-				</Stack>
+				</YStack>
 			)}
-			<YStack flex={1}>
-				<ScrollView
-					contentContainerStyle={{
-						flexGrow: 1,
-						alignItems: 'center',
-					}}
-				>
-					<YStack
-						flex={1}
-						paddingTop={24}
-						paddingHorizontal={20}
-						gap={18}
-						width="100%"
-						maxWidth={800}
-					>
-						{/* Header */}
-						<YStack
-							alignItems="center"
-							marginTop={6}
-							justifyContent="space-between"
-							gap={'$2'}
-						>
-							<SizableText
-								fontWeight={'$7'}
-								size={'$title1'}
-								fontFamily="$heading"
-							>
-								{i18next.t('EVA Personal Budget')}
-							</SizableText>
-							<SizableText
-								size={'$title2'}
-								fontFamily="$body"
-								hoverStyle={{ cursor: 'help' }}
-							>
-								{i18next.t(
-									'Supporting your financial well-being',
-								)}
-							</SizableText>
-							<XStack>
-								<Button
-									icon={Globe}
-									onPress={() =>
-										change(language === 'en' ? 'fi' : 'en')
-									}
-								>
-									{language === 'fi' ? 'Suomi' : 'English'}
-								</Button>
-							</XStack>
-							<Button
-								disabled
-								transparent
-								icon={<PiggyBank />}
-								size={200}
-								marginBottom={-190}
-								color={'$primary300'}
-							></Button>
-						</YStack>
-
-						{/* Illustration row */}
-						<XStack
-							alignItems="center"
-							justifyContent="center"
-							marginTop={16}
-							position="relative"
-							alignSelf="center"
-							width={200}
-							height={120}
-						>
-							<Button
-								position="absolute"
-								top={0}
-								right="-10%"
-								width="50%"
-								aspectRatio={1}
-								minWidth={28}
-								maxWidth={42}
-								zIndex={5}
-								onPress={() => setHelpVisible(true)}
-								circular
-								size="$4"
-								chromeless
-								icon={<MessageCircleQuestion size={28} />}
-							/>
-						</XStack>
-
-						{/* Balance card */}
-						<YStack
-							alignSelf="center"
-							width="90%"
-							maxWidth={480}
-							borderRadius={16}
-							alignItems="center"
-							paddingVertical={16}
-							gap={6}
-							backgroundColor={'$white'}
-							shadowColor={'$black'}
-							shadowOffset={{ width: 0, height: 2 }}
-							shadowOpacity={0.15}
-							shadowRadius={8}
-							elevation={6}
-						>
-							<SizableText
-								size={'$title2'}
-								fontWeight={'$5'}
-								marginBottom={4}
-								fontFamily="$heading"
-							>
-								04.10.2025
-							</SizableText>
-							<YStack>
-								<SizableText
-									size={'$title2'}
-									fontFamily="$body"
-								>
-									{i18next.t('Money in account')}{' '}
-									<SizableText
-										size={'$title3'}
-										fontWeight={'$4'}
-										fontFamily="$body"
-									>
-										1234€
-									</SizableText>
-								</SizableText>
-								<SizableText
-									size={'$title2'}
-									fontFamily="$body"
-								>
-									{i18next.t('Disposable income')}{' '}
-									<SizableText
-										size={'$title3'}
-										fontWeight={'$4'}
-										fontFamily="$body"
-									>
-										123€
-									</SizableText>
-								</SizableText>
-							</YStack>
-							<Button
-								marginTop={10}
-								alignSelf="center"
-								backgroundColor={'$primary500'}
-								size={64}
-								padding="5%"
-								height={80}
-							>
-								<SizableText
-									fontFamily="$body"
-									fontWeight="400"
-									color="$white"
-								>
-									{i18next.t('VIEW DETAILS')}
-								</SizableText>
-							</Button>
-						</YStack>
-
-						{/* Primary CTA */}
-						<Button
-							marginTop={8}
-							size={64}
-							backgroundColor="$primary300"
-							height={80}
-							onPress={() => router.push('/add_transaction')}
-						>
-							<SizableText fontFamily="$body" color="$white">
-								{i18next.t('ADD INCOME/EXPENSE')}
-							</SizableText>
-						</Button>
-
-						{/* Secondary CTAs */}
-						<XStack gap={14} justifyContent="space-between">
-							<Button
-								flex={1}
-								size={64}
-								padding={20}
-								backgroundColor={'$primary300'}
-								height={80}
-								onPress={() => router.push('/budget')}
-							>
-								<SizableText
-									fontFamily="$body"
-									fontWeight="400"
-									color="$white"
-								>
-									{i18next.t('SHOW BUDGET')}
-								</SizableText>
-							</Button>
-							<Button
-								flex={1}
-								size={64}
-								padding={20}
-								backgroundColor={'$primary300'}
-								height={80}
-							>
-								<SizableText
-									fontFamily="$body"
-									fontWeight="400"
-									color="$white"
-								>
-									{i18next.t('EDIT BUDGET')}
-								</SizableText>
-							</Button>
-						</XStack>
-						<YStack height={48} />
-					</YStack>
-				</ScrollView>
-			</YStack>
-		</>
+		</SafeAreaView>
 	);
 }

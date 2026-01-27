@@ -1,10 +1,12 @@
+import DateTimePicker, {
+	type DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
 import { Calendar } from '@tamagui/lucide-icons';
-import { format, formatISO } from 'date-fns';
+import { format, parse } from 'date-fns';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
-import DatePicker from 'react-native-date-picker';
-import { Button, Input, SizableText } from 'tamagui';
+import { Button, Input, SizableText, XStack } from 'tamagui';
 
 type Props = {
 	value?: Date | null;
@@ -21,26 +23,21 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 
 	useEffect(() => {
 		setDate(value || null);
-		setEditorDate(
-			value ? formatISO(value, { representation: 'date' }) : '',
-		);
+		setEditorDate(value ? format(value, 'dd/MM/yyyy') : '');
 	}, [value]);
 
-	useEffect(() => {
-		if (date) {
-			setEditorDate(format(date, 'dd-MM-yyyy'));
-		} else {
-			setEditorDate('');
-		}
-	}, [date]);
-
+	// Only update date when editorDate is valid and different
 	useEffect(() => {
 		const isValidDateFormat = /^\d{2}-\d{2}-\d{4}$/.test(editorDate);
 		if (isValidDateFormat) {
-			const [day, month, year] = editorDate.split('-').map(Number);
-			const parsedDate = new Date(year, month - 1, day);
+			const parsedDate = parse(editorDate, 'dd/MM/yyyy', new Date());
 			if (!Number.isNaN(parsedDate.getTime())) {
-				if (!date || parsedDate.getTime() !== date.getTime()) {
+				const parsedTime = parsedDate.getTime();
+				let currentTime = NaN;
+				if (date instanceof Date) {
+					currentTime = date.getTime();
+				}
+				if (Number.isNaN(currentTime) || parsedTime !== currentTime) {
 					onChange(parsedDate);
 					setDate(parsedDate);
 				}
@@ -48,57 +45,67 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 		}
 	}, [editorDate, onChange, date]);
 
+	const handleDateChange = (
+		event: DateTimePickerEvent,
+		selectedDate?: Date,
+	) => {
+		// On Android, picker closes automatically on any action
+		// On iOS, we need to handle it differently
+		if (Platform.OS === 'android') {
+			setDatePickerOpen(false);
+		}
+
+		if (event.type === 'set' && selectedDate) {
+			setDate(selectedDate);
+			setEditorDate(format(selectedDate, 'dd/MM/yyyy'));
+			onChange(selectedDate);
+		}
+	};
+
 	if (Platform.OS === 'web') {
 		return (
 			<View style={styles.dateElementsContainer}>
 				<Input
-					style={{ height: '100%' }}
+					flex={1}
 					placeholder="Write the date here (DD-MM-YYYY)"
 					value={editorDate}
-					onChangeText={(text: string) => {
-						setEditorDate(text);
-					}}
+					onChangeText={setEditorDate}
 				/>
 			</View>
 		);
 	}
 
 	return (
-		<>
-			<DatePicker
-				modal
-				open={datePickerOpen}
-				mode="date"
-				date={date ?? new Date()}
-				onConfirm={(date) => {
-					setDatePickerOpen(false);
-					setDate(date);
-				}}
-				onCancel={() => {
-					setDatePickerOpen(false);
-				}}
+		<XStack f={1} ai={'center'}>
+			{/* Display selected date */}
+			<SizableText size="$body">
+				{date ? format(date, 'd.MM.yy') : 'd.mm.yy'}
+			</SizableText>
+
+			{/* Calendar button */}
+			<Button
+				size="$3"
+				icon={Calendar}
+				onPress={() => setDatePickerOpen(true)}
+				chromeless
 			/>
-			<View style={styles.dateElementsContainer}>
-				<SizableText
-					style={{ height: '100%' }}
-					color="$primary300"
-					size="$title3"
-				>
-					Date: {editorDate ? format(editorDate, 'dd-MM-yyyy') : ''}
-				</SizableText>
-				<Button
-					style={{ height: '100%' }}
-					icon={Calendar}
-					onPress={() => setDatePickerOpen(true)}
+
+			{/* Date Picker - only rendered when open */}
+			{datePickerOpen && (
+				<DateTimePicker
+					value={date instanceof Date ? date : new Date()}
+					mode="date"
+					display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+					onChange={handleDateChange}
 				/>
-			</View>
-		</>
+			)}
+		</XStack>
 	);
 };
 
 const styles = StyleSheet.create({
 	dateElementsContainer: {
-		height: '100%',
+		flex: 1,
 		flexDirection: 'row',
 		alignItems: 'center',
 		gap: 10,
