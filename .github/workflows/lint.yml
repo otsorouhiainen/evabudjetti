@@ -1,6 +1,10 @@
 name: Linter check
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: ["main"]
 
 jobs:
   lint:

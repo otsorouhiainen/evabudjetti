@@ -1,5 +1,8 @@
 name: EAS Build
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
 
 jobs:
   build:
@@ -28,5 +31,20 @@ jobs:
       - name: Install dependencies
         run: pnpm i --frozen-lockfile
       - name: Build on EAS android
-        run: eas build --platform android --profile development --non-interactive --no-wait
-
+        run: eas build --platform android --profile development --non-interactive --wait --json > "$RUNNER_TEMP/build.json"
+      - name: Extract build status and links
+        run: |
+          STATUS=$(jq -r '.[0].status' "$RUNNER_TEMP/build.json")
+          BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' "$RUNNER_TEMP/build.json")
+          echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
+          {
+            echo "### EAS Build Complete"
+            echo "| Item | Value |"
+            echo "| --- | --- |"
+            echo "| Status | $STATUS |"
+            echo "| Build URL | [$BUILD_URL]($BUILD_URL) |"
+          } >> $GITHUB_STEP_SUMMARY
+          if [ "$STATUS" != "FINISHED" ]; then
+            echo "EAS build did not finish successfully (status: $STATUS)."
+            exit 1
+          fi
