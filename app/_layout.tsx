@@ -22,7 +22,6 @@ export default function RootLayout() {
 								options={{ presentation: 'modal' }}
 							/>
 						</Stack>
-						<BottomNav />
 					</SafeAreaProvider>
 				</Theme>
 			</PortalProvider>

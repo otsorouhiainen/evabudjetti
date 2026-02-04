@@ -20,8 +20,8 @@ import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore
 import {
 	TransactionType,
 	TransactionTypeSegment,
-} from '../src/components/TransactionTypeSegment';
-import type { Item } from '../src/constants/wizardConfig';
+} from '../../src/components/TransactionTypeSegment';
+import type { Item } from '../../src/constants/wizardConfig';
 
 export default function AddTransaction() {
 	const [type, setType] = useState<
