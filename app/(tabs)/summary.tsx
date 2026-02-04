@@ -16,11 +16,11 @@ import type { Item } from '@/src/constants/wizardConfig';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import { test_transactions } from '@/src/utils/fakeTransactions';
 
-import { Scene1 } from '../src/components/summary/scene1';
-import { Scene2 } from '../src/components/summary/scene2';
-import { Scene3 } from '../src/components/summary/scene3';
-import { Scene4 } from '../src/components/summary/scene4';
-import { Scene5 } from '../src/components/summary/scene5';
+import { Scene1 } from '../../src/components/summary/scene1';
+import { Scene2 } from '../../src/components/summary/scene2';
+import { Scene3 } from '../../src/components/summary/scene3';
+import { Scene4 } from '../../src/components/summary/scene4';
+import { Scene5 } from '../../src/components/summary/scene5';
 
 function sortDecreaseFreq(): string[] {
 	const transactions: Item[] = test_transactions;
