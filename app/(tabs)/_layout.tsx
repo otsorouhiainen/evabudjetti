@@ -12,7 +12,7 @@ const bottomNavOptions: BottomNavOption[] = [
 	{
 		icon: <Home size={'$icons.md'} />,
         name: 'Home',
-		route: 'landing',
+		route: 'index',
 	},
 	{
 		icon: <PlusCircle size={'$icons.md'} />,

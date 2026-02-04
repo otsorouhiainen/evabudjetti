@@ -137,7 +137,7 @@ export default function Summary() {
 							paddingVertical={20}
 							backgroundColor="$primary200"
 							color="$white"
-							onPress={() => router.push('/landing')}
+							onPress={() => router.push('/')}
 						>
 							{'< Back'}
 						</Button>
