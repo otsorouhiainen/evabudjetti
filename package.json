@@ -16,7 +16,6 @@
 		"test:e2e": "playwright test"
 	},
 	"dependencies": {
-		"@eva-design/eva": "^2.2.0",
 		"@expo-google-fonts/fira-sans": "^0.4.1",
 		"@expo-google-fonts/inter": "^0.4.2",
 		"@expo/vector-icons": "^15.0.3",
@@ -29,8 +28,6 @@
 		"@tamagui/config": "^1.144.3",
 		"@tamagui/core": "^1.144.3",
 		"@tamagui/lucide-icons": "^1.144.3",
-		"@ui-kitten/components": "^5.3.1",
-		"@ui-kitten/eva-icons": "^5.3.1",
 		"babel-preset-expo": "^54.0.10",
 		"date-fns": "^4.1.0",
 		"drizzle-orm": "^0.44.7",
