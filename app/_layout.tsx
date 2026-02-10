@@ -5,25 +5,25 @@ import { PortalProvider } from 'tamagui';
 import config from '../tamagui.config';
 
 export default function RootLayout() {
-  return (
-    <TamaguiProvider config={config} defaultTheme={'light'}>
-      {/* PortalProvider is neseccary for Tamagui Dialog components */}
-      <PortalProvider>
-        <Theme name={'light'}>
-          <SafeAreaProvider>
-            <Stack>
-              <Stack.Screen
-                name="(tabs)"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="modal"
-                options={{ presentation: 'modal' }}
-              />
-            </Stack>
-          </SafeAreaProvider>
-        </Theme>
-      </PortalProvider>
-    </TamaguiProvider>
-  );
+	return (
+		<TamaguiProvider config={config} defaultTheme={'light'}>
+			{/* PortalProvider is neseccary for Tamagui Dialog components */}
+			<PortalProvider>
+				<Theme name={'light'}>
+					<SafeAreaProvider>
+						<Stack>
+							<Stack.Screen
+								name="(tabs)"
+								options={{ headerShown: false }}
+							/>
+							<Stack.Screen
+								name="modal"
+								options={{ presentation: 'modal' }}
+							/>
+						</Stack>
+					</SafeAreaProvider>
+				</Theme>
+			</PortalProvider>
+		</TamaguiProvider>
+	);
 }
