@@ -49,9 +49,6 @@ export default function TabLayout() {
 					options={{
 						title: page.name,
 						tabBarIcon: () => page.icon,
-						tabBarIconStyle: {
-							color: theme.primary300.val,
-						},
 					}}
 				/>
 			))}
