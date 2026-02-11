@@ -294,7 +294,7 @@ export default function BudgetWizard() {
 									(step) => step.items,
 								);
 								replaceAll(allItems);
-								router.push('/landing');
+								router.push('/');
 							}}
 						>
 							<SizableText color="$white" size="$title1">
