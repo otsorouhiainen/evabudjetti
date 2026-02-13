@@ -19,7 +19,6 @@ This project leverages a modern stack for robust mobile development:
 * [**TypeScript**](https://www.typescriptlang.org/): Ensures type safety and scalable code.  
 * [**Tamagui**](https://tamagui.dev/): For highly performant and consistent UI components.  
 * [**Zustand**](https://github.com/pmndrs/zustand): A small, fast, and scalable bearbones state management solution.  
-* [**Prisma**](https://www.prisma.io/): Next-generation Node.js and TypeScript ORM for SQLite.  
 * [**i18next**](https://www.i18next.com/): For internationalization.  
 * [**PNPM**](https://pnpm.io/): Fast, disk space efficient package manager.  
 * [**Biome**](https://biomejs.dev/): Fast formatter and linter.
@@ -39,11 +38,6 @@ This project leverages a modern stack for robust mobile development:
 
 2. **Install dependencies**  
    pnpm install
-
-3. Initialize Database (Prisma)  
-   Ensure your local database is set up correctly.  
-   npx prisma generate  
-   npx prisma db push
 
 ### **Running the App**
 

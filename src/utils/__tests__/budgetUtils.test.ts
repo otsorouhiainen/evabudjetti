@@ -1,4 +1,4 @@
-import type { Item } from '../../../../src/constants/wizardConfig';
+import type { Item } from '../../constants/wizardConfig';
 import {
 	formatCurrency,
 	isValidDate,

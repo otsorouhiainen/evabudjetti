@@ -2,10 +2,11 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Tabs, Text, YStack } from 'tamagui';
-import BudgetDayView from '@/app/src/components/BudgetDayView';
-import BudgetMonthView from '@/app/src/components/BudgetMonthView';
-import BudgetYearView from '@/app/src/components/BudgetYearView';
-import StyledTab from '@/app/src/components/StyledTab';
+
+import BudgetDayView from '@/src/components/BudgetDayView';
+import BudgetMonthView from '@/src/components/BudgetMonthView';
+import BudgetYearView from '@/src/components/BudgetYearView';
+import StyledTab from '@/src/components/StyledTab';
 import type { Item } from '@/src/constants/wizardConfig';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 

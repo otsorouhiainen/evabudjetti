@@ -1,5 +1,5 @@
-import type { Item } from '../../../src/constants/wizardConfig';
-// ./src/utils/budgetUtils.ts
+import type { Item } from '../constants/wizardConfig';
+
 export function parseTxnDate(dateStr: string): Date {
 	const [day, month, year] = dateStr.split('.').map(Number);
 	return new Date(year, month - 1, day);
