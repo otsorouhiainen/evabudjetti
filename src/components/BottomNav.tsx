@@ -26,7 +26,7 @@ const NavButton = ({
 	/>
 );
 
-type RouteString = '/landing' | '/add_transaction' | '/budget' | '/summary';
+type RouteString = '/' | '/add_transaction' | '/budget' | '/summary';
 
 interface BottomNavOption {
 	icon: ReactElement;
@@ -36,7 +36,7 @@ interface BottomNavOption {
 const bottomNavOptions: BottomNavOption[] = [
 	{
 		icon: <Home size={'$icons.md'} />,
-		route: '/landing',
+		route: '/',
 	},
 	{
 		icon: <PlusCircle size={'$icons.md'} />,
