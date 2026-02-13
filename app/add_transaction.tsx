@@ -1,5 +1,6 @@
 import * as Crypto from 'expo-crypto';
 import { /*useEffect,*/ useMemo, useState } from 'react';
+import { Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	AlertDialog,

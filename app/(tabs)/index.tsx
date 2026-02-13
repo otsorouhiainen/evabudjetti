@@ -130,7 +130,7 @@ export default function Landing() {
 								<Button
 									backgroundColor="$primary200"
 									onPress={() =>
-										router.push('/add_transaction')
+										router.push('/add_transaction2')
 									}
 									minWidth={'85%'}
 									height={70}
