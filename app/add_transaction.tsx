@@ -1,5 +1,6 @@
+import { ChevronDown, ChevronUp, Plus } from '@tamagui/lucide-icons';
 import * as Crypto from 'expo-crypto';
-import { /*useEffect,*/ useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	AlertDialog,
@@ -15,9 +16,8 @@ import {
 } from 'tamagui';
 import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
 import type { Item } from '@/src/constants/wizardConfig';
-//import { type Category, useCategoryStore } from '@/src/store/categoryStore';
+import { type Category, useCategoryStore } from '@/src/store/categoryStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
-//import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import {
 	TransactionType,
 	TransactionTypeSegment,
@@ -36,33 +36,31 @@ export default function AddTransaction() {
 		repeatValue?: string;
 	}>({});
 
-	//const [expanded, _setExpanded] = useState(false);
-	//const [_categoryModalVisible, setCategoryModalVisible] = useState(false);
+	const [expanded, setExpanded] = useState(false);
+	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [plannedModalVisible, setPlannedModalVisible] = useState(false);
 	const [selectedPlannedTxn, setSelectedPlannedTxn] = useState<Item | null>(
 		null,
 	);
 	const [allocationAmount, setAllocationAmount] = useState('');
 
-	//const [newCategory, setNewCategory] = useState('');
+	const [newCategory, setNewCategory] = useState('');
 	const [showSuccess, setShowSuccess] = useState(false);
 	const addTransaction = usePlannedTransactionsStore((state) => state.add);
-	//const addCategory = useCategoryStore((state) => state.addCategory);
-	//const storeCategories = useCategoryStore();
-	/*const plannedTransactions = usePlannedTransactionsStore(
+	const addCategory = useCategoryStore((state) => state.addCategory);
+	const storeCategories = useCategoryStore();
+	const plannedTransactions = usePlannedTransactionsStore(
 		(state) => state.transactionsForTwoYears,
-	);*/
+	);
 
-	/* const [upcomingPlannedTransactions, setUpcomingPlannedTransactions] =
-		useState<Item[]>([]);*/
+	const [upcomingPlannedTransactions, setUpcomingPlannedTransactions] =
+		useState<Item[]>([]);
 
-	const [upcomingPlannedTransactions] = useState<Item[]>([]);
-	/*
 	const [categories, setCategories] = useState<Category[]>([]);
 	useEffect(() => {
 		setCategories(storeCategories.categories);
 	}, [storeCategories.categories]);
-	
+
 	const dynamicCategories = (categories || []).map((c) => ({
 		key: c.id,
 		label: c.name,
@@ -72,7 +70,7 @@ export default function AddTransaction() {
 				: TransactionType.Expense,
 	}));
 
-	const _visibleCategories = expanded
+	const visibleCategories = expanded
 		? dynamicCategories
 		: dynamicCategories.slice(0, 3);
 
@@ -92,7 +90,7 @@ export default function AddTransaction() {
 		console.log('Upcoming planned txns updated', twentyUpComingTxns);
 	}, [plannedTransactions]);
 
-	const _handleAddCategory = async () => {
+	const handleAddCategory = async () => {
 		if (!newCategory.trim()) return;
 
 		try {
@@ -108,7 +106,7 @@ export default function AddTransaction() {
 		} catch (e) {
 			console.error('Failed to add category:', e);
 		}
-	};*/
+	};
 
 	const handleSelectPlanned = (txn: Item) => {
 		setSelectedPlannedTxn(txn);
@@ -215,81 +213,81 @@ export default function AddTransaction() {
 					backgroundColor="$background"
 				>
 					{/* Add Category Modal */}
-					{/*{categoryModalVisible && (
-					<Stack
-						position="absolute"
-						top={0}
-						bottom={0}
-						left={0}
-						right={0}
-						backgroundColor="rgba(0, 0, 0, 0.4)"
-						justifyContent="center"
-						alignItems="center"
-						zIndex={10}
-					>
-						<YStack
-							backgroundColor="$white"
-							borderColor={'$black'}
-							borderWidth={2}
-							opacity={1}
-							borderRadius={16}
-							padding={24}
-							width={'80%'}
-							gap={20}
+					{categoryModalVisible && (
+						<Stack
+							position="absolute"
+							top={0}
+							bottom={0}
+							left={0}
+							right={0}
+							backgroundColor="rgba(0, 0, 0, 0.4)"
+							justifyContent="center"
+							alignItems="center"
+							zIndex={10}
 						>
-							<SizableText size={'$title1'} marginBottom={8}>
-								{'Add category'}
-							</SizableText>
-							<Input
-								value={newCategory}
-								onChangeText={setNewCategory}
-								placeholder={'Enter category'}
-								height={40}
-								borderRadius={6}
-								marginBottom={22}
-								focusStyle={{
-									outlineColor: 'transparent',
-								}}
-								px="10px"
-								fontSize={'$title3'}
-							/>
-							<XStack justifyContent="space-between">
-								<Button
-									onPress={() =>
-										setCategoryModalVisible(false)
-									}
-									borderColor={'$primary200'}
-									padding={22}
-									alignSelf="center"
-									size={42}
+							<YStack
+								backgroundColor="$white"
+								borderColor={'$black'}
+								borderWidth={2}
+								opacity={1}
+								borderRadius={16}
+								padding={24}
+								width={'80%'}
+								gap={20}
+							>
+								<SizableText size={'$title1'} marginBottom={8}>
+									{'Add category'}
+								</SizableText>
+								<Input
+									value={newCategory}
+									onChangeText={setNewCategory}
+									placeholder={'Enter category'}
+									height={40}
+									borderRadius={6}
+									marginBottom={22}
+									focusStyle={{
+										outlineColor: 'transparent',
+									}}
+									px="10px"
 									fontSize={'$title3'}
-								>
-									<SizableText
-										size={'$title3'}
-										color={'$primary200'}
+								/>
+								<XStack justifyContent="space-between">
+									<Button
+										onPress={() =>
+											setCategoryModalVisible(false)
+										}
+										borderColor={'$primary200'}
+										padding={22}
+										alignSelf="center"
+										size={42}
+										fontSize={'$title3'}
 									>
-										{'Cancel'}
-									</SizableText>
-								</Button>
-								<Button
-									onPress={handleAddCategory}
-									backgroundColor={'$primary200'}
-									size={42}
-									padding={22}
-									alignSelf="center"
-									fontSize={'$title3'}
-								>
-									<SizableText
-										size={'$title3'}
-										color={'$white'}
+										<SizableText
+											size={'$title3'}
+											color={'$primary200'}
+										>
+											{'Cancel'}
+										</SizableText>
+									</Button>
+									<Button
+										onPress={handleAddCategory}
+										backgroundColor={'$primary200'}
+										size={42}
+										padding={22}
+										alignSelf="center"
+										fontSize={'$title3'}
 									>
-										{'Save'}
-									</SizableText>
-								</Button>
-							</XStack>
-						</YStack>
-					</Stack>
-					)}*/}
+										<SizableText
+											size={'$title3'}
+											color={'$white'}
+										>
+											{'Save'}
+										</SizableText>
+									</Button>
+								</XStack>
+							</YStack>
+						</Stack>
+					)}
 
 					{/* Pick from Planned Modal */}
 					{plannedModalVisible && (
@@ -495,66 +493,68 @@ export default function AddTransaction() {
 							</YStack>
 
 							{/* Category chips */}
-							{/*<XStack
-							justifyContent="space-between"
-							alignItems="center"
-						>
-							<SizableText size={'$title2'}>
-								{'Category'}
-							</SizableText>
-							<Button
-								onPress={() => setExpanded(!expanded)}
-								icon={expanded ? ChevronUp : ChevronDown}
-								height="100%"
-								background={'$transparent'}
-							></Button>
-						</XStack>
+							<XStack
+								justifyContent="space-between"
+								alignItems="center"
+							>
+								<SizableText size={'$title2'}>
+									{'Category'}
+								</SizableText>
+								<Button
+									onPress={() => setExpanded(!expanded)}
+									icon={expanded ? ChevronUp : ChevronDown}
+									height="100%"
+									background={'$transparent'}
+								></Button>
+							</XStack>
 
-						{/* Add category button */}
-							{/*<XStack>
-							<Button
-								onPress={() => setCategoryModalVisible(true)}
-								icon={Plus}
-								size={26}
-								padding={14}
-								marginRight={8}
-							></Button>*/}
+							{/* Add category button */}
+							<XStack>
+								<Button
+									onPress={() =>
+										setCategoryModalVisible(true)
+									}
+									icon={Plus}
+									size={26}
+									padding={14}
+									marginRight={8}
+								></Button>
 
-							{/* Visible Category Chips */}
-							{/*{visibleCategories
-								.filter(
-									(category) =>
-										(type === TransactionType.Income &&
-											category.type ===
-												TransactionType.Income) ||
-										(type === TransactionType.Expense &&
-											category.type ===
-												TransactionType.Expense),
-								)
-								.map(({ key, label }) => {
-									const selected = key === category;
-									return (
-										<Button
-											key={key}
-											onPress={() => {
-												setCategory(key);
-											}}
-											size={28}
-											padding={14}
-											marginRight={8}
-											backgroundColor={
-												selected
-													? '$primary200'
-													: '$white'
-											}
-										>
-											<SizableText size={'$title3'}>
-												{label}
-											</SizableText>
-										</Button>
-									);
-								})}
-						</XStack>*/}
+								{/* Visible Category Chips */}
+								{visibleCategories
+									.filter(
+										(category) =>
+											(type === TransactionType.Income &&
+												category.type ===
+													TransactionType.Income) ||
+											(type === TransactionType.Expense &&
+												category.type ===
+													TransactionType.Expense),
+									)
+									.map(({ key, label }) => {
+										const selected = key === category;
+										return (
+											<Button
+												key={key}
+												onPress={() => {
+													setCategory(key);
+												}}
+												size={28}
+												padding={14}
+												marginRight={8}
+												backgroundColor={
+													selected
+														? '$primary200'
+														: '$white'
+												}
+											>
+												<SizableText size={'$title3'}>
+													{label}
+												</SizableText>
+											</Button>
+										);
+									})}
+							</XStack>
 
 							{/* Form */}
 							<YStack
