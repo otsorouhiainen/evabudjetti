@@ -1,3 +1,10 @@
+/**
+ * Defines the database schema for the application using Drizzle ORM's SQLite core.
+ *
+ * NOTE: After changes to the schema, remember to generate a migration with a name describing the change:
+ * pnpm drizzle-kit generate --name=your_migration_name
+ */
+
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const transactions = sqliteTable('transactions', {

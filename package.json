@@ -30,7 +30,7 @@
 		"@tamagui/lucide-icons": "^1.144.3",
 		"babel-preset-expo": "^54.0.10",
 		"date-fns": "^4.1.0",
-		"drizzle-orm": "^0.44.7",
+		"drizzle-orm": "^0.45.1",
 		"eas-cli": "^16.28.0",
 		"expo": "~54.0.32",
 		"expo-blur": "~15.0.8",

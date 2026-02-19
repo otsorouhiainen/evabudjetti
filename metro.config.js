@@ -10,6 +10,9 @@ const config = getDefaultConfig(__dirname, {
 // Add wasm asset support
 config.resolver.assetExts.push('wasm');
 
+// Add SQL migration support
+config.resolver.sourceExts.push('sql');
+
 // add nice web support with optimizing compiler + CSS extraction
 const { withTamagui } = require('@tamagui/metro-plugin');
 const tamaguiConfig = withTamagui(config, {
