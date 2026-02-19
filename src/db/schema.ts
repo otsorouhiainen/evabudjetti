@@ -7,25 +7,64 @@
 
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
-export const transactions = sqliteTable('transactions', {
-	id: text('id').primaryKey(), // UUID
-	name: text('name').notNull(), // mapped from description/name
+export const budgets = sqliteTable('budgets', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	name: text('name').notNull(),
+});
+
+export const accounts = sqliteTable('accounts', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	budgetId: integer('budget_id')
+		.notNull()
+		.references(() => budgets.id),
+	name: text('name').notNull(),
+});
+
+export const balanceReconciliations = sqliteTable('balance_reconciliations', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	accountId: integer('account_id')
+		.notNull()
+		.references(() => accounts.id),
+	date: integer('date', { mode: 'timestamp' }).notNull(),
+	amount: real('amount').notNull(),
+});
+
+export const plannedTransactions = sqliteTable('planned_transactions', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	accountId: integer('account_id')
+		.notNull()
+		.references(() => accounts.id),
+	name: text('name').notNull(),
+	categoryId: integer('category_id')
+		.notNull()
+		.references(() => categories.id),
+	amount: real('amount').notNull(),
+	startDate: integer('date', { mode: 'timestamp' }).notNull(),
+	endDate: integer('end_date', { mode: 'timestamp' }),
+	type: text('type').$type<'income' | 'expense'>().notNull(),
+	recurrenceBase: text('recurrence_base').$type<
+		'day' | 'week' | 'month' | 'year'
+	>(),
+	recurrenceInterval: integer('recurrence_interval').notNull(),
+});
+
+export const realTransactions = sqliteTable('real_transactions', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	accountId: integer('account_id')
+		.notNull()
+		.references(() => accounts.id),
+	name: text('name').notNull(),
+	categoryId: integer('category_id')
+		.notNull()
+		.references(() => categories.id),
 	amount: real('amount').notNull(),
 	date: integer('date', { mode: 'timestamp' }).notNull(),
-	categoryId: text('category_id'),
 	type: text('type').$type<'income' | 'expense'>().notNull(),
-	recurrence: text('recurrence')
-		.$type<'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'>()
-		.notNull()
-		.default('none'),
-	recurrenceInterval: integer('recurrence_interval'),
-	isPlanned: integer('is_planned', { mode: 'boolean' })
-		.notNull()
-		.default(false),
+	plannedTransactionId: integer('planned_transaction_id'),
 });
 
 export const categories = sqliteTable('categories', {
-	id: text('id').primaryKey(),
+	id: integer('id').primaryKey({ autoIncrement: true }),
 	name: text('name').notNull(),
 	type: text('type').$type<'income' | 'expense'>().notNull(),
 	color: text('color'),
