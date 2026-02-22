@@ -4,7 +4,6 @@ import { StyleSheet, View } from 'react-native';
 import { Button, Input, SizableText, Text, XStack, YStack } from 'tamagui';
 import type { Item, Recurrence } from '../constants/wizardConfig';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
-import { Placeholder } from 'drizzle-orm';
 
 type AddItemPopupProps = {
 	onAdd: (item: Item) => void;
