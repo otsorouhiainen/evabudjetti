@@ -53,15 +53,15 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	return (
 		<View style={styles.container}>
 			<YStack backgroundColor="$background" style={styles.card}>
-				<SizableText color="$black" size="$title2">
+				<SizableText color="$primary100" size="$title2">
 					Add a new item
 				</SizableText>
 				<View style={styles.inputsContainer}>
 					<View style={styles.singleItemContainer}>
-						<SizableText color="$black" size="$title3">
+						<SizableText color="$primary100" size="$title3">
 							Name
 						</SizableText>
-						<Input
+						<Input color="$primary100"
 							placeholder="Write the name here"
 							style={styles.input}
 							value={name}
@@ -69,10 +69,10 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						/>
 					</View>
 					<View style={styles.singleItemContainer}>
-						<SizableText color="$black" size="$title3">
+						<SizableText color="$primary100" size="$title3">
 							Amount
 						</SizableText>
-						<Input
+						<Input color="$primary100"
 							placeholder="Write the amount here (€)"
 							style={styles.input}
 							keyboardType="numeric"
@@ -81,7 +81,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						/>
 					</View>
 					<View>
-						<SizableText color="$black" size="$title3">
+						<SizableText color="$primary100" size="$title3">
 							Reoccurence
 						</SizableText>
 						<View
@@ -131,8 +131,10 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							))}
 							{reoccurence === 'custom' && (
 								<XStack gap={10} alignItems="center">
-									<Text>Interval (days)</Text>
-									<Input
+									<Text color="$primary100" fontWeight={"bold"} >
+										Interval (days)
+									</Text>
+									<Input color="$primary100"
 										style={{ height: '50%' }}
 										placeholder="Interval (days)"
 										keyboardType="numeric"
@@ -161,7 +163,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 					>
 						<SizableText
 							style={{ height: '100%' }}
-							color="$black"
+							color="$primary100"
 							size="$title3"
 						>
 							Date:
@@ -191,7 +193,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						style={styles.button}
 						onPress={onClose}
 					>
-						<SizableText color="$black" size="$title3">
+						<SizableText color="$primary100" size="$title3">
 							Cancel
 						</SizableText>
 					</Button>

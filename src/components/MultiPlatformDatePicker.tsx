@@ -65,7 +65,7 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 	if (Platform.OS === 'web') {
 		return (
 			<View style={styles.dateElementsContainer}>
-				<Input
+				<Input color="$primary100"
 					flex={1}
 					placeholder="Write the date here (DD-MM-YYYY)"
 					value={editorDate}
