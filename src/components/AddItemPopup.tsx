@@ -178,7 +178,9 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 				<View style={styles.buttonRow}>
 					<Button
 						borderRadius={28}
-						backgroundColor="$primary200"
+						backgroundColor={
+							isDisabled ? '$primary300' : '$primary200'
+						}
 						style={styles.button}
 						onPress={handleAdd}
 						disabled={isDisabled}
