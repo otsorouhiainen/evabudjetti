@@ -21,7 +21,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	const [name, setName] = useState<string>('');
 	const [amount, setAmount] = useState<number | null>(null);
 	const [date, setDate] = useState<Date>(new Date());
-	const [reoccurence, setReoccurence] = useState<Recurrence>('daily');
+	const [reoccurence, setReoccurence] = useState<Recurrence>('monthly');
 	const [reoccurenceInterval, setReoccurenceInterval] = useState<
 		number | undefined
 	>(undefined);
@@ -44,7 +44,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		} as Item);
 		setName('');
 		setAmount(null);
-		setReoccurence('daily');
+		setReoccurence('monthly');
 		setReoccurenceInterval(undefined);
 		setDate(new Date());
 		onClose();
