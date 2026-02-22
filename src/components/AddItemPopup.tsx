@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Button, Input, SizableText, Text, XStack, YStack } from 'tamagui';
 import type { Item, Recurrence } from '../constants/wizardConfig';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
+import { Placeholder } from 'drizzle-orm';
 
 type AddItemPopupProps = {
 	onAdd: (item: Item) => void;
@@ -76,8 +77,18 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							placeholder="Write the amount here (€)"
 							style={styles.input}
 							keyboardType="numeric"
-							value={amount?.toString() || ''}
-							onChangeText={(text) => setAmount(Number(text))}
+							onChangeText={(text) => {
+								const input = Number(text); 
+								if(
+									!Number.isNaN(input) &&
+									input >= 0
+									) {
+									setAmount(input);
+								}
+								else{
+									setAmount(NaN);	
+								}									
+							}}
 						/>
 					</View>
 					<View>
