@@ -34,7 +34,8 @@ export default function Landing() {
 	const router = useRouter();
 	const [initialBalance, setInitialBalance] = useState('');
 	const [helpVisible, setHelpVisible] = useState(false);
-	useEffect(() => {setBalance(storeBalance);
+	useEffect(() => {
+		setBalance(storeBalance);
 		setDisposable(storeDisposable);
 		recalcDisposable(transactions);
 	}, [storeBalance, storeDisposable, transactions, recalcDisposable]);
