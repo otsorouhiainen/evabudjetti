@@ -13,8 +13,10 @@ import {
 	type Item,
 	type Recurrence,
 } from '../src/constants/wizardConfig';
+import { useTranslation } from 'react-i18next';
 
 export default function BudgetWizard() {
+	const { t } = useTranslation();
 	const router = useRouter();
 	const transactions = usePlannedTransactionsStore(
 		(state) => state.transactions,
@@ -165,7 +167,7 @@ export default function BudgetWizard() {
 						style={styles.pageHeader}
 						size="$title1"
 					>
-						Create budget
+						{t('Create budget')}
 					</SizableText>
 					<SizableText
 						color="$primary100"
@@ -281,7 +283,7 @@ export default function BudgetWizard() {
 						onPress={() => setStepIndex(stepIndex - 1)}
 					>
 						<SizableText color="$white" size="$title1">
-							Previous
+							{t('Previous')}
 						</SizableText>
 					</Button>
 					{stepIndex === wizardData.length - 1 ? (
@@ -298,7 +300,7 @@ export default function BudgetWizard() {
 							}}
 						>
 							<SizableText color="$white" size="$title1">
-								Finish
+								{t('Finish')}
 							</SizableText>
 						</Button>
 					) : (
@@ -309,7 +311,7 @@ export default function BudgetWizard() {
 							onPress={() => setStepIndex(stepIndex + 1)}
 						>
 							<SizableText color="$white" size="$title1">
-								Next
+								{t('Next')}
 							</SizableText>
 						</Button>
 					)}
