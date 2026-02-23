@@ -1,6 +1,7 @@
 import { Plus, Trash2 } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, Progress, SizableText, XStack } from 'tamagui';
@@ -13,7 +14,6 @@ import {
 	type Item,
 	type Recurrence,
 } from '../src/constants/wizardConfig';
-import { useTranslation } from 'react-i18next';
 
 export default function BudgetWizard() {
 	const { t } = useTranslation();

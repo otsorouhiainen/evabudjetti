@@ -1,8 +1,8 @@
 import { ChartColumn, Home, Wallet } from '@tamagui/lucide-icons';
 import { Tabs } from 'expo-router';
 import type { ReactElement } from 'react';
-import { useTheme } from 'tamagui';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from 'tamagui';
 
 interface BottomNavOption {
 	icon: ReactElement;

@@ -1,6 +1,7 @@
 import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	Button,
@@ -13,19 +14,14 @@ import {
 } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
-
-import { useTranslation } from 'react-i18next';
 import '@/src/utils/i18n';
 
-
-
 export default function Landing() {
-
 	const { t, i18n } = useTranslation();
 	const handleLanguageChange = () => {
-			const nextLang = i18n.language.startsWith('fi') ? 'fi' : 'en';
-			i18n.changeLanguage(nextLang);
-		};
+		const nextLang = i18n.language.startsWith('fi') ? 'fi' : 'en';
+		i18n.changeLanguage(nextLang);
+	};
 	const transactions = usePlannedTransactionsStore(
 		(state) => state.transactions,
 	);
@@ -42,7 +38,6 @@ export default function Landing() {
 	const [initialBalance, setInitialBalance] = useState('');
 	const [helpVisible, setHelpVisible] = useState(false);
 
-
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
 			<YStack f={1} backgroundColor="$background">
@@ -57,8 +52,8 @@ export default function Landing() {
 							{t('EVA MyBudget')}
 						</Text>
 						<Text>{t('Supporting your financial well-being')}</Text>
-							
-							<XStack mt="$1">
+
+						<XStack mt="$1">
 							<Button
 								backgroundColor="$primary200"
 								borderRadius={40}
@@ -69,16 +64,22 @@ export default function Landing() {
 								onPress={() => {
 									// Check that i18n exists before call
 									if (i18n) {
-										const currentLang = i18n.language || 'fi';
-										const nextLang = currentLang.startsWith('fi') ? 'en' : 'fi';
+										const currentLang =
+											i18n.language || 'fi';
+										const nextLang = currentLang.startsWith(
+											'fi',
+										)
+											? 'en'
+											: 'fi';
 										i18n.changeLanguage(nextLang);
 									}
 								}}
 							>
-
-								{(i18n?.language?.startsWith('fi')) ? 'Suomi' : 'English'}
+								{i18n?.language?.startsWith('fi')
+									? 'Suomi'
+									: 'English'}
 							</Button>
-						</XStack> 
+						</XStack>
 
 						<XStack mt={'$5'}>
 							<Spacer size={'10%'} />
@@ -124,7 +125,9 @@ export default function Landing() {
 									<Text fontWeight={'700'} fontSize={'$3'}>
 										{new Date().toLocaleDateString('fi-FI')}
 									</Text>
-									<Text>{t('Money in account')} {balance}€</Text>
+									<Text>
+										{t('Money in account')} {balance}€
+									</Text>
 									<Button
 										borderRadius={40}
 										backgroundColor="$primary200"
@@ -198,9 +201,7 @@ export default function Landing() {
 
 					{!budgetCreated && (
 						<YStack gap={5} paddingHorizontal={25}>
-							<Text>
-								{t('No budget created')}
-							</Text>
+							<Text>{t('No budget created')}</Text>
 							<Input
 								style={{ height: '30%' }}
 								width="100%"
@@ -253,7 +254,9 @@ export default function Landing() {
 						gap={'3%'}
 						padding={20}
 					>
-						<SizableText textAlign="center">{t('Help')}</SizableText>
+						<SizableText textAlign="center">
+							{t('Help')}
+						</SizableText>
 						<SizableText textAlign="center">
 							{t('Help Disposable income')}
 						</SizableText>
@@ -263,7 +266,9 @@ export default function Landing() {
 							borderRadius={40}
 							alignSelf="center"
 						>
-							<SizableText color="$white">{t('CLOSE')}</SizableText>
+							<SizableText color="$white">
+								{t('CLOSE')}
+							</SizableText>
 						</Button>
 					</YStack>
 				</YStack>
@@ -271,5 +276,3 @@ export default function Landing() {
 		</SafeAreaView>
 	);
 }
-
-
