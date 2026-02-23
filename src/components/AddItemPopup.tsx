@@ -61,7 +61,8 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						<SizableText color="$primary100" size="$title3">
 							Name
 						</SizableText>
-						<Input color="$primary100"
+						<Input
+							color="$primary100"
 							placeholder="Write the name here"
 							style={styles.input}
 							value={name}
@@ -72,21 +73,18 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						<SizableText color="$primary100" size="$title3">
 							Amount
 						</SizableText>
-						<Input color="$primary100"
+						<Input
+							color="$primary100"
 							placeholder="Write the amount here (€)"
 							style={styles.input}
 							keyboardType="numeric"
 							onChangeText={(text) => {
-								const input = Number(text); 
-								if(
-									!Number.isNaN(input) &&
-									input >= 0
-									) {
+								const input = Number(text);
+								if (!Number.isNaN(input) && input >= 0) {
 									setAmount(input);
+								} else {
+									setAmount(NaN);
 								}
-								else{
-									setAmount(NaN);	
-								}									
 							}}
 						/>
 					</View>
@@ -141,10 +139,14 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							))}
 							{reoccurence === 'custom' && (
 								<XStack gap={10} alignItems="center">
-									<Text color="$primary100" fontWeight={"bold"} >
+									<Text
+										color="$primary100"
+										fontWeight={'bold'}
+									>
 										Interval (days)
 									</Text>
-									<Input color="$primary100"
+									<Input
+										color="$primary100"
 										style={{ height: '50%' }}
 										placeholder="Interval (days)"
 										keyboardType="numeric"
