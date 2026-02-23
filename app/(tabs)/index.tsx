@@ -18,10 +18,7 @@ import '@/src/utils/i18n';
 
 export default function Landing() {
 	const { t, i18n } = useTranslation();
-	const handleLanguageChange = () => {
-		const nextLang = i18n.language.startsWith('fi') ? 'fi' : 'en';
-		i18n.changeLanguage(nextLang);
-	};
+
 	const transactions = usePlannedTransactionsStore(
 		(state) => state.transactions,
 	);
@@ -37,6 +34,10 @@ export default function Landing() {
 	const router = useRouter();
 	const [initialBalance, setInitialBalance] = useState('');
 	const [helpVisible, setHelpVisible] = useState(false);
+	useEffect(() => {setBalance(storeBalance);
+		setDisposable(storeDisposable);
+		recalcDisposable(transactions);
+	}, [storeBalance, storeDisposable, transactions, recalcDisposable]);
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
