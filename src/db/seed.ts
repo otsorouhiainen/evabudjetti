@@ -1,4 +1,3 @@
-import * as Crypto from 'expo-crypto';
 import { Platform } from 'react-native';
 import { db } from './client';
 import { categories } from './schema';
@@ -35,7 +34,6 @@ export const seedCategories = async () => {
 
 		await db.insert(categories).values(
 			defaultCategories.map((cat) => ({
-				id: Crypto.randomUUID(),
 				name: cat.name,
 				type: cat.type,
 				color: cat.color,

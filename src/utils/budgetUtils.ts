@@ -1,16 +1,19 @@
-import type { Item } from '../constants/wizardConfig';
+import type { TransactionOccurrence } from '../dataModel';
 
 export function parseTxnDate(dateStr: string): Date {
 	const [day, month, year] = dateStr.split('.').map(Number);
 	return new Date(year, month - 1, day);
 }
 
-export function splitTransactions(transactions: Item[], referenceDate: Date) {
+export function splitTransactions(
+	transactions: TransactionOccurrence[],
+	referenceDate: Date,
+) {
 	const normalizedDate = new Date(referenceDate);
 	normalizedDate.setHours(0, 0, 0, 0);
 
-	const past: Item[] = [];
-	const future: Item[] = [];
+	const past: TransactionOccurrence[] = [];
+	const future: TransactionOccurrence[] = [];
 
 	for (const tx of transactions) {
 		if (tx.date < referenceDate) {

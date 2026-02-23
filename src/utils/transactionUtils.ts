@@ -1,54 +1,63 @@
 import { add } from 'date-fns';
-import * as Crypto from 'expo-crypto';
-import type { Item } from '../constants/wizardConfig';
+import type {
+	Persisted,
+	PlannedTransaction,
+	TransactionOccurrence,
+} from '../dataModel';
 
-export function generateTransactionsForTwoYears(txns: Item[]): Item[] {
+export function generateTransactionsForTwoYears(
+	txns: Persisted<PlannedTransaction>[],
+): TransactionOccurrence[] {
 	const now = new Date();
 	const currentYear = now.getFullYear();
-	const filteredTxns: Item[] = [];
-	const createdTxnsForTwoYears: Item[] = [];
+	const filteredTxns: Persisted<PlannedTransaction>[] = [];
+	const createdTxnsForTwoYears: TransactionOccurrence[] = [];
 
-	txns.forEach((t: Item) => {
-		const txnDate = new Date(t.date);
+	txns.forEach((t: Persisted<PlannedTransaction>) => {
+		const txnDate = t.startDate;
 		if (txnDate.getFullYear() === currentYear) {
-			filteredTxns.push({ ...t, date: txnDate });
+			filteredTxns.push(t);
 		}
 	});
 
 	filteredTxns.forEach((t) => {
-		let currentDate = new Date(t.date);
+		let currentDate = new Date(t.startDate);
 		while (
 			currentDate.getFullYear() === currentYear ||
 			currentDate.getFullYear() === currentYear + 1
 		) {
-			const newTxn: Item = {
-				...t,
+			const newTxn: TransactionOccurrence = {
+				amount: t.amount,
+				categoryId: t.categoryId,
+				type: t.type,
+				name: t.name,
 				date: new Date(currentDate),
-				id: Crypto.randomUUID(),
+				plannedTransaction: t,
 			};
 			createdTxnsForTwoYears.push(newTxn);
-			switch (t.recurrence) {
-				case 'daily':
-					currentDate = add(currentDate, { days: 1 });
+			switch (t.recurrenceBase) {
+				case 'day':
+					currentDate = add(currentDate, {
+						days: t.recurrenceInterval,
+					});
 					break;
-				case 'weekly':
-					currentDate = add(currentDate, { weeks: 1 });
+				case 'week':
+					currentDate = add(currentDate, {
+						weeks: t.recurrenceInterval,
+					});
 					break;
-				case 'monthly':
-					currentDate = add(currentDate, { months: 1 });
+				case 'month':
+					currentDate = add(currentDate, {
+						months: t.recurrenceInterval,
+					});
 					break;
-				case 'yearly':
-					currentDate = add(currentDate, { years: 1 });
-					break;
-				case 'custom':
-					if (t.recurrenceInterval) {
-						currentDate = add(currentDate, {
-							days: t.recurrenceInterval,
-						});
-					}
+				case 'year':
+					currentDate = add(currentDate, {
+						years: t.recurrenceInterval,
+					});
 					break;
 				default:
-					currentDate = add(currentDate, { years: 2 });
+					return;
 			}
 		}
 	});

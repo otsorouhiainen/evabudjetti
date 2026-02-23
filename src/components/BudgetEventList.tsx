@@ -2,11 +2,11 @@ import { Pencil } from '@tamagui/lucide-icons';
 import type { Router } from 'expo-router';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import { LOCALE } from '../constants/index';
-import type { Item } from '../constants/wizardConfig';
+import type { TransactionOccurrence } from '../dataModel';
 import StyledListItem from './StyledListItem';
 
 interface Props {
-	txns: Item[];
+	txns: TransactionOccurrence[];
 	title: string;
 	router?: Router;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
@@ -27,7 +27,9 @@ const BudgetEventList: React.FC<Props> = ({
 			)}
 
 			{txns.map((txn, index) => (
-				<StyledListItem key={`${txn.id}-${index}`}>
+				<StyledListItem
+					key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${index}`}
+				>
 					<Text
 						flex={1}
 						numberOfLines={1}

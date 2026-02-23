@@ -1,4 +1,4 @@
-import type { Item } from '../../constants/wizardConfig';
+import type { TransactionOccurrence } from '@/src/dataModel';
 import {
 	formatCurrency,
 	isValidDate,
@@ -19,25 +19,19 @@ describe('budgetUtils', () => {
 	describe('splitTransactions', () => {
 		it('should split transactions into past and future based on reference date', () => {
 			const refDate = new Date(2023, 5, 15); // June 15, 2023
-			const pastTx: Item = {
-				id: '1',
+			const pastTx: TransactionOccurrence = {
 				name: 'Past',
-				category: 'Food',
+				categoryId: 1,
 				type: 'expense',
 				amount: 10,
-				recurrence: 'none',
 				date: new Date(2023, 5, 10),
-				endDate: null,
 			};
-			const futureTx: Item = {
-				id: '2',
+			const futureTx: TransactionOccurrence = {
 				name: 'Future',
-				category: 'Food',
+				categoryId: 2,
 				type: 'expense',
 				amount: 20,
-				recurrence: 'none',
 				date: new Date(2023, 5, 20),
-				endDate: null,
 			};
 
 			const result = splitTransactions([pastTx, futureTx], refDate);

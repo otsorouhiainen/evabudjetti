@@ -10,7 +10,10 @@ import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { Button, Card, SizableText, View, XStack, YStack } from 'tamagui';
-import { test_transactions } from '@/src/utils/fakeTransactions';
+import {
+	test_category_names,
+	test_transactions,
+} from '@/src/utils/fakeTransactions';
 import { allMonthsData, type MonthSummary } from '@/src/utils/mockDataSummary';
 
 export default function BudgetPOC() {
@@ -211,7 +214,8 @@ function DetailedMonthView({ month }: { month: MonthSummary }) {
 		const expenses = test_transactions.filter((t) => t.type === 'expense');
 		const grouped: Record<string, number> = {};
 		for (const t of expenses) {
-			grouped[t.category] = (grouped[t.category] || 0) + t.amount;
+			grouped[test_category_names[t.categoryId]] =
+				(grouped[test_category_names[t.categoryId]] || 0) + t.amount;
 		}
 		return Object.entries(grouped);
 	}, []);

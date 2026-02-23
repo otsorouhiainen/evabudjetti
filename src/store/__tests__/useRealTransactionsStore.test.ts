@@ -1,4 +1,8 @@
-import type { Item } from '../../constants/wizardConfig';
+import {
+	DEFAULT_ACCOUNT_ID,
+	type Persisted,
+	type RealTransaction,
+} from '../../dataModel';
 import useRealTransactionsStore from '../useRealTransactionsStore';
 
 // Mock AsyncStorage
@@ -9,15 +13,14 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 }));
 
 describe('useRealTransactionsStore', () => {
-	const initialItem: Item = {
-		id: '1',
+	const initialItem: Persisted<RealTransaction> = {
+		id: 1,
+		accountId: DEFAULT_ACCOUNT_ID,
 		name: 'Test Item',
-		category: 'Test',
+		categoryId: 1,
 		type: 'expense',
 		amount: 100,
-		recurrence: 'none',
 		date: new Date(),
-		endDate: null,
 	};
 
 	beforeEach(() => {
@@ -49,9 +52,9 @@ describe('useRealTransactionsStore', () => {
 
 	it('should replace all transactions', () => {
 		const { replaceAll } = useRealTransactionsStore.getState();
-		const newItems: Item[] = [
+		const newItems: Persisted<RealTransaction>[] = [
 			initialItem,
-			{ ...initialItem, id: '2', name: 'Second Item' },
+			{ ...initialItem, id: 2, name: 'Second Item' },
 		];
 
 		replaceAll(newItems);

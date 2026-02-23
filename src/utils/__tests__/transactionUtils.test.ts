@@ -1,4 +1,8 @@
-import type { Item } from '../../constants/wizardConfig';
+import {
+	DEFAULT_ACCOUNT_ID,
+	type Persisted,
+	type PlannedTransaction,
+} from '../../dataModel';
 import { generateTransactionsForTwoYears } from '../transactionUtils';
 
 // Mock expo-crypto
@@ -11,15 +15,17 @@ describe('transactionUtils', () => {
 		it('should generate monthly transactions for current and next year', () => {
 			const now = new Date();
 			const currentYear = now.getFullYear();
-			const inputItem: Item = {
-				id: '1',
+			const inputItem: Persisted<PlannedTransaction> = {
+				id: 1,
+				accountId: DEFAULT_ACCOUNT_ID,
 				name: 'Salary',
-				category: 'Income',
+				categoryId: 1,
 				type: 'income',
 				amount: 3000,
-				recurrence: 'monthly',
-				date: new Date(currentYear, 0, 15), // Jan 15th
-				endDate: null,
+				recurrenceBase: 'month',
+				recurrenceInterval: 1,
+				startDate: new Date(currentYear, 0, 15), // Jan 15th
+				endDate: undefined,
 			};
 
 			const result = generateTransactionsForTwoYears([inputItem]);
@@ -37,7 +43,7 @@ describe('transactionUtils', () => {
 
 			// Check first item
 			expect(result[0].name).toBe('Salary');
-			expect(result[0].id).toBe('test-uuid');
+			expect(result[0].plannedTransaction).toBe(inputItem);
 
 			// Verify years
 			const years = result.map((t) => t.date.getFullYear());
@@ -50,15 +56,17 @@ describe('transactionUtils', () => {
 		it('should generate yearly transactions', () => {
 			const now = new Date();
 			const currentYear = now.getFullYear();
-			const inputItem: Item = {
-				id: '2',
+			const inputItem: Persisted<PlannedTransaction> = {
+				id: 2,
+				accountId: DEFAULT_ACCOUNT_ID,
 				name: 'Updates',
-				category: 'Software',
+				categoryId: 2,
 				type: 'expense',
 				amount: 100,
-				recurrence: 'yearly',
-				date: new Date(currentYear, 5, 1), // June 1st
-				endDate: null,
+				recurrenceBase: 'year',
+				recurrenceInterval: 1,
+				startDate: new Date(currentYear, 5, 1), // June 1st
+				endDate: undefined,
 			};
 
 			const result = generateTransactionsForTwoYears([inputItem]);

@@ -1,62 +1,76 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { add, addMonths, isWithinInterval } from 'date-fns';
-import * as Crypto from 'expo-crypto';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import type { Item } from '../constants/wizardConfig';
+import type {
+	Persisted,
+	PlannedTransaction,
+	TransactionOccurrence,
+} from '../dataModel';
 
 interface BalanceState {
 	balance: number;
 	disposable: number;
 	change: (amount: number) => void;
-	recalcDisposable: (txns: Item[], now?: Date) => void;
+	recalcDisposable: (
+		txns: Persisted<PlannedTransaction>[],
+		now?: Date,
+	) => void;
 }
 
-function computeDisposable(balance: number, txns: Item[], now: Date): number {
+function computeDisposable(
+	balance: number,
+	txns: Persisted<PlannedTransaction>[],
+	now: Date,
+): number {
 	const currentYear = now.getFullYear();
-	const filteredTxns: Item[] = [];
-	const createdTxnsForTwoYears: Item[] = [];
+	const filteredTxns: Persisted<PlannedTransaction>[] = [];
+	const createdTxnsForTwoYears: TransactionOccurrence[] = [];
 
-	txns.forEach((t: Item) => {
-		t.date = new Date(t.date);
-		if (t.date.getFullYear() === currentYear) {
+	txns.forEach((t: Persisted<PlannedTransaction>) => {
+		if (t.startDate.getFullYear() === currentYear) {
 			filteredTxns.push(t);
 		}
 	});
 	filteredTxns.forEach((t) => {
-		let currentDate = t.date;
+		let currentDate = t.startDate;
 		while (
 			currentDate.getFullYear() === currentYear ||
 			currentDate.getFullYear() === currentYear + 1
 		) {
 			const newTxn = {
-				...t,
-				date: new Date(currentDate),
-				id: Crypto.randomUUID(),
+				amount: t.amount,
+				categoryId: t.categoryId,
+				type: t.type,
+				name: t.name,
+				date: currentDate,
+				plannedTransaction: t,
 			};
 			createdTxnsForTwoYears.push(newTxn);
-			switch (t.recurrence) {
-				case 'daily':
-					currentDate = add(currentDate, { days: 1 });
+			switch (t.recurrenceBase) {
+				case 'day':
+					currentDate = add(currentDate, {
+						days: t.recurrenceInterval,
+					});
 					break;
-				case 'weekly':
-					currentDate = add(currentDate, { weeks: 1 });
+				case 'week':
+					currentDate = add(currentDate, {
+						weeks: t.recurrenceInterval,
+					});
 					break;
-				case 'monthly':
-					currentDate = add(currentDate, { months: 1 });
+				case 'month':
+					currentDate = add(currentDate, {
+						months: t.recurrenceInterval,
+					});
 					break;
-				case 'yearly':
-					currentDate = add(currentDate, { years: 1 });
-					break;
-				case 'custom':
-					if (t.recurrenceInterval) {
-						currentDate = add(currentDate, {
-							days: t.recurrenceInterval,
-						});
-					}
+				case 'year':
+					currentDate = add(currentDate, {
+						years: t.recurrenceInterval,
+					});
 					break;
 				default:
-					currentDate = add(currentDate, { years: 1 });
+					// Invalid recurrence base, break the loop
+					return;
 			}
 		}
 	});
@@ -87,7 +101,10 @@ const useBalanceStore = create<BalanceState>()(
 				const { disposable } = get();
 				set({ balance: amount, disposable });
 			},
-			recalcDisposable: (txns: Item[], now: Date = new Date()) => {
+			recalcDisposable: (
+				txns: Persisted<PlannedTransaction>[],
+				now: Date = new Date(),
+			) => {
 				const { balance } = get();
 				const disposable = computeDisposable(balance, txns, now);
 				set((state) => ({ ...state, disposable }));

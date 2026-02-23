@@ -1,5 +1,4 @@
 import { ChevronDown, ChevronUp, Plus } from '@tamagui/lucide-icons';
-import * as Crypto from 'expo-crypto';
 import { useEffect, useMemo, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -15,8 +14,13 @@ import {
 	YStack,
 } from 'tamagui';
 import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
-import type { Item } from '@/src/constants/wizardConfig';
-import { type Category, useCategoryStore } from '@/src/store/categoryStore';
+import {
+	type Category,
+	DEFAULT_ACCOUNT_ID,
+	type Persisted,
+	type TransactionOccurrence,
+} from '@/src/dataModel';
+import { useCategoryStore } from '@/src/store/categoryStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import {
 	TransactionType,
@@ -27,7 +31,7 @@ export default function AddTransaction() {
 	const [type, setType] = useState<
 		TransactionType.Income | TransactionType.Expense
 	>(TransactionType.Income);
-	const [category, setCategory] = useState<string | null>(null);
+	const [category, setCategory] = useState<Persisted<Category> | null>(null);
 	const [name, setName] = useState('');
 	const [amount, setAmount] = useState('');
 	const [date, setDate] = useState<Date | null>(null);
@@ -39,9 +43,8 @@ export default function AddTransaction() {
 	const [expanded, setExpanded] = useState(false);
 	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [plannedModalVisible, setPlannedModalVisible] = useState(false);
-	const [selectedPlannedTxn, setSelectedPlannedTxn] = useState<Item | null>(
-		null,
-	);
+	const [selectedPlannedTxn, setSelectedPlannedTxn] =
+		useState<TransactionOccurrence | null>(null);
 	const [allocationAmount, setAllocationAmount] = useState('');
 
 	const [newCategory, setNewCategory] = useState('');
@@ -49,14 +52,14 @@ export default function AddTransaction() {
 	const addTransaction = usePlannedTransactionsStore((state) => state.add);
 	const addCategory = useCategoryStore((state) => state.addCategory);
 	const storeCategories = useCategoryStore();
-	const plannedTransactions = usePlannedTransactionsStore(
+	const plannedTransactionOccurrences = usePlannedTransactionsStore(
 		(state) => state.transactionsForTwoYears,
 	);
 
 	const [upcomingPlannedTransactions, setUpcomingPlannedTransactions] =
-		useState<Item[]>([]);
+		useState<TransactionOccurrence[]>([]);
 
-	const [categories, setCategories] = useState<Category[]>([]);
+	const [categories, setCategories] = useState<Persisted<Category>[]>([]);
 	useEffect(() => {
 		setCategories(storeCategories.categories);
 	}, [storeCategories.categories]);
@@ -75,12 +78,14 @@ export default function AddTransaction() {
 		: dynamicCategories.slice(0, 3);
 
 	useEffect(() => {
-		const upcomingTxns = (plannedTransactions || []).filter((t) => {
-			const txnDate = new Date(t.date);
-			const now = new Date();
-			now.setHours(0, 0, 0, 0);
-			return txnDate >= now;
-		});
+		const upcomingTxns = (plannedTransactionOccurrences || []).filter(
+			(t) => {
+				const txnDate = new Date(t.date);
+				const now = new Date();
+				now.setHours(0, 0, 0, 0);
+				return txnDate >= now;
+			},
+		);
 		const twentyUpComingTxns = upcomingTxns
 			.sort((a, b) => {
 				return new Date(a.date).getTime() - new Date(b.date).getTime();
@@ -88,14 +93,13 @@ export default function AddTransaction() {
 			.slice(0, 20);
 		setUpcomingPlannedTransactions(twentyUpComingTxns);
 		console.log('Upcoming planned txns updated', twentyUpComingTxns);
-	}, [plannedTransactions]);
+	}, [plannedTransactionOccurrences]);
 
 	const handleAddCategory = async () => {
 		if (!newCategory.trim()) return;
 
 		try {
 			await addCategory({
-				id: Crypto.randomUUID(),
 				name: newCategory,
 				type: type === TransactionType.Income ? 'income' : 'expense',
 				color: '#000000', // Default color
@@ -108,7 +112,7 @@ export default function AddTransaction() {
 		}
 	};
 
-	const handleSelectPlanned = (txn: Item) => {
+	const handleSelectPlanned = (txn: TransactionOccurrence) => {
 		setSelectedPlannedTxn(txn);
 		setAllocationAmount(txn.amount.toString());
 	};
@@ -118,7 +122,6 @@ export default function AddTransaction() {
 			setName(selectedPlannedTxn.name);
 			setAmount(allocationAmount);
 			setDate(new Date(selectedPlannedTxn.date));
-			setCategory(selectedPlannedTxn.category);
 			setType(
 				selectedPlannedTxn.type === 'income'
 					? TransactionType.Income
@@ -182,14 +185,15 @@ export default function AddTransaction() {
 
 		/*if (Object.keys(newErrors).length === 0) {*/
 		addTransaction({
-			id: Crypto.randomUUID(),
 			name: name,
+			accountId: DEFAULT_ACCOUNT_ID,
 			amount: Number(amount),
-			date: date ?? new Date(),
-			endDate: null,
-			category: category ?? 'uncategorized',
+			startDate: date ?? new Date(),
+			endDate: undefined,
+			categoryId: category?.id ?? 0,
 			type: type.toLowerCase() as 'income' | 'expense',
-			recurrence: 'none',
+			recurrenceBase: 'year',
+			recurrenceInterval: 1,
 		});
 		console.log({
 			type,
@@ -336,7 +340,7 @@ export default function AddTransaction() {
 															style={{
 																height: 'auto',
 															}}
-															key={`${txn.id}-${txn.date}`}
+															key={`${txn.plannedTransaction?.id}-${txn.date}`}
 															onPress={() =>
 																handleSelectPlanned(
 																	txn,
@@ -533,12 +537,12 @@ export default function AddTransaction() {
 													TransactionType.Expense),
 									)
 									.map(({ key, label }) => {
-										const selected = key === category;
+										const selected = key === category?.id;
 										return (
 											<Button
 												key={key}
 												onPress={() => {
-													setCategory(key);
+													setCategory(category);
 												}}
 												size={28}
 												padding={14}

@@ -1,17 +1,13 @@
 import { ChevronLeft, ChevronRight, Pencil, X } from '@tamagui/lucide-icons';
 import { useCallback, useMemo, useState } from 'react';
 import { Button, ScrollView, Separator, Text, XStack, YStack } from 'tamagui';
-import type {
-	Item,
-	Recurrence,
-	TransactionType,
-} from '../constants/wizardConfig';
+import type { TransactionOccurrence, TransactionType } from '../dataModel';
 import { formatCurrency } from '../utils/budgetUtils';
 import BudgetDropdown from './BudgetDropdown';
 
 interface BudgetYearViewProps {
 	currentDate: Date;
-	transactions: Item[];
+	transactions: TransactionOccurrence[];
 	onDateChange: (date: Date) => void;
 }
 
@@ -88,7 +84,7 @@ export default function BudgetYearView({
 		yearTransactions.forEach((t) => {
 			const amount = Number(t.amount);
 			// Use the category string, or fallback if empty
-			const category = t.category || 'Uncategorized';
+			const category = 'Uncategorized';
 
 			if (t.type === 'income') {
 				incomeMap[category] = (incomeMap[category] || 0) + amount;
@@ -97,19 +93,20 @@ export default function BudgetYearView({
 			}
 		});
 
-		// Helper to convert the Map back into a Item object shape so BudgetDropdown accepts it
-		const mapToTxns = (map: Record<string, number>): Item[] => {
+		// Helper to convert the Map back into a TransactionOccurrence object shape so BudgetDropdown accepts it
+		const mapToTxns = (
+			map: Record<string, number>,
+		): TransactionOccurrence[] => {
 			return (
 				Object.entries(map)
 					.map(([catName, totalAmount], index) => ({
 						id: index.toString(),
+						categoryId: 0,
 						name: catName,
 						amount: totalAmount,
 						date: currentDate,
 						endDate: null,
-						category: catName,
 						type: 'income' as TransactionType,
-						recurrence: 'none' as Recurrence,
 					}))
 					// This sorts the result highest value-first
 					.sort(
@@ -225,7 +222,10 @@ export default function BudgetYearView({
 							{incomeTxns.length > 0 ? (
 								incomeTxns.map((t) => (
 									<XStack
-										key={t.id}
+										key={
+											t.realTransaction?.id ??
+											t.plannedTransaction?.id
+										}
 										justifyContent="space-between"
 										marginBottom={5}
 									>
@@ -264,7 +264,10 @@ export default function BudgetYearView({
 							{expenseTxns.length > 0 ? (
 								expenseTxns.map((t) => (
 									<XStack
-										key={t.id}
+										key={
+											t.realTransaction?.id ??
+											t.plannedTransaction?.id
+										}
 										justifyContent="space-between"
 										marginBottom={5}
 									>

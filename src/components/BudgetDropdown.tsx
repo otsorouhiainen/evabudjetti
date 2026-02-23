@@ -2,12 +2,12 @@ import { ChevronDown, ChevronRight, Pencil } from '@tamagui/lucide-icons';
 import type { Router } from 'expo-router';
 import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
-import type { Item } from '../constants/wizardConfig';
+import type { TransactionOccurrence } from '../dataModel';
 import StyledCard from './styledCard';
 
 interface Props {
 	name: string;
-	txns: Item[];
+	txns: TransactionOccurrence[];
 	isOpen: boolean;
 	router?: Router;
 	openDropdown: Dispatch<SetStateAction<boolean>>;
@@ -69,7 +69,7 @@ const BudgetDropdown: React.FC<Props> = ({
 				<YStack mb={15} gap={5}>
 					{txns.map((txn, index) => (
 						<XStack
-							key={`${txn.id}-${index}`}
+							key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${index}`}
 							justifyContent="space-between"
 							alignItems="center"
 							ml={15}
