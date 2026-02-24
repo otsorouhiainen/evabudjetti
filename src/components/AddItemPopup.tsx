@@ -21,7 +21,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	const [name, setName] = useState<string>('');
 	const [amount, setAmount] = useState<number | null>(null);
 	const [date, setDate] = useState<Date>(new Date());
-	const [reoccurence, setReoccurence] = useState<Recurrence>('daily');
+	const [reoccurence, setReoccurence] = useState<Recurrence>('monthly');
 	const [reoccurenceInterval, setReoccurenceInterval] = useState<
 		number | undefined
 	>(undefined);
@@ -44,7 +44,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		} as Item);
 		setName('');
 		setAmount(null);
-		setReoccurence('daily');
+		setReoccurence('monthly');
 		setReoccurenceInterval(undefined);
 		setDate(new Date());
 		onClose();
@@ -53,15 +53,16 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	return (
 		<View style={styles.container}>
 			<YStack backgroundColor="$background" style={styles.card}>
-				<SizableText color="$black" size="$title2">
+				<SizableText color="$primary100" size="$title2">
 					Add a new item
 				</SizableText>
 				<View style={styles.inputsContainer}>
 					<View style={styles.singleItemContainer}>
-						<SizableText color="$black" size="$title3">
+						<SizableText color="$primary100" size="$title3">
 							Name
 						</SizableText>
 						<Input
+							color="$primary100"
 							placeholder="Write the name here"
 							style={styles.input}
 							value={name}
@@ -69,19 +70,26 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						/>
 					</View>
 					<View style={styles.singleItemContainer}>
-						<SizableText color="$black" size="$title3">
+						<SizableText color="$primary100" size="$title3">
 							Amount
 						</SizableText>
 						<Input
+							color="$primary100"
 							placeholder="Write the amount here (€)"
 							style={styles.input}
 							keyboardType="numeric"
-							value={amount?.toString() || ''}
-							onChangeText={(text) => setAmount(Number(text))}
+							onChangeText={(text) => {
+								const input = Number(text);
+								if (!Number.isNaN(input) && input >= 0) {
+									setAmount(input);
+								} else {
+									setAmount(NaN);
+								}
+							}}
 						/>
 					</View>
 					<View>
-						<SizableText color="$black" size="$title3">
+						<SizableText color="$primary100" size="$title3">
 							Reoccurence
 						</SizableText>
 						<View
@@ -131,8 +139,14 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							))}
 							{reoccurence === 'custom' && (
 								<XStack gap={10} alignItems="center">
-									<Text>Interval (days)</Text>
+									<Text
+										color="$primary100"
+										fontWeight={'bold'}
+									>
+										Interval (days)
+									</Text>
 									<Input
+										color="$primary100"
 										style={{ height: '50%' }}
 										placeholder="Interval (days)"
 										keyboardType="numeric"
@@ -161,7 +175,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 					>
 						<SizableText
 							style={{ height: '100%' }}
-							color="$black"
+							color="$primary100"
 							size="$title3"
 						>
 							Date:
@@ -176,7 +190,9 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 				<View style={styles.buttonRow}>
 					<Button
 						borderRadius={28}
-						backgroundColor="$primary200"
+						backgroundColor={
+							isDisabled ? '$primary300' : '$primary200'
+						}
 						style={styles.button}
 						onPress={handleAdd}
 						disabled={isDisabled}
@@ -191,7 +207,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						style={styles.button}
 						onPress={onClose}
 					>
-						<SizableText color="$black" size="$title3">
+						<SizableText color="$primary100" size="$title3">
 							Cancel
 						</SizableText>
 					</Button>
