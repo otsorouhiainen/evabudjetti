@@ -278,7 +278,9 @@ export default function BudgetWizard() {
 					<Button
 						borderRadius={28}
 						style={styles.footerButton}
-						backgroundColor="$primary200"
+						backgroundColor={
+							stepIndex === 0 ? '$primary300' : '$primary200'
+						}
 						disabled={stepIndex === 0}
 						onPress={() => setStepIndex(stepIndex - 1)}
 					>
