@@ -1,5 +1,6 @@
 import {
 	AlertCircle,
+	Calendar,
 	ChevronDown,
 	ChevronRight,
 	ChevronUp,
@@ -10,40 +11,42 @@ import { useMemo, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { Button, Card, SizableText, View, XStack, YStack } from 'tamagui';
 import { test_transactions } from '@/src/utils/fakeTransactions';
-
-// 1. Define a strict interface to solve 'noExplicitAny'
-interface MonthSummary {
-	id: string;
-	name: string;
-	year: string;
-	change: number;
-	status: 'warning' | 'ok';
-}
-
-const monthsData: MonthSummary[] = [
-	{
-		id: '1',
-		name: 'Joulukuu',
-		year: '2022',
-		change: -50.0,
-		status: 'warning',
-	},
-	{ id: '2', name: 'Tammikuu', year: '2023', change: 24.0, status: 'ok' },
-	{ id: '3', name: 'Helmikuu', year: '2023', change: 65.0, status: 'ok' },
-	{
-		id: '4',
-		name: 'Maaliskuu',
-		year: '2023',
-		change: -12.0,
-		status: 'warning',
-	},
-];
+import { allMonthsData, type MonthSummary } from '@/src/utils/mockDataSummary';
 
 export default function BudgetPOC() {
 	const router = useRouter();
+
+	const [selectedYear, setSelectedYear] = useState<string | null>(null);
 	const [selectedMonthId, setSelectedMonthId] = useState<string | null>(null);
 
-	const currentMonth = monthsData.find((m) => m.id === selectedMonthId);
+	// Extract unique years from the data
+	const availableYears = useMemo(() => {
+		const years = allMonthsData.map((m) => m.year);
+		return Array.from(new Set(years)).sort((a, b) => a.localeCompare(b));
+	}, []);
+
+	// Filter months for the selected year
+	const monthsForYear = useMemo(() => {
+		if (!selectedYear) return [];
+		return allMonthsData.filter((m) => m.year === selectedYear);
+	}, [selectedYear]);
+
+	// Find the specific month if one is selected
+	const currentMonth = useMemo(() => {
+		if (!selectedMonthId) return null;
+		return allMonthsData.find((m) => m.id === selectedMonthId);
+	}, [selectedMonthId]);
+
+	// Handle the back button
+	const handleBackPress = () => {
+		if (selectedMonthId) {
+			setSelectedMonthId(null);
+		} else if (selectedYear) {
+			setSelectedYear(null);
+		} else {
+			router.push('/');
+		}
+	};
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
@@ -54,32 +57,48 @@ export default function BudgetPOC() {
 				borderBottomWidth={1}
 				borderColor="$borderColor"
 			>
-				<Button
-					size="$3"
-					onPress={() =>
-						selectedMonthId
-							? setSelectedMonthId(null)
-							: router.push('/')
-					}
-				>
-					{selectedMonthId ? '< Takaisin' : '< Koti'}
+				<Button size="$3" onPress={handleBackPress}>
+					{selectedMonthId
+						? '< Takaisin'
+						: selectedYear
+							? '< Vuodet'
+							: '< Koti'}
 				</Button>
 				<SizableText fontWeight="bold">Eva - OmaBudjetti</SizableText>
-				<View width={40} />
+				<View width={60} />
 			</XStack>
 
 			<ScrollView>
 				<YStack padding="$4" gap="$3">
-					{!selectedMonthId ? (
+					{!selectedYear && !selectedMonthId && (
 						<>
 							<SizableText
 								size="$5"
 								color="$color10"
 								marginBottom="$2"
 							>
-								MONTHS list
+								Valitse vuosi
 							</SizableText>
-							{monthsData.map((item) => (
+							{availableYears.map((year) => (
+								<YearListCard
+									key={year}
+									year={year}
+									onPress={() => setSelectedYear(year)}
+								/>
+							))}
+						</>
+					)}
+
+					{selectedYear && !selectedMonthId && (
+						<>
+							<SizableText
+								size="$5"
+								color="$color10"
+								marginBottom="$2"
+							>
+								{selectedYear} Kuukaudet
+							</SizableText>
+							{monthsForYear.map((item) => (
 								<MonthListCard
 									key={item.id}
 									item={item}
@@ -87,19 +106,50 @@ export default function BudgetPOC() {
 								/>
 							))}
 						</>
-					) : currentMonth ? (
-						/* 2. Solve 'noNonNullAssertion' by checking currentMonth exists */
+					)}
+					{selectedMonthId && currentMonth && (
 						<DetailedMonthView month={currentMonth} />
-					) : null}
+					)}
 				</YStack>
 			</ScrollView>
 		</YStack>
 	);
 }
 
-/**
- * Updated with MonthSummary type
- */
+function YearListCard({
+	year,
+	onPress,
+}: {
+	year: string;
+	onPress: () => void;
+}) {
+	return (
+		<Card
+			bordered
+			padding="$4"
+			onPress={onPress}
+			backgroundColor="white"
+			borderColor="$borderColor"
+			pressStyle={{ scale: 0.98 }}
+		>
+			<XStack justifyContent="space-between" alignItems="center">
+				<XStack gap="$4" alignItems="center">
+					<View
+						padding="$2"
+						borderRadius={100}
+						backgroundColor="#f0f4f8"
+					>
+						<Calendar size={20} color="#0277bd" />
+					</View>
+					<SizableText fontWeight="bold" size="$6">
+						Vuosi {year}
+					</SizableText>
+				</XStack>
+				<ChevronRight size={20} color="$color10" />
+			</XStack>
+		</Card>
+	);
+}
 function MonthListCard({
 	item,
 	onPress,
@@ -153,9 +203,6 @@ function MonthListCard({
 	);
 }
 
-/**
- * Updated with MonthSummary type
- */
 function DetailedMonthView({ month }: { month: MonthSummary }) {
 	const [expensesExpanded, setExpensesExpanded] = useState(false);
 	const [incomeExpanded, setIncomeExpanded] = useState(false);
