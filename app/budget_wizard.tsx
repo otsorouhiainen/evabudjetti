@@ -188,7 +188,7 @@ export default function BudgetWizard() {
 							key={item.name}
 						>
 							<SizableText
-								color="$black"
+								color="$primary100"
 								size="$body"
 								style={styles.itemName}
 							>
@@ -224,7 +224,8 @@ export default function BudgetWizard() {
 									keyboardType="numeric"
 									style={styles.amountInput}
 									backgroundColor="$white"
-									borderColor="$black"
+									borderColor="$primary100"
+									color="$primary100"
 									value={
 										item.amount === 0
 											? ''
