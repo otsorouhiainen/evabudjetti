@@ -1,51 +1,85 @@
 import * as Crypto from 'expo-crypto';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Input, SizableText, Text, XStack, YStack } from 'tamagui';
+import { Button, Input, SizableText, Text, XStack, YStack, ScrollView } from 'tamagui';
+import { Plus } from '@tamagui/lucide-icons';
 import type { Item, Recurrence } from '../constants/wizardConfig';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
+import { type Category, useCategoryStore } from '../store/categoryStore';
 
 type AddItemPopupProps = {
 	onAdd: (item: Item) => void;
 	onClose: () => void;
+	transactionType: 'income' | 'expense';
+	initialData?: {
+		name?: string;
+		amount?: number;
+		date?: Date;
+		category?: string;
+	};
 };
 
-const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
-	const REOCCURENCE_OPTIONS: Recurrence[] = [
-		'daily',
-		'weekly',
-		'monthly',
-		'yearly',
-		'custom',
-	];
+const AddItemPopup = ({ onAdd, onClose, transactionType, initialData }: AddItemPopupProps) => {
 	const [name, setName] = useState<string>('');
 	const [amount, setAmount] = useState<number | null>(null);
 	const [date, setDate] = useState<Date>(new Date());
-	const [reoccurence, setReoccurence] = useState<Recurrence>('daily');
-	const [reoccurenceInterval, setReoccurenceInterval] = useState<
-		number | undefined
-	>(undefined);
+	const [category, setCategory] = useState<string>('uncategorized');
+	const [newCategoryName, setNewCategoryName] = useState<string>('');
+	const [showCategoryInput, setShowCategoryInput] = useState(false);
+	
+	// Get categories from store
+	const storeCategories = useCategoryStore();
+	const addCategory = useCategoryStore((state) => state.addCategory);
+	const categories = storeCategories.categories.filter((c) => c.type === transactionType);
+	
+	// Pre-fill with initial data if provided
+	useEffect(() => {
+		if (initialData) {
+			if (initialData.name) setName(initialData.name);
+			if (initialData.amount) setAmount(initialData.amount);
+			if (initialData.date) setDate(initialData.date);
+			if (initialData.category) setCategory(initialData.category);
+		}
+	}, [initialData]);
+	
 	const isDisabled =
 		!name.trim() ||
 		Number.isNaN(Number(amount)) ||
 		Number(amount) <= 0 ||
 		!date;
 
+	const handleAddCategory = async () => {
+		if (!newCategoryName.trim()) return;
+
+		try {
+			const newCat = {
+				id: Crypto.randomUUID(),
+				name: newCategoryName,
+				type: transactionType,
+				color: '#000000',
+				icon: 'circle',
+			};
+			await addCategory(newCat);
+			setCategory(newCat.id);
+			setNewCategoryName('');
+			setShowCategoryInput(false);
+		} catch (e) {
+			console.error('Failed to add category:', e);
+		}
+	};
+
 	const handleAdd = () => {
 		onAdd({
 			id: Crypto.randomUUID(),
-			category: 'uncategorized',
+			category: category,
 			name: name.trim(),
 			amount: amount,
-			recurrence: reoccurence,
+			recurrence: 'none',
 			date: date,
-			recurrenceInterval:
-				reoccurence === 'custom' ? reoccurenceInterval : undefined,
 		} as Item);
 		setName('');
 		setAmount(null);
-		setReoccurence('daily');
-		setReoccurenceInterval(undefined);
+		setCategory('uncategorized');
 		setDate(new Date());
 		onClose();
 	};
@@ -54,124 +88,110 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		<View style={styles.container}>
 			<YStack backgroundColor="$background" style={styles.card}>
 				<SizableText color="$black" size="$title2">
-					Add a new item
+					Add a new {transactionType}
 				</SizableText>
-				<View style={styles.inputsContainer}>
-					<View style={styles.singleItemContainer}>
-						<SizableText color="$black" size="$title3">
-							Name
-						</SizableText>
-						<Input
-							placeholder="Write the name here"
-							style={styles.input}
-							value={name}
-							onChangeText={setName}
-						/>
-					</View>
-					<View style={styles.singleItemContainer}>
-						<SizableText color="$black" size="$title3">
-							Amount
-						</SizableText>
-						<Input
-							placeholder="Write the amount here (€)"
-							style={styles.input}
-							keyboardType="numeric"
-							value={amount?.toString() || ''}
-							onChangeText={(text) => setAmount(Number(text))}
-						/>
-					</View>
-					<View>
-						<SizableText color="$black" size="$title3">
-							Reoccurence
-						</SizableText>
-						<View
-							style={{
-								flexDirection: 'row',
-								gap: 12,
-								alignItems: 'center',
-								width: '100%',
-								height: '25%',
-								flexWrap: 'wrap',
-							}}
-						>
-							{REOCCURENCE_OPTIONS.map((opt) => (
-								<View
-									style={{
-										flexDirection: 'row',
-										alignItems: 'center',
-										height: '100%',
-										gap: 10,
-									}}
-									key={opt}
-								>
+				<ScrollView showsVerticalScrollIndicator={true}>
+					<View style={styles.inputsContainer}>
+						<View style={styles.singleItemContainer}>
+							<SizableText color="$black" size="$title3">
+								Name
+							</SizableText>
+							<Input
+								placeholder="Write the name here"
+								style={styles.input}
+								value={name}
+								onChangeText={setName}
+							/>
+						</View>
+						<View style={styles.singleItemContainer}>
+							<SizableText color="$black" size="$title3">
+								Amount
+							</SizableText>
+							<Input
+								placeholder="Write the amount here (€)"
+								style={styles.input}
+								keyboardType="numeric"
+								value={amount?.toString() || ''}
+								onChangeText={(text) => setAmount(Number(text))}
+							/>
+						</View>
+
+						{/* Category Selection & Creation */}
+						<View style={styles.categoryContainer}>
+							<SizableText color="$black" size="$title3" marginBottom={8}>
+								Category
+							</SizableText>
+							
+							<XStack flexWrap="wrap" gap={8}>
+								{/* Add Category Button */}
+								<Button
+									onPress={() => setShowCategoryInput(!showCategoryInput)}
+									icon={Plus}
+									size="$3"
+									backgroundColor={showCategoryInput ? '$primary100' : '$white'}
+								/>
+
+								{/* Category Pills - Show All */}
+								{categories.map((cat) => (
 									<Button
+										key={cat.id}
+										onPress={() => setCategory(cat.id)}
 										backgroundColor={
-											reoccurence === opt
+											category === cat.id
 												? '$primary200'
-												: '$primary300'
+												: '$white'
 										}
-										onPress={() => setReoccurence(opt)}
-										style={{
-											height: '100%',
-										}}
+										size="$3"
 									>
-										<SizableText
-											color={
-												reoccurence === opt
-													? '$white'
-													: '$primary100'
-											}
-											size="$title3"
-										>
-											{opt.charAt(0).toUpperCase() +
-												opt.slice(1)}
+										<SizableText size="$body">
+											{cat.name}
 										</SizableText>
 									</Button>
-								</View>
-							))}
-							{reoccurence === 'custom' && (
-								<XStack gap={10} alignItems="center">
-									<Text>Interval (days)</Text>
+								))}
+							</XStack>
+
+							{/* New Category Input */}
+							{showCategoryInput && (
+								<XStack gap={8} marginTop={8}>
 									<Input
-										style={{ height: '50%' }}
-										placeholder="Interval (days)"
-										keyboardType="numeric"
-										onChangeText={(text) => {
-											const interval = Number(text);
-											if (
-												!Number.isNaN(interval) &&
-												interval > 0
-											) {
-												setReoccurenceInterval(
-													interval,
-												);
-											}
-										}}
+										flex={1}
+										placeholder="New category name"
+										value={newCategoryName}
+										onChangeText={setNewCategoryName}
+										onSubmitEditing={handleAddCategory}
 									/>
+									<Button
+										onPress={handleAddCategory}
+										backgroundColor="$primary200"
+										disabled={!newCategoryName.trim()}
+									>
+										<SizableText color="$white">Add</SizableText>
+									</Button>
 								</XStack>
 							)}
 						</View>
-					</View>
-					<XStack
-						style={{
-							height: '10%',
-							alignItems: 'center',
-							gap: 10,
-						}}
-					>
-						<SizableText
-							style={{ height: '100%' }}
-							color="$black"
-							size="$title3"
+
+						<XStack
+							style={{
+								height: '10%',
+								alignItems: 'center',
+								gap: 10,
+							}}
 						>
-							Date:
-						</SizableText>
-						<MultiPlatformDatePicker
-							value={date}
-							onChange={setDate}
-						/>
-					</XStack>
-				</View>
+							<SizableText
+								style={{ height: '100%' }}
+								color="$black"
+								size="$title3"
+							>
+								Date:
+							</SizableText>
+							<MultiPlatformDatePicker
+								value={date}
+								onChange={setDate}
+							/>
+						</XStack>
+					</View>
+				</ScrollView>
 
 				<View style={styles.buttonRow}>
 					<Button
@@ -208,7 +228,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	singleItemContainer: {
-		height: '13%',
+		minHeight: 80,
+		marginBottom: 10,
+	},
+	categoryContainer: {
+		minHeight: 100,
+		marginBottom: 10,
 	},
 	dateInput: {
 		height: '60%',
@@ -223,20 +248,20 @@ const styles = StyleSheet.create({
 	card: {
 		width: '90%',
 		padding: 20,
-		height: '70%',
+		maxHeight: '85%',
 	},
 	input: {
-		height: '100%',
+		height: 40,
+		marginTop: 8,
 	},
 	buttonRow: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		height: '10%',
+		height: 50,
+		marginTop: 10,
 	},
 	inputsContainer: {
-		gap: 30,
 		marginVertical: 20,
-		height: '75%',
 	},
 	button: {
 		width: '45%',

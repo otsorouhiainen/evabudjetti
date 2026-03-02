@@ -7,7 +7,7 @@ import { LOCALE } from '../constants/index';
 import type { Item } from '../constants/wizardConfig';
 import { formatCurrency, splitTransactions } from '../utils/budgetUtils';
 import BudgetDropdown from './BudgetDropdown';
-import BudgetEventList from './BudgetEventList';
+import TransactionList from './BudgetEventList';
 
 interface BudgetMonthViewProps {
 	currentDate: Date;
@@ -164,7 +164,7 @@ export default function BudgetMonthView({
 				</YStack>
 
 				{/* Future events */}
-				<BudgetEventList
+				<TransactionList
 					txns={future}
 					title={'Future events'}
 					router={router}
@@ -172,7 +172,7 @@ export default function BudgetMonthView({
 				/>
 
 				{/* Past events */}
-				<BudgetEventList
+				<TransactionList
 					txns={past}
 					title={'Past events'}
 					router={router}

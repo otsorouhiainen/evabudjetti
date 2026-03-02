@@ -47,7 +47,10 @@ const BudgetDropdown: React.FC<Props> = ({
 						>
 							{formatCurrency(
 								txns.reduce(
-									(acc, txn) => acc + Number(txn.amount),
+									(acc, txn) => 
+										acc + (txn.type === 'expense' 
+											? -Number(txn.amount) 
+											: Number(txn.amount)),
 									0,
 								),
 							)}
@@ -86,7 +89,11 @@ const BudgetDropdown: React.FC<Props> = ({
 									textAlign="right"
 									color={'$color.white'}
 								>
-									{formatCurrency(Number(txn.amount))}
+									{formatCurrency(
+										txn.type === 'expense' 
+											? -Number(txn.amount) 
+											: Number(txn.amount)
+									)}
 								</Text>
 								{/* Edit button rendered only if router exists */}
 								{router && (
