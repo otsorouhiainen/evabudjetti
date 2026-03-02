@@ -27,6 +27,7 @@ describe('budgetUtils', () => {
 				amount: 10,
 				recurrence: 'none',
 				date: new Date(2023, 5, 10),
+				endDate: null,
 			};
 			const futureTx: Item = {
 				id: '2',
@@ -36,6 +37,7 @@ describe('budgetUtils', () => {
 				amount: 20,
 				recurrence: 'none',
 				date: new Date(2023, 5, 20),
+				endDate: null,
 			};
 
 			const result = splitTransactions([pastTx, futureTx], refDate);

@@ -52,7 +52,26 @@ i18next
 				'Add {{transactionType}}': 'Add {{transactionType}}',
 				'Saved': 'Saved',
 
+				//ADD NEW ITEM POPUP
+				'Add a new item': 'Add a new item',
+				'Write the name here': 'Write the name here',
+				'Write the amount here (€)': 'Write the amount here (€)',
+				'Reoccurrence': 'Reoccurrence',
+				'Daily': 'Daily',
+				'Weekly': 'Weekly',
+				'Monthly': 'Monthly',
+				'Yearly': 'Yearly',
+				'Custom': 'Custom',
+				'Set Interval': 'Set Interval',
+				'Interval (days)': 'Interval (days)',
+				'Start Date': 'Start Date',
+				'End Date': 'End Date',
+				'Add': 'Add',
+
 				// BUDGET
+				'Previous': 'Previous',
+				'Next': 'Next',
+				'Finish': 'Finish',
 				'No budget created': 'No budget created yet. Enter your balance in € without commas and press the "Create budget" button below to get started!',
 				'Create budget': 'CREATE BUDGET',
 				'Bus card': 'Bus card',
@@ -162,6 +181,22 @@ i18next
 				'{{transactionType}} added': '{{transactionType}} lisätty',
 				'Add {{transactionType}}': 'Lisää {{transactionType}}',
 				'Saved': 'Tallennettu',
+				
+				//ADD NEW ITEM POPUP
+				'Add a new item': 'Lisää uusi tapahtuma',
+				'Write the name here': 'Kirjoita nimi tähän',
+				'Write the amount here (€)': 'Kirjoita määrä tähän (€)',
+				'Reoccurrence': 'Toistuvuus',
+				'Daily': 'Päivä',
+				'Weekly': 'Viikko',
+				'Monthly': 'Kuukausi',
+				'Yearly': 'Vuosi',
+				'Custom': 'Muu',
+				'Set Interval': 'Aikaväli',
+				'Interval (days)': 'Aikaväli (päiviä)',
+				'Start Date': 'Tapahtuma alkaa',
+				'End Date': 'Tapahtuma loppuu',
+				'Add': 'Lisää',
 
 				// BUDGET
 				'Previous': 'Edellinen',

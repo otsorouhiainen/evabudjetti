@@ -106,6 +106,7 @@ export default function BudgetYearView({
 						name: catName,
 						amount: totalAmount,
 						date: currentDate,
+						endDate: null,
 						category: catName,
 						type: 'income' as TransactionType,
 						recurrence: 'none' as Recurrence,
