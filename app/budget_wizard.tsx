@@ -30,7 +30,7 @@ export default function BudgetWizard() {
 			prev.map((step) => ({
 				...step,
 				items:
-					step.header === 'Income'
+					step.header === 'Incomes'
 						? transactions.filter((t) => t.type === 'income')
 						: transactions.filter((t) => t.type === 'expense'),
 			})),
@@ -41,7 +41,7 @@ export default function BudgetWizard() {
 	const progressBarValue = ((stepIndex + 1) * 100) / wizardData.length;
 
 	function addItem(newItem: Item) {
-		newItem.type = currentStep.header === 'Income' ? 'income' : 'expense';
+		newItem.type = currentStep.header === 'Incomes' ? 'income' : 'expense';
 		newItem.category = 'uncategorized';
 		newItem.id = Math.random().toString(36).substring(2, 15);
 		setWizardData((prev) => {
@@ -174,7 +174,7 @@ export default function BudgetWizard() {
 						style={styles.stepHeader}
 						size="$title2"
 					>
-						{currentStep.header}
+						{t(currentStep.header)}
 					</SizableText>
 				</View>
 				<ScrollView

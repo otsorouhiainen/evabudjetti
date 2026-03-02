@@ -24,7 +24,7 @@ export interface BudgetWizardStep {
 
 export const BUDGET_WIZARD_STEPS: BudgetWizardStep[] = [
 	{
-		header: 'Income',
+		header: 'Incomes',
 		items: [],
 	},
 	{
