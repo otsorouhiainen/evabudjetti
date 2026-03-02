@@ -28,7 +28,7 @@ export default function TabLayout() {
 		{
 			icon: <ChartColumn size={'$icons.md'} color={theme.white.val} />,
 			name: t('Summary'),
-			route: 'summary',
+			route: 'newSummary',
 		},
 	];
 	return (
