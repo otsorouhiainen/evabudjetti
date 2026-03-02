@@ -54,22 +54,9 @@ pnpm run web
 
 ## **🤝 Contributing**
 
-We welcome contributions\! Please follow these guidelines to ensure a smooth workflow.
+We welcome contributions\! 
 
-### **Starting a New Feature**
-
-1. Create a new branch from nightly (or main if nightly is not active).  
-2. Open a **Draft Pull Request** immediately to signal work in progress.
-
-### **Workflow**
-
-1. **Development**: Edit files in the app/ directory (Expo Router).  
-2. **Testing**: Run tests if available.  
-3. **Linting**: Ensure code quality by running pnpm run lint.  
-4. **Review**: Request a review from a senior developer.  
-5. **Merge**: Once approved and checks pass, your code will be merged.
-
-Need help? Open a [GitHub Issue](https://github.com/Samu-K/evabudjetti/issues).
+Please follow the guidelines in our [DEVELOPMENT.md](DEVELOPMENT.md) to ensure a smooth workflow.
 
 ## **📄 License**
 

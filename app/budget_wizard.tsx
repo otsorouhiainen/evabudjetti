@@ -1,6 +1,7 @@
 import { Plus, Trash2 } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, Progress, SizableText, XStack } from 'tamagui';
@@ -15,6 +16,7 @@ import {
 } from '../src/constants/wizardConfig';
 
 export default function BudgetWizard() {
+	const { t } = useTranslation();
 	const router = useRouter();
 	const transactions = usePlannedTransactionsStore(
 		(state) => state.transactions,
@@ -165,7 +167,7 @@ export default function BudgetWizard() {
 						style={styles.pageHeader}
 						size="$title1"
 					>
-						Create budget
+						{t('Create budget')}
 					</SizableText>
 					<SizableText
 						color="$primary100"
@@ -281,7 +283,7 @@ export default function BudgetWizard() {
 						onPress={() => setStepIndex(stepIndex - 1)}
 					>
 						<SizableText color="$white" size="$title1">
-							Previous
+							{t('Previous')}
 						</SizableText>
 					</Button>
 					{stepIndex === wizardData.length - 1 ? (
@@ -298,7 +300,7 @@ export default function BudgetWizard() {
 							}}
 						>
 							<SizableText color="$white" size="$title1">
-								Finish
+								{t('Finish')}
 							</SizableText>
 						</Button>
 					) : (
@@ -309,7 +311,7 @@ export default function BudgetWizard() {
 							onPress={() => setStepIndex(stepIndex + 1)}
 						>
 							<SizableText color="$white" size="$title1">
-								Next
+								{t('Next')}
 							</SizableText>
 						</Button>
 					)}

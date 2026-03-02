@@ -1,6 +1,7 @@
 import { ChartColumn, Home, Wallet } from '@tamagui/lucide-icons';
 import { Tabs } from 'expo-router';
 import type { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from 'tamagui';
 
 interface BottomNavOption {
@@ -11,21 +12,26 @@ interface BottomNavOption {
 
 export default function TabLayout() {
 	const theme = useTheme();
+	const { t } = useTranslation();
 
 	const bottomNavOptions: BottomNavOption[] = [
 		{
 			icon: <Home size={'$icons.md'} color={theme.white.val} />,
-			name: 'Home',
+			name: t('Home'),
 			route: 'index',
 		},
 		{
 			icon: <Wallet size={'$icons.md'} color={theme.white.val} />,
+<<<<<<< HEAD
 			name: 'Transactions',
+=======
+			name: t('Budget'),
+>>>>>>> 97c47c4de0494e69497447711652e025a24c97c8
 			route: 'budget',
 		},
 		{
 			icon: <ChartColumn size={'$icons.md'} color={theme.white.val} />,
-			name: 'Summary',
+			name: t('Summary'),
 			route: 'summary',
 		},
 	];
