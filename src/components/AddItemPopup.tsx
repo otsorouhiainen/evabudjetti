@@ -79,12 +79,7 @@ const AddItemPopup = ({ onAdd, onClose, transactionType, initialData }: AddItemP
 		} as Item);
 		setName('');
 		setAmount(null);
-<<<<<<< HEAD
 		setCategory('uncategorized');
-=======
-		setReoccurence('monthly');
-		setReoccurenceInterval(undefined);
->>>>>>> 97c47c4de0494e69497447711652e025a24c97c8
 		setDate(new Date());
 		onClose();
 	};
@@ -92,7 +87,6 @@ const AddItemPopup = ({ onAdd, onClose, transactionType, initialData }: AddItemP
 	return (
 		<View style={styles.container}>
 			<YStack backgroundColor="$background" style={styles.card}>
-<<<<<<< HEAD
 				<SizableText color="$black" size="$title2">
 					Add a new {transactionType}
 				</SizableText>
@@ -139,67 +133,6 @@ const AddItemPopup = ({ onAdd, onClose, transactionType, initialData }: AddItemP
 
 								{/* Category Pills - Show All */}
 								{categories.map((cat) => (
-=======
-				<SizableText color="$primary100" size="$title2">
-					Add a new item
-				</SizableText>
-				<View style={styles.inputsContainer}>
-					<View style={styles.singleItemContainer}>
-						<SizableText color="$primary100" size="$title3">
-							Name
-						</SizableText>
-						<Input
-							color="$primary100"
-							placeholder="Write the name here"
-							style={styles.input}
-							value={name}
-							onChangeText={setName}
-						/>
-					</View>
-					<View style={styles.singleItemContainer}>
-						<SizableText color="$primary100" size="$title3">
-							Amount
-						</SizableText>
-						<Input
-							color="$primary100"
-							placeholder="Write the amount here (€)"
-							style={styles.input}
-							keyboardType="numeric"
-							onChangeText={(text) => {
-								const input = Number(text);
-								if (!Number.isNaN(input) && input >= 0) {
-									setAmount(input);
-								} else {
-									setAmount(NaN);
-								}
-							}}
-						/>
-					</View>
-					<View>
-						<SizableText color="$primary100" size="$title3">
-							Reoccurence
-						</SizableText>
-						<View
-							style={{
-								flexDirection: 'row',
-								gap: 12,
-								alignItems: 'center',
-								width: '100%',
-								height: '25%',
-								flexWrap: 'wrap',
-							}}
-						>
-							{REOCCURENCE_OPTIONS.map((opt) => (
-								<View
-									style={{
-										flexDirection: 'row',
-										alignItems: 'center',
-										height: '100%',
-										gap: 10,
-									}}
-									key={opt}
-								>
->>>>>>> 97c47c4de0494e69497447711652e025a24c97c8
 									<Button
 										key={cat.id}
 										onPress={() => setCategory(cat.id)}
@@ -214,7 +147,6 @@ const AddItemPopup = ({ onAdd, onClose, transactionType, initialData }: AddItemP
 											{cat.name}
 										</SizableText>
 									</Button>
-<<<<<<< HEAD
 								))}
 							</XStack>
 
@@ -227,34 +159,6 @@ const AddItemPopup = ({ onAdd, onClose, transactionType, initialData }: AddItemP
 										value={newCategoryName}
 										onChangeText={setNewCategoryName}
 										onSubmitEditing={handleAddCategory}
-=======
-								</View>
-							))}
-							{reoccurence === 'custom' && (
-								<XStack gap={10} alignItems="center">
-									<Text
-										color="$primary100"
-										fontWeight={'bold'}
-									>
-										Interval (days)
-									</Text>
-									<Input
-										color="$primary100"
-										style={{ height: '50%' }}
-										placeholder="Interval (days)"
-										keyboardType="numeric"
-										onChangeText={(text) => {
-											const interval = Number(text);
-											if (
-												!Number.isNaN(interval) &&
-												interval > 0
-											) {
-												setReoccurenceInterval(
-													interval,
-												);
-											}
-										}}
->>>>>>> 97c47c4de0494e69497447711652e025a24c97c8
 									/>
 									<Button
 										onPress={handleAddCategory}
@@ -266,7 +170,6 @@ const AddItemPopup = ({ onAdd, onClose, transactionType, initialData }: AddItemP
 								</XStack>
 							)}
 						</View>
-<<<<<<< HEAD
 
 						<XStack
 							style={{
@@ -274,20 +177,6 @@ const AddItemPopup = ({ onAdd, onClose, transactionType, initialData }: AddItemP
 								alignItems: 'center',
 								gap: 10,
 							}}
-=======
-					</View>
-					<XStack
-						style={{
-							height: '10%',
-							alignItems: 'center',
-							gap: 10,
-						}}
-					>
-						<SizableText
-							style={{ height: '100%' }}
-							color="$primary100"
-							size="$title3"
->>>>>>> 97c47c4de0494e69497447711652e025a24c97c8
 						>
 							<SizableText
 								style={{ height: '100%' }}
