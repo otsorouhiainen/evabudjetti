@@ -211,7 +211,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 								color="$primary100"
 								size="$title3"
 							>
-								{t('Set End Date')}:
+								{t('End Date')}:
 							</SizableText>
 							<Checkbox
 								onCheckedChange={() =>

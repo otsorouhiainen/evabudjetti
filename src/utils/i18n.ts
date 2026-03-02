@@ -64,8 +64,8 @@ i18next
 				'Custom': 'Custom',
 				'Set Interval': 'Set Interval',
 				'Interval (days)': 'Interval (days)',
-				'Start Date': 'Start Date:',
-				'End Date': 'End Date:',
+				'Start Date': 'Start Date',
+				'End Date': 'End Date',
 				'Add': 'Add',
 
 				// BUDGET
@@ -192,7 +192,7 @@ i18next
 				'Set Interval': 'Aikaväli',
 				'Interval (days)': 'Aikaväli (päiviä)',
 				'Start Date': 'Tapahtuma alkaa',
-				'Set End Date': 'Tapahtuma loppuu',
+				'End Date': 'Tapahtuma loppuu',
 				'Add': 'Lisää',
 
 				// BUDGET
