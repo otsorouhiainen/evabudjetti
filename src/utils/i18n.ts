@@ -69,6 +69,9 @@ i18next
 				'Add': 'Add',
 
 				// BUDGET
+				'Previous': 'Previous',
+				'Next': 'Next',
+				'Finish': 'Finish',
 				'No budget created': 'No budget created yet. Enter your balance in € without commas and press the "Create budget" button below to get started!',
 				'Create budget': 'CREATE BUDGET',
 				'Bus card': 'Bus card',
