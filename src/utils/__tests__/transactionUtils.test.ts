@@ -19,6 +19,7 @@ describe('transactionUtils', () => {
 				amount: 3000,
 				recurrence: 'monthly',
 				date: new Date(currentYear, 0, 15), // Jan 15th
+				endDate: null,
 			};
 
 			const result = generateTransactionsForTwoYears([inputItem]);
@@ -57,6 +58,7 @@ describe('transactionUtils', () => {
 				amount: 100,
 				recurrence: 'yearly',
 				date: new Date(currentYear, 5, 1), // June 1st
+				endDate: null,
 			};
 
 			const result = generateTransactionsForTwoYears([inputItem]);

@@ -15,6 +15,7 @@ export interface Item {
 	recurrence: Recurrence;
 	recurrenceInterval?: number;
 	date: Date;
+	endDate: Date | null;
 }
 
 export interface BudgetWizardStep {

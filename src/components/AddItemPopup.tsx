@@ -1,7 +1,7 @@
 import { Check } from '@tamagui/lucide-icons';
 import * as Crypto from 'expo-crypto';
-import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import {
 	Button,
@@ -51,6 +51,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 			amount: amount,
 			recurrence: reoccurence,
 			date: startDate,
+			endDate: endDate,
 			recurrenceInterval:
 				reoccurence === 'custom' ? reoccurenceInterval : undefined,
 		} as Item);
@@ -143,8 +144,10 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 											}
 											size="$title3"
 										>
-											{t(opt.charAt(0).toUpperCase() +
-												opt.slice(1))}
+											{t(
+												opt.charAt(0).toUpperCase() +
+													opt.slice(1),
+											)}
 										</SizableText>
 									</Button>
 								</View>
