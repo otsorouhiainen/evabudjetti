@@ -188,6 +188,7 @@ export default function AddTransaction() {
 			name: name,
 			amount: Number(amount),
 			date: date ?? new Date(),
+			endDate: null,
 			category: category ?? 'uncategorized',
 			type: type.toLowerCase() as 'income' | 'expense',
 			recurrence: 'none',

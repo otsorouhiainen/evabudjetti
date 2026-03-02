@@ -1,8 +1,17 @@
+import { Check } from '@tamagui/lucide-icons';
 import * as Crypto from 'expo-crypto';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { Button, Input, SizableText, Text, XStack, YStack } from 'tamagui';
+import {
+	Button,
+	Checkbox,
+	Input,
+	SizableText,
+	Text,
+	XStack,
+	YStack,
+} from 'tamagui';
 import type { Item, Recurrence } from '../constants/wizardConfig';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
@@ -21,9 +30,11 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		'yearly',
 		'custom',
 	];
+	const { t } = useTranslation();
 	const [name, setName] = useState<string>('');
 	const [amount, setAmount] = useState<number | null>(null);
-	const [date, setDate] = useState<Date>(new Date());
+	const [startDate, setStartDate] = useState<Date>(new Date());
+	const [endDate, setEndDate] = useState<Date | null>(null);
 	const [reoccurence, setReoccurence] = useState<Recurrence>('monthly');
 	const [reoccurenceInterval, setReoccurenceInterval] = useState<
 		number | undefined
@@ -32,8 +43,8 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		!name.trim() ||
 		Number.isNaN(Number(amount)) ||
 		Number(amount) <= 0 ||
-		!date;
-
+		!startDate;
+	const hasEndDate = endDate !== null;
 	const handleAdd = () => {
 		onAdd({
 			id: Crypto.randomUUID(),
@@ -41,7 +52,8 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 			name: name.trim(),
 			amount: amount,
 			recurrence: reoccurence,
-			date: date,
+			date: startDate,
+			endDate: endDate,intti error ei liity tähän nii voi mergee
 			recurrenceInterval:
 				reoccurence === 'custom' ? reoccurenceInterval : undefined,
 		} as Item);
@@ -49,7 +61,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		setAmount(null);
 		setReoccurence('monthly');
 		setReoccurenceInterval(undefined);
-		setDate(new Date());
+		setStartDate(new Date());
 		onClose();
 	};
 
@@ -57,7 +69,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		<View style={styles.container}>
 			<YStack backgroundColor="$background" style={styles.card}>
 				<SizableText color="$primary100" size="$title2">
-					{t('Add item')}
+					{t('Add a new item')}
 				</SizableText>
 				<View style={styles.inputsContainer}>
 					<View style={styles.singleItemContainer}>
@@ -93,12 +105,12 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 					</View>
 					<View>
 						<SizableText color="$primary100" size="$title3">
-							{t('Reoccurence')}
+							{t('Reoccurrence')}
 						</SizableText>
 						<View
 							style={{
 								flexDirection: 'row',
-								gap: 12,
+								gap: 8,
 								alignItems: 'center',
 								width: '100%',
 								height: '25%',
@@ -148,7 +160,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 										color="$primary100"
 										fontWeight={'bold'}
 									>
-										{t('Interval (days)')}
+										{t('Set Interval')}:
 									</Text>
 									<Input
 										color="$primary100"
@@ -171,27 +183,61 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							)}
 						</View>
 					</View>
-					<XStack
-						style={{
-							height: '10%',
-							alignItems: 'center',
-							gap: 10,
-						}}
-					>
-						<SizableText
-							style={{ height: '100%' }}
-							color="$primary100"
-							size="$title3"
+					<View style={{ paddingTop: 10, gap: 5 }}>
+						<XStack
+							style={{
+								alignItems: 'center',
+								gap: 10,
+							}}
 						>
-							{t('Date')}
-						</SizableText>
-						<MultiPlatformDatePicker
-							value={date}
-							onChange={setDate}
-						/>
-					</XStack>
-				</View>
+							<SizableText
+								style={{ height: '100%' }}
+								color="$primary100"
+								size="$title3"
+							>
+								{t('Start Date')}:
+							</SizableText>
+							<MultiPlatformDatePicker
+								value={startDate}
+								onChange={setStartDate}
+							/>
+						</XStack>
+						<XStack
+							style={{
+								alignItems: 'center',
+								gap: 5,
+							}}
+						>
+							<SizableText
+								style={{ height: '100%' }}
+								color="$primary100"
+								size="$title3"
+							>
+								{t('End Date')}:
+							</SizableText>
+							<Checkbox
+								onCheckedChange={() =>
+									hasEndDate
+										? setEndDate(null)
+										: setEndDate(new Date())
+								}
+								// Default end date should change based on interval?
+								size="$8"
+							>
+								<Checkbox.Indicator>
+									<Check />
+								</Checkbox.Indicator>
+							</Checkbox>
 
+							{hasEndDate && (
+								<MultiPlatformDatePicker
+									value={endDate}
+									onChange={setEndDate}
+								/>
+							)}
+						</XStack>
+					</View>
+				</View>
 				<View style={styles.buttonRow}>
 					<Button
 						borderRadius={28}
