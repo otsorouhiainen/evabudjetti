@@ -1,5 +1,6 @@
 import * as Crypto from 'expo-crypto';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Button, Input, SizableText, Text, XStack, YStack } from 'tamagui';
 import type { Item, Recurrence } from '../constants/wizardConfig';
@@ -11,6 +12,8 @@ type AddItemPopupProps = {
 };
 
 const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
+	const { t } = useTranslation();
+
 	const REOCCURENCE_OPTIONS: Recurrence[] = [
 		'daily',
 		'weekly',
@@ -54,16 +57,16 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		<View style={styles.container}>
 			<YStack backgroundColor="$background" style={styles.card}>
 				<SizableText color="$primary100" size="$title2">
-					Add a new item
+					{t('Add item')}
 				</SizableText>
 				<View style={styles.inputsContainer}>
 					<View style={styles.singleItemContainer}>
 						<SizableText color="$primary100" size="$title3">
-							Name
+							{t('Name')}
 						</SizableText>
 						<Input
 							color="$primary100"
-							placeholder="Write the name here"
+							placeholder={t('Write the name here')}
 							style={styles.input}
 							value={name}
 							onChangeText={setName}
@@ -71,11 +74,11 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 					</View>
 					<View style={styles.singleItemContainer}>
 						<SizableText color="$primary100" size="$title3">
-							Amount
+							{t('Amount')}
 						</SizableText>
 						<Input
 							color="$primary100"
-							placeholder="Write the amount here (€)"
+							placeholder={t('Write the amount here (€)')}
 							style={styles.input}
 							keyboardType="numeric"
 							onChangeText={(text) => {
@@ -90,7 +93,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 					</View>
 					<View>
 						<SizableText color="$primary100" size="$title3">
-							Reoccurence
+							{t('Reoccurence')}
 						</SizableText>
 						<View
 							style={{
@@ -131,8 +134,10 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 											}
 											size="$title3"
 										>
-											{opt.charAt(0).toUpperCase() +
-												opt.slice(1)}
+											{t(
+												opt.charAt(0).toUpperCase() +
+													opt.slice(1),
+											)}
 										</SizableText>
 									</Button>
 								</View>
@@ -143,12 +148,12 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 										color="$primary100"
 										fontWeight={'bold'}
 									>
-										Interval (days)
+										{t('Interval (days)')}
 									</Text>
 									<Input
 										color="$primary100"
 										style={{ height: '50%' }}
-										placeholder="Interval (days)"
+										placeholder={t('Interval (days)')}
 										keyboardType="numeric"
 										onChangeText={(text) => {
 											const interval = Number(text);
@@ -178,7 +183,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							color="$primary100"
 							size="$title3"
 						>
-							Date:
+							{t('Date')}
 						</SizableText>
 						<MultiPlatformDatePicker
 							value={date}
@@ -198,7 +203,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						disabled={isDisabled}
 					>
 						<SizableText color="$white" size="$title3">
-							Add
+							{t('Add')}
 						</SizableText>
 					</Button>
 					<Button
@@ -208,7 +213,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						onPress={onClose}
 					>
 						<SizableText color="$primary100" size="$title3">
-							Cancel
+							{t('Cancel')}
 						</SizableText>
 					</Button>
 				</View>

@@ -19,7 +19,29 @@ i18next
     			'Budget': 'Budget',
     			'Summary': 'Summary',
 
+				//AddItemPopups
+				'Add item': 'Add a new item',
+				'Write the name here': 'Write the name here',
+				'Write the amount here (€)': 'Write the amount here (€)',
+				'Reoccurence': 'Reoccurence',
+				'Daily': 'Daily',
+				'Weekly': 'Weekly',
+				'Monthly': 'Monthly',
+				'Yearly': 'Yearly',
+				'Custom': 'Custom',
+				'Interval (days)': 'Interval (days)',
+				'Add': 'Add',
+
 				//ADD_TRANSACTION
+				'Select planned': 'Select planned',
+				'Submit': 'Submit',
+				'Add a real transaction': 'Add a real transaction',
+				'Select a planned transaction': 'Select a planned transaction',
+				'No upcoming planned transactions found.': 'No upcoming planned transactions found.',
+				'Income name': 'Income name',
+				'Expense name': 'Expense name',
+				'Write the date here (DD-MM-YYYY)': 'Write the date here (DD-MM-YYYY)',
+
 				'Income': 'Income',
 				'Expense': 'Expense',
 				'Benefit': 'Benefit',
@@ -131,7 +153,29 @@ i18next
     			'Budget': 'Budjetti',
     			'Summary': 'Yhteenveto',
 
+				//AddItemPopups
+				'Add item': 'Lisää uusi tuote',
+				'Write the name here': 'Kirjoita nimi tähän',
+				'Write the amount here (€)': 'Kirjoita summa tähän (€)',
+				'Reoccurence': 'Toistuvuus',
+				'Daily': 'Päivittäin',
+				'Weekly': 'Viikoittain',
+				'Monthly': 'Kuukausittain',
+				'Yearly': 'Vuosittain',
+				'Custom': 'Valinnainen',
+				'Interval (days)': 'Jakso (päivää)',
+				'Add': 'Lisää',
+
 				//ADD_TRANSACTION
+				'Select planned': 'Valitse suunniteltu',
+				'Submit': 'Tallenna',
+				'Add a real transaction': 'Lisää tapahtuma',
+				'Select a planned transaction': 'Valitse suunniteltu tapahtuma',
+				'No upcoming planned transactions found.': 'Sinulla ei ole vielä budjetoituja menoja tai tuloja.',
+				'Income name': 'Tulon nimi',
+				'Expense name': 'Menon nimi',
+				'Write the date here (DD-MM-YYYY)': 'Kirjoita päivämäärä tähän (PP-KK-VVVV)',
+
 				'Income': 'Tulo',
 				'Expense': 'Meno',
 				'Benefit': 'Tuki',

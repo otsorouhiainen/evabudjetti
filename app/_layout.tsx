@@ -3,7 +3,6 @@ import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PortalProvider } from 'tamagui';
 import config from '../tamagui.config';
-import '../src/utils/i18n';
 
 export default function RootLayout() {
 	return (
