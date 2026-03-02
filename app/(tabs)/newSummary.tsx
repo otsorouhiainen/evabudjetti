@@ -219,9 +219,6 @@ function DetailedMonthView({ month }: { month: MonthSummary }) {
 	return (
 		<YStack gap="$4">
 			<YStack>
-				<SizableText size="$3" color="$color10">
-					{'<Budgetin nimi>'}
-				</SizableText>
 				<SizableText size="$9" fontWeight="800">
 					{month.name} {month.year}
 				</SizableText>
