@@ -8,6 +8,7 @@ export const transaction1: Item = {
 	amount: 100,
 	recurrence: 'monthly',
 	date: new Date('12-20-2025'),
+	endDate: null,
 };
 export const transaction2: Item = {
 	id: '1',
@@ -17,6 +18,7 @@ export const transaction2: Item = {
 	amount: 40,
 	recurrence: 'weekly',
 	date: new Date('2-21-2025'),
+	endDate: null,
 };
 export const transaction3: Item = {
 	id: '2',
@@ -26,6 +28,7 @@ export const transaction3: Item = {
 	amount: 60,
 	recurrence: 'weekly',
 	date: new Date('4-4-2025'),
+	endDate: null,
 };
 export const transaction4: Item = {
 	id: '4',
@@ -35,6 +38,7 @@ export const transaction4: Item = {
 	amount: 3,
 	recurrence: 'daily',
 	date: new Date('3-12-2025'),
+	endDate: null,
 };
 export const transaction5: Item = {
 	id: '5',
@@ -44,6 +48,7 @@ export const transaction5: Item = {
 	amount: 80,
 	recurrence: 'monthly',
 	date: new Date('8-20-2025'),
+	endDate: null,
 };
 
 // transactions below are AI GENERATED
@@ -56,6 +61,7 @@ export const transaction6: Item = {
 	amount: 45,
 	recurrence: 'monthly',
 	date: new Date('01-15-2025'),
+	endDate: null,
 };
 export const transaction7: Item = {
 	id: '7',
@@ -65,6 +71,7 @@ export const transaction7: Item = {
 	amount: 25,
 	recurrence: 'monthly',
 	date: new Date('01-18-2025'),
+	endDate: null,
 };
 export const transaction8: Item = {
 	id: '8',
@@ -74,6 +81,7 @@ export const transaction8: Item = {
 	amount: 30,
 	recurrence: 'monthly',
 	date: new Date('02-03-2025'),
+	endDate: null,
 };
 export const transaction9: Item = {
 	id: '9',
@@ -83,6 +91,7 @@ export const transaction9: Item = {
 	amount: 55,
 	recurrence: 'monthly',
 	date: new Date('03-02-2025'),
+	endDate: null,
 };
 export const transaction10: Item = {
 	id: '10',
@@ -92,6 +101,7 @@ export const transaction10: Item = {
 	amount: 20,
 	recurrence: 'monthly',
 	date: new Date('02-11-2025'),
+	endDate: null,
 };
 export const transaction11: Item = {
 	id: '11',
@@ -101,6 +111,7 @@ export const transaction11: Item = {
 	amount: 120,
 	recurrence: 'weekly',
 	date: new Date('03-05-2025'),
+	endDate: null,
 };
 export const transaction12: Item = {
 	id: '12',
@@ -110,6 +121,7 @@ export const transaction12: Item = {
 	amount: 10,
 	recurrence: 'monthly',
 	date: new Date('02-17-2025'),
+	endDate: null,
 };
 export const transaction13: Item = {
 	id: '13',
@@ -119,6 +131,7 @@ export const transaction13: Item = {
 	amount: 15,
 	recurrence: 'none',
 	date: new Date('04-10-2025'),
+	endDate: null,
 };
 export const transaction14: Item = {
 	id: '14',
@@ -128,6 +141,7 @@ export const transaction14: Item = {
 	amount: 12,
 	recurrence: 'daily',
 	date: new Date('05-01-2025'),
+	endDate: null,
 };
 export const transaction15: Item = {
 	id: '15',
@@ -137,6 +151,7 @@ export const transaction15: Item = {
 	amount: 5,
 	recurrence: 'monthly',
 	date: new Date('05-05-2025'),
+	endDate: null,
 };
 export const transaction16: Item = {
 	id: '16',
@@ -146,6 +161,7 @@ export const transaction16: Item = {
 	amount: 9,
 	recurrence: 'daily',
 	date: new Date('03-20-2025'),
+	endDate: null,
 };
 export const transaction17: Item = {
 	id: '17',
@@ -155,6 +171,7 @@ export const transaction17: Item = {
 	amount: 4,
 	recurrence: 'daily',
 	date: new Date('03-14-2025'),
+	endDate: null,
 };
 export const transaction18: Item = {
 	id: '18',
@@ -164,6 +181,7 @@ export const transaction18: Item = {
 	amount: 6,
 	recurrence: 'daily',
 	date: new Date('04-11-2025'),
+	endDate: null,
 };
 export const transaction19: Item = {
 	id: '19',
@@ -173,6 +191,7 @@ export const transaction19: Item = {
 	amount: 22,
 	recurrence: 'weekly',
 	date: new Date('02-28-2025'),
+	endDate: null,
 };
 export const transaction20: Item = {
 	id: '20',
@@ -182,6 +201,7 @@ export const transaction20: Item = {
 	amount: 40,
 	recurrence: 'monthly',
 	date: new Date('06-07-2025'),
+	endDate: null,
 };
 export const transaction21: Item = {
 	id: '21',
@@ -191,6 +211,7 @@ export const transaction21: Item = {
 	amount: 18,
 	recurrence: 'none',
 	date: new Date('06-22-2025'),
+	endDate: null,
 };
 export const transaction22: Item = {
 	id: '22',
@@ -200,6 +221,7 @@ export const transaction22: Item = {
 	amount: 14,
 	recurrence: 'none',
 	date: new Date('04-29-2025'),
+	endDate: null,
 };
 export const transaction23: Item = {
 	id: '23',
@@ -209,6 +231,7 @@ export const transaction23: Item = {
 	amount: 200,
 	recurrence: 'none',
 	date: new Date('05-16-2025'),
+	endDate: null,
 };
 export const transaction24: Item = {
 	id: '24',
@@ -218,6 +241,7 @@ export const transaction24: Item = {
 	amount: 35,
 	recurrence: 'weekly',
 	date: new Date('05-12-2025'),
+	endDate: null,
 };
 export const transaction25: Item = {
 	id: '25',
@@ -227,6 +251,7 @@ export const transaction25: Item = {
 	amount: 8,
 	recurrence: 'weekly',
 	date: new Date('03-01-2025'),
+	endDate: null,
 };
 export const transaction26: Item = {
 	id: '26',
@@ -236,6 +261,7 @@ export const transaction26: Item = {
 	amount: 90,
 	recurrence: 'monthly',
 	date: new Date('04-18-2025'),
+	endDate: null,
 };
 export const transaction27: Item = {
 	id: '27',
@@ -245,6 +271,7 @@ export const transaction27: Item = {
 	amount: 50,
 	recurrence: 'weekly',
 	date: new Date('05-25-2025'),
+	endDate: null,
 };
 export const transaction28: Item = {
 	id: '28',
@@ -254,6 +281,7 @@ export const transaction28: Item = {
 	amount: 6,
 	recurrence: 'daily',
 	date: new Date('04-02-2025'),
+	endDate: null,
 };
 export const transaction29: Item = {
 	id: '29',
@@ -263,6 +291,7 @@ export const transaction29: Item = {
 	amount: 18,
 	recurrence: 'weekly',
 	date: new Date('03-26-2025'),
+	endDate: null,
 };
 export const transaction30: Item = {
 	id: '30',
@@ -272,6 +301,7 @@ export const transaction30: Item = {
 	amount: 25,
 	recurrence: 'weekly',
 	date: new Date('03-19-2025'),
+	endDate: null,
 };
 export const transaction31: Item = {
 	id: '31',
@@ -281,6 +311,7 @@ export const transaction31: Item = {
 	amount: 7,
 	recurrence: 'monthly',
 	date: new Date('03-07-2025'),
+	endDate: null,
 };
 export const transaction32: Item = {
 	id: '32',
@@ -290,6 +321,7 @@ export const transaction32: Item = {
 	amount: 12,
 	recurrence: 'none',
 	date: new Date('04-13-2025'),
+	endDate: null,
 };
 export const transaction33: Item = {
 	id: '33',
@@ -299,6 +331,7 @@ export const transaction33: Item = {
 	amount: 10,
 	recurrence: 'weekly',
 	date: new Date('04-21-2025'),
+	endDate: null,
 };
 export const transaction34: Item = {
 	id: '34',
@@ -308,6 +341,7 @@ export const transaction34: Item = {
 	amount: 75,
 	recurrence: 'monthly',
 	date: new Date('06-01-2025'),
+	endDate: null,
 };
 export const transaction35: Item = {
 	id: '35',
@@ -317,6 +351,7 @@ export const transaction35: Item = {
 	amount: 15,
 	recurrence: 'monthly',
 	date: new Date('02-09-2025'),
+	endDate: null,
 };
 export const transaction36: Item = {
 	id: '36',
@@ -326,6 +361,7 @@ export const transaction36: Item = {
 	amount: 20,
 	recurrence: 'monthly',
 	date: new Date('03-22-2025'),
+	endDate: null,
 };
 export const transaction37: Item = {
 	id: '37',
@@ -335,6 +371,7 @@ export const transaction37: Item = {
 	amount: 8,
 	recurrence: 'weekly',
 	date: new Date('05-19-2025'),
+	endDate: null,
 };
 export const transaction38: Item = {
 	id: '38',
@@ -344,6 +381,7 @@ export const transaction38: Item = {
 	amount: 30,
 	recurrence: 'weekly',
 	date: new Date('06-12-2025'),
+	endDate: null,
 };
 export const transaction39: Item = {
 	id: '39',
@@ -353,6 +391,7 @@ export const transaction39: Item = {
 	amount: 12,
 	recurrence: 'monthly',
 	date: new Date('01-25-2025'),
+	endDate: null,
 };
 export const transaction40: Item = {
 	id: '40',
@@ -362,6 +401,7 @@ export const transaction40: Item = {
 	amount: 5,
 	recurrence: 'monthly',
 	date: new Date('02-14-2025'),
+	endDate: null,
 };
 export const transaction41: Item = {
 	id: '41',
@@ -371,6 +411,7 @@ export const transaction41: Item = {
 	amount: 25,
 	recurrence: 'weekly',
 	date: new Date('04-05-2025'),
+	endDate: null,
 };
 export const transaction42: Item = {
 	id: '42',
@@ -380,6 +421,7 @@ export const transaction42: Item = {
 	amount: 60,
 	recurrence: 'weekly',
 	date: new Date('03-30-2025'),
+	endDate: null,
 };
 export const transaction43: Item = {
 	id: '43',
@@ -389,6 +431,7 @@ export const transaction43: Item = {
 	amount: 40,
 	recurrence: 'none',
 	date: new Date('01-20-2025'),
+	endDate: null,
 };
 export const transaction44: Item = {
 	id: '44',
@@ -398,6 +441,7 @@ export const transaction44: Item = {
 	amount: 5,
 	recurrence: 'daily',
 	date: new Date('06-15-2025'),
+	endDate: null,
 };
 export const transaction45: Item = {
 	id: '45',
@@ -407,6 +451,7 @@ export const transaction45: Item = {
 	amount: 60,
 	recurrence: 'monthly',
 	date: new Date('02-02-2025'),
+	endDate: null,
 };
 export const transaction46: Item = {
 	id: '46',
@@ -416,6 +461,7 @@ export const transaction46: Item = {
 	amount: 35,
 	recurrence: 'weekly',
 	date: new Date('04-16-2025'),
+	endDate: null,
 };
 export const transaction47: Item = {
 	id: '47',
@@ -425,6 +471,7 @@ export const transaction47: Item = {
 	amount: 45,
 	recurrence: 'weekly',
 	date: new Date('05-03-2025'),
+	endDate: null,
 };
 export const transaction48: Item = {
 	id: '48',
@@ -434,6 +481,7 @@ export const transaction48: Item = {
 	amount: 20,
 	recurrence: 'weekly',
 	date: new Date('03-17-2025'),
+	endDate: null,
 };
 export const transaction49: Item = {
 	id: '49',
@@ -443,6 +491,7 @@ export const transaction49: Item = {
 	amount: 18,
 	recurrence: 'none',
 	date: new Date('05-29-2025'),
+	endDate: null,
 };
 export const transaction50: Item = {
 	id: '50',
@@ -452,6 +501,7 @@ export const transaction50: Item = {
 	amount: 6,
 	recurrence: 'daily',
 	date: new Date('04-09-2025'),
+	endDate: null,
 };
 export const transaction51: Item = {
 	id: '51',
@@ -461,6 +511,7 @@ export const transaction51: Item = {
 	amount: 7,
 	recurrence: 'none',
 	date: new Date('03-06-2025'),
+	endDate: null,
 };
 export const transaction52: Item = {
 	id: '52',
@@ -470,6 +521,7 @@ export const transaction52: Item = {
 	amount: 22,
 	recurrence: 'weekly',
 	date: new Date('03-27-2025'),
+	endDate: null,
 };
 export const transaction53: Item = {
 	id: '53',
@@ -479,6 +531,7 @@ export const transaction53: Item = {
 	amount: 28,
 	recurrence: 'none',
 	date: new Date('02-19-2025'),
+	endDate: null,
 };
 export const transaction54: Item = {
 	id: '54',
@@ -488,6 +541,7 @@ export const transaction54: Item = {
 	amount: 14,
 	recurrence: 'monthly',
 	date: new Date('05-09-2025'),
+	endDate: null,
 };
 export const transaction55: Item = {
 	id: '55',
@@ -497,6 +551,7 @@ export const transaction55: Item = {
 	amount: 40,
 	recurrence: 'none',
 	date: new Date('04-28-2025'),
+	endDate: null,
 };
 export const transaction56: Item = {
 	id: '56',
@@ -506,6 +561,7 @@ export const transaction56: Item = {
 	amount: 18,
 	recurrence: 'none',
 	date: new Date('06-04-2025'),
+	endDate: null,
 };
 export const transaction57: Item = {
 	id: '57',
@@ -515,6 +571,7 @@ export const transaction57: Item = {
 	amount: 50,
 	recurrence: 'weekly',
 	date: new Date('03-23-2025'),
+	endDate: null,
 };
 export const transaction58: Item = {
 	id: '58',
@@ -524,6 +581,7 @@ export const transaction58: Item = {
 	amount: 65,
 	recurrence: 'none',
 	date: new Date('07-14-2025'),
+	endDate: null,
 };
 export const transaction59: Item = {
 	id: '59',
@@ -533,6 +591,7 @@ export const transaction59: Item = {
 	amount: 11,
 	recurrence: 'monthly',
 	date: new Date('02-27-2025'),
+	endDate: null,
 };
 export const transaction60: Item = {
 	id: '60',
@@ -542,6 +601,7 @@ export const transaction60: Item = {
 	amount: 3,
 	recurrence: 'daily',
 	date: new Date('01-30-2025'),
+	endDate: null,
 };
 export const transaction61: Item = {
 	id: '61',
@@ -551,6 +611,7 @@ export const transaction61: Item = {
 	amount: 50,
 	recurrence: 'none',
 	date: new Date('03-10-2025'),
+	endDate: null,
 };
 export const transaction62: Item = {
 	id: '62',
@@ -560,6 +621,7 @@ export const transaction62: Item = {
 	amount: 14,
 	recurrence: 'weekly',
 	date: new Date('04-14-2025'),
+	endDate: null,
 };
 export const transaction63: Item = {
 	id: '63',
@@ -569,6 +631,7 @@ export const transaction63: Item = {
 	amount: 10,
 	recurrence: 'monthly',
 	date: new Date('05-13-2025'),
+	endDate: null,
 };
 export const transaction64: Item = {
 	id: '64',
@@ -578,6 +641,7 @@ export const transaction64: Item = {
 	amount: 32,
 	recurrence: 'weekly',
 	date: new Date('06-19-2025'),
+	endDate: null,
 };
 export const test_transactions: Item[] = [
 	transaction1,

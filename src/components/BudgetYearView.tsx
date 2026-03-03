@@ -1,13 +1,13 @@
 import { ChevronLeft, ChevronRight, Pencil, X } from '@tamagui/lucide-icons';
 import { useCallback, useMemo, useState } from 'react';
 import { Button, ScrollView, Separator, Text, XStack, YStack } from 'tamagui';
-import BudgetDropdown from '@/app/src/components/BudgetDropdown';
 import type {
 	Item,
 	Recurrence,
 	TransactionType,
-} from '../../../src/constants/wizardConfig';
+} from '../constants/wizardConfig';
 import { formatCurrency } from '../utils/budgetUtils';
+import BudgetDropdown from './BudgetDropdown';
 
 interface BudgetYearViewProps {
 	currentDate: Date;
@@ -106,6 +106,7 @@ export default function BudgetYearView({
 						name: catName,
 						amount: totalAmount,
 						date: currentDate,
+						endDate: null,
 						category: catName,
 						type: 'income' as TransactionType,
 						recurrence: 'none' as Recurrence,

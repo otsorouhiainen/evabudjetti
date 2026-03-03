@@ -1,7 +1,10 @@
 import i18next from 'i18next';
+import { initReactI18next } from 'react-i18next';
 
 // biome-ignore format: <explanation> Ignore formatting to keep the required quotation marks
-i18next.init({
+i18next
+.use(initReactI18next) //Connects i18Next to React
+.init({
 	lng: 'fi',
 	debug: true,
 	resources: {
@@ -10,6 +13,11 @@ i18next.init({
 				'Test string': 'Test string',
 				'Test string with interpolated value {{value}}':
 					'Test string with interpolated value {{value}}',
+
+				//Layouts
+				'Home': 'Home',
+    			'Budget': 'Budget',
+    			'Summary': 'Summary',
 
 				//ADD_TRANSACTION
 				'Income': 'Income',
@@ -44,7 +52,28 @@ i18next.init({
 				'Add {{transactionType}}': 'Add {{transactionType}}',
 				'Saved': 'Saved',
 
+				//ADD NEW ITEM POPUP
+				'Add a new item': 'Add a new item',
+				'Write the name here': 'Write the name here',
+				'Write the amount here (€)': 'Write the amount here (€)',
+				'Reoccurrence': 'Reoccurrence',
+				'Daily': 'Daily',
+				'Weekly': 'Weekly',
+				'Monthly': 'Monthly',
+				'Yearly': 'Yearly',
+				'Custom': 'Custom',
+				'Set Interval': 'Set Interval',
+				'Interval (days)': 'Interval (days)',
+				'Start Date': 'Start Date',
+				'End Date': 'End Date',
+				'Add': 'Add',
+
 				// BUDGET
+				'Previous': 'Previous',
+				'Next': 'Next',
+				'Finish': 'Finish',
+				'No budget created': 'No budget created yet. Enter your balance in € without commas and press the "Create budget" button below to get started!',
+				'Create budget': 'CREATE BUDGET',
 				'Bus card': 'Bus card',
 				'Study benefit': 'Study benefit',
 				'Study loan': 'Study loan',
@@ -106,7 +135,7 @@ i18next.init({
 				'ADD INCOME/EXPENSE': 'ADD INCOME/EXPENSE',
 				'EDIT BUDGET': 'EDIT BUDGET',
 				'SHOW BUDGET': 'SHOW BUDGET',
-				'EVA Personal Budget': 'EVA Personal Budget',
+				'EVA MyBudget': 'EVA MyBudget',
 				'VIEW DETAILS': 'VIEW DETAILS',
 			},
 		},
@@ -115,6 +144,11 @@ i18next.init({
 				'Test string': 'Testistringi',
 				'Test string with interpolated value {{value}}':
 					'Testistringi interpoloidulla arvolla {{value}}',
+
+				//Layouts
+				'Home': 'Koti',
+    			'Budget': 'Budjetti',
+    			'Summary': 'Yhteenveto',
 
 				//ADD_TRANSACTION
 				'Income': 'Tulo',
@@ -147,8 +181,29 @@ i18next.init({
 				'{{transactionType}} added': '{{transactionType}} lisätty',
 				'Add {{transactionType}}': 'Lisää {{transactionType}}',
 				'Saved': 'Tallennettu',
+				
+				//ADD NEW ITEM POPUP
+				'Add a new item': 'Lisää uusi tapahtuma',
+				'Write the name here': 'Kirjoita nimi tähän',
+				'Write the amount here (€)': 'Kirjoita määrä tähän (€)',
+				'Reoccurrence': 'Toistuvuus',
+				'Daily': 'Päivä',
+				'Weekly': 'Viikko',
+				'Monthly': 'Kuukausi',
+				'Yearly': 'Vuosi',
+				'Custom': 'Muu',
+				'Set Interval': 'Aikaväli',
+				'Interval (days)': 'Aikaväli (päiviä)',
+				'Start Date': 'Tapahtuma alkaa',
+				'End Date': 'Tapahtuma loppuu',
+				'Add': 'Lisää',
 
 				// BUDGET
+				'Previous': 'Edellinen',
+				'Next': 'Seuraava',
+				'Finish': 'Valmis',
+				'No budget created': 'Budjettia ei ole vielä luotu. Aloita syöttämällä tilisi saldo euroina (€) ilman pilkkuja ja paina alta löytyvää "Luo budjetti" -painiketta!',
+				'Create budget': 'LUO BUDJETTI',
 				'Bus card': 'Bussikortti',
 				'Study benefit': 'Opintotuki',
 				'Study loan': 'Opintolaina',
@@ -245,7 +300,7 @@ i18next.init({
 				'ADD INCOME/EXPENSE': 'LISÄÄ TULO/MENO',
 				'EDIT BUDGET': 'MUOKKAA BUDJETTIA',
 				'SHOW BUDGET': 'NÄYTÄ BUDJETTI',
-				'EVA Personal Budget': 'EVA henkilökohtainen budjetti',
+				'EVA MyBudget': 'EVA OmaBudjetti',
 				'VIEW DETAILS': 'NÄYTÄ TIEDOT',
 			},
 		},

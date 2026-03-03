@@ -2,11 +2,11 @@ import { TamaguiProvider, Theme } from '@tamagui/core';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PortalProvider } from 'tamagui';
-import { BottomNav } from '@/src/components/BottomNav';
 import config from '../tamagui.config';
 import { StatusBar } from 'expo-status-bar';
 
 
+import '../src/utils/i18n';
 
 export default function RootLayout() {
 	return (
@@ -29,7 +29,6 @@ export default function RootLayout() {
 								options={{ presentation: 'modal' }}
 							/>
 						</Stack>
-						<BottomNav />
 					</SafeAreaProvider>
 				</Theme>
 			</PortalProvider>

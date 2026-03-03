@@ -2,8 +2,8 @@ import { ChevronDown, ChevronRight, Pencil } from '@tamagui/lucide-icons';
 import type { Router } from 'expo-router';
 import type { Dispatch, SetStateAction } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
-import StyledCard from '@/app/src/components/styledCard';
-import type { Item } from '../../../src/constants/wizardConfig';
+import type { Item } from '../constants/wizardConfig';
+import StyledCard from './styledCard';
 
 interface Props {
 	name: string;

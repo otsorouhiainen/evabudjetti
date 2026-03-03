@@ -1,9 +1,9 @@
 import { Pencil } from '@tamagui/lucide-icons';
 import type { Router } from 'expo-router';
 import { Button, Text, XStack, YStack } from 'tamagui';
-import StyledListItem from '@/app/src/components/StyledListItem';
-import type { Item } from '../../../src/constants/wizardConfig';
-import { LOCALE } from '../constants';
+import { LOCALE } from '../constants/index';
+import type { Item } from '../constants/wizardConfig';
+import StyledListItem from './StyledListItem';
 
 interface Props {
 	txns: Item[];

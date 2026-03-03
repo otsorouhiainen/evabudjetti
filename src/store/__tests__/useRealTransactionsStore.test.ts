@@ -17,6 +17,7 @@ describe('useRealTransactionsStore', () => {
 		amount: 100,
 		recurrence: 'none',
 		date: new Date(),
+		endDate: null,
 	};
 
 	beforeEach(() => {

@@ -26,11 +26,7 @@
 			"favicon": "./assets/images/favicon.png",
 			"build": {
 				"babel": {
-					"include": [
-						"@ui-kitten/components",
-						"expo-font",
-						"@expo-google-fonts/fira-sans"
-					]
+					"include": ["expo-font", "@expo-google-fonts/fira-sans"]
 				}
 			}
 		},

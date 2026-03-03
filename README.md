@@ -19,7 +19,6 @@ This project leverages a modern stack for robust mobile development:
 * [**TypeScript**](https://www.typescriptlang.org/): Ensures type safety and scalable code.  
 * [**Tamagui**](https://tamagui.dev/): For highly performant and consistent UI components.  
 * [**Zustand**](https://github.com/pmndrs/zustand): A small, fast, and scalable bearbones state management solution.  
-* [**Prisma**](https://www.prisma.io/): Next-generation Node.js and TypeScript ORM for SQLite.  
 * [**i18next**](https://www.i18next.com/): For internationalization.  
 * [**PNPM**](https://pnpm.io/): Fast, disk space efficient package manager.  
 * [**Biome**](https://biomejs.dev/): Fast formatter and linter.
@@ -40,11 +39,6 @@ This project leverages a modern stack for robust mobile development:
 2. **Install dependencies**  
    pnpm install
 
-3. Initialize Database (Prisma)  
-   Ensure your local database is set up correctly.  
-   npx prisma generate  
-   npx prisma db push
-
 ### **Running the App**
 
 **Android**  
@@ -60,22 +54,9 @@ pnpm run web
 
 ## **🤝 Contributing**
 
-We welcome contributions\! Please follow these guidelines to ensure a smooth workflow.
+We welcome contributions\! 
 
-### **Starting a New Feature**
-
-1. Create a new branch from nightly (or main if nightly is not active).  
-2. Open a **Draft Pull Request** immediately to signal work in progress.
-
-### **Workflow**
-
-1. **Development**: Edit files in the app/ directory (Expo Router).  
-2. **Testing**: Run tests if available.  
-3. **Linting**: Ensure code quality by running pnpm run lint.  
-4. **Review**: Request a review from a senior developer.  
-5. **Merge**: Once approved and checks pass, your code will be merged.
-
-Need help? Open a [GitHub Issue](https://github.com/Samu-K/evabudjetti/issues).
+Please follow the guidelines in our [DEVELOPMENT.md](DEVELOPMENT.md) to ensure a smooth workflow.
 
 ## **📄 License**
 

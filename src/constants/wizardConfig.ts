@@ -15,6 +15,7 @@ export interface Item {
 	recurrence: Recurrence;
 	recurrenceInterval?: number;
 	date: Date;
+	endDate: Date | null;
 }
 
 export interface BudgetWizardStep {
@@ -24,7 +25,7 @@ export interface BudgetWizardStep {
 
 export const BUDGET_WIZARD_STEPS: BudgetWizardStep[] = [
 	{
-		header: 'Income',
+		header: 'Incomes',
 		items: [],
 	},
 	{

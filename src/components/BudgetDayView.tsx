@@ -7,8 +7,8 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
-import type { Item } from '../../../src/constants/wizardConfig';
-import { LOCALE } from '../constants';
+import { LOCALE } from '../constants/index';
+import type { Item } from '../constants/wizardConfig';
 import { formatCurrency } from '../utils/budgetUtils';
 import BudgetEventList from './BudgetEventList';
 import StyledCard from './styledCard';

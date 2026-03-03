@@ -1,6 +1,7 @@
 import { Plus, Trash2 } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, Progress, SizableText, XStack } from 'tamagui';
@@ -15,6 +16,7 @@ import {
 } from '../src/constants/wizardConfig';
 
 export default function BudgetWizard() {
+	const { t } = useTranslation();
 	const router = useRouter();
 	const transactions = usePlannedTransactionsStore(
 		(state) => state.transactions,
@@ -28,7 +30,7 @@ export default function BudgetWizard() {
 			prev.map((step) => ({
 				...step,
 				items:
-					step.header === 'Income'
+					step.header === 'Incomes'
 						? transactions.filter((t) => t.type === 'income')
 						: transactions.filter((t) => t.type === 'expense'),
 			})),
@@ -39,7 +41,7 @@ export default function BudgetWizard() {
 	const progressBarValue = ((stepIndex + 1) * 100) / wizardData.length;
 
 	function addItem(newItem: Item) {
-		newItem.type = currentStep.header === 'Income' ? 'income' : 'expense';
+		newItem.type = currentStep.header === 'Incomes' ? 'income' : 'expense';
 		newItem.category = 'uncategorized';
 		newItem.id = Math.random().toString(36).substring(2, 15);
 		setWizardData((prev) => {
@@ -165,14 +167,14 @@ export default function BudgetWizard() {
 						style={styles.pageHeader}
 						size="$title1"
 					>
-						Create budget
+						{t('Create budget')}
 					</SizableText>
 					<SizableText
 						color="$primary100"
 						style={styles.stepHeader}
 						size="$title2"
 					>
-						{currentStep.header}
+						{t(currentStep.header)}
 					</SizableText>
 				</View>
 				<ScrollView
@@ -186,7 +188,7 @@ export default function BudgetWizard() {
 							key={item.name}
 						>
 							<SizableText
-								color="$black"
+								color="$primary100"
 								size="$body"
 								style={styles.itemName}
 							>
@@ -222,7 +224,8 @@ export default function BudgetWizard() {
 									keyboardType="numeric"
 									style={styles.amountInput}
 									backgroundColor="$white"
-									borderColor="$black"
+									borderColor="$primary100"
+									color="$primary100"
 									value={
 										item.amount === 0
 											? ''
@@ -276,12 +279,14 @@ export default function BudgetWizard() {
 					<Button
 						borderRadius={28}
 						style={styles.footerButton}
-						backgroundColor="$primary200"
+						backgroundColor={
+							stepIndex === 0 ? '$primary300' : '$primary200'
+						}
 						disabled={stepIndex === 0}
 						onPress={() => setStepIndex(stepIndex - 1)}
 					>
 						<SizableText color="$white" size="$title1">
-							Previous
+							{t('Previous')}
 						</SizableText>
 					</Button>
 					{stepIndex === wizardData.length - 1 ? (
@@ -294,11 +299,11 @@ export default function BudgetWizard() {
 									(step) => step.items,
 								);
 								replaceAll(allItems);
-								router.push('/landing');
+								router.push('/');
 							}}
 						>
 							<SizableText color="$white" size="$title1">
-								Finish
+								{t('Finish')}
 							</SizableText>
 						</Button>
 					) : (
@@ -309,7 +314,7 @@ export default function BudgetWizard() {
 							onPress={() => setStepIndex(stepIndex + 1)}
 						>
 							<SizableText color="$white" size="$title1">
-								Next
+								{t('Next')}
 							</SizableText>
 						</Button>
 					)}

@@ -41,7 +41,7 @@ export default function Err() {
 				paddingVertical={20}
 				backgroundColor={'$primary200'}
 				color="$white"
-				onPress={() => router.push('/landing')}
+				onPress={() => router.push('/')}
 			>
 				{'Back to home'}
 			</Button>
