@@ -275,9 +275,7 @@ export default function BudgetYearView({
 											{t.name}
 										</Text>
 										<Text fontSize={15}>
-											{formatCurrency(
-												Math.abs(Number(t.amount)),
-											)}
+											{formatCurrency(-Number(t.amount))}
 										</Text>
 									</XStack>
 								))

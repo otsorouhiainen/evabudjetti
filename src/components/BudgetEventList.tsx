@@ -12,7 +12,7 @@ interface Props {
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
 
-const BudgetEventList: React.FC<Props> = ({
+const TransactionList: React.FC<Props> = ({
 	txns,
 	title,
 	router,
@@ -52,8 +52,11 @@ const BudgetEventList: React.FC<Props> = ({
 						minWidth={100}
 					>
 						<Text fontSize="$body" fontWeight="600">
-							{txn.type === 'income' ? '+' : '-'}
-							{formatCurrency(Number(txn.amount))}
+							{formatCurrency(
+								txn.type === 'expense' 
+									? -Number(txn.amount) 
+									: Number(txn.amount)
+							)}
 						</Text>
 						{/* Edit button rendered only if router exists */}
 						{router && (
@@ -74,4 +77,4 @@ const BudgetEventList: React.FC<Props> = ({
 	);
 };
 
-export default BudgetEventList;
+export default TransactionList;

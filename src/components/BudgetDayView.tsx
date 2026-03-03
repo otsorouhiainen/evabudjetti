@@ -10,7 +10,7 @@ import useBalanceStore from '@/src/store/useBalanceStore';
 import { LOCALE } from '../constants/index';
 import type { Item } from '../constants/wizardConfig';
 import { formatCurrency } from '../utils/budgetUtils';
-import BudgetEventList from './BudgetEventList';
+import TransactionList from './BudgetEventList';
 import StyledCard from './styledCard';
 
 interface BudgetDayViewProps {
@@ -154,7 +154,7 @@ export default function BudgetDayView({
 					</YStack>
 
 					{/* --- Future Events --- */}
-					<BudgetEventList
+					<TransactionList
 						txns={future}
 						title={''}
 						formatCurrency={formatCurrency}
@@ -265,7 +265,7 @@ export default function BudgetDayView({
 					</StyledCard>
 
 					{/* --- Past Events --- */}
-					<BudgetEventList
+					<TransactionList
 						txns={past}
 						title={''}
 						formatCurrency={formatCurrency}

@@ -3,16 +3,20 @@ import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Tabs, Text, YStack } from 'tamagui';
 
-import BudgetDayView from '@/src/components/BudgetDayView';
-import BudgetMonthView from '@/src/components/BudgetMonthView';
-import BudgetYearView from '@/src/components/BudgetYearView';
+import TransactionDayView from '@/src/components/BudgetDayView';
+import TransactionMonthView from '@/src/components/BudgetMonthView';
+import TransactionYearView from '@/src/components/BudgetYearView';
 import StyledTab from '@/src/components/StyledTab';
 import type { Item } from '@/src/constants/wizardConfig';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 
-export default function Budget() {
+export default function Transactions() {
 	const storeTransactionsForTwoYears = usePlannedTransactionsStore(
 		(state) => state.transactionsForTwoYears,
+	);
+	const realTransactions = useRealTransactionsStore(
+		(state) => state.transactions,
 	);
 
 	const [currentDate, setcurrentDate] = useState(new Date());
@@ -22,8 +26,13 @@ export default function Budget() {
 	const router = useRouter();
 
 	useEffect(() => {
-		setTransactions(storeTransactionsForTwoYears ?? []);
-	}, [storeTransactionsForTwoYears]);
+		// Combine planned (budget) and real (actual) transactions
+		const combined = [
+			...(storeTransactionsForTwoYears ?? []),
+			...(realTransactions ?? []),
+		];
+		setTransactions(combined);
+	}, [storeTransactionsForTwoYears, realTransactions]);
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
@@ -94,17 +103,17 @@ export default function Budget() {
 						</StyledTab>
 					</Tabs.List>
 					<Tabs.Content value="day" flex={1}>
-						<BudgetDayView
+						<TransactionDayView
 							onDateChange={setcurrentDate}
 							currentDate={currentDate}
 							transactions={transactions}
 							onAddPress={() => {
-								router.push('/add_transaction');
+								router.push('/add_transaction2');
 							}}
 						/>
 					</Tabs.Content>
 					<Tabs.Content value="month" flex={1}>
-						<BudgetMonthView
+						<TransactionMonthView
 							currentDate={currentDate}
 							transactions={transactions}
 							router={router}
@@ -112,7 +121,7 @@ export default function Budget() {
 						/>
 					</Tabs.Content>
 					<Tabs.Content value="year" flex={1}>
-						<BudgetYearView
+						<TransactionYearView
 							onDateChange={setcurrentDate}
 							currentDate={currentDate}
 							transactions={transactions}

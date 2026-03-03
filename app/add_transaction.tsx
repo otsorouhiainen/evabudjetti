@@ -3,6 +3,7 @@ import * as Crypto from "expo-crypto";
 import { useEffect, useMemo, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
+<<<<<<< HEAD
   AlertDialog,
   Button,
   Input,
@@ -18,6 +19,24 @@ import { MultiPlatformDatePicker } from "@/src/components/MultiPlatformDatePicke
 import type { Item } from "@/src/constants/wizardConfig";
 import { type Category, useCategoryStore } from "@/src/store/categoryStore";
 import usePlannedTransactionsStore from "@/src/store/usePlannedTransactionsStore";
+=======
+	AlertDialog,
+	Button,
+	Input,
+	PortalProvider,
+	ScrollView,
+	SizableText,
+	Stack,
+	Text,
+	XStack,
+	YStack,
+} from 'tamagui';
+import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
+import type { Item } from '@/src/constants/wizardConfig';
+import { type Category, useCategoryStore } from '@/src/store/categoryStore';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
+>>>>>>> 333836f842089963daceccd5eee9211354378d8d
 import {
   TransactionType,
   TransactionTypeSegment,
@@ -44,6 +63,7 @@ export default function AddTransaction() {
   );
   const [allocationAmount, setAllocationAmount] = useState("");
 
+<<<<<<< HEAD
   const [newCategory, setNewCategory] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const addTransaction = usePlannedTransactionsStore((state) => state.add);
@@ -52,6 +72,16 @@ export default function AddTransaction() {
   const plannedTransactions = usePlannedTransactionsStore(
     (state) => state.transactionsForTwoYears,
   );
+=======
+	const [newCategory, setNewCategory] = useState('');
+	const [showSuccess, setShowSuccess] = useState(false);
+	const addTransaction = useRealTransactionsStore((state) => state.add);
+	const addCategory = useCategoryStore((state) => state.addCategory);
+	const storeCategories = useCategoryStore();
+	const plannedTransactions = usePlannedTransactionsStore(
+		(state) => state.transactionsForTwoYears,
+	);
+>>>>>>> 333836f842089963daceccd5eee9211354378d8d
 
   const [upcomingPlannedTransactions, setUpcomingPlannedTransactions] =
     useState<Item[]>([]);

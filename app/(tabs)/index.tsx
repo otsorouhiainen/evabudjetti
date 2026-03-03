@@ -14,12 +14,16 @@ import {
 } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import '@/src/utils/i18n';
 
 export default function Landing() {
 	const { t, i18n } = useTranslation();
 
 	const transactions = usePlannedTransactionsStore(
+		(state) => state.transactions,
+	);
+	const realTransactions = useRealTransactionsStore(
 		(state) => state.transactions,
 	);
 	const storeBalance = useBalanceStore((state) => state.balance);
@@ -37,9 +41,10 @@ export default function Landing() {
 	useEffect(() => {
 		setBalance(storeBalance);
 		setDisposable(storeDisposable);
-		recalcDisposable(transactions);
-	}, [storeBalance, storeDisposable, transactions, recalcDisposable]);
-
+		// Combine both planned and real transactions for balance calculation
+		const allTransactions = [...transactions, ...realTransactions];
+		recalcDisposable(allTransactions);
+	}, [storeBalance, storeDisposable, transactions, realTransactions, recalcDisposable]);
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
 			<YStack f={1} backgroundColor="$background">
