@@ -21,8 +21,6 @@ type AddItemPopupProps = {
 };
 
 const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
-	const { t } = useTranslation();
-
 	const REOCCURENCE_OPTIONS: Recurrence[] = [
 		'daily',
 		'weekly',
@@ -53,7 +51,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 			amount: amount,
 			recurrence: reoccurence,
 			date: startDate,
-			endDate: endDate,intti error ei liity tähän nii voi mergee
+			endDate: endDate,
 			recurrenceInterval:
 				reoccurence === 'custom' ? reoccurenceInterval : undefined,
 		} as Item);
