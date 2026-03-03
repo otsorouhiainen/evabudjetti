@@ -99,7 +99,7 @@ export default function Budget() {
 							currentDate={currentDate}
 							transactions={transactions}
 							onAddPress={() => {
-								router.push('/add_transaction');
+								router.push('/add_transaction2');
 							}}
 						/>
 					</Tabs.Content>

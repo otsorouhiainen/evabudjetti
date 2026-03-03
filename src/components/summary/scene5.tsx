@@ -24,7 +24,7 @@ export const Scene5 = () => {
 				paddingVertical={20}
 				backgroundColor="$primary200"
 				color="$white"
-				onPress={() => router.push('/add_transaction')}
+				onPress={() => router.push('/add_transaction2')}
 			>
 				{'Add transaction'}
 			</Button>
