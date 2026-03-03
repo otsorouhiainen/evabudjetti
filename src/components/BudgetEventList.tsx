@@ -26,9 +26,9 @@ const BudgetEventList: React.FC<Props> = ({
 				</Text>
 			)}
 
-			{txns.map((txn, index) => (
+			{txns.map((txn) => (
 				<StyledListItem
-					key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${index}`}
+					key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${txn.date.getTime()}`}
 				>
 					<Text
 						flex={1}

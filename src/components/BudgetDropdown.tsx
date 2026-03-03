@@ -67,9 +67,9 @@ const BudgetDropdown: React.FC<Props> = ({
 			{/* Dropdown Content */}
 			{isOpen && (
 				<YStack mb={15} gap={5}>
-					{txns.map((txn, index) => (
+					{txns.map((txn) => (
 						<XStack
-							key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${index}`}
+							key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${txn.date.getTime()}`}
 							justifyContent="space-between"
 							alignItems="center"
 							ml={15}
