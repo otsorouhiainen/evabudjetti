@@ -4,6 +4,9 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PortalProvider } from 'tamagui';
 import { BottomNav } from '@/src/components/BottomNav';
 import config from '../tamagui.config';
+import { StatusBar } from 'expo-status-bar';
+
+
 
 export default function RootLayout() {
 	return (
@@ -12,6 +15,10 @@ export default function RootLayout() {
 			<PortalProvider>
 				<Theme name={'light'}>
 					<SafeAreaProvider>
+						<StatusBar
+							style="dark"
+							translucent={false}
+						/>
 						<Stack>
 							<Stack.Screen
 								name="(tabs)"
