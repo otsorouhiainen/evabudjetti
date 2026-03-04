@@ -38,22 +38,22 @@ export function generateTransactionsForTwoYears(
 			switch (t.recurrenceBase) {
 				case 'day':
 					currentDate = add(currentDate, {
-						days: t.recurrenceInterval,
+						days: t.recurrenceInterval ?? 1,
 					});
 					break;
 				case 'week':
 					currentDate = add(currentDate, {
-						weeks: t.recurrenceInterval,
+						weeks: t.recurrenceInterval ?? 1,
 					});
 					break;
 				case 'month':
 					currentDate = add(currentDate, {
-						months: t.recurrenceInterval,
+						months: t.recurrenceInterval ?? 1,
 					});
 					break;
 				case 'year':
 					currentDate = add(currentDate, {
-						years: t.recurrenceInterval,
+						years: t.recurrenceInterval ?? 1,
 					});
 					break;
 				default:

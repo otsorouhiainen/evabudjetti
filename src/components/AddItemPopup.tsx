@@ -156,6 +156,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 									color="$primary100"
 									style={{ height: '50%' }}
 									placeholder={t('Interval')}
+									defaultValue="1"
 									keyboardType="numeric"
 									onChangeText={(text) => {
 										const interval = Number(text);

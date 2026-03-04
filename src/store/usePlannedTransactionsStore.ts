@@ -70,9 +70,6 @@ export const usePlannedTransactionsStore = create<PlannedTransactionsState>()(
 				items: (PlannedTransaction | Persisted<PlannedTransaction>)[],
 			) => {
 				const transactions = items.map((item, index) => {
-					if ('id' in item && item.id !== undefined) {
-						return item;
-					}
 					return { ...item, id: index + 1 };
 				});
 
