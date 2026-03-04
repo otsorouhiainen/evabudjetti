@@ -19,19 +19,6 @@ i18next
     			'Budget': 'Budget',
     			'Summary': 'Summary',
 
-				//AddItemPopups
-				'Add item': 'Add a new item',
-				'Write the name here': 'Write the name here',
-				'Write the amount here (€)': 'Write the amount here (€)',
-				'Reoccurence': 'Reoccurence',
-				'Daily': 'Daily',
-				'Weekly': 'Weekly',
-				'Monthly': 'Monthly',
-				'Yearly': 'Yearly',
-				'Custom': 'Custom',
-				'Interval (days)': 'Interval (days)',
-				'Add': 'Add',
-
 				//ADD_TRANSACTION
 				'Select planned': 'Select planned',
 				'Submit': 'Submit',
@@ -171,19 +158,6 @@ i18next
 				'Home': 'Koti',
     			'Budget': 'Budjetti',
     			'Summary': 'Yhteenveto',
-
-				//AddItemPopups
-				'Add item': 'Lisää uusi tuote',
-				'Write the name here': 'Kirjoita nimi tähän',
-				'Write the amount here (€)': 'Kirjoita summa tähän (€)',
-				'Reoccurence': 'Toistuvuus',
-				'Daily': 'Päivittäin',
-				'Weekly': 'Viikoittain',
-				'Monthly': 'Kuukausittain',
-				'Yearly': 'Vuosittain',
-				'Custom': 'Valinnainen',
-				'Interval (days)': 'Jakso (päivää)',
-				'Add': 'Lisää',
 
 				//ADD_TRANSACTION
 				'Select planned': 'Valitse suunniteltu',
