@@ -20,6 +20,15 @@ i18next
     			'Summary': 'Summary',
 
 				//ADD_TRANSACTION
+				'Select planned': 'Select planned',
+				'Submit': 'Submit',
+				'Add a real transaction': 'Add a real transaction',
+				'Select a planned transaction': 'Select a planned transaction',
+				'No upcoming planned transactions found.': 'No upcoming planned transactions found.',
+				'Income name': 'Income name',
+				'Expense name': 'Expense name',
+				'Write the date here (DD-MM-YYYY)': 'Write the date here (DD-MM-YYYY)',
+
 				'Income': 'Income',
 				'Expense': 'Expense',
 				'Benefit': 'Benefit',
@@ -150,6 +159,15 @@ i18next
     			'Summary': 'Yhteenveto',
 
 				//ADD_TRANSACTION
+				'Select planned': 'Valitse suunniteltu',
+				'Submit': 'Tallenna',
+				'Add a real transaction': 'Lisää tapahtuma',
+				'Select a planned transaction': 'Valitse suunniteltu tapahtuma',
+				'No upcoming planned transactions found.': 'Sinulla ei ole vielä budjetoituja menoja tai tuloja.',
+				'Income name': 'Tulon nimi',
+				'Expense name': 'Menon nimi',
+				'Write the date here (DD-MM-YYYY)': 'Kirjoita päivämäärä tähän (PP-KK-VVVV)',
+
 				'Income': 'Tulo',
 				'Expense': 'Meno',
 				'Benefit': 'Tuki',

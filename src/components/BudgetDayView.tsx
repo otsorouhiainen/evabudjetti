@@ -5,6 +5,7 @@ import {
 	ChevronUp,
 } from '@tamagui/lucide-icons';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import { LOCALE } from '../constants/index';
@@ -32,6 +33,7 @@ export default function BudgetDayView({
 	onDateChange,
 	onAddPress,
 }: BudgetDayViewProps) {
+	const { t } = useTranslation();
 	// State to track how many transactions to show
 	const storeBalance = useBalanceStore((state) => state.balance);
 	const storeDisposable = useBalanceStore((state) => state.disposable);
@@ -232,7 +234,7 @@ export default function BudgetDayView({
 								fontStyle="italic"
 								marginTop={'$4'}
 							>
-								{'No transactions'}
+								{t('No transactions')}
 							</Text>
 						)}
 
@@ -252,18 +254,18 @@ export default function BudgetDayView({
 								fontSize="$buttons.sm"
 								textTransform="uppercase"
 							>
-								{'Add new'}
+								{t('Add new')}
 							</Text>
 						</Button>
 
 						{/* Daily Stats */}
 						<YStack alignItems="center" gap={5}>
 							<Text color="$white" fontSize="$body">
-								{'Account balance'}:{' '}
+								{t('Account balance')}:{' '}
 								{formatCurrency(currentBalance)}
 							</Text>
 							<Text color="$white" fontSize="$body">
-								{'Disposable income'}:{' '}
+								{t('Disposable income')}:{' '}
 								{formatCurrency(disposable)}
 							</Text>
 						</YStack>

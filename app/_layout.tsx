@@ -1,14 +1,12 @@
 import { TamaguiProvider, Theme } from '@tamagui/core';
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PortalProvider, Spinner, Text, YStack } from 'tamagui';
-import config from '../tamagui.config';
-
-import '../src/utils/i18n';
-import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import migrations from '@/drizzle/migrations';
 import { db, isDbReal } from '@/src/db/client';
+import config from '../tamagui.config';
 
 export default function RootLayout() {
 	const { success, error } = useMigrations(db, migrations);
