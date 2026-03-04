@@ -30,7 +30,7 @@
 		"@tamagui/lucide-icons": "^1.144.3",
 		"babel-preset-expo": "^54.0.10",
 		"date-fns": "^4.1.0",
-		"drizzle-orm": "^0.44.7",
+		"drizzle-orm": "^0.45.1",
 		"eas-cli": "^16.28.0",
 		"expo": "~54.0.32",
 		"expo-blur": "~15.0.8",
@@ -67,7 +67,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.28.6",
-		"@biomejs/biome": "2.2.2",
+		"@biomejs/biome": "2.4.5",
 		"@playwright/test": "^1.58.0",
 		"@tamagui/metro-plugin": "^1.144.3",
 		"@testing-library/react-native": "^13.3.3",

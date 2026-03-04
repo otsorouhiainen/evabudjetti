@@ -1,4 +1,3 @@
-import * as Crypto from 'expo-crypto';
 import { useEffect, useState } from 'react';
 import { Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,11 +12,16 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
-import { type Category, useCategoryStore } from '@/src/store/categoryStore';
+import type {
+	Category,
+	Persisted,
+	RealTransaction,
+	TransactionOccurrence,
+} from '@/src/dataModel';
+import { useCategoryStore } from '@/src/store/categoryStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import RealTransactionModal from '../src/components/RealTransactionModal';
-import type { Item } from '../src/constants/wizardConfig';
 
 export default function AddTransaction() {
 	const [popupVisible, setPopupVisible] = useState(false);
@@ -28,22 +32,21 @@ export default function AddTransaction() {
 	const [showSuccess, setShowSuccess] = useState(false);
 
 	// Category state
-	const [categories, setCategories] = useState<Category[]>([]);
+	const [categories, setCategories] = useState<Persisted<Category>[]>([]);
 
 	// Planned transaction state
 	const [plannedModalVisible, setPlannedModalVisible] = useState(false);
-	const [selectedPlannedTxn, setSelectedPlannedTxn] = useState<Item | null>(
-		null,
-	);
+	const [selectedPlannedTxn, setSelectedPlannedTxn] =
+		useState<TransactionOccurrence | null>(null);
 	const [allocationAmount, setAllocationAmount] = useState('');
 	const [upcomingPlannedTransactions, setUpcomingPlannedTransactions] =
-		useState<Item[]>([]);
+		useState<TransactionOccurrence[]>([]);
 	const [prefillData, setPrefillData] = useState<
 		| {
 				name?: string;
 				amount?: number;
 				date?: Date;
-				category?: string;
+				category?: number;
 		  }
 		| undefined
 	>(undefined);
@@ -88,7 +91,6 @@ export default function AddTransaction() {
 
 		try {
 			await addCategory({
-				id: Crypto.randomUUID(),
 				name: categoryName,
 				type: transactionType,
 				color: '#000000',
@@ -100,7 +102,7 @@ export default function AddTransaction() {
 		}
 	};
 
-	const handleSelectPlanned = (txn: Item) => {
+	const handleSelectPlanned = (txn: TransactionOccurrence) => {
 		setSelectedPlannedTxn(txn);
 		setAllocationAmount(txn.amount.toString());
 	};
@@ -125,7 +127,7 @@ export default function AddTransaction() {
 				name: selectedPlannedTxn.name,
 				amount: Number(allocationAmount),
 				date: new Date(selectedPlannedTxn.date),
-				category: selectedPlannedTxn.category,
+				category: selectedPlannedTxn.categoryId,
 			});
 			setTransactionType(selectedPlannedTxn.type);
 
@@ -138,13 +140,11 @@ export default function AddTransaction() {
 		}
 	};
 
-	function addItem(newItem: Item) {
+	function addItem(newItem: RealTransaction) {
 		addTransaction({
 			...newItem,
-			id: Crypto.randomUUID(),
 			type: transactionType,
-			category: newItem.category ?? 'uncategorized',
-			recurrence: 'none',
+			categoryId: newItem.categoryId ?? 0,
 		});
 		setPopupVisible(false);
 		setPrefillData(undefined); // Clear prefill data
@@ -221,7 +221,7 @@ export default function AddTransaction() {
 														style={{
 															height: 'auto',
 														}}
-														key={`${txn.id}-${txn.date}`}
+														key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${txn.date}`}
 														onPress={() =>
 															handleSelectPlanned(
 																txn,

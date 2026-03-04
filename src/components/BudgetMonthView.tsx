@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import { LOCALE } from '../constants/index';
-import type { Item } from '../constants/wizardConfig';
+import type { TransactionOccurrence } from '../dataModel';
 import { formatCurrency, splitTransactions } from '../utils/budgetUtils';
 import BudgetDropdown from './BudgetDropdown';
 import BudgetEventList from './BudgetEventList';
@@ -12,7 +12,7 @@ import BudgetEventList from './BudgetEventList';
 interface BudgetMonthViewProps {
 	currentDate: Date;
 	router: Router;
-	transactions: Item[];
+	transactions: TransactionOccurrence[];
 	onDateChange: (date: Date) => void;
 }
 
@@ -49,11 +49,11 @@ export default function BudgetMonthView({
 		[MonthTransactions, currentDate],
 	);
 
-	const IncomeTxns: Item[] = MonthTransactions.filter(
+	const IncomeTxns: TransactionOccurrence[] = MonthTransactions.filter(
 		(txn) => txn.type === 'income',
 	);
 
-	const ExpenseTxns: Item[] = MonthTransactions.filter(
+	const ExpenseTxns: TransactionOccurrence[] = MonthTransactions.filter(
 		(txn) => txn.type === 'expense',
 	);
 

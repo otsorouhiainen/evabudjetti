@@ -1,26 +1,32 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import type { Item } from '../constants/wizardConfig';
+import type { Persisted, RealTransaction } from '../dataModel';
 
 interface RealTransactionsState {
-	transactions: Item[];
-	add: (item: Item) => void;
-	remove: (item: Item) => void;
-	replaceAll: (items: Item[]) => void;
+	transactions: Persisted<RealTransaction>[];
+	nextId: number;
+	add: (item: RealTransaction) => void;
+	remove: (item: Persisted<RealTransaction>) => void;
+	replaceAll: (items: Persisted<RealTransaction>[]) => void;
 }
 
 const useRealTransactionsStore = create<RealTransactionsState>()(
 	persist(
 		(set) => ({
 			transactions: [],
-			add: (item: Item) => {
+			nextId: 1,
+			add: (item: RealTransaction) => {
 				set((state) => ({
 					...state,
-					transactions: [...state.transactions, item],
+					transactions: [
+						...state.transactions,
+						{ ...item, id: state.nextId },
+					],
+					nextId: state.nextId + 1,
 				}));
 			},
-			remove: (item: Item) => {
+			remove: (item: Persisted<RealTransaction>) => {
 				set((state) => {
 					const id = item.id;
 					if (id === undefined) return state;
@@ -32,7 +38,7 @@ const useRealTransactionsStore = create<RealTransactionsState>()(
 					};
 				});
 			},
-			replaceAll: (items: Item[]) => {
+			replaceAll: (items: Persisted<RealTransaction>[]) => {
 				set((state) => ({
 					...state,
 					transactions: items,
@@ -42,6 +48,16 @@ const useRealTransactionsStore = create<RealTransactionsState>()(
 		{
 			name: 'real-transactions-storage',
 			storage: createJSONStorage(() => AsyncStorage),
+			version: 1,
+			onRehydrateStorage: () => (state) => {
+				if (state) {
+					// convert date from string to Date object
+					state.transactions = state.transactions.map((t) => ({
+						...t,
+						date: new Date(t.date),
+					}));
+				}
+			},
 		},
 	),
 );

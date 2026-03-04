@@ -1,33 +1,48 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import type { Item } from '../constants/wizardConfig';
+import type {
+	Persisted,
+	PlannedTransaction,
+	TransactionOccurrence,
+} from '../dataModel';
+import { generateTransactionsForTwoYears } from '../utils/transactionUtils';
 
 export interface PlannedTransactionsState {
-	transactions: Item[];
-	transactionsForTwoYears: Item[];
-	add: (item: Item) => void;
-	remove: (item: Item) => void;
-	replaceAll: (items: Item[]) => void;
+	transactions: Persisted<PlannedTransaction>[];
+	transactionsForTwoYears: TransactionOccurrence[];
+	nextId: number;
+	add: (item: PlannedTransaction) => void;
+	remove: (item: Persisted<PlannedTransaction>) => void;
+	replaceAll: (
+		items: (PlannedTransaction | Persisted<PlannedTransaction>)[],
+	) => void;
 	change: () => void;
 }
+
 export const usePlannedTransactionsStore = create<PlannedTransactionsState>()(
 	persist(
 		(set) => ({
 			transactions: [],
 			transactionsForTwoYears: [],
-			add: (item: Item) => {
+			nextId: 1,
+			add: (item: PlannedTransaction) => {
 				set((state) => {
-					const newTransactions = [...state.transactions, item];
+					const newTransactions = [
+						...state.transactions,
+						{ ...item, id: state.nextId },
+					];
+
 					return {
 						...state,
 						transactions: newTransactions,
 						transactionsForTwoYears:
 							generateTransactionsForTwoYears(newTransactions),
+						nextId: state.nextId + 1,
 					};
 				});
 			},
-			remove: (item: Item) => {
+			remove: (item: Persisted<PlannedTransaction>) => {
 				set((state) => {
 					// remove by matching id
 					const id = item.id;
@@ -51,21 +66,37 @@ export const usePlannedTransactionsStore = create<PlannedTransactionsState>()(
 					),
 				}));
 			},
-			replaceAll: (items: Item[]) => {
+			replaceAll: (
+				items: (PlannedTransaction | Persisted<PlannedTransaction>)[],
+			) => {
+				const transactions = items.map((item, index) => {
+					return { ...item, id: index + 1 };
+				});
+
 				set((state) => ({
 					...state,
-					transactions: items,
+					transactions: transactions,
 					transactionsForTwoYears:
-						generateTransactionsForTwoYears(items),
+						generateTransactionsForTwoYears(transactions),
 				}));
 			},
 		}),
 		{
 			name: 'planned-transactions-storage',
 			storage: createJSONStorage(() => AsyncStorage),
+			version: 1,
+			onRehydrateStorage: () => (state) => {
+				if (state) {
+					// convert date from string to Date object
+					state.transactions = state.transactions.map((t) => ({
+						...t,
+						startDate: new Date(t.startDate),
+						endDate: t.endDate ? new Date(t.endDate) : undefined,
+					}));
+				}
+			},
 		},
 	),
 );
 
-import { generateTransactionsForTwoYears } from '../utils/transactionUtils';
 export default usePlannedTransactionsStore;

@@ -1,12 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { Text, View, XStack } from 'tamagui';
-import type { Item } from '@/src/constants/wizardConfig';
+import type { TransactionOccurrence } from '@/src/dataModel';
 export const Scene4 = ({
 	categories,
 	upcoming,
 }: {
 	categories: string[];
-	upcoming: Item[];
+	upcoming: TransactionOccurrence[];
 }) => {
 	const font = 12;
 
@@ -32,12 +32,12 @@ export const Scene4 = ({
 				<Text> Upcoming expenses </Text>
 				{upcoming
 					.filter((t) => t.type === 'expense')
-					.filter((t) => t.recurrence !== 'none')
+					.filter((t) => t.plannedTransaction != null)
 					.slice(0, 5)
 					.map((e) => (
 						<XStack
 							style={styles.subContainer}
-							key={e.name}
+							key={e.plannedTransaction?.id}
 							width="100%"
 						>
 							<Text width="33.33%" fontSize={font}>

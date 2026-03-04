@@ -1,24 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-
-export interface Category {
-	id: string;
-	name: string;
-	type: 'income' | 'expense';
-	color?: string | null;
-	icon?: string | null;
-}
+import type { Category, Persisted } from '../dataModel';
 
 interface CategoryStore {
-	categories: Category[];
+	categories: Persisted<Category>[];
 	loading: boolean;
 	error: string | null;
+	nextId: number;
 
 	// Actions
 	addCategory: (category: Category) => Promise<void>;
-	removeCategory: (id: string) => void;
-	replaceAll: (items: Category[]) => void;
+	removeCategory: (id: number) => void;
+	replaceAll: (items: Persisted<Category>[]) => void;
 }
 
 export const useCategoryStore = create<CategoryStore>()(
@@ -27,14 +21,19 @@ export const useCategoryStore = create<CategoryStore>()(
 			categories: [],
 			loading: false,
 			error: null,
+			nextId: 1,
 
 			addCategory: async (category: Category) => {
 				set({ loading: true, error: null });
 				try {
 					// update in-memory state; persist middleware will save to AsyncStorage
 					set((state) => ({
-						categories: [...state.categories, category],
+						categories: [
+							...state.categories,
+							{ ...category, id: state.nextId },
+						],
 						loading: false,
+						nextId: state.nextId + 1,
 					}));
 				} catch (err) {
 					console.error('Failed to add category:', err);
@@ -42,19 +41,20 @@ export const useCategoryStore = create<CategoryStore>()(
 				}
 			},
 
-			removeCategory: (id: string) => {
+			removeCategory: (id: number) => {
 				set((state) => ({
 					categories: state.categories.filter((c) => c.id !== id),
 				}));
 			},
 
-			replaceAll: (items: Category[]) => {
+			replaceAll: (items: Persisted<Category>[]) => {
 				set({ categories: items });
 			},
 		}),
 		{
 			name: 'categories-storage',
 			storage: createJSONStorage(() => AsyncStorage),
+			version: 1,
 		},
 	),
 );

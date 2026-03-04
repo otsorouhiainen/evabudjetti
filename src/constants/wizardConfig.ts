@@ -1,26 +1,8 @@
-export type Recurrence =
-	| 'none'
-	| 'daily'
-	| 'weekly'
-	| 'monthly'
-	| 'yearly'
-	| 'custom';
-export type TransactionType = 'income' | 'expense';
-export interface Item {
-	id: string;
-	name: string;
-	category: string;
-	type: TransactionType;
-	amount: number;
-	recurrence: Recurrence;
-	recurrenceInterval?: number;
-	date: Date;
-	endDate: Date | null;
-}
+import type { Persisted, PlannedTransaction } from '../dataModel';
 
 export interface BudgetWizardStep {
 	header: string;
-	items: Item[];
+	items: (Persisted<PlannedTransaction> | PlannedTransaction)[];
 }
 
 export const BUDGET_WIZARD_STEPS: BudgetWizardStep[] = [

@@ -8,7 +8,7 @@ import BudgetDayView from '@/src/components/BudgetDayView';
 import BudgetMonthView from '@/src/components/BudgetMonthView';
 import BudgetYearView from '@/src/components/BudgetYearView';
 import StyledTab from '@/src/components/StyledTab';
-import type { Item } from '@/src/constants/wizardConfig';
+import type { TransactionOccurrence } from '@/src/dataModel';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 
 export default function Budget() {
@@ -17,7 +17,9 @@ export default function Budget() {
 	);
 
 	const [currentDate, setcurrentDate] = useState(new Date());
-	const [transactions, setTransactions] = useState<Item[]>([]);
+	const [transactions, setTransactions] = useState<TransactionOccurrence[]>(
+		[],
+	);
 	const [selectedTab, setSelectedTab] = useState('day');
 
 	const { t } = useTranslation();

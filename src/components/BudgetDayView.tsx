@@ -9,17 +9,17 @@ import { useTranslation } from 'react-i18next';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import { LOCALE } from '../constants/index';
-import type { Item } from '../constants/wizardConfig';
+import type { TransactionOccurrence } from '../dataModel';
 import { formatCurrency } from '../utils/budgetUtils';
 import BudgetEventList from './BudgetEventList';
 import StyledCard from './styledCard';
 
 interface BudgetDayViewProps {
 	currentDate: Date;
-	transactions: Item[];
+	transactions: TransactionOccurrence[];
 	onDateChange: (date: Date) => void;
 	onAddPress?: () => void;
-	onEditPress?: (txn: Item) => void;
+	onEditPress?: (txn: TransactionOccurrence) => void;
 }
 
 // Helper to format date as "dd.mm.yyyy"
@@ -66,23 +66,25 @@ export default function BudgetDayView({
 		const cDateStr = formatDate(currentDate);
 
 		// Normalize dates: ensure each txn.date is a Date object so getTime() is available
-		const normalizedTxns: Item[] = transactions.map((t) => {
-			const parsedDate =
-				// if already a Date keep it, otherwise create a Date from the value
-				t.date instanceof Date
-					? t.date
-					: new Date(t.date as unknown as string);
-			return { ...t, date: parsedDate };
-		});
+		const normalizedTxns: TransactionOccurrence[] = transactions.map(
+			(t) => {
+				const parsedDate =
+					// if already a Date keep it, otherwise create a Date from the value
+					t.date instanceof Date
+						? t.date
+						: new Date(t.date as unknown as string);
+				return { ...t, date: parsedDate };
+			},
+		);
 
 		// Sort all transactions by date descending (Newest first)
 		const sorted = [...normalizedTxns].sort(
 			(a, b) => b.date.getTime() - a.date.getTime(),
 		);
 
-		const futureTxns: Item[] = [];
-		const currentTxns: Item[] = [];
-		const pastTxns: Item[] = [];
+		const futureTxns: TransactionOccurrence[] = [];
+		const currentTxns: TransactionOccurrence[] = [];
+		const pastTxns: TransactionOccurrence[] = [];
 
 		// Iterate and split based on date comparison
 		const nowTime = currentDate.getTime();
@@ -208,7 +210,10 @@ export default function BudgetDayView({
 							<YStack width="100%" gap={10}>
 								{current.map((t) => (
 									<XStack
-										key={t.id}
+										key={
+											t.realTransaction?.id ??
+											t.plannedTransaction?.id
+										}
 										justifyContent="space-between"
 										borderBottomWidth={1}
 										borderColor="$primary300"

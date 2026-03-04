@@ -1,5 +1,4 @@
 import { Check } from '@tamagui/lucide-icons';
-import * as Crypto from 'expo-crypto';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -12,28 +11,27 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
-import type { Item, Recurrence } from '../constants/wizardConfig';
+import type { PlannedTransaction, RecurrenceBase } from '../dataModel';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type AddItemPopupProps = {
-	onAdd: (item: Item) => void;
+	onAdd: (item: PlannedTransaction) => void;
 	onClose: () => void;
 };
 
 const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
-	const REOCCURENCE_OPTIONS: Recurrence[] = [
-		'daily',
-		'weekly',
-		'monthly',
-		'yearly',
-		'custom',
+	const REOCCURENCE_OPTIONS: RecurrenceBase[] = [
+		'day',
+		'week',
+		'month',
+		'year',
 	];
 	const { t } = useTranslation();
 	const [name, setName] = useState<string>('');
 	const [amount, setAmount] = useState<number | null>(null);
 	const [startDate, setStartDate] = useState<Date>(new Date());
 	const [endDate, setEndDate] = useState<Date | null>(null);
-	const [reoccurence, setReoccurence] = useState<Recurrence>('monthly');
+	const [reoccurence, setReoccurence] = useState<RecurrenceBase>('month');
 	const [reoccurenceInterval, setReoccurenceInterval] = useState<
 		number | undefined
 	>(undefined);
@@ -45,19 +43,17 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	const hasEndDate = endDate !== null;
 	const handleAdd = () => {
 		onAdd({
-			id: Crypto.randomUUID(),
-			category: 'uncategorized',
+			categoryId: 0,
 			name: name.trim(),
 			amount: amount,
-			recurrence: reoccurence,
-			date: startDate,
+			recurrenceBase: reoccurence,
+			startDate: startDate,
 			endDate: endDate,
-			recurrenceInterval:
-				reoccurence === 'custom' ? reoccurenceInterval : undefined,
-		} as Item);
+			recurrenceInterval: reoccurenceInterval,
+		} as PlannedTransaction);
 		setName('');
 		setAmount(null);
-		setReoccurence('monthly');
+		setReoccurence('month');
 		setReoccurenceInterval(undefined);
 		setStartDate(new Date());
 		onClose();
@@ -152,33 +148,27 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 									</Button>
 								</View>
 							))}
-							{reoccurence === 'custom' && (
-								<XStack gap={10} alignItems="center">
-									<Text
-										color="$primary100"
-										fontWeight={'bold'}
-									>
-										{t('Set Interval')}:
-									</Text>
-									<Input
-										color="$primary100"
-										style={{ height: '50%' }}
-										placeholder={t('Interval (days)')}
-										keyboardType="numeric"
-										onChangeText={(text) => {
-											const interval = Number(text);
-											if (
-												!Number.isNaN(interval) &&
-												interval > 0
-											) {
-												setReoccurenceInterval(
-													interval,
-												);
-											}
-										}}
-									/>
-								</XStack>
-							)}
+							<XStack gap={10} alignItems="center">
+								<Text color="$primary100" fontWeight={'bold'}>
+									{t('Interval')}:
+								</Text>
+								<Input
+									color="$primary100"
+									style={{ height: '50%' }}
+									placeholder={t('Interval')}
+									defaultValue="1"
+									keyboardType="numeric"
+									onChangeText={(text) => {
+										const interval = Number(text);
+										if (
+											!Number.isNaN(interval) &&
+											interval > 0
+										) {
+											setReoccurenceInterval(interval);
+										}
+									}}
+								/>
+							</XStack>
 						</View>
 					</View>
 					<View style={{ paddingTop: 10, gap: 5 }}>

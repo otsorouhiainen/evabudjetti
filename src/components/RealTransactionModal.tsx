@@ -11,20 +11,20 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
-import type { Item } from '../constants/wizardConfig';
+import { DEFAULT_ACCOUNT_ID, type RealTransaction } from '../dataModel';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type RealTransactionModalProps = {
-	onAdd: (item: Item) => void;
+	onAdd: (item: RealTransaction) => void;
 	onClose: () => void;
 	transactionType: 'income' | 'expense';
-	categories: { key: string; label: string; type: string }[];
+	categories: { key: number; label: string; type: string }[];
 	onAddCategory: (categoryName: string) => Promise<void>;
 	prefillData?: {
 		name?: string;
 		amount?: number;
 		date?: Date;
-		category?: string;
+		category?: number;
 	};
 };
 
@@ -42,7 +42,7 @@ const RealTransactionModal = ({
 		prefillData?.amount?.toString() || '',
 	);
 	const [date, setDate] = useState<Date>(prefillData?.date || new Date());
-	const [selectedCategory, setSelectedCategory] = useState<string | null>(
+	const [selectedCategory, setSelectedCategory] = useState<number | null>(
 		prefillData?.category || null,
 	);
 	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
@@ -73,14 +73,12 @@ const RealTransactionModal = ({
 		}
 
 		onAdd({
-			id: '', // Will be set by parent
+			accountId: DEFAULT_ACCOUNT_ID,
 			name: name.trim(),
 			amount: numAmount,
 			date,
 			type: transactionType,
-			category: selectedCategory || 'uncategorized',
-			recurrence: 'none',
-			endDate: null,
+			categoryId: selectedCategory ?? 0,
 		});
 	};
 

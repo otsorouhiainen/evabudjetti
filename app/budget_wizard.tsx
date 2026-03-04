@@ -5,14 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, Progress, SizableText, XStack } from 'tamagui';
+import type { PlannedTransaction, RecurrenceBase } from '@/src/dataModel';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import AddItemPopup from '../src/components/AddItemPopup';
 import { MultiPlatformDatePicker } from '../src/components/MultiPlatformDatePicker';
 import {
 	BUDGET_WIZARD_STEPS,
 	type BudgetWizardStep,
-	type Item,
-	type Recurrence,
 } from '../src/constants/wizardConfig';
 
 export default function BudgetWizard() {
@@ -40,10 +39,9 @@ export default function BudgetWizard() {
 	const currentStep = wizardData[stepIndex];
 	const progressBarValue = ((stepIndex + 1) * 100) / wizardData.length;
 
-	function addItem(newItem: Item) {
+	function addItem(newItem: PlannedTransaction) {
 		newItem.type = currentStep.header === 'Incomes' ? 'income' : 'expense';
-		newItem.category = 'uncategorized';
-		newItem.id = Math.random().toString(36).substring(2, 15);
+		newItem.categoryId = 0;
 		setWizardData((prev) => {
 			return prev.map((step, sIdx) =>
 				sIdx === stepIndex
@@ -56,7 +54,7 @@ export default function BudgetWizard() {
 		});
 	}
 
-	function deleteItem(item: Item) {
+	function deleteItem(item: PlannedTransaction) {
 		setWizardData((prev) =>
 			prev.map((step, sIdx) =>
 				sIdx === stepIndex
@@ -71,7 +69,10 @@ export default function BudgetWizard() {
 		);
 	}
 
-	function amountInputChange(item: Item, text: number): BudgetWizardStep[] {
+	function amountInputChange(
+		item: PlannedTransaction,
+		text: number,
+	): BudgetWizardStep[] {
 		return wizardData.map((step, sIdx) =>
 			sIdx === stepIndex
 				? {
@@ -89,15 +90,15 @@ export default function BudgetWizard() {
 		);
 	}
 
-	function shortenRecVisual(rec: Recurrence): string {
+	function shortenRecVisual(rec: RecurrenceBase): string {
 		switch (rec) {
-			case 'daily':
+			case 'day':
 				return 'd';
-			case 'monthly':
+			case 'month':
 				return 'm';
-			case 'yearly':
+			case 'year':
 				return 'y';
-			case 'weekly':
+			case 'week':
 				return 'w';
 			// case custom for default
 			default:
@@ -105,31 +106,32 @@ export default function BudgetWizard() {
 		}
 	}
 
-	function nextOccurence(rec: Recurrence) {
+	function nextOccurence(rec: RecurrenceBase) {
 		switch (rec) {
-			case 'daily':
-				return 'weekly';
-			case 'weekly':
-				return 'monthly';
-			case 'monthly':
-				return 'yearly';
-			case 'yearly':
-				return 'daily';
-			// case weekly, also default
+			case 'day':
+				return 'week';
+			case 'week':
+				return 'month';
+			case 'month':
+				return 'year';
+			case 'year':
+				return 'day';
 			default:
-				return 'custom';
+				return 'month';
 		}
 	}
 
-	function reoccurenceChange(item: Item): BudgetWizardStep[] {
+	function reoccurenceChange(item: PlannedTransaction): BudgetWizardStep[] {
 		return wizardData.map((step, sIdx) =>
 			sIdx === stepIndex
 				? {
 						...step,
 						items: step.items.map((it) => {
 							if (it.name === item.name) {
-								const newRec = nextOccurence(it.recurrence);
-								it.recurrence = newRec;
+								const newRec = nextOccurence(
+									it.recurrenceBase ?? 'month',
+								);
+								it.recurrenceBase = newRec;
 							}
 							return it;
 						}),
@@ -196,7 +198,7 @@ export default function BudgetWizard() {
 							</SizableText>
 							<View style={styles.itemContent}>
 								<MultiPlatformDatePicker
-									value={item.date}
+									value={item.startDate}
 									onChange={(date: Date) => {
 										setWizardData((prev) =>
 											prev.map((step, sIdx) =>
@@ -249,7 +251,9 @@ export default function BudgetWizard() {
 									}}
 								>
 									<SizableText color="$white" size={'$body'}>
-										{shortenRecVisual(item.recurrence)}
+										{shortenRecVisual(
+											item.recurrenceBase ?? 'month',
+										)}
 										{/* Need to make display enum for this later "/mo, /d, /a, etc" */}
 									</SizableText>
 								</Button>
@@ -295,9 +299,8 @@ export default function BudgetWizard() {
 							style={styles.footerButton}
 							backgroundColor="$primary200"
 							onPress={() => {
-								const allItems: Item[] = wizardData.flatMap(
-									(step) => step.items,
-								);
+								const allItems: PlannedTransaction[] =
+									wizardData.flatMap((step) => step.items);
 								replaceAll(allItems);
 								router.push('/');
 							}}
