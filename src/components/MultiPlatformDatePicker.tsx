@@ -5,6 +5,7 @@ import { Calendar } from '@tamagui/lucide-icons';
 import { format, parse } from 'date-fns';
 import type React from 'react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Button, Input, SizableText, XStack } from 'tamagui';
 
@@ -20,6 +21,7 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 	const [editorDate, setEditorDate] = useState<string>('');
 	const [datePickerOpen, setDatePickerOpen] = useState(false);
 	const [date, setDate] = useState<Date | null>(value || null);
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		setDate(value || null);
@@ -68,7 +70,7 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 				<Input
 					color="$primary100"
 					flex={1}
-					placeholder="Write the date here (DD-MM-YYYY)"
+					placeholder={t('Write the date here (DD-MM-YYYY)')}
 					value={editorDate}
 					onChangeText={setEditorDate}
 				/>

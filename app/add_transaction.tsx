@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronUp, Plus } from '@tamagui/lucide-icons';
 import * as Crypto from 'expo-crypto';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	AlertDialog,
@@ -24,6 +25,7 @@ import {
 } from '../src/components/TransactionTypeSegment';
 
 export default function AddTransaction() {
+	const { t } = useTranslation();
 	const [type, setType] = useState<
 		TransactionType.Income | TransactionType.Expense
 	>(TransactionType.Income);
@@ -237,12 +239,12 @@ export default function AddTransaction() {
 								gap={20}
 							>
 								<SizableText size={'$title1'} marginBottom={8}>
-									{'Add category'}
+									{t('Add category')}
 								</SizableText>
 								<Input
 									value={newCategory}
 									onChangeText={setNewCategory}
-									placeholder={'Enter category'}
+									placeholder={t('Enter category')}
 									height={40}
 									borderRadius={6}
 									marginBottom={22}
@@ -267,7 +269,7 @@ export default function AddTransaction() {
 											size={'$title3'}
 											color={'$primary200'}
 										>
-											{'Cancel'}
+											{t('Cancel')}
 										</SizableText>
 									</Button>
 									<Button
@@ -282,7 +284,7 @@ export default function AddTransaction() {
 											size={'$title3'}
 											color={'$white'}
 										>
-											{'Save'}
+											{t('Save')}
 										</SizableText>
 									</Button>
 								</XStack>
@@ -315,9 +317,11 @@ export default function AddTransaction() {
 								gap={20}
 							>
 								<SizableText size={'$title1'} marginBottom={8}>
-									{selectedPlannedTxn
-										? 'Allocate Amount'
-										: 'Select a planned transaction'}
+									{t(
+										selectedPlannedTxn
+											? 'Allocate Amount'
+											: 'Select a planned transaction',
+									)}
 								</SizableText>
 
 								{!selectedPlannedTxn ? (
@@ -326,8 +330,9 @@ export default function AddTransaction() {
 											{upcomingPlannedTransactions.length ===
 											0 ? (
 												<SizableText>
-													No upcoming planned
-													transactions found.
+													{t(
+														'No upcoming planned transactions found.',
+													)}
 												</SizableText>
 											) : (
 												upcomingPlannedTransactions.map(
@@ -468,7 +473,7 @@ export default function AddTransaction() {
 								justifyContent="center"
 							>
 								<SizableText size={'$title1'}>
-									{'Add a real transaction'}
+									{t('Add a real transaction')}
 								</SizableText>
 							</XStack>
 
@@ -482,7 +487,7 @@ export default function AddTransaction() {
 									onPress={() => setPlannedModalVisible(true)}
 								>
 									<SizableText color="$white">
-										Select planned
+										{t('Select planned')}
 									</SizableText>
 								</Button>
 								<XStack justifyContent="center">
@@ -499,7 +504,7 @@ export default function AddTransaction() {
 								alignItems="center"
 							>
 								<SizableText size={'$title2'}>
-									{'Category'}
+									{t('Category')}
 								</SizableText>
 								<Button
 									onPress={() => setExpanded(!expanded)}
@@ -568,9 +573,11 @@ export default function AddTransaction() {
 							>
 								<YStack>
 									<SizableText size={'$title3'}>
-										{type === TransactionType.Income
-											? `${TransactionType.Income} name`
-											: `${TransactionType.Expense} name`}
+										{t(
+											type === TransactionType.Income
+												? `${TransactionType.Income} name`
+												: `${TransactionType.Expense} name`,
+										)}
 										<SizableText size={'$title3'}>
 											{' '}
 											*
@@ -579,7 +586,7 @@ export default function AddTransaction() {
 									<Input
 										value={name}
 										onChangeText={setName}
-										placeholder={`${type} name`}
+										placeholder={t(`${type} name`)}
 										height={40}
 										borderRadius={6}
 										focusStyle={{
@@ -592,7 +599,7 @@ export default function AddTransaction() {
 
 								<YStack>
 									<SizableText size={'$title3'}>
-										{'Amount'}
+										{t('Amount')}
 										<SizableText size={'$title3'}>
 											{' '}
 											*
@@ -628,7 +635,7 @@ export default function AddTransaction() {
 
 								<XStack>
 									<SizableText size={'$title3'}>
-										{'Date'}
+										{t('Date')}
 										<SizableText size={'$title3'}>
 											{' '}
 											*{' '}
@@ -655,7 +662,7 @@ export default function AddTransaction() {
 								onPress={handleSubmit}
 								style={{ height: '10%' }}
 							>
-								<Text color={'$white'}>Submit</Text>
+								<Text color={'$white'}>{t('Submit')}</Text>
 							</Button>
 
 							{/* Success alert */}
@@ -717,7 +724,7 @@ export default function AddTransaction() {
 								fontSize={'$title3'}
 								style={{ height: '10%' }}
 							>
-								<Text color={'$primary200'}>{'Cancel'}</Text>
+								<Text color={'$primary200'}>{t('Cancel')}</Text>
 							</Button>
 						</YStack>
 					</YStack>

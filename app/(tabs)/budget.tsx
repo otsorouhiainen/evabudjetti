@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Tabs, Text, YStack } from 'tamagui';
 
@@ -18,6 +19,8 @@ export default function Budget() {
 	const [currentDate, setcurrentDate] = useState(new Date());
 	const [transactions, setTransactions] = useState<Item[]>([]);
 	const [selectedTab, setSelectedTab] = useState('day');
+
+	const { t } = useTranslation();
 
 	const router = useRouter();
 
@@ -61,7 +64,7 @@ export default function Budget() {
 										: '$color.black'
 								}
 							>
-								{'Day'}
+								{t('Day')}
 							</Text>
 						</StyledTab>
 						<StyledTab value="month" flex={1}>
@@ -72,7 +75,7 @@ export default function Budget() {
 										: '$color.black'
 								}
 							>
-								{'Month'}
+								{t('Month')}
 							</Text>
 						</StyledTab>
 						<StyledTab
@@ -89,7 +92,7 @@ export default function Budget() {
 								}
 								borderRadius={15}
 							>
-								{'Year'}
+								{t('Year')}
 							</Text>
 						</StyledTab>
 					</Tabs.List>
