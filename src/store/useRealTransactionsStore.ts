@@ -5,7 +5,8 @@ import type { Persisted, RealTransaction } from '../dataModel';
 
 interface RealTransactionsState {
 	transactions: Persisted<RealTransaction>[];
-	add: (item: Persisted<RealTransaction>) => void;
+	nextId: number;
+	add: (item: RealTransaction) => void;
 	remove: (item: Persisted<RealTransaction>) => void;
 	replaceAll: (items: Persisted<RealTransaction>[]) => void;
 }
@@ -14,10 +15,15 @@ const useRealTransactionsStore = create<RealTransactionsState>()(
 	persist(
 		(set) => ({
 			transactions: [],
-			add: (item: Persisted<RealTransaction>) => {
+			nextId: 1,
+			add: (item: RealTransaction) => {
 				set((state) => ({
 					...state,
-					transactions: [...state.transactions, item],
+					transactions: [
+						...state.transactions,
+						{ ...item, id: state.nextId },
+					],
+					nextId: state.nextId + 1,
 				}));
 			},
 			remove: (item: Persisted<RealTransaction>) => {
