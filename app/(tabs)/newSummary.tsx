@@ -42,11 +42,9 @@ export default function BudgetPOC() {
 	const handleBackPress = () => {
 		if (selectedMonthId) {
 			setSelectedMonthId(null);
-		} else if (selectedYear) {
-			setSelectedYear(null);
 		} else {
-			router.push('/');
-		}
+			setSelectedYear(null);
+		} 
 	};
 
 	return (
@@ -97,27 +95,29 @@ export default function BudgetPOC() {
 			</ScrollView>
 
 			{/* Floating Back Button */}
-            <Button
-                position="absolute"
-                bottom={20}
-                right={20}
-                size="$5"
-                borderRadius="$4" 
-                icon={<ArrowLeft size={24} />} 
-                justifyContent="center"
-                alignItems="center"
-                onPress={handleBackPress}
-                backgroundColor="white"
-                color="$color"
-                elevation="$4"
-                shadowColor="black"
-                shadowOpacity={0.2}
-                shadowRadius={5}
-                shadowOffset={{ width: 0, height: 2 }}
-                zIndex={100}
-            >
-                {selectedMonthId ? 'Takaisin' : selectedYear ? 'Takaisin' : 'Koti'}
-            </Button>
+            {(selectedYear || selectedMonthId) && (
+				<Button
+            	    position="absolute"
+            	    bottom={20}
+            	    right={20}
+					height={50}
+            	    size="$3"
+            	    borderRadius="$3" 
+            	    icon={<ArrowLeft size={24} />} 
+            	    justifyContent="center"
+            	    alignItems="center"
+            	    onPress={handleBackPress}
+            	    backgroundColor="white"
+            	    color="$color"
+            	    elevation="$4"
+            	    shadowColor="black"
+            	    shadowOpacity={0.2}
+            	    shadowRadius={5}
+            	    shadowOffset={{ width: 0, height: 2 }}
+            	    zIndex={100}
+            	>
+            	</Button>
+			)}
 		</YStack>
 	);
 }
