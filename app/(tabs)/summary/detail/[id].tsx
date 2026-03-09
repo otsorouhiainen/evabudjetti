@@ -32,14 +32,9 @@ export default function DetailedMonthScreen() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
-			<Stack.Screen options={{ title: `${month.name}n tiedot` }} />
+			<Stack.Screen options={{ title: `${month.name} ${month.year}` }} />
 			<ScrollView>
 				<YStack padding="$4" gap="$4" paddingBottom="$10">
-					<YStack>
-						<SizableText size="$9" fontWeight="800">
-							{month.name} {month.year}
-						</SizableText>
-					</YStack>
 
 					<YStack gap="$2">
 						<Button
