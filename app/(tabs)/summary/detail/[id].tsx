@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { Button, Card, SizableText, XStack, YStack } from 'tamagui';
 import {
@@ -13,6 +14,7 @@ export default function DetailedMonthScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const [expensesExpanded, setExpensesExpanded] = useState(false);
 	const [incomeExpanded, setIncomeExpanded] = useState(false);
+	const { t } = useTranslation();
 
 	const month = useMemo(() => {
 		return allMonthsData.find((m) => m.id === id);
@@ -32,7 +34,9 @@ export default function DetailedMonthScreen() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
-			<Stack.Screen options={{ title: `${month.name} ${month.year}` }} />
+			<Stack.Screen
+				options={{ title: `${t(month.name)} ${month.year}` }}
+			/>
 			<ScrollView>
 				<YStack padding="$4" gap="$4" paddingBottom="$10">
 					<YStack gap="$2">
@@ -46,7 +50,9 @@ export default function DetailedMonthScreen() {
 							borderWidth={1}
 							borderColor="$borderColor"
 						>
-							<SizableText fontWeight="bold">Menot</SizableText>
+							<SizableText fontWeight="bold">
+								{t('Expenses')}
+							</SizableText>
 							<XStack gap="$2" alignItems="center">
 								<SizableText fontWeight="bold">
 									2345,00€
@@ -111,7 +117,9 @@ export default function DetailedMonthScreen() {
 							borderWidth={1}
 							borderColor="$borderColor"
 						>
-							<SizableText fontWeight="bold">Tulot</SizableText>
+							<SizableText fontWeight="bold">
+								{t('Incomes')}
+							</SizableText>
 							<XStack gap="$2" alignItems="center">
 								<SizableText fontWeight="bold">
 									2150,00€

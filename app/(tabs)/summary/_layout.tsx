@@ -1,6 +1,9 @@
 import { Stack } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 export default function SummaryStackLayout() {
+	const { t } = useTranslation();
+
 	return (
 		<Stack
 			screenOptions={{
@@ -12,7 +15,7 @@ export default function SummaryStackLayout() {
 			<Stack.Screen
 				name="[year]"
 				options={({ route }) => ({
-					title: `Vuosi ${(route.params as { year?: string })?.year}`,
+					title: `${t('Year')} ${(route.params as { year?: string })?.year}`,
 				})}
 			/>
 			<Stack.Screen name="detail/[id]" options={{ title: '' }} />

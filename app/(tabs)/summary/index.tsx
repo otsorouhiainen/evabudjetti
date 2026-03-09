@@ -1,12 +1,14 @@
 import { Calendar, ChevronRight } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { Card, SizableText, View, XStack, YStack } from 'tamagui';
 import { allMonthsData } from '@/src/utils/mockDataSummary';
 
 export default function YearsScreen() {
 	const router = useRouter();
+	const { t } = useTranslation();
 
 	const availableYears = useMemo(() => {
 		const years = allMonthsData.map((m) => m.year);
@@ -18,7 +20,7 @@ export default function YearsScreen() {
 			<ScrollView>
 				<YStack padding="$4" gap="$3">
 					<SizableText size="$5" color="$color10" marginBottom="$2">
-						Valitse vuosi
+						{t('Choose a year')}
 					</SizableText>
 					{availableYears.map((year) => (
 						<Card
@@ -43,7 +45,7 @@ export default function YearsScreen() {
 										<Calendar size={20} color="#0277bd" />
 									</View>
 									<SizableText fontWeight="bold" size="$6">
-										Vuosi {year}
+										{t('Year')} {year}
 									</SizableText>
 								</XStack>
 								<ChevronRight size={20} color="$color10" />

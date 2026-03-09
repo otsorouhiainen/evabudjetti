@@ -106,6 +106,19 @@ i18next
 				'dd.mm.yyyy': 'dd.mm.yyyy',
 				'Year': 'Year',
 				'Year view': 'Year view',
+				"january": "January",
+				"february": "February",
+				"march": "March",
+				"april": "April",
+				"may": "May",
+				"june": "June",
+				"july": "July",
+				"august": "August",
+				"september": "September",
+				"october": "October",
+				"november": "November",
+				"december": "December",
+
 
 				// ERROR
 				'Something went wrong': 'Something went wrong',
@@ -145,6 +158,10 @@ i18next
 				'SHOW BUDGET': 'SHOW BUDGET',
 				'EVA MyBudget': 'EVA MyBudget',
 				'VIEW DETAILS': 'VIEW DETAILS',
+
+				// SUMMARY
+				'Choose a year': 'Choose a year',
+				'Months': 'Months',
 			},
 		},
 		fi: {
@@ -233,18 +250,18 @@ i18next
 				'Month': 'Kuukausi',
 				'Months' : 'kuukaudet',
 
-				"january": "tammikuu",
-				"february": "helmikuu",
-				"march": "maaliskuu",
-				"april": "huhtikuu",
-				"may": "toukokuu",
-				"june": "kesäkuu",
-				"july": "heinäkuu",
-				"august": "elokuu",
-				"september": "syyskuu",
-				"october": "lokakuu",
-				"november": "marraskuu",
-				"december": "joulukuu",
+				"january": "Tammikuu",
+				"february": "Helmikuu",
+				"march": "Maaliskuu",
+				"april": "Huhtikuu",
+				"may": "Toukokuu",
+				"june": "Kesäkuu",
+				"july": "Heinäkuu",
+				"august": "Elokuu",
+				"september": "Syyskuu",
+				"october": "Lokakuu",
+				"november": "Marraskuu",
+				"december": "Joulukuu",
 
 				"Jan": "tammi",
 				"Feb": "helmi",
@@ -318,6 +335,10 @@ i18next
 				'SHOW BUDGET': 'NÄYTÄ BUDJETTI',
 				'EVA MyBudget': 'EVA OmaBudjetti',
 				'VIEW DETAILS': 'NÄYTÄ TIEDOT',
+
+				// SUMMARY
+				'Choose a year': 'Valitse vuosi',
+
 			},
 		},
 	},

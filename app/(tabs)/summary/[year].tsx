@@ -1,6 +1,7 @@
 import { AlertCircle, ChevronRight, DollarSign } from '@tamagui/lucide-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { Card, SizableText, View, XStack, YStack } from 'tamagui';
 import { allMonthsData } from '@/src/utils/mockDataSummary';
@@ -8,6 +9,7 @@ import { allMonthsData } from '@/src/utils/mockDataSummary';
 export default function MonthsScreen() {
 	const { year } = useLocalSearchParams<{ year: string }>();
 	const router = useRouter();
+	const { t } = useTranslation();
 
 	const monthsForYear = useMemo(() => {
 		return allMonthsData.filter((m) => m.year === year);
@@ -62,7 +64,7 @@ export default function MonthsScreen() {
 												fontWeight="bold"
 												size="$5"
 											>
-												{item.name}
+												{t(item.name)}
 											</SizableText>
 											<SizableText
 												color={
