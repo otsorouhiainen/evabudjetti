@@ -141,8 +141,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 											size="$title3"
 										>
 											{t(
-												opt.charAt(0).toUpperCase() +
-													opt.slice(1),
+												"Rec_"+opt,
 											)}
 										</SizableText>
 									</Button>
