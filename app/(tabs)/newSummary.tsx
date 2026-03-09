@@ -1,5 +1,6 @@
 import {
 	AlertCircle,
+	ArrowLeft,
 	Calendar,
 	ChevronDown,
 	ChevronRight,
@@ -10,10 +11,7 @@ import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { Button, Card, SizableText, View, XStack, YStack } from 'tamagui';
-import {
-	test_category_names,
-	test_transactions,
-} from '@/src/utils/fakeTransactions';
+import { test_category_names, test_transactions } from '@/src/utils/fakeTransactions';
 import { allMonthsData, type MonthSummary } from '@/src/utils/mockDataSummary';
 
 export default function BudgetPOC() {
@@ -53,24 +51,6 @@ export default function BudgetPOC() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
-			<XStack
-				padding="$4"
-				alignItems="center"
-				justifyContent="space-between"
-				borderBottomWidth={1}
-				borderColor="$borderColor"
-			>
-				<Button size="$3" onPress={handleBackPress}>
-					{selectedMonthId
-						? '< Takaisin'
-						: selectedYear
-							? '< Vuodet'
-							: '< Koti'}
-				</Button>
-				<SizableText fontWeight="bold">Eva - OmaBudjetti</SizableText>
-				<View width={60} />
-			</XStack>
-
 			<ScrollView>
 				<YStack padding="$4" gap="$3">
 					{!selectedYear && !selectedMonthId && (
@@ -115,6 +95,29 @@ export default function BudgetPOC() {
 					)}
 				</YStack>
 			</ScrollView>
+
+			{/* Floating Back Button */}
+            <Button
+                position="absolute"
+                bottom={20}
+                right={20}
+                size="$5"
+                borderRadius="$4" 
+                icon={<ArrowLeft size={24} />} 
+                justifyContent="center"
+                alignItems="center"
+                onPress={handleBackPress}
+                backgroundColor="white"
+                color="$color"
+                elevation="$4"
+                shadowColor="black"
+                shadowOpacity={0.2}
+                shadowRadius={5}
+                shadowOffset={{ width: 0, height: 2 }}
+                zIndex={100}
+            >
+                {selectedMonthId ? 'Takaisin' : selectedYear ? 'Takaisin' : 'Koti'}
+            </Button>
 		</YStack>
 	);
 }
