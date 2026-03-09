@@ -35,7 +35,6 @@ export default function DetailedMonthScreen() {
 			<Stack.Screen options={{ title: `${month.name} ${month.year}` }} />
 			<ScrollView>
 				<YStack padding="$4" gap="$4" paddingBottom="$10">
-
 					<YStack gap="$2">
 						<Button
 							height={60}
