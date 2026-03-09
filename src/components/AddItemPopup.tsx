@@ -117,7 +117,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 									textAlign="center"
 									maxLength={3}
 									borderColor={'$primary100'}
-									style={{width: "24%", height: "100%"}}
+									style={{ width: '24%', height: '100%' }}
 									defaultValue="1"
 									keyboardType="numeric"
 									onChangeText={(text) => {
@@ -131,9 +131,9 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 									}}
 								/>
 								<View>
-									<Select 
-									value={reoccurence} 
-									disablePreventBodyScroll
+									<Select
+										value={reoccurence}
+										disablePreventBodyScroll
 									>
 										<Select.Trigger
 											borderColor={'$primary100'}
@@ -144,18 +144,29 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 										<Select.Content>
 											<Select.Viewport>
 												<Select.Group>
-													{REOCCURENCE_OPTIONS.map((opt, i) => (
-														<Select.Item
-															index={i}
-															key={opt}
-															value={opt}
-														>
-															<Select.ItemText>{t("Rec_"+opt)}</Select.ItemText>
-															<Select.ItemIndicator marginLeft="auto">
-																<Check size={16} />
-															</Select.ItemIndicator>
-														</Select.Item>
-													))}
+													{REOCCURENCE_OPTIONS.map(
+														(opt, i) => (
+															<Select.Item
+																index={i}
+																key={opt}
+																value={opt}
+															>
+																<Select.ItemText>
+																	{t(
+																		'Rec_' +
+																			opt,
+																	)}
+																</Select.ItemText>
+																<Select.ItemIndicator marginLeft="auto">
+																	<Check
+																		size={
+																			16
+																		}
+																	/>
+																</Select.ItemIndicator>
+															</Select.Item>
+														),
+													)}
 												</Select.Group>
 											</Select.Viewport>
 										</Select.Content>
