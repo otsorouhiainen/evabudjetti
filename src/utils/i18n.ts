@@ -209,7 +209,7 @@ i18next
 				'Rec_month': 'kuukauden',
 				'Rec_year': 'vuoden',
 				'Custom': 'Muu',
-				'Interval': 'Aikaväli',
+				'Interval': 'välein',
 				'Start Date': 'Tapahtuma alkaa',
 				'End Date': 'Tapahtuma loppuu',
 				'Add': 'Lisää',

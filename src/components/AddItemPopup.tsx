@@ -1,4 +1,4 @@
-import { Check } from '@tamagui/lucide-icons';
+import { Check, ChevronDown } from '@tamagui/lucide-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -6,6 +6,7 @@ import {
 	Button,
 	Checkbox,
 	Input,
+	Select,
 	SizableText,
 	Text,
 	XStack,
@@ -58,7 +59,6 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		setStartDate(new Date());
 		onClose();
 	};
-
 	return (
 		<View style={styles.container}>
 			<YStack backgroundColor="$background" style={styles.card}>
@@ -111,50 +111,13 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 								flexWrap: 'wrap',
 							}}
 						>
-							{REOCCURENCE_OPTIONS.map((opt) => (
-								<View
-									style={{
-										flexDirection: 'row',
-										alignItems: 'center',
-										height: '100%',
-										gap: 10,
-									}}
-									key={opt}
-								>
-									<Button
-										backgroundColor={
-											reoccurence === opt
-												? '$primary200'
-												: '$primary300'
-										}
-										onPress={() => setReoccurence(opt)}
-										style={{
-											height: '100%',
-										}}
-									>
-										<SizableText
-											color={
-												reoccurence === opt
-													? '$white'
-													: '$primary100'
-											}
-											size="$title3"
-										>
-											{t(
-												"Rec_"+opt,
-											)}
-										</SizableText>
-									</Button>
-								</View>
-							))}
 							<XStack gap={10} alignItems="center">
-								<Text color="$primary100" fontWeight={'bold'}>
-									{t('Interval')}:
-								</Text>
 								<Input
 									color="$primary100"
-									style={{ height: '50%' }}
-									placeholder={t('Interval')}
+									textAlign="center"
+									maxLength={3}
+									borderColor={'$primary100'}
+									style={{width: "24%", height: "100%"}}
 									defaultValue="1"
 									keyboardType="numeric"
 									onChangeText={(text) => {
@@ -167,6 +130,40 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 										}
 									}}
 								/>
+								<View>
+									<Select 
+									value={reoccurence} 
+									disablePreventBodyScroll
+									>
+										<Select.Trigger
+											borderColor={'$primary100'}
+											iconAfter={ChevronDown}
+										>
+											<Select.Value />
+										</Select.Trigger>
+										<Select.Content>
+											<Select.Viewport>
+												<Select.Group>
+													{REOCCURENCE_OPTIONS.map((opt, i) => (
+														<Select.Item
+															index={i}
+															key={opt}
+															value={opt}
+														>
+															<Select.ItemText>{t("Rec_"+opt)}</Select.ItemText>
+															<Select.ItemIndicator marginLeft="auto">
+																<Check size={16} />
+															</Select.ItemIndicator>
+														</Select.Item>
+													))}
+												</Select.Group>
+											</Select.Viewport>
+										</Select.Content>
+									</Select>
+								</View>
+								<Text color="$primary100" fontWeight={'bold'}>
+									{t('Interval')}
+								</Text>
 							</XStack>
 						</View>
 					</View>
