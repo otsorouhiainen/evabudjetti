@@ -1,12 +1,16 @@
-import { Check, ChevronDown } from '@tamagui/lucide-icons';
-import { useState } from 'react';
+import {
+	Check,
+	ChevronDown,
+	ChevronDownCircle,
+	Container,
+} from '@tamagui/lucide-icons';
+import React, { createContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import {
 	Button,
 	Checkbox,
 	Input,
-	Select,
 	SizableText,
 	Text,
 	XStack,
@@ -111,13 +115,17 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 								flexWrap: 'wrap',
 							}}
 						>
-							<XStack gap={10} alignItems="center">
+							<XStack gap={5} alignItems="center">
 								<Input
 									color="$primary100"
 									textAlign="center"
 									maxLength={3}
 									borderColor={'$primary100'}
-									style={{ width: '24%', height: '100%' }}
+									style={{
+										minWidth: '21%',
+										maxWidth: '0%',
+										height: '100%',
+									}}
 									defaultValue="1"
 									keyboardType="numeric"
 									onChangeText={(text) => {
@@ -131,46 +139,32 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 									}}
 								/>
 								<View>
-									<Select
-										value={reoccurence}
-										disablePreventBodyScroll
+									<Button
+										borderColor={'$primary100'}
+										padding={8}
+										minWidth={'42%'}
+										minHeight={'150%'}
+										onPress={() => {
+											if (reoccurence === 'day') {
+												setReoccurence('week');
+											} else if (reoccurence === 'week') {
+												setReoccurence('month');
+											} else if (
+												reoccurence === 'month'
+											) {
+												setReoccurence('year');
+											} else {
+												setReoccurence('day');
+											}
+										}}
 									>
-										<Select.Trigger
-											borderColor={'$primary100'}
-											iconAfter={ChevronDown}
+										<SizableText
+											style={styles.input}
+											color="$primary100"
 										>
-											<Select.Value />
-										</Select.Trigger>
-										<Select.Content>
-											<Select.Viewport>
-												<Select.Group>
-													{REOCCURENCE_OPTIONS.map(
-														(opt, i) => (
-															<Select.Item
-																index={i}
-																key={opt}
-																value={opt}
-															>
-																<Select.ItemText>
-																	{t(
-																		'Rec_' +
-																			opt,
-																	)}
-																</Select.ItemText>
-																<Select.ItemIndicator marginLeft="auto">
-																	<Check
-																		size={
-																			16
-																		}
-																	/>
-																</Select.ItemIndicator>
-															</Select.Item>
-														),
-													)}
-												</Select.Group>
-											</Select.Viewport>
-										</Select.Content>
-									</Select>
+											{t('Rec_' + reoccurence)}
+										</SizableText>
+									</Button>
 								</View>
 								<Text color="$primary100" fontWeight={'bold'}>
 									{t('Interval')}
