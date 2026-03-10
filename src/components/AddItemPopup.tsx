@@ -141,6 +141,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 								<View>
 									<Button
 										borderColor={'$primary100'}
+										backgroundColor={'$primary200'}
 										padding={8}
 										minWidth={'42%'}
 										minHeight={'150%'}
@@ -160,7 +161,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 									>
 										<SizableText
 											style={styles.input}
-											color="$primary100"
+											color={'$white'}
 										>
 											{t('Rec_' + reoccurence)}
 										</SizableText>

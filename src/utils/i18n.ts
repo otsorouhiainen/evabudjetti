@@ -70,7 +70,7 @@ i18next
 				'Rec_week': 'Week',
 				'Rec_month': 'Month',
 				'Rec_year': 'Year',
-				'Interval ': 'Interval',
+				'Interval': 'Interval',
 				'Start Date': 'Start Date',
 				'End Date': 'End Date',
 				'Add': 'Add',
