@@ -1,5 +1,5 @@
 import { Check, ChevronDown } from '@tamagui/lucide-icons';
-import React, { createContext, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import {
@@ -178,9 +178,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 																		: 0
 																}
 																disabled={
-																	recSelect
-																		? false
-																		: true
+																	!recSelect
 																}
 																zIndex={
 																	recSelect
