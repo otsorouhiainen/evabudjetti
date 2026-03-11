@@ -1,9 +1,4 @@
-import {
-	Check,
-	ChevronDown,
-	ChevronDownCircle,
-	Container,
-} from '@tamagui/lucide-icons';
+import { Check, ChevronDown } from '@tamagui/lucide-icons';
 import React, { createContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -11,6 +6,7 @@ import {
 	Button,
 	Checkbox,
 	Input,
+	Select,
 	SizableText,
 	Text,
 	XStack,
@@ -32,6 +28,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		'year',
 	];
 	const { t } = useTranslation();
+	const [recSelect, toggleRecSelect] = useState<true | false>(false);
 	const [name, setName] = useState<string>('');
 	const [amount, setAmount] = useState<number | null>(null);
 	const [startDate, setStartDate] = useState<Date>(new Date());
@@ -61,6 +58,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 		setReoccurence('month');
 		setReoccurenceInterval(undefined);
 		setStartDate(new Date());
+		toggleRecSelect(false);
 		onClose();
 	};
 	return (
@@ -115,7 +113,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 								flexWrap: 'wrap',
 							}}
 						>
-							<XStack gap={5} alignItems="center">
+							<XStack gap={5} alignItems="unset">
 								<Input
 									color="$primary100"
 									textAlign="center"
@@ -137,35 +135,118 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 										}
 									}}
 								/>
-
-								<Button
-									borderColor={'$primary100'}
-									backgroundColor={'$primary200'}
-									height={'150%'}
-									minWidth={100}
-									paddingVertical={8}
-									paddingHorizontal={0}
-									onPress={() => {
-										if (reoccurence === 'day') {
-											setReoccurence('week');
-										} else if (reoccurence === 'week') {
-											setReoccurence('month');
-										} else if (reoccurence === 'month') {
-											setReoccurence('year');
-										} else {
-											setReoccurence('day');
-										}
-									}}
-								>
-									<SizableText
-										style={styles.input}
-										color={'$white'}
+								<View>
+									<Select
+										disablePreventBodyScroll
+										native="web"
+										defaultValue="month"
 									>
-										{t('Rec_' + reoccurence)}
-									</SizableText>
-								</Button>
+										<Select.Trigger
+											borderColor={'$primary100'}
+											height={'45'}
+											/* Border style changes when selection is active */
+											borderWidth={recSelect ? 2 : 1}
+											borderBottomLeftRadius={
+												recSelect ? 0 : 15
+											}
+											borderBottomRightRadius={
+												recSelect ? 0 : 15
+											}
+											iconAfter={ChevronDown}
+											onPressOut={() =>
+												recSelect
+													? toggleRecSelect(false)
+													: toggleRecSelect(true)
+											}
+										>
+											<Select.Value
+												color={'$primary100'}
+											/>
+										</Select.Trigger>
 
-								<Text color="$primary100" fontWeight={'bold'}>
+										<Select.Content>
+											<Select.Viewport>
+												<Select.Group>
+													{REOCCURENCE_OPTIONS.map(
+														(opt, i) => (
+															<Select.Item
+																/* Manually hide and disable the dropdown menu when necessary.
+																This is not optimal and should probably be changed at some point*/
+																opacity={
+																	recSelect
+																		? 100
+																		: 0
+																}
+																disabled={
+																	recSelect
+																		? false
+																		: true
+																}
+																zIndex={
+																	recSelect
+																		? 2000
+																		: 0
+																}
+																borderColor={
+																	'$primary100'
+																}
+																borderWidth={2}
+																borderTopWidth={
+																	0
+																}
+																borderBottomWidth={
+																	i ===
+																	REOCCURENCE_OPTIONS.length -
+																		1
+																		? 2
+																		: 0
+																}
+																alignSelf="center"
+																marginTop={-0.5}
+																index={i}
+																key={opt}
+																value={opt}
+																onTouchEnd={() => {
+																	setReoccurence(
+																		opt,
+																	);
+																	toggleRecSelect(
+																		false,
+																	);
+																}}
+															>
+																<Select.ItemText
+																	color={
+																		'$primary100'
+																	}
+																	alignContent="center"
+																>
+																	{t(
+																		'Rec_' +
+																			opt,
+																	)}
+																</Select.ItemText>
+																<Select.ItemIndicator marginLeft="10">
+																	<Check
+																		size={
+																			16
+																		}
+																	/>
+																</Select.ItemIndicator>
+															</Select.Item>
+														),
+													)}
+												</Select.Group>
+											</Select.Viewport>
+										</Select.Content>
+									</Select>
+								</View>
+
+								<Text
+									color="$primary100"
+									fontWeight={'bold'}
+									paddingVertical={10}
+								>
 									{t('Interval')}
 								</Text>
 							</XStack>
