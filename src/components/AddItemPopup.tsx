@@ -101,7 +101,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							}}
 						/>
 					</View>
-					<View>
+					<View style={styles.singleItemContainer}>
 						<SizableText color="$primary100" size="$title3">
 							{t('Reoccurrence')}
 						</SizableText>
@@ -111,7 +111,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 								gap: 8,
 								alignItems: 'center',
 								width: '100%',
-								height: '25%',
+								height: '60%',
 								flexWrap: 'wrap',
 							}}
 						>
@@ -123,7 +123,6 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 									borderColor={'$primary100'}
 									style={{
 										minWidth: '21%',
-										maxWidth: '0%',
 										height: '100%',
 									}}
 									defaultValue="1"
@@ -138,64 +137,55 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 										}
 									}}
 								/>
-								<View>
-									<Button
-										borderColor={'$primary100'}
-										backgroundColor={'$primary200'}
-										padding={8}
-										minWidth={'42%'}
-										minHeight={'150%'}
-										onPress={() => {
-											if (reoccurence === 'day') {
-												setReoccurence('week');
-											} else if (reoccurence === 'week') {
-												setReoccurence('month');
-											} else if (
-												reoccurence === 'month'
-											) {
-												setReoccurence('year');
-											} else {
-												setReoccurence('day');
-											}
-										}}
+
+								<Button
+									borderColor={'$primary100'}
+									backgroundColor={'$primary200'}
+									height={'150%'}
+									minWidth={100}
+									paddingVertical={8}
+									paddingHorizontal={0}
+									onPress={() => {
+										if (reoccurence === 'day') {
+											setReoccurence('week');
+										} else if (reoccurence === 'week') {
+											setReoccurence('month');
+										} else if (reoccurence === 'month') {
+											setReoccurence('year');
+										} else {
+											setReoccurence('day');
+										}
+									}}
+								>
+									<SizableText
+										style={styles.input}
+										color={'$white'}
 									>
-										<SizableText
-											style={styles.input}
-											color={'$white'}
-										>
-											{t('Rec_' + reoccurence)}
-										</SizableText>
-									</Button>
-								</View>
+										{t('Rec_' + reoccurence)}
+									</SizableText>
+								</Button>
+
 								<Text color="$primary100" fontWeight={'bold'}>
 									{t('Interval')}
 								</Text>
 							</XStack>
 						</View>
 					</View>
-					<View style={{ paddingTop: 10, gap: 5 }}>
-						<XStack
-							style={{
-								alignItems: 'center',
-								gap: 10,
-							}}
-						>
-							<SizableText
-								style={{ height: '100%' }}
-								color="$primary100"
-								size="$title3"
-							>
-								{t('Start Date')}:
-							</SizableText>
-							<MultiPlatformDatePicker
-								value={startDate}
-								onChange={setStartDate}
-							/>
-						</XStack>
+					<View style={styles.singleItemContainer}>
+						<SizableText color="$primary100" size="$title3">
+							{t('Start Date')}:
+						</SizableText>
+						<MultiPlatformDatePicker
+							value={startDate}
+							onChange={setStartDate}
+						/>
+					</View>
+					<View style={styles.singleItemContainer}>
 						<XStack
 							style={{
 								alignItems: 'center',
 								gap: 5,
+								marginTop: '-20',
 							}}
 						>
 							<SizableText
@@ -212,20 +202,19 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 										: setEndDate(new Date())
 								}
 								// Default end date should change based on interval?
-								size="$8"
+								size="$10"
 							>
 								<Checkbox.Indicator>
 									<Check />
 								</Checkbox.Indicator>
 							</Checkbox>
-
-							{hasEndDate && (
-								<MultiPlatformDatePicker
-									value={endDate}
-									onChange={setEndDate}
-								/>
-							)}
 						</XStack>
+						{hasEndDate && (
+							<MultiPlatformDatePicker
+								value={endDate}
+								onChange={setEndDate}
+							/>
+						)}
 					</View>
 				</View>
 				<View style={styles.buttonRow}>
