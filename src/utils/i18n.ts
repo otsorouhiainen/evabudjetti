@@ -18,6 +18,7 @@ i18next
 				'Home': 'Home',
     			'Budget': 'Budget',
     			'Summary': 'Summary',
+				'Settings': 'Settings',
 
 				//ADD_TRANSACTION
 				'Select planned': 'Select planned',
@@ -174,6 +175,7 @@ i18next
 				'Home': 'Koti',
     			'Budget': 'Budjetti',
     			'Summary': 'Yhteenveto',
+				'Settings': 'Asetukset',
 
 				//ADD_TRANSACTION
 				'Select planned': 'Valitse suunniteltu',
