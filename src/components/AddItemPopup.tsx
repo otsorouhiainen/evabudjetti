@@ -105,7 +105,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							style={{
 								alignItems: 'center',
 								gap: 5,
-								marginBottom: 5
+								marginBottom: 5,
 							}}
 						>
 							<SizableText color="$primary100" size="$title3">
@@ -124,7 +124,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 								</Checkbox.Indicator>
 							</Checkbox>
 						</XStack>
-						{ hasReocurrence && (
+						{hasReocurrence && (
 							<View
 								style={{
 									flexDirection: 'row',
@@ -153,7 +153,9 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 												!Number.isNaN(interval) &&
 												interval > 0
 											) {
-												setReoccurenceInterval(interval);
+												setReoccurenceInterval(
+													interval,
+												);
 											}
 										}}
 									/>
@@ -210,7 +212,9 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 																	borderColor={
 																		'$primary100'
 																	}
-																	borderWidth={2}
+																	borderWidth={
+																		2
+																	}
 																	borderTopWidth={
 																		0
 																	}
@@ -222,7 +226,9 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 																			: 0
 																	}
 																	alignSelf="center"
-																	marginTop={-0.5}
+																	marginTop={
+																		-0.5
+																	}
 																	index={i}
 																	key={opt}
 																	value={opt}
