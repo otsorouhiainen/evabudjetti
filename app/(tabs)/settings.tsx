@@ -1,5 +1,12 @@
 import { SafeAreaView } from "react-native-safe-area-context"
-import { YStack, Text, Button, Dialog, Separator, SizableText, XStack } from "tamagui"
+import { 
+    YStack, 
+    Text, 
+    Button, 
+    Dialog, 
+    Separator, 
+    SizableText, 
+    XStack } from "tamagui"
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronRight, Check } from "@tamagui/lucide-icons";
