@@ -163,6 +163,9 @@ i18next
 				// SUMMARY
 				'Choose a year': 'Choose a year',
 				'Months': 'Months',
+
+				// SETTINGS
+				'Language': 'Language',
 			},
 		},
 		fi: {
@@ -341,6 +344,9 @@ i18next
 
 				// SUMMARY
 				'Choose a year': 'Valitse vuosi',
+
+				// SETTINGS
+				'Language': 'Kieli'
 
 			},
 		},

@@ -7,6 +7,7 @@ import { PortalProvider, Spinner, Text, YStack } from 'tamagui';
 import migrations from '@/drizzle/migrations';
 import { db, isDbReal } from '@/src/db/client';
 import config from '../tamagui.config';
+import '@/src/utils/i18n';
 
 export default function RootLayout() {
 	const { success, error } = useMigrations(db, migrations);
