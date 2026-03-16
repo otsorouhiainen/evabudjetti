@@ -1,4 +1,4 @@
-import { ChartColumn, Home, Wallet, Settings } from '@tamagui/lucide-icons';
+import { ChartColumn, Home, Settings, Wallet } from '@tamagui/lucide-icons';
 import { Tabs } from 'expo-router';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -33,8 +33,8 @@ export default function TabLayout() {
 		{
 			icon: <Settings size={'$icons.md'} color={theme.white.val} />,
 			name: t('Settings'),
-			route: 'settings'
-		}
+			route: 'settings',
+		},
 	];
 	return (
 		<Tabs
