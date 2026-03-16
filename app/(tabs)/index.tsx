@@ -1,4 +1,4 @@
-import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
+import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,7 @@ import useBalanceStore from '@/src/store/useBalanceStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 
 export default function Landing() {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 
 	const transactions = usePlannedTransactionsStore(
 		(state) => state.transactions,
