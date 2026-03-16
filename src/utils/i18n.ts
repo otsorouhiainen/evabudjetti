@@ -18,6 +18,7 @@ i18next
 				'Home': 'Home',
     			'Budget': 'Budget',
     			'Summary': 'Summary',
+				'Settings': 'Settings',
 
 				//ADD_TRANSACTION
 				'Select planned': 'Select planned',
@@ -162,6 +163,9 @@ i18next
 				// SUMMARY
 				'Choose a year': 'Choose a year',
 				'Months': 'Months',
+
+				// SETTINGS
+				'Language': 'Language',
 			},
 		},
 		fi: {
@@ -174,6 +178,7 @@ i18next
 				'Home': 'Koti',
     			'Budget': 'Budjetti',
     			'Summary': 'Yhteenveto',
+				'Settings': 'Asetukset',
 
 				//ADD_TRANSACTION
 				'Select planned': 'Valitse suunniteltu',
@@ -339,6 +344,9 @@ i18next
 
 				// SUMMARY
 				'Choose a year': 'Valitse vuosi',
+
+				// SETTINGS
+				'Language': 'Kieli'
 
 			},
 		},

@@ -14,7 +14,6 @@ import {
 } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
-import '@/src/utils/i18n';
 
 export default function Landing() {
 	const { t, i18n } = useTranslation();
@@ -54,34 +53,6 @@ export default function Landing() {
 							{t('EVA MyBudget')}
 						</Text>
 						<Text>{t('Supporting your financial well-being')}</Text>
-
-						<XStack mt="$1">
-							<Button
-								backgroundColor="$primary200"
-								borderRadius={40}
-								size="$5"
-								color="white"
-								icon={Globe}
-								chromeless
-								onPress={() => {
-									// Check that i18n exists before call
-									if (i18n) {
-										const currentLang =
-											i18n.language || 'fi';
-										const nextLang = currentLang.startsWith(
-											'fi',
-										)
-											? 'en'
-											: 'fi';
-										i18n.changeLanguage(nextLang);
-									}
-								}}
-							>
-								{i18n?.language?.startsWith('fi')
-									? 'Suomi'
-									: 'English'}
-							</Button>
-						</XStack>
 
 						<XStack mt={'$5'}>
 							<Spacer size={'10%'} />
