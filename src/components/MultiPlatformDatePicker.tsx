@@ -99,7 +99,7 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 				<DateTimePicker
 					value={date instanceof Date ? date : new Date()}
 					mode="date"
-					display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+					display={Platform.OS === 'ios' ? 'compact' : 'default'}
 					onChange={handleDateChange}
 				/>
 			)}
