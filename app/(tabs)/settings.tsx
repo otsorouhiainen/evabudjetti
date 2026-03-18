@@ -1,4 +1,5 @@
 import { Check, ChevronRight } from '@tamagui/lucide-icons';
+import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,6 +19,7 @@ interface Language {
 
 export default function Settings() {
 	const { t, i18n } = useTranslation();
+	const router = useRouter();
 	const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
 
 	const possibleLanguages: Language[] = [
@@ -120,6 +122,35 @@ export default function Settings() {
 						</Dialog.Content>
 					</Dialog.Portal>
 				</Dialog>
+
+				<Button
+					unstyled
+					width="100%"
+					justifyContent="space-between"
+					alignItems="center"
+					paddingVertical={14}
+					paddingHorizontal={0}
+					color="$black"
+					onPress={() => router.push('/finance_debug')}
+				>
+					<XStack
+						width="100%"
+						justifyContent="space-between"
+						alignItems="center"
+					>
+						<YStack>
+							<SizableText color="$black" size="$title2">
+								Financial debug / test view
+							</SizableText>
+							<SizableText size="$2" color="$black">
+								Temporary
+							</SizableText>
+						</YStack>
+						<ChevronRight size="$icons.sm" color="$black" />
+					</XStack>
+				</Button>
+
+				<Separator />
 			</YStack>
 		</SafeAreaView>
 	);
