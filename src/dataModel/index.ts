@@ -59,9 +59,9 @@ export interface PlannedTransaction {
 	categoryId: number;
 	amount: number;
 	startDate: Date;
-	endDate?: Date;
+	endDate: Date | null;
 	type: TransactionType;
-	recurrenceBase?: RecurrenceBase;
+	recurrenceBase: RecurrenceBase | null;
 	recurrenceInterval: number;
 }
 
@@ -76,7 +76,7 @@ export interface RealTransaction {
 	amount: number;
 	date: Date;
 	type: TransactionType;
-	plannedTransactionId?: number;
+	plannedTransactionId: number | null;
 }
 
 /**
@@ -91,4 +91,84 @@ export interface TransactionOccurrence {
 	type: TransactionType;
 	realTransaction?: Persisted<RealTransaction>;
 	plannedTransaction?: Persisted<PlannedTransaction>;
+}
+
+export interface MonthInstance {
+	/**
+	 * The year of the month, e.g. 2026
+	 */
+	year: number;
+	/**
+	 * The month number, 0-11 where 0 is January and 11 is December
+	 */
+	month: number;
+}
+
+export interface TransactionOccurrencesMonthData {
+	/**
+	 * A stable key representing the month, e.g. "2026-12", also used as the key in the cache map
+	 */
+	monthKey: string;
+	/**
+	 * All transaction occurrences that happen in this month, including both planned and real transactions,
+	 * sorted by date
+	 */
+	transactionOccurrences: TransactionOccurrence[];
+}
+
+export interface DayBalance {
+	/** The balance at the end of the day */
+	balance: number;
+	/** Whether this balance is directly from the reconciliations, i.e. the user has manually input it for this day */
+	isReconciled: boolean;
+}
+
+export interface AccountBalanceMonthData {
+	/** A stable key representing the month, e.g. "2026-12", also used as the key in the cache map */
+	monthKey: string;
+	/** The balance of the account at the start of this month, if available */
+	startBalance?: number;
+	/** The balance of the account at the end of this month, if available */
+	endBalance?: number;
+	/** Daily balances for the month */
+	dailyBalances: (DayBalance | undefined)[];
+}
+
+export interface OccurrencesAndBalanceMonthData {
+	/** A stable key representing the month, e.g. "2026-12", also used as the key in the cache map */
+	monthKey: string;
+	/** The balance of the account at the start of this month, if available */
+	startBalance?: number;
+	/** The balance of the account at the end of this month, if available */
+	endBalance?: number;
+	/** Daily balances for the month */
+	dailyBalances: (DayBalance | undefined)[];
+	/** All transaction occurrences that happen in this month, including both planned and real transactions,
+	 * sorted by date
+	 */
+	transactionOccurrences: TransactionOccurrence[];
+}
+
+export interface CategoryTransactionSummary {
+	/** The id of the category for which this summary is */
+	categoryId: number;
+	/** The total sum of transactions for the category in the month */
+	totalAmount: number;
+	/** The transaction occurrences for the category in the month */
+	transactionOccurrences: TransactionOccurrence[];
+}
+
+export interface TransactionSummaryMonthData {
+	/** A stable key representing the month, e.g. "2026-12", also used as the key in the cache map */
+	monthKey: string;
+	/** Total amount of all income transactions that occur in this month */
+	totalIncome: number;
+	/** Total amount of all expense transactions that occur in this month */
+	totalExpense: number;
+	/** Cash flow for the month, negative or positive */
+	cashFlow: number;
+	/** Incomes by category id */
+	incomeByCategory: Map<number, CategoryTransactionSummary>;
+	/** Expenses by category id */
+	expenseByCategory: Map<number, CategoryTransactionSummary>;
 }
