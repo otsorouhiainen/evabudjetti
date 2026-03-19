@@ -91,14 +91,14 @@ export function generateTransactionOccurrences(
 }
 
 /**
- * Generates all occurrences for the given month based on the relevant planned transactions and overridden occurrence dates
+ * Generates all occurrences for the given month range based on the relevant planned transactions and overridden occurrence dates
  * @param startYear The year of the first month for which to generate occurrences
  * @param startMonth The first month (0-11) for which to generate occurrences
  * @param endYear The year of the last month for which to generate occurrences
  * @param endMonth The last month (0-11) for which to generate occurrences
- * @param relevantPlannedTransactions Transactions that have occurrences within the given month
+ * @param relevantPlannedTransactions Transactions that have occurrences within the given range
  * @param overriddenOccurrenceDates A map of overridden occurrence dates keyed by planned transaction ID
- * @returns A list of planned transaction occurrences for the given month
+ * @returns A list of planned transaction occurrences for the given month range
  */
 function generatePlannedTransactionOccurrencesForMonths(
 	startYear: number,
@@ -189,6 +189,12 @@ export function firstPlannedOccurrenceAfter(
 
 	var firstOccurrenceAfter: Date | undefined;
 
+	if (planned.recurrenceBase !== null && planned.recurrenceInterval <= 0) {
+		throw new Error(
+			`Invalid recurrence interval: ${planned.recurrenceInterval} for planned transaction`,
+		);
+	}
+
 	switch (planned.recurrenceBase) {
 		case null:
 			firstOccurrenceAfter =
@@ -275,7 +281,7 @@ export function nextPlannedOccurrence(
 	planned: PlannedTransaction,
 	currentOccurrence: Date,
 ): Date | undefined {
-	if (planned.recurrenceBase == null) {
+	if (planned.recurrenceBase == null || planned.recurrenceInterval <= 0) {
 		return undefined;
 	}
 
