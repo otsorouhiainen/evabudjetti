@@ -253,6 +253,8 @@ export default function BudgetDayView({
 								fontWeight="800"
 								fontSize="$buttons.sm"
 								textTransform="uppercase"
+								numberOfLines={1}
+								adjustsFontSizeToFit
 							>
 								{t('Add new')}
 							</Text>
