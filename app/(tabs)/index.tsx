@@ -11,6 +11,7 @@ import {
 	Text,
 	XStack,
 	YStack,
+	ScrollView,
 } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
@@ -41,7 +42,10 @@ export default function Landing() {
 	}, [storeBalance, storeDisposable, transactions, recalcDisposable]);
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
+		<ScrollView
+			contentContainerStyle={{ flexGrow: 1, paddingBottom: 16 }}
+			keyboardShouldPersistTaps="handled"
+		>
 			<YStack f={1} backgroundColor="$background">
 				<YStack
 					f={1}
@@ -50,10 +54,21 @@ export default function Landing() {
 				>
 					{/* Header */}
 					<YStack gap="5" marginTop={10} alignItems="center">
-						<Text fontSize={'$7'} fontWeight={'500'}>
+						<Text
+							fontSize={'$7'}
+							fontWeight={'500'}
+							numberOfLines={1}
+							adjustsFontSizeToFit
+						>
 							{t('EVA MyBudget')}
 						</Text>
-						<Text>{t('Supporting your financial well-being')}</Text>
+
+						<Text
+							numberOfLines={1}
+							adjustsFontSizeToFit
+						>
+							{t('Supporting your financial well-being')}
+						</Text>
 
 						<XStack mt="$1">
 							<Button
@@ -134,8 +149,14 @@ export default function Landing() {
 										borderRadius={40}
 										backgroundColor="$primary200"
 										size={'$buttons.lg'}
+
 									>
-										<Text color={'$white'}>
+										<Text
+											color={'$white'}
+											numberOfLines={1}
+											adjustsFontSizeToFit
+										>
+
 											{t('VIEW DETAILS')}
 										</Text>
 									</Button>
@@ -156,6 +177,8 @@ export default function Landing() {
 										color={'$white'}
 										fontWeight={'700'}
 										fontSize={'$4'}
+										numberOfLines={1}
+										adjustsFontSizeToFit
 									>
 										{t('ADD INCOME/EXPENSE')}
 									</Text>
@@ -174,6 +197,8 @@ export default function Landing() {
 											fontWeight={'700'}
 											fontSize={'$3'}
 											ta={'center'}
+											numberOfLines={2}
+											adjustsFontSizeToFit
 										>
 											SHOW{'\n'}BUDGET
 										</Text>
@@ -192,6 +217,8 @@ export default function Landing() {
 											fontWeight={'700'}
 											fontSize={'$3'}
 											ta={'center'}
+											numberOfLines={2}
+											adjustsFontSizeToFit
 										>
 											EDIT{'\n'} BUDGET
 										</Text>
@@ -203,9 +230,13 @@ export default function Landing() {
 
 					{!budgetCreated && (
 						<YStack gap={5} paddingHorizontal={25}>
-							<Text>{t('No budget created')}</Text>
+							<Text
+								numberOfLines={4}
+								adjustsFontSizeToFit
+							>
+								{t('No budget created')}</Text>
 							<Input
-								style={{ height: '30%' }}
+								style={{ height: '25%' }}
 								width="100%"
 								value={initialBalance}
 								onChangeText={setInitialBalance}
@@ -215,7 +246,7 @@ export default function Landing() {
 								fontSize={15}
 							/>
 							<Button
-								style={{ height: '30%' }}
+								style={{ height: '20%' }}
 								marginTop={10}
 								borderRadius={40}
 								backgroundColor="$primary200"
@@ -226,6 +257,8 @@ export default function Landing() {
 									router.push('/budget_wizard');
 								}}
 								disabled={initialBalance === ''}
+								numberOfLines={1}
+								adjustsFontSizeToFit
 							>
 								{t('Create budget')}
 							</Button>
@@ -256,10 +289,16 @@ export default function Landing() {
 						gap={'3%'}
 						padding={20}
 					>
-						<SizableText textAlign="center">
+						<SizableText
+							textAlign="center"
+							maxFontSizeMultiplier={1.3}
+						>
 							{t('Help')}
 						</SizableText>
-						<SizableText textAlign="center">
+						<SizableText
+							textAlign="center"
+							maxFontSizeMultiplier={1.3}
+						>
 							{t('Help Disposable income')}
 						</SizableText>
 						<Button
@@ -268,13 +307,16 @@ export default function Landing() {
 							borderRadius={40}
 							alignSelf="center"
 						>
-							<SizableText color="$white">
+							<SizableText
+								color="$white"
+								maxFontSizeMultiplier={1}
+							>
 								{t('CLOSE')}
 							</SizableText>
 						</Button>
 					</YStack>
 				</YStack>
 			)}
-		</SafeAreaView>
+		</ScrollView>
 	);
 }
