@@ -12,32 +12,26 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
-import useBalanceStore from '@/src/store/useBalanceStore';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import { useSetInitialBalance } from '@/src/finance/hook/useSetInitialBalance';
+import { useBalances } from '@/src/finance/hook/useBalances';
 
 export default function Landing() {
 	const { t } = useTranslation();
-
-	const transactions = usePlannedTransactionsStore(
-		(state) => state.transactions,
-	);
-	const storeBalance = useBalanceStore((state) => state.balance);
-	const storeDisposable = useBalanceStore((state) => state.disposable);
-	const setStoreBalance = useBalanceStore((state) => state.change);
-	const recalcDisposable = useBalanceStore((state) => state.recalcDisposable);
-	const [balance, setBalance] = useState(0);
-	const [_disposable, setDisposable] = useState(0);
-	const budgetCreated = usePlannedTransactionsStore(
-		(state) => state.transactions.length > 0,
-	);
 	const router = useRouter();
 	const [initialBalance, setInitialBalance] = useState('');
+	const saveBalanceToDb = useSetInitialBalance();
 	const [helpVisible, setHelpVisible] = useState(false);
-	useEffect(() => {
-		setBalance(storeBalance);
-		setDisposable(storeDisposable);
-		recalcDisposable(transactions);
-	}, [storeBalance, storeDisposable, transactions, recalcDisposable]);
+
+	const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const dayOfMonth = today.getDate();
+
+	const currentMonthBalances = useBalances(year, month, year, month);
+    const currentMonthData = currentMonthBalances[0];
+
+	const budgetCreated = currentMonthData?.endBalance !== undefined;
+	const displayBalance = currentMonthData?.dailyBalances[dayOfMonth - 1]?.balance ?? 0;
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
@@ -96,10 +90,10 @@ export default function Landing() {
 									width="100%"
 								>
 									<Text fontWeight={'700'} fontSize={'$3'}>
-										{new Date().toLocaleDateString('fi-FI')}
+										{today.toLocaleDateString('fi-FI')}
 									</Text>
 									<Text>
-										{t('Money in account')} {balance}€
+										{t('Money in account')} {displayBalance}€
 									</Text>
 									<Button
 										borderRadius={40}
@@ -192,11 +186,14 @@ export default function Landing() {
 								backgroundColor="$primary200"
 								width="100%"
 								color={'white'}
-								onPress={() => {
-									setStoreBalance(Number(initialBalance));
-									router.push('/budget_wizard');
-								}}
 								disabled={initialBalance === ''}
+								onPress={async () => {
+        							const numericBalance = Number(initialBalance);
+        
+        							await saveBalanceToDb(numericBalance);
+
+        							router.push('/budget_wizard');
+    							}}
 							>
 								{t('Create budget')}
 							</Button>
