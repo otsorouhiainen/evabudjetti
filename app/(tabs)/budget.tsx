@@ -74,7 +74,6 @@ export default function Budget() {
 						</StyledTab>
 						<StyledTab value="month" flex={1}>
 							<Text
-
 								color={
 									selectedTab === 'month'
 										? '$color.white'
@@ -116,7 +115,6 @@ export default function Budget() {
 							onAddPress={() => {
 								router.push('/add_transaction2');
 							}}
-
 						/>
 					</Tabs.Content>
 					<Tabs.Content value="month" flex={1}>
