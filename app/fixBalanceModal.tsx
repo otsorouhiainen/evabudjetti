@@ -32,12 +32,14 @@ export function FixBalanceModal() {
 		0;
 
 	const numericInput = Number(inputValue);
-	const difference = isNaN(numericInput) ? 0 : numericInput - currentBalance;
+	const difference = Number.isNaN(numericInput)
+		? 0
+		: numericInput - currentBalance;
 
 	const [dialogHeight, setDialogHeight] = useState(0);
 
 	const handleConfirmSave = async () => {
-		if (!isNaN(numericInput)) {
+		if (!Number.isNaN(numericInput)) {
 			await saveBalanceReconciliation(numericInput);
 			setConfirmOpen(false);
 			setOpen(false);
@@ -121,7 +123,8 @@ export function FixBalanceModal() {
 								backgroundColor="$primary200"
 								color="white"
 								disabled={
-									inputValue === '' || isNaN(numericInput)
+									inputValue === '' ||
+									Number.isNaN(numericInput)
 								}
 								onPress={() => setConfirmOpen(true)}
 							>
