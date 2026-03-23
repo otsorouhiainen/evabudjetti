@@ -151,6 +151,7 @@ i18next
 				'CLOSE': 'CLOSE',
 				'Supporting your financial well-being':
 					'Supporting your financial well-being',
+				'Current situation': 'Current situation',
 				'Money in account': 'Money in account',
 				'Disposable income': 'Disposable income',
 				'EXAMINE': 'EXAMINE',
@@ -334,6 +335,7 @@ i18next
 					'Tervetuloa budjettisovellukseen! Käytä alaosan navigointipainikkeita siirtyäksesi osioiden välillä. Lisää tulo tai mepainamalla "Lisää tulo/meno". Voit tarkastella ja muokata budjettiasi sekä nähdä yhteenvedon taloudestasi.',
 				'Supporting your financial well-being':
 					'Taloudenhallintasi tueksi',
+				'Current situation': 'Nykytilanne',
 				'Money in account': 'Tilillä rahaa',
 				'Disposable income': 'Käyttövara',
 				'EXAMINE': 'TARKASTELE',

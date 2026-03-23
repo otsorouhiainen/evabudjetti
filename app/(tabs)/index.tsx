@@ -75,7 +75,7 @@ export default function Landing() {
 
 					{budgetCreated && (
 						<YStack f={1} ai={'center'}>
-							{/* balance snapshot */}
+							{/* Current situation card */}
 							<YStack
 								width={'70%'}
 								backgroundColor="$white"
@@ -91,7 +91,12 @@ export default function Landing() {
 									gap={10}
 									width="100%"
 								>
-									<Text fontWeight={'700'} fontSize={'$3'}>
+									<Text
+										textAlign="center"
+										fontWeight={'700'}
+										fontSize={'$3'}
+									>
+										{t('Current situation')}{' '}
 										{today.toLocaleDateString('fi-FI')}
 									</Text>
 									<Text>
@@ -100,16 +105,6 @@ export default function Landing() {
 									</Text>
 
 									<FixBalanceModal />
-
-									<Button
-										borderRadius={40}
-										backgroundColor="$primary200"
-										size={'$buttons.lg'}
-									>
-										<Text color={'$white'}>
-											{t('VIEW DETAILS')}
-										</Text>
-									</Button>
 								</YStack>
 							</YStack>
 							{/* Buttons */}
