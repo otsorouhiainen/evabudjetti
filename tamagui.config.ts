@@ -198,6 +198,30 @@ const configDefinition = {
 		mr: 'marginRight',
 		pb: 'paddingBottom',
 	} as const,
+
+	// Allow font scaling for accessibility, but cap it to prevent layout breakage.
+	// Users with larger font preferences will see text scale up to 120% of base size.
+	// Font scaling blocked from buttons own internal text rendering
+
+	settings: {
+		allowFontScaling: true,
+	},
+
+	defaultProps: {
+		Text: {
+			allowFontScaling: true,
+			maxFontSizeMultiplier: 1.2,
+		},
+		Paragraph: {
+			allowFontScaling: true,
+			maxFontSizeMultiplier: 1.2,
+		},
+
+		Button: {
+			allowFontScaling: false,
+			maxFontSizeMultiplier: 1.0,
+		},
+	},
 } as const;
 
 type AppConfig = typeof configDefinition;

@@ -50,7 +50,7 @@ export default function Budget() {
 				>
 					<Tabs.List
 						flexDirection="row"
-						height={'$tabItemHeight'}
+						minHeight={'$tabItemHeight'}
 						backgroundColor="$transparent"
 					>
 						<StyledTab
@@ -65,6 +65,9 @@ export default function Budget() {
 										? '$color.white'
 										: '$color.black'
 								}
+								numberOfLines={1}
+								adjustsFontSizeToFit
+								maxFontSizeMultiplier={1.3}
 							>
 								{t('Day')}
 							</Text>
@@ -76,6 +79,9 @@ export default function Budget() {
 										? '$color.white'
 										: '$color.black'
 								}
+								numberOfLines={1}
+								adjustsFontSizeToFit
+								maxFontSizeMultiplier={1.3}
 							>
 								{t('Month')}
 							</Text>
@@ -92,6 +98,9 @@ export default function Budget() {
 										? '$color.white'
 										: '$color.black'
 								}
+								numberOfLines={1}
+								adjustsFontSizeToFit
+								maxFontSizeMultiplier={1.3}
 								borderRadius={15}
 							>
 								{t('Year')}
