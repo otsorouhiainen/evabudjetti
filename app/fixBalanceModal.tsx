@@ -71,7 +71,6 @@ export function FixBalanceModal() {
 				<Dialog.Content
 					key="content"
 					width="100%"
-					height="30%"
 					onLayout={(event) => {
 						setDialogHeight(event.nativeEvent.layout.height);
 					}}
@@ -91,7 +90,7 @@ export function FixBalanceModal() {
 							value={inputValue}
 							onChangeText={setInputValue}
 							keyboardType="numeric"
-							placeholder="New actual balance"
+							placeholder={t('New actual balance')}
 							borderColor="$primary100"
 							backgroundColor="$white"
 							placeholderTextColor="$gray9"
