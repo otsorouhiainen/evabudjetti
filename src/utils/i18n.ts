@@ -18,6 +18,7 @@ i18next
 				'Home': 'Home',
     			'Budget': 'Budget',
     			'Summary': 'Summary',
+				'Settings': 'Settings',
 
 				//ADD_TRANSACTION
 				'Select planned': 'Select planned',
@@ -158,10 +159,14 @@ i18next
 				'SHOW BUDGET': 'SHOW BUDGET',
 				'EVA MyBudget': 'EVA MyBudget',
 				'VIEW DETAILS': 'VIEW DETAILS',
+				'EDIT BALANCE': 'EDIT BALANCE',
 
 				// SUMMARY
 				'Choose a year': 'Choose a year',
 				'Months': 'Months',
+
+				// SETTINGS
+				'Language': 'Language',
 			},
 		},
 		fi: {
@@ -174,6 +179,7 @@ i18next
 				'Home': 'Koti',
     			'Budget': 'Budjetti',
     			'Summary': 'Yhteenveto',
+				'Settings': 'Asetukset',
 
 				//ADD_TRANSACTION
 				'Select planned': 'Valitse suunniteltu',
@@ -336,9 +342,20 @@ i18next
 				'SHOW BUDGET': 'NÄYTÄ BUDJETTI',
 				'EVA MyBudget': 'EVA OmaBudjetti',
 				'VIEW DETAILS': 'NÄYTÄ TIEDOT',
+				'EDIT BALANCE': 'MUOKKAA SALDOA',
+				'Update Account Balance': 'Muokkaa Tilin Saldoa',
+				'Current Planned Balance': 'Nykyinen Saldo',
+				'New actual balance': 'Nykyinen korjattu saldo',
+				'Difference': 'Muutos',
+				'Are you sure?': 'Oletko varma?',
+				'This will alter the balance record.': 'Tämä tulee muuttamaan tilin saldoa.',
+				'Confirm': 'Vahvista',
 
 				// SUMMARY
 				'Choose a year': 'Valitse vuosi',
+
+				// SETTINGS
+				'Language': 'Kieli'
 
 			},
 		},

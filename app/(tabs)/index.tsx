@@ -1,6 +1,6 @@
-import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
+import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -13,33 +13,28 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
-import useBalanceStore from '@/src/store/useBalanceStore';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
-import '@/src/utils/i18n';
+import { FixBalanceModal } from '@/app/fixBalanceModal';
+import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
+import { useBalances } from '@/src/finance/hook/useBalances';
 
 export default function Landing() {
-	const { t, i18n } = useTranslation();
-
-	const transactions = usePlannedTransactionsStore(
-		(state) => state.transactions,
-	);
-	const storeBalance = useBalanceStore((state) => state.balance);
-	const storeDisposable = useBalanceStore((state) => state.disposable);
-	const setStoreBalance = useBalanceStore((state) => state.change);
-	const recalcDisposable = useBalanceStore((state) => state.recalcDisposable);
-	const [balance, setBalance] = useState(0);
-	const [_disposable, setDisposable] = useState(0);
-	const budgetCreated = usePlannedTransactionsStore(
-		(state) => state.transactions.length > 0,
-	);
+	const { t } = useTranslation();
 	const router = useRouter();
 	const [initialBalance, setInitialBalance] = useState('');
+	const saveBalanceToDb = useAddBalanceReconciliation();
 	const [helpVisible, setHelpVisible] = useState(false);
-	useEffect(() => {
-		setBalance(storeBalance);
-		setDisposable(storeDisposable);
-		recalcDisposable(transactions);
-	}, [storeBalance, storeDisposable, transactions, recalcDisposable]);
+
+	const today = new Date();
+	const year = today.getFullYear();
+	const month = today.getMonth();
+	const dayOfMonth = today.getDate();
+
+	const currentMonthBalances = useBalances(year, month, year, month);
+	const currentMonthData = currentMonthBalances[0];
+
+	const budgetCreated = currentMonthData?.endBalance !== undefined;
+	const displayBalance =
+		currentMonthData?.dailyBalances[dayOfMonth - 1]?.balance ?? 0;
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
@@ -51,7 +46,6 @@ export default function Landing() {
 					<YStack
 						f={1}
 						paddingHorizontal={10}
-						// keep overall maxWidth behavior but prefer percent-based outer padding above
 					>
 						{/* Header */}
 						<YStack gap="5" marginTop={10} alignItems="center">
@@ -67,33 +61,6 @@ export default function Landing() {
 							<Text numberOfLines={1} adjustsFontSizeToFit>
 								{t('Supporting your financial well-being')}
 							</Text>
-
-							<XStack mt="$1">
-								<Button
-									backgroundColor="$primary200"
-									borderRadius={40}
-									size="$5"
-									color="white"
-									icon={Globe}
-									chromeless
-									onPress={() => {
-										// Check that i18n exists before call
-										if (i18n) {
-											const currentLang =
-												i18n.language || 'fi';
-											const nextLang =
-												currentLang.startsWith('fi')
-													? 'en'
-													: 'fi';
-											i18n.changeLanguage(nextLang);
-										}
-									}}
-								>
-									{i18n?.language?.startsWith('fi')
-										? 'Suomi'
-										: 'English'}
-								</Button>
-							</XStack>
 
 							<XStack mt={'$5'}>
 								<Spacer size={'10%'} />
@@ -136,17 +103,15 @@ export default function Landing() {
 										gap={10}
 										width="100%"
 									>
-										<Text
-											fontWeight={'700'}
-											fontSize={'$3'}
-										>
-											{new Date().toLocaleDateString(
-												'fi-FI',
-											)}
+										<Text fontWeight={'700'} fontSize={'$3'}>
+											{today.toLocaleDateString('fi-FI')}
 										</Text>
 										<Text>
-											{t('Money in account')} {balance}€
+											{t('Money in account')} {displayBalance}€
 										</Text>
+
+										<FixBalanceModal />
+
 										<Button
 											borderRadius={40}
 											backgroundColor="$primary200"
@@ -240,7 +205,7 @@ export default function Landing() {
 									{t('No budget created')}
 								</Text>
 								<Input
-									style={{ height: '25%' }}
+									style={{ height: '30%' }}
 									width="100%"
 									value={initialBalance}
 									onChangeText={setInitialBalance}
@@ -250,77 +215,76 @@ export default function Landing() {
 									fontSize={15}
 								/>
 								<Button
-									style={{ height: '20%' }}
+									style={{ height: '30%' }}
 									marginTop={10}
 									borderRadius={40}
 									backgroundColor="$primary200"
 									width="100%"
 									color={'white'}
-									onPress={() => {
-										setStoreBalance(Number(initialBalance));
+									disabled={initialBalance === ''}
+									onPress={async () => {
+										const numericBalance = Number(initialBalance);
+										await saveBalanceToDb(numericBalance);
 										router.push('/budget_wizard');
 									}}
-									disabled={initialBalance === ''}
-									numberOfLines={1}
-									adjustsFontSizeToFit
 								>
 									{t('Create budget')}
 								</Button>
 							</YStack>
 						)}
 					</YStack>
-				</YStack>
 
-				{/* Help Modal */}
-				{helpVisible && (
-					<YStack
-						position="absolute"
-						top={0}
-						left={0}
-						right={0}
-						bottom={0}
-						backgroundColor="rgba(0,0,0,0.5)"
-						justifyContent="center"
-						alignItems="center"
-					>
+					{/* Help Modal */}
+					{helpVisible && (
 						<YStack
-							backgroundColor="$white"
-							borderColor="$black"
-							borderWidth={2}
-							borderRadius={10}
-							width={'70%'}
-							shadowColor="$black"
-							gap={'3%'}
-							padding={20}
+							position="absolute"
+							top={0}
+							left={0}
+							right={0}
+							bottom={0}
+							backgroundColor="rgba(0,0,0,0.5)"
+							justifyContent="center"
+							alignItems="center"
 						>
-							<SizableText
-								textAlign="center"
-								maxFontSizeMultiplier={1.3}
-							>
-								{t('Help')}
-							</SizableText>
-							<SizableText
-								textAlign="center"
-								maxFontSizeMultiplier={1.3}
-							>
-								{t('Help Disposable income')}
-							</SizableText>
-							<Button
-								onPress={() => setHelpVisible(false)}
-								backgroundColor="$primary200"
-								borderRadius={40}
-								alignSelf="center"
+							<YStack
+								backgroundColor="$white"
+								borderColor="$black"
+								borderWidth={2}
+								borderRadius={10}
+								width={'70%'}
+								shadowColor="$black"
+								gap={'3%'}
+								padding={20}
 							>
 								<SizableText
-									color="$white"
-									maxFontSizeMultiplier={1}
+									textAlign="center"
+									maxFontSizeMultiplier={1.3}
 								>
-									{t('CLOSE')}
+									{t('Help')}
 								</SizableText>
-							</Button>
+								<SizableText
+									textAlign="center"
+									maxFontSizeMultiplier={1.3}
+								>
+									{t('Help Disposable income')}
+								</SizableText>
+								<Button
+									onPress={() => setHelpVisible(false)}
+									backgroundColor="$primary200"
+									borderRadius={40}
+									alignSelf="center"
+								>
+									<SizableText
+										color="$white"
+										maxFontSizeMultiplier={1}
+									>
+										{t('CLOSE')}
+									</SizableText>
+								</Button>
+							</YStack>
 						</YStack>
-					</YStack>
-				)}
+					)}
+				</YStack>
 			</ScrollView>
 		</SafeAreaView>
 	);
