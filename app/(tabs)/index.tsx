@@ -82,73 +82,61 @@ export default function Landing() {
 							</XStack>
 						</YStack>
 
-						{budgetCreated && (
-							<YStack f={1} ai={'center'}>
-								{/* balance snapshot */}
+					{budgetCreated && (
+						<YStack f={1} ai={'center'}>
+							{/* Current situation card */}
+							<YStack
+								width={'70%'}
+								backgroundColor="$white"
+								borderColor="$primary200"
+								borderRadius={20}
+								borderWidth={2}
+								padding={10}
+								mt={'$2'}
+								mb={'$8'}
+							>
 								<YStack
-									width={'70%'}
-									backgroundColor="$white"
-									borderColor="$primary200"
-									borderRadius={20}
-									borderWidth={2}
-									padding={10}
-									mt={'$2'}
-									mb={'$8'}
+									alignItems="center"
+									gap={10}
+									width="100%"
 								>
-									<YStack
-										alignItems="center"
-										gap={10}
-										width="100%"
+									<Text
+										textAlign="center"
+										fontWeight={'700'}
+										fontSize={'$3'}
 									>
-										<Text
-											fontWeight={'700'}
-											fontSize={'$3'}
-										>
-											{today.toLocaleDateString('fi-FI')}
-										</Text>
-										<Text>
-											{t('Money in account')}{' '}
-											{displayBalance}€
-										</Text>
+										{t('Current situation')}{' '}
+										{today.toLocaleDateString('fi-FI')}
+									</Text>
+									<Text>
+										{t('Money in account')} {displayBalance}
+										€
+									</Text>
 
-										<FixBalanceModal />
-
-										<Button
-											borderRadius={40}
-											backgroundColor="$primary200"
-											size={'$buttons.lg'}
-										>
-											<Text
-												color={'$white'}
-												numberOfLines={1}
-												adjustsFontSizeToFit
-											>
-												{t('VIEW DETAILS')}
-											</Text>
-										</Button>
-									</YStack>
+									<FixBalanceModal />
 								</YStack>
-								{/* Buttons */}
-								<YStack f={1} ai="center">
-									<Button
-										backgroundColor="$primary200"
-										onPress={() =>
-											router.push('/add_transaction2')
-										}
-										minWidth={'85%'}
-										height={70}
-										borderRadius={40}
+							</YStack>
+							{/* Buttons */}
+							<YStack f={1} ai="center">
+								<Button
+									backgroundColor="$primary200"
+									onPress={() =>
+										router.push('/add_transaction2')
+									}
+									minWidth={'85%'}
+									height={70}
+									borderRadius={40}
+								>
+									<Text
+										color={'$white'}
+										fontWeight={'700'}
+										fontSize={'$4'}
+										numberOfLines={1}
+										adjustsFontSizeToFit
 									>
-										<Text
-											color={'$white'}
-											fontWeight={'700'}
-											fontSize={'$4'}
-											numberOfLines={1}
-											adjustsFontSizeToFit
-										>
-											{t('ADD INCOME/EXPENSE')}
-										</Text>
-									</Button>
+										{t('ADD INCOME/EXPENSE')}
+									</Text>
+								</Button>
 
 									<XStack
 										mt={'$3'}
