@@ -156,8 +156,9 @@ i18next
 				'Supporting your financial well-being':
 					'Supporting your financial well-being',
 				'Current situation': 'Current situation',
-				'Money in account': 'Money in account',
+				'Current balance': 'Current balance',
 				'Disposable income': 'Disposable income',
+				'Balance runs out': 'Balance runs out',
 				'EXAMINE': 'EXAMINE',
 				'ADD INCOME/EXPENSE': 'ADD INCOME/EXPENSE',
 				'EDIT BUDGET': 'EDIT BUDGET',
@@ -340,8 +341,9 @@ i18next
 				'Supporting your financial well-being':
 					'Taloudenhallintasi tueksi',
 				'Current situation': 'Nykytilanne',
-				'Money in account': 'Tilillä rahaa',
-				'Disposable income': 'Käyttövara',
+				'Current balance': 'Nykyinen saldo',
+				'Disposable income': 'Kuukauden Käyttövara',
+				'Balance runs out': 'Saldo loppuu',
 				'EXAMINE': 'TARKASTELE',
 				'ADD INCOME/EXPENSE': 'LISÄÄ TULO/MENO',
 				'EDIT BUDGET': 'MUOKKAA BUDJETTIA',

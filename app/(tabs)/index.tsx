@@ -16,6 +16,7 @@ import {
 import { FixBalanceModal } from '@/app/fixBalanceModal';
 import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
 import { useBalances } from '@/src/finance/hook/useBalances';
+//import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
 
 export default function Landing() {
 	const { t } = useTranslation();
@@ -35,6 +36,17 @@ export default function Landing() {
 	const budgetCreated = currentMonthData?.endBalance !== undefined;
 	const displayBalance =
 		currentMonthData?.dailyBalances[dayOfMonth - 1]?.balance ?? 0;
+
+	/* Placeholder values for current situation card */
+	const DISPOSABLE = displayBalance >= 1000 ? 100 : -20;
+	const RUNOUT_DATE = '31.3.2026';
+
+	/*	Intended implementation for disposable income
+	const transactionSummary = useTransactionSummaries(year, month, year, month)
+	const monthDiff = transactionSummary[0].cashFlow
+
+	const disposableIncome = displayBalance + monthDiff 
+	*/
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
@@ -102,15 +114,44 @@ export default function Landing() {
 								>
 									<Text
 										textAlign="center"
-										fontWeight={'700'}
+										fontWeight={'500'}
 										fontSize={'$3'}
 									>
 										{t('Current situation')}{' '}
 										{today.toLocaleDateString('fi-FI')}
 									</Text>
+									<Text
+										textAlign="center"
+										fontWeight={'800'}
+										fontSize={'$3'}
+										marginBottom={'-5%'}
+									>
+										{t('Disposable income this month') +
+											':'}
+									</Text>
+									<Text
+										textAlign="center"
+										fontWeight={'700'}
+										fontSize={'$5'}
+										color={
+											DISPOSABLE > 0
+												? '$primary100'
+												: '$color.danger500'
+										}
+									>
+										{DISPOSABLE}€
+									</Text>
+									{DISPOSABLE <= 0 && (
+										<Text
+											marginTop={'-5%'}
+											color={'$color.danger500'}
+										>
+											{t('Balance runs out')}{' '}
+											{RUNOUT_DATE}
+										</Text>
+									)}
 									<Text>
-										{t('Money in account')} {displayBalance}
-										€
+										{t('Current balance')} {displayBalance}€
 									</Text>
 
 									<FixBalanceModal />
