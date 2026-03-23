@@ -43,10 +43,7 @@ export default function Landing() {
 				keyboardShouldPersistTaps="handled"
 			>
 				<YStack f={1} backgroundColor="$background">
-					<YStack
-						f={1}
-						paddingHorizontal={10}
-					>
+					<YStack f={1} paddingHorizontal={10}>
 						{/* Header */}
 						<YStack gap="5" marginTop={10} alignItems="center">
 							<Text
@@ -103,11 +100,15 @@ export default function Landing() {
 										gap={10}
 										width="100%"
 									>
-										<Text fontWeight={'700'} fontSize={'$3'}>
+										<Text
+											fontWeight={'700'}
+											fontSize={'$3'}
+										>
 											{today.toLocaleDateString('fi-FI')}
 										</Text>
 										<Text>
-											{t('Money in account')} {displayBalance}€
+											{t('Money in account')}{' '}
+											{displayBalance}€
 										</Text>
 
 										<FixBalanceModal />
@@ -205,7 +206,7 @@ export default function Landing() {
 									{t('No budget created')}
 								</Text>
 								<Input
-									style={{ height: '30%' }}
+									style={{ height: '25%' }}
 									width="100%"
 									value={initialBalance}
 									onChangeText={setInitialBalance}
@@ -215,7 +216,7 @@ export default function Landing() {
 									fontSize={15}
 								/>
 								<Button
-									style={{ height: '30%' }}
+									style={{ height: '25%' }}
 									marginTop={10}
 									borderRadius={40}
 									backgroundColor="$primary200"
@@ -223,7 +224,8 @@ export default function Landing() {
 									color={'white'}
 									disabled={initialBalance === ''}
 									onPress={async () => {
-										const numericBalance = Number(initialBalance);
+										const numericBalance =
+											Number(initialBalance);
 										await saveBalanceToDb(numericBalance);
 										router.push('/budget_wizard');
 									}}
