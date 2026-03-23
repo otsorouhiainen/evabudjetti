@@ -2,16 +2,15 @@ import { Globe, MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	Button,
 	Input,
+	ScrollView,
 	SizableText,
 	Spacer,
 	Text,
 	XStack,
 	YStack,
-	ScrollView,
 } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
@@ -63,10 +62,7 @@ export default function Landing() {
 							{t('EVA MyBudget')}
 						</Text>
 
-						<Text
-							numberOfLines={1}
-							adjustsFontSizeToFit
-						>
+						<Text numberOfLines={1} adjustsFontSizeToFit>
 							{t('Supporting your financial well-being')}
 						</Text>
 
@@ -149,14 +145,12 @@ export default function Landing() {
 										borderRadius={40}
 										backgroundColor="$primary200"
 										size={'$buttons.lg'}
-
 									>
 										<Text
 											color={'$white'}
 											numberOfLines={1}
 											adjustsFontSizeToFit
 										>
-
 											{t('VIEW DETAILS')}
 										</Text>
 									</Button>
@@ -230,11 +224,9 @@ export default function Landing() {
 
 					{!budgetCreated && (
 						<YStack gap={5} paddingHorizontal={25}>
-							<Text
-								numberOfLines={4}
-								adjustsFontSizeToFit
-							>
-								{t('No budget created')}</Text>
+							<Text numberOfLines={4} adjustsFontSizeToFit>
+								{t('No budget created')}
+							</Text>
 							<Input
 								style={{ height: '25%' }}
 								width="100%"
