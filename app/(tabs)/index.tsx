@@ -1,6 +1,6 @@
 import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -12,26 +12,28 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
-import { useSetInitialBalance } from '@/src/finance/hook/useSetInitialBalance';
+import { FixBalanceModal } from '@/app/fixBalanceModal';
+import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
 import { useBalances } from '@/src/finance/hook/useBalances';
 
 export default function Landing() {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const [initialBalance, setInitialBalance] = useState('');
-	const saveBalanceToDb = useSetInitialBalance();
+	const saveBalanceToDb = useAddBalanceReconciliation();
 	const [helpVisible, setHelpVisible] = useState(false);
 
 	const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
-    const dayOfMonth = today.getDate();
+	const year = today.getFullYear();
+	const month = today.getMonth();
+	const dayOfMonth = today.getDate();
 
 	const currentMonthBalances = useBalances(year, month, year, month);
-    const currentMonthData = currentMonthBalances[0];
+	const currentMonthData = currentMonthBalances[0];
 
 	const budgetCreated = currentMonthData?.endBalance !== undefined;
-	const displayBalance = currentMonthData?.dailyBalances[dayOfMonth - 1]?.balance ?? 0;
+	const displayBalance =
+		currentMonthData?.dailyBalances[dayOfMonth - 1]?.balance ?? 0;
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
@@ -93,8 +95,12 @@ export default function Landing() {
 										{today.toLocaleDateString('fi-FI')}
 									</Text>
 									<Text>
-										{t('Money in account')} {displayBalance}€
+										{t('Money in account')} {displayBalance}
+										€
 									</Text>
+
+									<FixBalanceModal />
+
 									<Button
 										borderRadius={40}
 										backgroundColor="$primary200"
@@ -188,12 +194,13 @@ export default function Landing() {
 								color={'white'}
 								disabled={initialBalance === ''}
 								onPress={async () => {
-        							const numericBalance = Number(initialBalance);
-        
-        							await saveBalanceToDb(numericBalance);
+									const numericBalance =
+										Number(initialBalance);
 
-        							router.push('/budget_wizard');
-    							}}
+									await saveBalanceToDb(numericBalance);
+
+									router.push('/budget_wizard');
+								}}
 							>
 								{t('Create budget')}
 							</Button>
