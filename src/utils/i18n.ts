@@ -24,19 +24,6 @@ i18next
     			'Summary': 'Summary',
 				'Settings': 'Settings',
 
-				//AddItemPopups
-				'Add item': 'Add a new item',
-				'Write the name here': 'Write the name here',
-				'Write the amount here (€)': 'Write the amount here (€)',
-				'Reoccurence': 'Reoccurence',
-				'Daily': 'Daily',
-				'Weekly': 'Weekly',
-				'Monthly': 'Monthly',
-				'Yearly': 'Yearly',
-				'Custom': 'Custom',
-				'Interval (days)': 'Interval (days)',
-				'Add': 'Add',
-
 				//ADD_TRANSACTION
 				'Select planned': 'Select planned',
 				'Submit': 'Submit',
@@ -79,7 +66,24 @@ i18next
 				'Add {{transactionType}}': 'Add {{transactionType}}',
 				'Saved': 'Saved',
 
+				//ADD NEW ITEM POPUP
+				'Add a new item': 'Add a new item',
+				'Write the name here': 'Write the name here',
+				'Write the amount here (€)': 'Write the amount here (€)',
+				'Reoccurrence': 'Does the item repeat?',
+				'Rec_day': 'Day',
+				'Rec_week': 'Week',
+				'Rec_month': 'Month',
+				'Rec_year': 'Year',
+				'Interval': 'Interval',
+				'Start Date': 'Start Date',
+				'End Date': 'End Date',
+				'Add': 'Add',
+
 				// BUDGET
+				'Previous': 'Previous',
+				'Next': 'Next',
+				'Finish': 'Finish',
 				'No budget created': 'No budget created yet. Enter your balance in € without commas and press the "Create budget" button below to get started!',
 				'Create budget': 'CREATE BUDGET',
 				'Bus card': 'Bus card',
@@ -91,6 +95,7 @@ i18next
 					'Invalid date, use format: dd.mm.yyyy',
 				'Day': 'Day',
 				'Day view': 'Day view',
+				'Week': 'Week',
 				'Month': 'Month',
 				'Incomes': 'Incomes',
 				'Expenses': 'Expenses',
@@ -106,6 +111,19 @@ i18next
 				'dd.mm.yyyy': 'dd.mm.yyyy',
 				'Year': 'Year',
 				'Year view': 'Year view',
+				"january": "January",
+				"february": "February",
+				"march": "March",
+				"april": "April",
+				"may": "May",
+				"june": "June",
+				"july": "July",
+				"august": "August",
+				"september": "September",
+				"october": "October",
+				"november": "November",
+				"december": "December",
+
 
 				// ERROR
 				'Something went wrong': 'Something went wrong',
@@ -145,6 +163,14 @@ i18next
 				'SHOW BUDGET': 'SHOW BUDGET',
 				'EVA MyBudget': 'EVA MyBudget',
 				'VIEW DETAILS': 'VIEW DETAILS',
+				'EDIT BALANCE': 'EDIT BALANCE',
+
+				// SUMMARY
+				'Choose a year': 'Choose a year',
+				'Months': 'Months',
+
+				// SETTINGS
+				'Language': 'Language',
 			},
 		},
 		fi: {
@@ -157,19 +183,7 @@ i18next
 				'Home': 'Koti',
     			'Budget': 'Budjetti',
     			'Summary': 'Yhteenveto',
-
-				//AddItemPopups
-				'Add item': 'Lisää uusi tuote',
-				'Write the name here': 'Kirjoita nimi tähän',
-				'Write the amount here (€)': 'Kirjoita summa tähän (€)',
-				'Recurrence': 'Toistuvuus',
-				'Daily': 'Päivittäin',
-				'Weekly': 'Viikoittain',
-				'Monthly': 'Kuukausittain',
-				'Yearly': 'Vuosittain',
-				'Custom': 'Valinnainen',
-				'Interval (days)': 'Jakso (päivää)',
-				'Add': 'Lisää',
+				'Settings': 'Asetukset',
 
 				//ADD_TRANSACTION
 				'Select planned': 'Valitse suunniteltu',
@@ -211,6 +225,21 @@ i18next
 				'{{transactionType}} added': '{{transactionType}} lisätty',
 				'Add {{transactionType}}': 'Lisää {{transactionType}}',
 				'Saved': 'Tallennettu',
+				
+				//ADD NEW ITEM POPUP
+				'Add a new item': 'Lisää uusi tapahtuma',
+				'Write the name here': 'Kirjoita nimi tähän',
+				'Write the amount here (€)': 'Kirjoita määrä tähän (€)',
+				'Reoccurrence': 'Tapahtuma toistuu:',
+				'Rec_day': 'päivän',
+				'Rec_week': 'viikon',
+				'Rec_month': 'kuukauden',
+				'Rec_year': 'vuoden',
+				'Custom': 'Muu',
+				'Interval': 'välein',
+				'Start Date': 'Tapahtuma alkaa',
+				'End Date': 'Tapahtuma loppuu',
+				'Add': 'Lisää',
 
 				// BUDGET
 				'Previous': 'Edellinen',
@@ -228,21 +257,22 @@ i18next
 				'Day': 'Päivä',
 				'Day view': 'Päivänäkymä',
 
+				'Week': 'Viikko',
 				'Month': 'Kuukausi',
 				'Months' : 'kuukaudet',
 
-				"january": "tammikuu",
-				"february": "helmikuu",
-				"march": "maaliskuu",
-				"april": "huhtikuu",
-				"may": "toukokuu",
-				"june": "kesäkuu",
-				"july": "heinäkuu",
-				"august": "elokuu",
-				"september": "syyskuu",
-				"october": "lokakuu",
-				"november": "marraskuu",
-				"december": "joulukuu",
+				"january": "Tammikuu",
+				"february": "Helmikuu",
+				"march": "Maaliskuu",
+				"april": "Huhtikuu",
+				"may": "Toukokuu",
+				"june": "Kesäkuu",
+				"july": "Heinäkuu",
+				"august": "Elokuu",
+				"september": "Syyskuu",
+				"october": "Lokakuu",
+				"november": "Marraskuu",
+				"december": "Joulukuu",
 
 				"Jan": "tammi",
 				"Feb": "helmi",
@@ -316,6 +346,21 @@ i18next
 				'SHOW BUDGET': 'NÄYTÄ BUDJETTI',
 				'EVA MyBudget': 'EVA OmaBudjetti',
 				'VIEW DETAILS': 'NÄYTÄ TIEDOT',
+				'EDIT BALANCE': 'MUOKKAA SALDOA',
+				'Update Account Balance': 'Muokkaa Tilin Saldoa',
+				'Current Planned Balance': 'Nykyinen Saldo',
+				'New actual balance': 'Nykyinen korjattu saldo',
+				'Difference': 'Muutos',
+				'Are you sure?': 'Oletko varma?',
+				'This will alter the balance record.': 'Tämä tulee muuttamaan tilin saldoa.',
+				'Confirm': 'Vahvista',
+
+				// SUMMARY
+				'Choose a year': 'Valitse vuosi',
+
+				// SETTINGS
+				'Language': 'Kieli'
+
 			},
 		},
 	},

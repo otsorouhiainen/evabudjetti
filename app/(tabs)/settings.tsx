@@ -1,4 +1,5 @@
 import { Check, ChevronRight } from '@tamagui/lucide-icons';
+import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,7 +8,6 @@ import {
 	Dialog,
 	Separator,
 	SizableText,
-	Text,
 	XStack,
 	YStack,
 } from 'tamagui';
@@ -20,6 +20,7 @@ interface Language {
 
 export default function Settings() {
 	const { t, i18n } = useTranslation();
+	const router = useRouter();
 	const { language, setLanguage } = useLanguageStore();
 	const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
 
@@ -54,20 +55,24 @@ export default function Settings() {
 				>
 					<Dialog.Trigger asChild>
 						<Button
-							chromeless
+							unstyled
 							width="100%"
 							justifyContent="space-between"
 							alignItems="center"
 							paddingVertical={14}
 							paddingHorizontal={0}
-							backgroundColor="transparent"
-							pressStyle={{
-								backgroundColor: 'transparent',
-								opacity: 0.7,
-							}}
+							color="$black"
 						>
-							<Text color="$black">{t('Language')}</Text>
-							<ChevronRight size="$icons.sm" color="$black" />
+							<XStack
+								width="100%"
+								justifyContent="space-between"
+								alignItems="center"
+							>
+								<SizableText color="$black" size="$title2">
+									{t('Language')}
+								</SizableText>
+								<ChevronRight size="$icons.sm" color="$black" />
+							</XStack>
 						</Button>
 					</Dialog.Trigger>
 
@@ -80,23 +85,25 @@ export default function Settings() {
 							bordered
 							elevate
 							width="90%"
-							maxWidth={420}
 							padding={24}
 							gap={10}
 						>
-							<Dialog.Title>{t('Language')}</Dialog.Title>
+							<Dialog.Title padding={8}>
+								{t('Language')}
+							</Dialog.Title>
 
-							<YStack gap="$size.2">
+							<YStack>
 								{possibleLanguages.map((lang) => (
 									<Button
+										unstyled
 										key={lang.code}
-										chromeless
 										justifyContent="space-between"
 										alignItems="center"
 										onPress={() =>
 											changeLanguage(lang.code)
 										}
 										paddingVertical={12}
+										color="$black"
 									>
 										<XStack
 											width="100%"
@@ -104,7 +111,7 @@ export default function Settings() {
 											alignItems="center"
 										>
 											<SizableText
-												size="$title3"
+												size="$title2"
 												color="$black"
 											>
 												{lang.label}
@@ -119,6 +126,35 @@ export default function Settings() {
 						</Dialog.Content>
 					</Dialog.Portal>
 				</Dialog>
+
+				<Button
+					unstyled
+					width="100%"
+					justifyContent="space-between"
+					alignItems="center"
+					paddingVertical={14}
+					paddingHorizontal={0}
+					color="$black"
+					onPress={() => router.push('/finance_debug')}
+				>
+					<XStack
+						width="100%"
+						justifyContent="space-between"
+						alignItems="center"
+					>
+						<YStack>
+							<SizableText color="$black" size="$title2">
+								Financial debug / test view
+							</SizableText>
+							<SizableText size="$2" color="$black">
+								Temporary
+							</SizableText>
+						</YStack>
+						<ChevronRight size="$icons.sm" color="$black" />
+					</XStack>
+				</Button>
+
+				<Separator />
 			</YStack>
 		</SafeAreaView>
 	);
