@@ -1,11 +1,15 @@
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { useLanguageStore } from '..//store/useLanguageStore';
+
+const initialLanguage = useLanguageStore.getState().language;
 
 // biome-ignore format: <explanation> Ignore formatting to keep the required quotation marks
 i18next
 .use(initReactI18next) //Connects i18Next to React
 .init({
-	lng: 'fi',
+	lng: initialLanguage || 'fi',
+	fallbackLng: 'fi',
 	debug: true,
 	resources: {
 		en: {

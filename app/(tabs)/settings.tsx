@@ -11,6 +11,7 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
+import { useLanguageStore } from '../../src/store/useLanguageStore';
 
 interface Language {
 	code: 'fi' | 'en';
@@ -20,6 +21,7 @@ interface Language {
 export default function Settings() {
 	const { t, i18n } = useTranslation();
 	const router = useRouter();
+	const { language, setLanguage } = useLanguageStore();
 	const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
 
 	const possibleLanguages: Language[] = [
@@ -28,11 +30,13 @@ export default function Settings() {
 	];
 
 	const currentLanguage = useMemo(() => {
-		return i18n.language?.startsWith('fi') ? 'fi' : 'en';
-	}, [i18n.language]);
+		const activeLang = i18n.language || language;
+		return activeLang.startsWith('fi') ? 'fi' : 'en';
+	}, [i18n.language, language]);
 
 	const changeLanguage = async (code: 'fi' | 'en') => {
 		await i18n.changeLanguage(code);
+		setLanguage(code);
 		setLanguageDialogOpen(false);
 	};
 

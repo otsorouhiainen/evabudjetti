@@ -9,8 +9,20 @@ import { db, isDbReal } from '@/src/db/client';
 import config from '../tamagui.config';
 import '@/src/utils/i18n';
 
+import i18next from 'i18next';
+import { useEffect } from 'react';
+import { useLanguageStore } from '@/src/store/useLanguageStore';
+
 export default function RootLayout() {
 	const { success, error } = useMigrations(db, migrations);
+
+	const language = useLanguageStore((state) => state.language);
+
+	useEffect(() => {
+		if (language && i18next.language !== language) {
+			i18next.changeLanguage(language);
+		}
+	}, [language]);
 
 	if (isDbReal) {
 		if (error) {
