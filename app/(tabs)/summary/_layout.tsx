@@ -16,9 +16,9 @@ export default function SummaryStackLayout() {
 				name="[year]"
 				options={({ route }) => ({
 					title: `${t('Year')} ${(route.params as { year?: string })?.year}`,
+					headerLargeTitle: false,
 				})}
 			/>
-			<Stack.Screen name="detail/[id]" options={{ title: '' }} />
 		</Stack>
 	);
 }

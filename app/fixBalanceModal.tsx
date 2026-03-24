@@ -11,6 +11,7 @@ import {
 } from 'tamagui';
 import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
 import { useBalances } from '@/src/finance/hook/useBalances';
+import { LayoutChangeEvent } from 'react-native';
 
 export function FixBalanceModal() {
 	const { t } = useTranslation();
@@ -71,7 +72,7 @@ export function FixBalanceModal() {
 				<Dialog.Content
 					key="content"
 					width="100%"
-					onLayout={(event) => {
+					onLayout={(event: LayoutChangeEvent) => {
 						setDialogHeight(event.nativeEvent.layout.height);
 					}}
 				>
