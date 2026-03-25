@@ -135,96 +135,97 @@ export default function Landing() {
 							</XStack>
 						</YStack>
 
-					{budgetCreated && (
-						<YStack f={1} ai={'center'}>
-							{/* Current situation card */}
-							<YStack
-								width={'70%'}
-								backgroundColor="$white"
-								borderColor="$primary200"
-								borderRadius={20}
-								borderWidth={2}
-								padding={10}
-								mt={'$2'}
-								mb={'$2'}
-							>
+						{budgetCreated && (
+							<YStack f={1} ai={'center'}>
+								{/* Current situation card */}
 								<YStack
-									alignItems="center"
-									gap={10}
-									width="100%"
+									width={'70%'}
+									backgroundColor="$white"
+									borderColor="$primary200"
+									borderRadius={20}
+									borderWidth={2}
+									padding={10}
+									mt={'$2'}
+									mb={'$2'}
 								>
-									<Text
-										textAlign="center"
-										fontWeight={'600'}
-										fontSize={'$3'}
+									<YStack
+										alignItems="center"
+										gap={10}
+										width="100%"
 									>
-										{t('Current situation')}
-										{'\n'}
-										{today.toLocaleDateString('fi-FI')}
-										{' - '}
-										{spanEndDate.toLocaleDateString(
-											'fi-FI',
-										)}
-									</Text>
-									<Text
-										textAlign="center"
-										fontWeight={'800'}
-										fontSize={'$3'}
-										marginBottom={'-5%'}
-									>
-										{t('Usable funds')}:
-									</Text>
-									<Text
-										textAlign="center"
-										fontWeight={'700'}
-										fontSize={'$5'}
-										color={
-											usableFunds > 0
-												? '$primary100'
-												: '$color.danger500'
-										}
-									>
-										{usableFunds.toFixed(2)}€ {t('/ day')}
-									</Text>
-									{usableFunds <= 0 && (
 										<Text
-											mt={'-5%'}
-											color={'$color.danger500'}
+											textAlign="center"
+											fontWeight={'600'}
+											fontSize={'$3'}
 										>
-											{t('Balance runs out')}{' '}
-											{getBalanceZeroDate().toLocaleDateString(
+											{t('Current situation')}
+											{'\n'}
+											{today.toLocaleDateString('fi-FI')}
+											{' - '}
+											{spanEndDate.toLocaleDateString(
 												'fi-FI',
 											)}
 										</Text>
-									)}
-									<Text>
-										{t('Current balance')}: {displayBalance}
-										€
-									</Text>
+										<Text
+											textAlign="center"
+											fontWeight={'800'}
+											fontSize={'$3'}
+											marginBottom={'-5%'}
+										>
+											{t('Usable funds')}:
+										</Text>
+										<Text
+											textAlign="center"
+											fontWeight={'700'}
+											fontSize={'$5'}
+											color={
+												usableFunds > 0
+													? '$primary100'
+													: '$color.danger500'
+											}
+										>
+											{usableFunds.toFixed(2)}€{' '}
+											{t('/ day')}
+										</Text>
+										{usableFunds <= 0 && (
+											<Text
+												mt={'-5%'}
+												color={'$color.danger500'}
+											>
+												{t('Balance runs out')}{' '}
+												{getBalanceZeroDate().toLocaleDateString(
+													'fi-FI',
+												)}
+											</Text>
+										)}
+										<Text>
+											{t('Current balance')}:{' '}
+											{displayBalance}€
+										</Text>
+									</YStack>
 								</YStack>
-							</YStack>
-							<FixBalanceModal />
-							{/* Buttons */}
-							<YStack f={1} ai="center" mt="3%">
-								<Button
-									backgroundColor="$primary200"
-									onPress={() =>
-										router.push('/add_transaction2')
-									}
-									minWidth={'85%'}
-									height={70}
-									borderRadius={40}
-								>
-									<Text
-										color={'$white'}
-										fontWeight={'700'}
-										fontSize={'$4'}
-										numberOfLines={1}
-										adjustsFontSizeToFit
+								<FixBalanceModal />
+								{/* Buttons */}
+								<YStack f={1} ai="center" mt="3%">
+									<Button
+										backgroundColor="$primary200"
+										onPress={() =>
+											router.push('/add_transaction2')
+										}
+										minWidth={'85%'}
+										height={70}
+										borderRadius={40}
 									>
-										{t('ADD INCOME/EXPENSE')}
-									</Text>
-								</Button>
+										<Text
+											color={'$white'}
+											fontWeight={'700'}
+											fontSize={'$4'}
+											numberOfLines={1}
+											adjustsFontSizeToFit
+										>
+											{t('ADD INCOME/EXPENSE')}
+										</Text>
+									</Button>
 
 									<XStack
 										mt={'$3'}
