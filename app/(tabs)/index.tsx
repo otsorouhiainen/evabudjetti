@@ -39,12 +39,12 @@ export default function Landing() {
 		currentMonthData?.dailyBalances[dayOfMonth - 1]?.balance ?? 0;
 
 	/* 
-	Usable funds are currently calculated for the next 30 days. 
+	Usable funds are currently calculated for today and the following 30 days. 
 	TODO: Make interval customizable 
 	*/
-	const usableFundsInterval = 30;
+	const usableFundsTimespan = 30;
 
-	const fundsEndDate = addDays(today, usableFundsInterval);
+	const fundsEndDate = addDays(today, usableFundsTimespan);
 	const fundsEndYear = fundsEndDate.getFullYear();
 	const fundsEndMonth = fundsEndDate.getMonth();
 	const fundsEndDay = fundsEndDate.getDate();
@@ -115,7 +115,7 @@ export default function Landing() {
 								borderWidth={2}
 								padding={10}
 								mt={'$2'}
-								mb={'$8'}
+								mb={'$2'}
 							>
 								<YStack
 									alignItems="center"
@@ -124,11 +124,16 @@ export default function Landing() {
 								>
 									<Text
 										textAlign="center"
-										fontWeight={'500'}
+										fontWeight={'600'}
 										fontSize={'$3'}
 									>
-										{t('Current situation')}{' '}
+										{t('Current situation')}
+										{'\n'}
 										{today.toLocaleDateString('fi-FI')}
+										{' - '}
+										{fundsEndDate.toLocaleDateString(
+											'fi-FI',
+										)}
 									</Text>
 									<Text
 										textAlign="center"
@@ -136,9 +141,7 @@ export default function Landing() {
 										fontSize={'$3'}
 										marginBottom={'-5%'}
 									>
-										{t('Disposable income')}{' '}
-										{'\n(' + t('Timespan')}{' '}
-										{usableFundsInterval} {t('Days') + '):'}
+										{t('Usable funds')}:
 									</Text>
 									<Text
 										textAlign="center"
@@ -150,25 +153,25 @@ export default function Landing() {
 												: '$color.danger500'
 										}
 									>
-										{usableFunds.toFixed(2)}€ / {t('Day')}
+										{usableFunds.toFixed(2)}€ {t('/ day')}
 									</Text>
 									{usableFunds <= 0 && (
 										<Text
-											marginTop={'-5%'}
+											mt={'-5%'}
 											color={'$color.danger500'}
 										>
 											{t('Balance runs out')}{' '}
 										</Text>
 									)}
 									<Text>
-										{t('Current balance')} {displayBalance}€
+										{t('Current balance')}: {displayBalance}
+										€
 									</Text>
-
-									<FixBalanceModal />
 								</YStack>
 							</YStack>
+							<FixBalanceModal />
 							{/* Buttons */}
-							<YStack f={1} ai="center">
+							<YStack f={1} ai="center" mt="3%">
 								<Button
 									backgroundColor="$primary200"
 									onPress={() =>
