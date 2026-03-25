@@ -1,4 +1,5 @@
 import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
+import { addDays } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +16,7 @@ import {
 import { FixBalanceModal } from '@/app/fixBalanceModal';
 import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
 import { useBalances } from '@/src/finance/hook/useBalances';
-//import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
+import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
 
 export default function Landing() {
 	const { t } = useTranslation();
@@ -36,16 +37,25 @@ export default function Landing() {
 	const displayBalance =
 		currentMonthData?.dailyBalances[dayOfMonth - 1]?.balance ?? 0;
 
-	/* Placeholder values for current situation card */
-	const DISPOSABLE = displayBalance >= 1000 ? 100 : -20;
-	const RUNOUT_DATE = '31.3.2026';
-
-	/*	Intended implementation for disposable income
-	const transactionSummary = useTransactionSummaries(year, month, year, month)
-	const monthDiff = transactionSummary[0].cashFlow
-
-	const disposableIncome = displayBalance + monthDiff 
+	/* 
+	Usable funds are currently calculated for the next 30 days. 
+	TODO: Make interval customizable 
 	*/
+	const usableFundsInterval = 30;
+
+	const fundsEndDate = addDays(today, usableFundsInterval);
+	const fundsEndYear = fundsEndDate.getFullYear();
+	const fundsEndMonth = fundsEndDate.getMonth();
+	const fundsEndDay = fundsEndDate.getDate();
+
+	const usableFunds = useUsableFunds(
+		year,
+		month,
+		dayOfMonth,
+		fundsEndYear,
+		fundsEndMonth,
+		fundsEndDay,
+	);
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
@@ -117,28 +127,28 @@ export default function Landing() {
 										fontSize={'$3'}
 										marginBottom={'-5%'}
 									>
-										{t('Disposable income this month') +
-											':'}
+										{t('Disposable income')}{' '}
+										{'\n(' + t('Timespan')}{' '}
+										{usableFundsInterval} {t('Days') + '):'}
 									</Text>
 									<Text
 										textAlign="center"
 										fontWeight={'700'}
 										fontSize={'$5'}
 										color={
-											DISPOSABLE > 0
+											usableFunds > 0
 												? '$primary100'
 												: '$color.danger500'
 										}
 									>
-										{DISPOSABLE}€
+										{usableFunds.toFixed(2)}€ / {t('Day')}
 									</Text>
-									{DISPOSABLE <= 0 && (
+									{usableFunds <= 0 && (
 										<Text
 											marginTop={'-5%'}
 											color={'$color.danger500'}
 										>
 											{t('Balance runs out')}{' '}
-											{RUNOUT_DATE}
 										</Text>
 									)}
 									<Text>
