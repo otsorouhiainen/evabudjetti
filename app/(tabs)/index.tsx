@@ -31,32 +31,63 @@ export default function Landing() {
 	const month = today.getMonth();
 	const dayOfMonth = today.getDate();
 
-	const currentMonthBalances = useBalances(year, month, year, month);
-	const currentMonthData = currentMonthBalances[0];
+	/* 
+	Current situation (usable funds) is currently calculated for 31 days
+	(current day + the following 30 days). 
+	TODO: Make timespan customizable 
+	*/
+	const currentSituationTimespan = 30;
+
+	const spanEndDate = addDays(today, currentSituationTimespan);
+	const spanEndYear = spanEndDate.getFullYear();
+	const spanEndMonth = spanEndDate.getMonth();
+	const spanEndDay = spanEndDate.getDate();
+
+	const timespanBalances = useBalances(
+		year,
+		month,
+		spanEndYear,
+		spanEndMonth,
+	);
+	const currentMonthData = timespanBalances[0];
 
 	const budgetCreated = currentMonthData?.endBalance !== undefined;
 	const displayBalance =
 		currentMonthData?.dailyBalances[dayOfMonth - 1]?.balance ?? 0;
 
-	/* 
-	Usable funds are currently calculated for today and the following 30 days. 
-	TODO: Make interval customizable 
-	*/
-	const usableFundsTimespan = 30;
-
-	const fundsEndDate = addDays(today, usableFundsTimespan);
-	const fundsEndYear = fundsEndDate.getFullYear();
-	const fundsEndMonth = fundsEndDate.getMonth();
-	const fundsEndDay = fundsEndDate.getDate();
-
 	const usableFunds = useUsableFunds(
 		year,
 		month,
 		dayOfMonth,
-		fundsEndYear,
-		fundsEndMonth,
-		fundsEndDay,
+		spanEndYear,
+		spanEndMonth,
+		spanEndDay,
 	);
+
+	/* 
+	Function for calculating the date on which balance reaches zero.
+	Checks daily balance for each day in the timespan and returns the first date where
+	balance is not positive.
+	Returns spanEndDate if balance never reaches zero (positive usable funds).
+	(TODO: Test with real values)
+	*/
+	const getBalanceZeroDate = () => {
+		let daysCounter = -dayOfMonth; // Tracks difference from current day
+
+		for (const month of timespanBalances) {
+			const balances = month.dailyBalances;
+			for (let day = 0; day < balances.length; day++) {
+				if (balances[day] !== undefined) {
+					const balance = balances[day]?.balance;
+					if (balance !== undefined && balance <= 0) {
+						return addDays(today, daysCounter);
+					}
+				}
+				daysCounter += 1; // If balance was not 0, add day to counter and continue.
+			}
+		}
+		return spanEndDate;
+	};
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
@@ -131,7 +162,7 @@ export default function Landing() {
 										{'\n'}
 										{today.toLocaleDateString('fi-FI')}
 										{' - '}
-										{fundsEndDate.toLocaleDateString(
+										{spanEndDate.toLocaleDateString(
 											'fi-FI',
 										)}
 									</Text>
@@ -161,6 +192,9 @@ export default function Landing() {
 											color={'$color.danger500'}
 										>
 											{t('Balance runs out')}{' '}
+											{getBalanceZeroDate().toLocaleDateString(
+												'fi-FI',
+											)}
 										</Text>
 									)}
 									<Text>
