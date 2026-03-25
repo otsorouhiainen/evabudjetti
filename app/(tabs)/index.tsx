@@ -16,7 +16,7 @@ import {
 } from 'tamagui';
 import { FixBalanceModal } from '@/app/fixBalanceModal';
 import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
-import { useBalances } from '@/src/finance/hook/useBalances';
+import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
 import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
 
 export default function Landing() {
@@ -43,7 +43,7 @@ export default function Landing() {
 	const spanEndMonth = spanEndDate.getMonth();
 	const spanEndDay = spanEndDate.getDate();
 
-	const timespanBalances = useBalances(
+	const timespanBalances = useOccurrencesAndBalances(
 		year,
 		month,
 		spanEndYear,
