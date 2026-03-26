@@ -3,11 +3,8 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
-import { Button, Card, SizableText, XStack, YStack } from 'tamagui';
-import { db } from '@/src/db/client';
-import { and, gte, lte, eq } from 'drizzle-orm';
-import * as schema from '@/src/db/schema';
-import { useEffect } from 'react';
+import { Button, Card, SizableText, XStack, YStack, Separator } from 'tamagui';
+import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
 
 export default function DetailedMonthScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
@@ -15,58 +12,45 @@ export default function DetailedMonthScreen() {
 	const [incomeExpanded, setIncomeExpanded] = useState(false);
 	const { t } = useTranslation();
 
-	const [transactions, setTransactions] = useState<any[]>([]);
 	const [yearStr, monthStr] = id.split('-');
     const yearNum = Number(yearStr);
     const monthNum = Number(monthStr);
 
-	useEffect(() => {
-        async function fetchTransactions() {
-            const startOfMonth = new Date(yearNum, monthNum, 1);
-            const endOfMonth = new Date(yearNum, monthNum + 1, 0, 23, 59, 59, 999);
+	const monthDataArray = useOccurrencesAndBalances(yearNum, monthNum, yearNum, monthNum);
+    const monthData = monthDataArray[0];
 
-            const data = await db
-                // 👇 Tell Drizzle exactly what data we want and flatten it
-                .select({
-                    amount: schema.realTransactions.amount,
-                    type: schema.realTransactions.type,
-                    categoryName: schema.categories.name,
-                })
-                .from(schema.realTransactions)
-                .leftJoin(
-                    schema.categories, 
-                    eq(schema.realTransactions.categoryId, schema.categories.id)
-                )
-                .where(
-                    and(
-                        gte(schema.realTransactions.date, startOfMonth),
-                        lte(schema.realTransactions.date, endOfMonth)
-                    )
-                );
-            setTransactions(data);
-        }
-        fetchTransactions();
-    }, [yearNum, monthNum]);
-	
-	const categoryBreakdown = useMemo(() => {
-        // 👇 Filter by the 'type' column from your schema
-        const expenses = transactions.filter((t) => t.type === 'expense'); 
-        const grouped: Record<string, number> = {};
-        
-        for (const t of expenses) {
-            // 👇 Read directly from the flattened categoryName
-            const catName = t.categoryName || t('Uncategorized');
-            // 👇 Read directly from the flattened amount
-            grouped[catName] = (grouped[catName] || 0) + Math.abs(t.amount); 
-        }
-        
-        return Object.entries(grouped).sort((a, b) => b[1] - a[1]);
-    }, [transactions, t]);
+	const { expenseBreakdown, incomeBreakdown, totalExpenses, totalIncomes } = useMemo(() => {
+        const expenses: Record<string, number> = {};
+        const incomes: Record<string, number> = {};
+        let totalExp = 0;
+        let totalInc = 0;
 
-	const totalExpenses = categoryBreakdown.reduce((sum, [, amount]) => sum + amount, 0);
-	const totalIncomes = transactions
-    	.filter((t) => t.amount > 0)
-    	.reduce((sum, t) => sum + t.amount, 0);
+        if (!monthData) return { expenseBreakdown: [], incomeBreakdown: [], totalExpenses: 0, totalIncomes: 0 };
+
+        for (const occ of monthData.transactionOccurrences) {
+            // If planned, prefix so the user knows it's an estimate.
+            const name = occ.realTransaction 
+                ? occ.name 
+                : `${occ.name} (${t('Planned')})`;
+            
+            const amount = Math.abs(occ.amount);
+
+            if (occ.type === 'expense') {
+                expenses[name] = (expenses[name] || 0) + amount;
+                totalExp += amount;
+            } else {
+                incomes[name] = (incomes[name] || 0) + amount;
+                totalInc += amount;
+            }
+        }
+
+		return {
+            expenseBreakdown: Object.entries(expenses).sort((a, b) => b[1] - a[1]),
+            incomeBreakdown: Object.entries(incomes).sort((a, b) => b[1] - a[1]),
+            totalExpenses: totalExp,
+            totalIncomes: totalInc
+        };
+    }, [monthData, t]);
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
@@ -107,39 +91,20 @@ export default function DetailedMonthScreen() {
 								padding="$4"
 								backgroundColor="#fafafa"
 							>
-								{categoryBreakdown.map(([cat, amount]) => (
-									<YStack key={cat} marginBottom="$3">
-										<XStack justifyContent="space-between">
-											<SizableText fontWeight="bold">
-												{cat}
-											</SizableText>
-											<SizableText fontWeight="bold">
-												{amount.toFixed(2)}€
-											</SizableText>
-										</XStack>
-										<YStack
-											paddingLeft="$4"
-											marginTop="$1"
-											borderLeftWidth={1}
-											borderColor="$borderColor"
-										>
+								<YStack separator={<Separator borderColor="$borderColor" opacity={0.5} />}>
+									{expenseBreakdown.map(([cat, amount]) => (
+										<YStack key={cat} margin="$1">
 											<XStack justifyContent="space-between">
-												<SizableText
-													size="$2"
-													color="$color10"
-												>
-													Esimerkki rivi
+												<SizableText fontWeight="bold">
+													{cat}
 												</SizableText>
-												<SizableText
-													size="$2"
-													color="$color10"
-												>
-													/kk
+												<SizableText fontWeight="bold">
+													{amount.toFixed(2)}€
 												</SizableText>
 											</XStack>
 										</YStack>
-									</YStack>
-								))}
+									))}
+								</YStack>
 							</Card>
 						)}
 					</YStack>
@@ -171,41 +136,22 @@ export default function DetailedMonthScreen() {
 						{incomeExpanded && (
 							<Card bordered
 								padding="$4"
-								backgroundColor="#fafafa"
+								backgroundColor="#FAFAFA"
 							>
-								{categoryBreakdown.map(([cat, amount]) => (
-									<YStack key={cat} marginBottom="$3">
-										<XStack justifyContent="space-between">
-											<SizableText fontWeight="bold">
-												{cat}
-											</SizableText>
-											<SizableText fontWeight="bold">
-												{amount.toFixed(2)}€
-											</SizableText>
-										</XStack>
-										<YStack
-											paddingLeft="$4"
-											marginTop="$1"
-											borderLeftWidth={1}
-											borderColor="$borderColor"
-										>
+								<YStack separator={<Separator borderColor="$borderColor" opacity={0.5}/>}>
+									{incomeBreakdown.map(([cat, amount]) => (
+										<YStack key={cat} margin="$1">
 											<XStack justifyContent="space-between">
-												<SizableText
-													size="$2"
-													color="$color10"
-												>
-													Esimerkki rivi
+												<SizableText fontWeight="bold">
+													{cat}
 												</SizableText>
-												<SizableText
-													size="$2"
-													color="$color10"
-												>
-													/kk
+												<SizableText fontWeight="bold">
+													{amount.toFixed(2)}€
 												</SizableText>
 											</XStack>
 										</YStack>
-									</YStack>
-								))}
+									))}
+								</YStack>
 							</Card>
 						)}
 					</YStack>
