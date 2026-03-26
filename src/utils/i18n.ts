@@ -165,7 +165,6 @@ i18next
 				'EDIT BUDGET': 'EDIT BUDGET',
 				'SHOW BUDGET': 'SHOW BUDGET',
 				'EVA MyBudget': 'EVA MyBudget',
-				'VIEW DETAILS': 'VIEW DETAILS',
 				'EDIT BALANCE': 'EDIT BALANCE',
 
 				// SUMMARY
@@ -351,7 +350,6 @@ i18next
 				'EDIT BUDGET': 'MUOKKAA BUDJETTIA',
 				'SHOW BUDGET': 'NÄYTÄ BUDJETTI',
 				'EVA MyBudget': 'EVA OmaBudjetti',
-				'VIEW DETAILS': 'NÄYTÄ TIEDOT',
 				'EDIT BALANCE': 'MUOKKAA SALDOA',
 				'Update Account Balance': 'Muokkaa Tilin Saldoa',
 				'Current Planned Balance': 'Nykyinen Saldo',
