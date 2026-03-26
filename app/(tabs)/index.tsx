@@ -1,4 +1,5 @@
 import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
+import { addDays } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +17,7 @@ import {
 import { FixBalanceModal } from '@/app/fixBalanceModal';
 import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
 import { useBalances } from '@/src/finance/hook/useBalances';
+import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
 
 export default function Landing() {
 	const { t } = useTranslation();
@@ -29,12 +31,63 @@ export default function Landing() {
 	const month = today.getMonth();
 	const dayOfMonth = today.getDate();
 
-	const currentMonthBalances = useBalances(year, month, year, month);
-	const currentMonthData = currentMonthBalances[0];
+	/* 
+	Current situation (usable funds) is currently calculated for 31 days
+	(current day + the following 30 days). 
+	TODO: Make timespan customizable 
+	*/
+	const currentSituationTimespan = 30;
+
+	const spanEndDate = addDays(today, currentSituationTimespan);
+	const spanEndYear = spanEndDate.getFullYear();
+	const spanEndMonth = spanEndDate.getMonth();
+	const spanEndDay = spanEndDate.getDate();
+
+	const timespanBalances = useBalances(
+		year,
+		month,
+		spanEndYear,
+		spanEndMonth,
+	);
+	const currentMonthData = timespanBalances[0];
 
 	const budgetCreated = currentMonthData?.endBalance !== undefined;
 	const displayBalance =
 		currentMonthData?.dailyBalances[dayOfMonth - 1]?.balance ?? 0;
+
+	const usableFunds = useUsableFunds(
+		year,
+		month,
+		dayOfMonth,
+		spanEndYear,
+		spanEndMonth,
+		spanEndDay,
+	);
+
+	/* 
+	Function for calculating the date on which balance reaches zero.
+	Checks daily balance for each day in the timespan and returns the first date where
+	balance is not positive.
+	Returns spanEndDate if balance never reaches zero (positive usable funds).
+	(TODO: Test with real values)
+	*/
+	const getBalanceZeroDate = () => {
+		let daysCounter = -dayOfMonth; // Tracks difference from current day
+
+		for (const month of timespanBalances) {
+			const balances = month.dailyBalances;
+			for (let day = 0; day < balances.length; day++) {
+				if (balances[day] !== undefined) {
+					const balance = balances[day]?.balance;
+					if (balance !== undefined && balance <= 0) {
+						return addDays(today, daysCounter);
+					}
+				}
+				daysCounter += 1; // If balance was not 0, add day to counter and continue.
+			}
+		}
+		return spanEndDate;
+	};
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
@@ -84,7 +137,7 @@ export default function Landing() {
 
 						{budgetCreated && (
 							<YStack f={1} ai={'center'}>
-								{/* balance snapshot */}
+								{/* Current situation card */}
 								<YStack
 									width={'70%'}
 									backgroundColor="$white"
@@ -93,7 +146,7 @@ export default function Landing() {
 									borderWidth={2}
 									padding={10}
 									mt={'$2'}
-									mb={'$8'}
+									mb={'$2'}
 								>
 									<YStack
 										alignItems="center"
@@ -101,35 +154,59 @@ export default function Landing() {
 										width="100%"
 									>
 										<Text
-											fontWeight={'700'}
+											textAlign="center"
+											fontWeight={'600'}
 											fontSize={'$3'}
 										>
+											{t('Current situation')}
+											{'\n'}
 											{today.toLocaleDateString('fi-FI')}
+											{' - '}
+											{spanEndDate.toLocaleDateString(
+												'fi-FI',
+											)}
 										</Text>
-										<Text>
-											{t('Money in account')}{' '}
-											{displayBalance}€
-										</Text>
-
-										<FixBalanceModal />
-
-										<Button
-											borderRadius={40}
-											backgroundColor="$primary200"
-											size={'$buttons.lg'}
+										<Text
+											textAlign="center"
+											fontWeight={'800'}
+											fontSize={'$3'}
+											marginBottom={'-5%'}
 										>
+											{t('Usable funds')}:
+										</Text>
+										<Text
+											textAlign="center"
+											fontWeight={'700'}
+											fontSize={'$5'}
+											color={
+												usableFunds > 0
+													? '$primary100'
+													: '$color.danger500'
+											}
+										>
+											{usableFunds.toFixed(2)} €{' '}
+											{t('/ day')}
+										</Text>
+										{usableFunds <= 0 && (
 											<Text
-												color={'$white'}
-												numberOfLines={1}
-												adjustsFontSizeToFit
+												mt={'-5%'}
+												color={'$color.danger500'}
 											>
-												{t('VIEW DETAILS')}
+												{t('Balance runs out')}{' '}
+												{getBalanceZeroDate().toLocaleDateString(
+													'fi-FI',
+												)}
 											</Text>
-										</Button>
+										)}
+										<Text>
+											{t('Current balance')}:{' '}
+											{displayBalance} €
+										</Text>
 									</YStack>
 								</YStack>
+								<FixBalanceModal />
 								{/* Buttons */}
-								<YStack f={1} ai="center">
+								<YStack f={1} ai="center" mt="3%">
 									<Button
 										backgroundColor="$primary200"
 										onPress={() =>
