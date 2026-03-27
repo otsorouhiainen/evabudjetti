@@ -1,4 +1,9 @@
-import { AlertCircle, ChevronRight, DollarSign } from '@tamagui/lucide-icons';
+import {
+	AlertCircle,
+	ChevronRight,
+	DollarSign,
+	Minus,
+} from '@tamagui/lucide-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
@@ -11,38 +16,67 @@ export default function MonthsScreen() {
 	const { t } = useTranslation();
 
 	const yearNum = Number(year);
-
 	const yearlyBalances = useBalances(yearNum, 0, yearNum, 11);
+
+	const monthKeys = [
+		'january',
+		'february',
+		'march',
+		'april',
+		'may',
+		'june',
+		'july',
+		'august',
+		'september',
+		'october',
+		'november',
+		'december',
+	];
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
 			<ScrollView>
 				<YStack padding="$4" gap="$3">
 					{yearlyBalances.map((monthData, index) => {
-                        // If there is no data for a month, default to 0
-                        const start = monthData?.startBalance ?? 0;
-                        const end = monthData?.endBalance ?? 0;
-                        
-                        // Calculate the net change for the month
-                        const change = end - start;
-                        const isWarning = change < 0;
+						const start = monthData?.startBalance ?? 0;
+						const end = monthData?.endBalance ?? 0;
 
-                        // Format the month name cleanly (e.g., "Tammikuu")
-                        const date = new Date(yearNum, index, 1);
-                        const monthName = date.toLocaleString('fi-FI', { month: 'long' });
-                        
-                        // Create the ID to pass to the detail screen (e.g., "2026-00" for Jan)
-                        const routeId = `${yearNum}-${index.toString().padStart(2, '0')}`;
+						const change = end - start;
+						const isWarning = change < 0;
+						const isNeutral = change === 0;
+
+						const translatedMonth = t(monthKeys[index]);
+
+						const routeId = `${yearNum}-${index.toString().padStart(2, '0')}`;
+
+						const bgColor = isWarning
+							? '#fce4ec'
+							: isNeutral
+								? '#f5f5f5'
+								: '#e0f2f1';
+						const borderColor = isWarning
+							? '#f8bbd0'
+							: isNeutral
+								? '#e0e0e0'
+								: '#b2dfdb';
+						const iconColor = isWarning
+							? '#d32f2f'
+							: isNeutral
+								? '#757575'
+								: '#00796b';
+
 						return (
 							<Card
-                                key={routeId}
-                                bordered
-                                padding="$4"
-                                onPress={() => router.push(`/summary/detail/${routeId}`)}
-                                backgroundColor={isWarning ? '#fce4ec' : '#e0f2f1'}
-                                borderColor={isWarning ? '#f8bbd0' : '#b2dfdb'}
-                                pressStyle={{ scale: 0.98 }}
-                            >
+								key={routeId}
+								bordered
+								padding="$4"
+								onPress={() =>
+									router.push(`/summary/detail/${routeId}`)
+								}
+								backgroundColor={bgColor}
+								borderColor={borderColor}
+								pressStyle={{ scale: 0.98 }}
+							>
 								<XStack
 									justifyContent="space-between"
 									alignItems="center"
@@ -58,12 +92,17 @@ export default function MonthsScreen() {
 											{isWarning ? (
 												<AlertCircle
 													size={20}
-													color="#d32f2f"
+													color={iconColor}
+												/>
+											) : isNeutral ? (
+												<Minus
+													size={20}
+													color={iconColor}
 												/>
 											) : (
 												<DollarSign
 													size={20}
-													color="#00796b"
+													color={iconColor}
 												/>
 											)}
 										</View>
@@ -72,7 +111,7 @@ export default function MonthsScreen() {
 												fontWeight="bold"
 												size="$5"
 											>
-												{t(monthName)}
+												{t(translatedMonth)}
 											</SizableText>
 											<SizableText
 												color={
@@ -81,10 +120,8 @@ export default function MonthsScreen() {
 														: '#00796b'
 												}
 											>
-												{change > 0
-													? `+${change.toFixed(2)}`
-													: change.toFixed(2)}
-												€
+												{change > 0 ? '+' : ''}
+												{change.toFixed(2)}€
 											</SizableText>
 										</YStack>
 									</XStack>

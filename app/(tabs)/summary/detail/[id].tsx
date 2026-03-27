@@ -3,7 +3,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
-import { Button, Card, SizableText, XStack, YStack, Separator } from 'tamagui';
+import { Button, Card, Separator, SizableText, XStack, YStack } from 'tamagui';
 import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
 
 export default function DetailedMonthScreen() {
@@ -13,50 +13,82 @@ export default function DetailedMonthScreen() {
 	const { t } = useTranslation();
 
 	const [yearStr, monthStr] = id.split('-');
-    const yearNum = Number(yearStr);
-    const monthNum = Number(monthStr);
+	const yearNum = Number(yearStr);
+	const monthNum = Number(monthStr);
 
-	const monthDataArray = useOccurrencesAndBalances(yearNum, monthNum, yearNum, monthNum);
-    const monthData = monthDataArray[0];
+	const monthKeys = [
+		'january',
+		'february',
+		'march',
+		'april',
+		'may',
+		'june',
+		'july',
+		'august',
+		'september',
+		'october',
+		'november',
+		'december',
+	];
+	const translatedMonth = t(monthKeys[monthNum]);
 
-	const { expenseBreakdown, incomeBreakdown, totalExpenses, totalIncomes } = useMemo(() => {
-        const expenses: Record<string, number> = {};
-        const incomes: Record<string, number> = {};
-        let totalExp = 0;
-        let totalInc = 0;
+	const formattedTitle = `${translatedMonth} ${yearNum}`;
 
-        if (!monthData) return { expenseBreakdown: [], incomeBreakdown: [], totalExpenses: 0, totalIncomes: 0 };
+	const monthDataArray = useOccurrencesAndBalances(
+		yearNum,
+		monthNum,
+		yearNum,
+		monthNum,
+	);
+	const monthData = monthDataArray[0];
 
-        for (const occ of monthData.transactionOccurrences) {
-            // If planned, prefix so the user knows it's an estimate.
-            const name = occ.realTransaction 
-                ? occ.name 
-                : `${occ.name} (${t('Planned')})`;
-            
-            const amount = Math.abs(occ.amount);
+	const { expenseBreakdown, incomeBreakdown, totalExpenses, totalIncomes } =
+		useMemo(() => {
+			const expenses: Record<string, number> = {};
+			const incomes: Record<string, number> = {};
+			let totalExp = 0;
+			let totalInc = 0;
 
-            if (occ.type === 'expense') {
-                expenses[name] = (expenses[name] || 0) + amount;
-                totalExp += amount;
-            } else {
-                incomes[name] = (incomes[name] || 0) + amount;
-                totalInc += amount;
-            }
-        }
+			if (!monthData)
+				return {
+					expenseBreakdown: [],
+					incomeBreakdown: [],
+					totalExpenses: 0,
+					totalIncomes: 0,
+				};
 
-		return {
-            expenseBreakdown: Object.entries(expenses).sort((a, b) => b[1] - a[1]),
-            incomeBreakdown: Object.entries(incomes).sort((a, b) => b[1] - a[1]),
-            totalExpenses: totalExp,
-            totalIncomes: totalInc
-        };
-    }, [monthData, t]);
+			for (const occ of monthData.transactionOccurrences) {
+				// If planned, prefix so the user knows it's an estimate.
+				const name = occ.realTransaction
+					? occ.name
+					: `${occ.name} (${t('Planned')})`;
+
+				const amount = Math.abs(occ.amount);
+
+				if (occ.type === 'expense') {
+					expenses[name] = (expenses[name] || 0) + amount;
+					totalExp += amount;
+				} else {
+					incomes[name] = (incomes[name] || 0) + amount;
+					totalInc += amount;
+				}
+			}
+
+			return {
+				expenseBreakdown: Object.entries(expenses).sort(
+					(a, b) => b[1] - a[1],
+				),
+				incomeBreakdown: Object.entries(incomes).sort(
+					(a, b) => b[1] - a[1],
+				),
+				totalExpenses: totalExp,
+				totalIncomes: totalInc,
+			};
+		}, [monthData, t]);
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
-			<Stack.Screen
-				options={{ title: `${monthNum + 1} / ${yearNum}` }}
-			/>
+			<Stack.Screen options={{ title: formattedTitle }} />
 			<ScrollView>
 				<YStack padding="$4" gap="$4" paddingBottom="$10">
 					<YStack gap="$2">
@@ -75,8 +107,8 @@ export default function DetailedMonthScreen() {
 							</SizableText>
 							<XStack gap="$2" alignItems="center">
 								<SizableText fontWeight="bold">
-                                	{totalExpenses.toFixed(2)}€
-                            	</SizableText>
+									{totalExpenses.toFixed(2)}€
+								</SizableText>
 								{expensesExpanded ? (
 									<ChevronUp size={20} />
 								) : (
@@ -91,20 +123,45 @@ export default function DetailedMonthScreen() {
 								padding="$4"
 								backgroundColor="#fafafa"
 							>
-								<YStack separator={<Separator borderColor="$borderColor" opacity={0.5} />}>
-									{expenseBreakdown.map(([cat, amount]) => (
-										<YStack key={cat} margin="$1">
-											<XStack justifyContent="space-between">
-												<SizableText fontWeight="bold">
-													{cat}
-												</SizableText>
-												<SizableText fontWeight="bold">
-													{amount.toFixed(2)}€
-												</SizableText>
-											</XStack>
-										</YStack>
-									))}
-								</YStack>
+								{expenseBreakdown.length === 0 ? (
+									<SizableText
+										color="$color10"
+										textAlign="center"
+										paddingVertical="$2"
+									>
+										{t('No expenses this month')}
+									</SizableText>
+								) : (
+									<YStack
+										separator={
+											<Separator
+												borderColor="$borderColor"
+												opacity={0.5}
+											/>
+										}
+									>
+										{expenseBreakdown.map(
+											([cat, amount]) => (
+												<YStack
+													key={cat}
+													paddingVertical="$2"
+												>
+													<XStack justifyContent="space-between">
+														<SizableText
+															fontWeight="bold"
+															fontSize={15}
+														>
+															{cat}
+														</SizableText>
+														<SizableText fontWeight="bold">
+															{amount.toFixed(2)}€
+														</SizableText>
+													</XStack>
+												</YStack>
+											),
+										)}
+									</YStack>
+								)}
 							</Card>
 						)}
 					</YStack>
@@ -123,8 +180,8 @@ export default function DetailedMonthScreen() {
 							</SizableText>
 							<XStack gap="$2" alignItems="center">
 								<SizableText fontWeight="bold">
-                                	{totalIncomes.toFixed(2)}€
-                            	</SizableText>
+									{totalIncomes.toFixed(2)}€
+								</SizableText>
 								{incomeExpanded ? (
 									<ChevronUp size={20} />
 								) : (
@@ -134,24 +191,50 @@ export default function DetailedMonthScreen() {
 						</Button>
 
 						{incomeExpanded && (
-							<Card bordered
+							<Card
+								bordered
 								padding="$4"
 								backgroundColor="#FAFAFA"
 							>
-								<YStack separator={<Separator borderColor="$borderColor" opacity={0.5}/>}>
-									{incomeBreakdown.map(([cat, amount]) => (
-										<YStack key={cat} margin="$1">
-											<XStack justifyContent="space-between">
-												<SizableText fontWeight="bold">
-													{cat}
-												</SizableText>
-												<SizableText fontWeight="bold">
-													{amount.toFixed(2)}€
-												</SizableText>
-											</XStack>
-										</YStack>
-									))}
-								</YStack>
+								{incomeBreakdown.length === 0 ? (
+									<SizableText
+										color="$color10"
+										textAlign="center"
+										paddingVertical="$2"
+									>
+										{t('No income this month')}
+									</SizableText>
+								) : (
+									<YStack
+										separator={
+											<Separator
+												borderColor="$borderColor"
+												opacity={0.5}
+											/>
+										}
+									>
+										{incomeBreakdown.map(
+											([cat, amount]) => (
+												<YStack
+													key={cat}
+													paddingVertical="$2"
+												>
+													<XStack justifyContent="space-between">
+														<SizableText
+															fontWeight="bold"
+															fontSize={15}
+														>
+															{cat}
+														</SizableText>
+														<SizableText fontWeight="bold">
+															{amount.toFixed(2)}€
+														</SizableText>
+													</XStack>
+												</YStack>
+											),
+										)}
+									</YStack>
+								)}
 							</Card>
 						)}
 					</YStack>

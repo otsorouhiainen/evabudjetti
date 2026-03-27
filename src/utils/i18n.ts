@@ -361,6 +361,9 @@ i18next
 
 				// SUMMARY
 				'Choose a year': 'Valitse vuosi',
+				'Planned': 'Suunniteltu',
+				'No expenses this month': 'Ei menoja tässä kuussa',
+				'No income this month': 'Ei tuloja tässä kuussa',
 
 				// SETTINGS
 				'Language': 'Kieli'
