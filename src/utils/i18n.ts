@@ -21,6 +21,7 @@ i18next
 				//Layouts
 				'Home': 'Home',
     			'Budget': 'Budget',
+				'Funds': 'Funds',
     			'Summary': 'Summary',
 				'Settings': 'Settings',
 
@@ -184,6 +185,7 @@ i18next
 				//Layouts
 				'Home': 'Koti',
     			'Budget': 'Budjetti',
+				'Funds': 'Käyttövara',
     			'Summary': 'Yhteenveto',
 				'Settings': 'Asetukset',
 

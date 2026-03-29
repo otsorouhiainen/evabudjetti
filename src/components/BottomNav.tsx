@@ -26,7 +26,7 @@ const NavButton = ({
 	/>
 );
 
-type RouteString = '/' | '/add_transaction' | '/budget' | '/summary';
+type RouteString = '/' | '/add_transaction' | '/budget' | '/summary'; //TODO: Rename 'budget' to 'funds'
 
 interface BottomNavOption {
 	icon: ReactElement;
@@ -44,7 +44,7 @@ const bottomNavOptions: BottomNavOption[] = [
 	},
 	{
 		icon: <Wallet size={'$icons.md'} />,
-		route: '/budget',
+		route: '/budget', //TODO: Rename to 'funds'
 	},
 	{
 		icon: <ChartColumn size={'$icons.md'} />,

@@ -22,7 +22,7 @@ export default function TabLayout() {
 		},
 		{
 			icon: <Wallet size={'$icons.md'} color={theme.white.val} />,
-			name: t('Budget'),
+			name: t('Funds'),
 			route: 'budget',
 		},
 		{
