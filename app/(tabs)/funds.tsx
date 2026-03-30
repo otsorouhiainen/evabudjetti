@@ -51,12 +51,7 @@ export default function Funds() {
 						minHeight={'$tabItemHeight'}
 						backgroundColor="$transparent"
 					>
-						<StyledTab
-							value="day"
-							flex={1}
-							borderTopLeftRadius={20}
-							borderBottomLeftRadius={20}
-						>
+						<StyledTab value="day" flex={1} borderRadius={0}>
 							<Text
 								color={
 									selectedTab === 'day'
