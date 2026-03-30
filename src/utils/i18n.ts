@@ -364,6 +364,7 @@ i18next
 				'Planned': 'Suunniteltu',
 				'No expenses this month': 'Ei menoja tässä kuussa',
 				'No income this month': 'Ei tuloja tässä kuussa',
+				'Uncategorized': 'Ei määritelty',
 
 				// SETTINGS
 				'Language': 'Kieli'

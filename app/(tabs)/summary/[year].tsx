@@ -8,7 +8,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { Card, SizableText, View, XStack, YStack } from 'tamagui';
-import { useBalances } from '@/src/finance/hook/useBalances';
+import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
 
 export default function MonthsScreen() {
 	const { year } = useLocalSearchParams<{ year: string }>();
@@ -16,7 +16,7 @@ export default function MonthsScreen() {
 	const { t } = useTranslation();
 
 	const yearNum = Number(year);
-	const yearlyBalances = useBalances(yearNum, 0, yearNum, 11);
+	const yearlySummaries = useTransactionSummaries(yearNum, 0, yearNum, 11);
 
 	const monthKeys = [
 		'january',
@@ -37,11 +37,8 @@ export default function MonthsScreen() {
 		<YStack flex={1} backgroundColor="$background">
 			<ScrollView>
 				<YStack padding="$4" gap="$3">
-					{yearlyBalances.map((monthData, index) => {
-						const start = monthData?.startBalance ?? 0;
-						const end = monthData?.endBalance ?? 0;
-
-						const change = end - start;
+					{yearlySummaries.map((monthData, index) => {
+						const change = monthData?.cashFlow ?? 0;
 						const isWarning = change < 0;
 						const isNeutral = change === 0;
 
@@ -111,15 +108,9 @@ export default function MonthsScreen() {
 												fontWeight="bold"
 												size="$5"
 											>
-												{t(translatedMonth)}
+												{translatedMonth}
 											</SizableText>
-											<SizableText
-												color={
-													isWarning
-														? '#d32f2f'
-														: '#00796b'
-												}
-											>
+											<SizableText color={iconColor}>
 												{change > 0 ? '+' : ''}
 												{change.toFixed(2)}€
 											</SizableText>

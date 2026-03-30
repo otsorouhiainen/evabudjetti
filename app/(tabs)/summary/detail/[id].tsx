@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { Button, Card, Separator, SizableText, XStack, YStack } from 'tamagui';
-import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
+import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
 
 export default function DetailedMonthScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
@@ -31,10 +31,9 @@ export default function DetailedMonthScreen() {
 		'december',
 	];
 	const translatedMonth = t(monthKeys[monthNum]);
-
 	const formattedTitle = `${translatedMonth} ${yearNum}`;
 
-	const monthDataArray = useOccurrencesAndBalances(
+	const monthDataArray = useTransactionSummaries(
 		yearNum,
 		monthNum,
 		yearNum,
@@ -44,11 +43,6 @@ export default function DetailedMonthScreen() {
 
 	const { expenseBreakdown, incomeBreakdown, totalExpenses, totalIncomes } =
 		useMemo(() => {
-			const expenses: Record<string, number> = {};
-			const incomes: Record<string, number> = {};
-			let totalExp = 0;
-			let totalInc = 0;
-
 			if (!monthData)
 				return {
 					expenseBreakdown: [],
@@ -57,30 +51,45 @@ export default function DetailedMonthScreen() {
 					totalIncomes: 0,
 				};
 
-			for (const occ of monthData.transactionOccurrences) {
-				// If planned, prefix so the user knows it's an estimate.
-				const name = occ.realTransaction
-					? occ.name
-					: `${occ.name} (${t('Planned')})`;
+			const totalExp = monthData.totalExpense || 0;
+			const totalInc = monthData.totalIncome || 0;
 
-				const amount = Math.abs(occ.amount);
+			const rawExpenses = monthData.expenseByCategory || {};
+			const rawIncomes = monthData.incomeByCategory || {};
 
-				if (occ.type === 'expense') {
-					expenses[name] = (expenses[name] || 0) + amount;
-					totalExp += amount;
-				} else {
-					incomes[name] = (incomes[name] || 0) + amount;
-					totalInc += amount;
-				}
+			const expenseBreakdown = Object.entries(rawExpenses)
+				.map(([categoryId, amount]) => {
+					const numAmount = Math.abs(Number(amount));
+					const categoryName =
+						categoryId === 'null' || categoryId === 'undefined'
+							? t('Uncategorized')
+							: `${t('Category')} ${categoryId}`;
+
+					return [categoryName, numAmount] as [string, number];
+				})
+				.sort((a, b) => b[1] - a[1]);
+
+			const incomeBreakdown = Object.entries(rawIncomes)
+				.map(([categoryId, amount]) => {
+					const numAmount = Math.abs(Number(amount));
+					const categoryName =
+						categoryId === 'null' || categoryId === 'undefined'
+							? t('Uncategorized')
+							: `${t('Category')} ${categoryId}`;
+					return [categoryName, numAmount] as [string, number];
+				})
+				.sort((a, b) => b[1] - a[1]);
+
+			if (expenseBreakdown.length === 0 && totalExp > 0) {
+				expenseBreakdown.push([t('Uncategorized'), totalExp]);
+			}
+			if (incomeBreakdown.length === 0 && totalInc > 0) {
+				incomeBreakdown.push([t('Uncategorized'), totalInc]);
 			}
 
 			return {
-				expenseBreakdown: Object.entries(expenses).sort(
-					(a, b) => b[1] - a[1],
-				),
-				incomeBreakdown: Object.entries(incomes).sort(
-					(a, b) => b[1] - a[1],
-				),
+				expenseBreakdown,
+				incomeBreakdown,
 				totalExpenses: totalExp,
 				totalIncomes: totalInc,
 			};
