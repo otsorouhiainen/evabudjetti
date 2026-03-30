@@ -10,10 +10,8 @@ export function useAddBalanceReconciliation() {
 
 	const setInitialBalance = useCallback(
 		async (amount: number) => {
-			// Save to database
 			const newReconciliation = await insertBalanceReconciliation(amount);
 
-			// Tell versioning system to invalidate cache
 			onBalanceReconciliationCreated(newReconciliation);
 		},
 		[onBalanceReconciliationCreated],

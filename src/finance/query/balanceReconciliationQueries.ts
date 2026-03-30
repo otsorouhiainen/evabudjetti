@@ -1,8 +1,9 @@
 import { endOfMonth } from 'date-fns/endOfMonth';
 import { lte } from 'drizzle-orm';
 import type { BalanceReconciliation, Persisted } from '@/src/dataModel';
-import { db } from '@/src/db/client';
+import { db, isDbReal } from '@/src/db/client';
 import * as schema from '@/src/db/schema';
+import useBalanceReconciliationStore from '@/src/store/useBalanceReconciliationStore';
 
 /**
  * Retrieves all balance reconciliations that occur before or within the given month
@@ -14,6 +15,12 @@ export async function fetchBalanceReconciliationsBeforeOrIn(
 	year: number,
 	month: number,
 ): Promise<Persisted<BalanceReconciliation>[]> {
+	if (!isDbReal) {
+		return useBalanceReconciliationStore
+			.getState()
+			.getBeforeOrIn(year, month);
+	}
+
 	const data = await db
 		.select()
 		.from(schema.balanceReconciliations)
