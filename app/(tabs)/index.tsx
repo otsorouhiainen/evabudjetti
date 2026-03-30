@@ -14,7 +14,7 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
-import { FixBalanceModal } from '@/app/fixBalanceModal';
+import FixBalanceModal from '@/app/fixBalanceModal';
 import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
 import { useBalances } from '@/src/finance/hook/useBalances';
 import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
