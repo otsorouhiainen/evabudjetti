@@ -13,7 +13,7 @@ import {
 import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
 import { useBalances } from '@/src/finance/hook/useBalances';
 
-export function FixBalanceModal() {
+export default function FixBalanceModal() {
 	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);

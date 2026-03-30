@@ -358,6 +358,7 @@ i18next
 				'Are you sure?': 'Oletko varma?',
 				'This will alter the balance record.': 'Tämä tulee muuttamaan tilin saldoa.',
 				'Confirm': 'Vahvista',
+				'Update balance': 'Muokkaa saldoa',
 
 				// SUMMARY
 				'Choose a year': 'Valitse vuosi',

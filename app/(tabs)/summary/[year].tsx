@@ -112,7 +112,7 @@ export default function MonthsScreen() {
 											</SizableText>
 											<SizableText color={iconColor}>
 												{change > 0 ? '+' : ''}
-												{change.toFixed(2)}€
+												{change.toFixed(2)} €
 											</SizableText>
 										</YStack>
 									</XStack>
