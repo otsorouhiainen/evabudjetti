@@ -235,7 +235,7 @@ export default function Landing() {
 										<Button
 											backgroundColor="$primary200"
 											onPress={() =>
-												router.push('/budget')
+												router.push('/funds')
 											}
 											height={80}
 											f={1}

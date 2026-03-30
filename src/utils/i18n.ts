@@ -21,6 +21,7 @@ i18next
 				//Layouts
 				'Home': 'Home',
     			'Budget': 'Budget',
+				'Funds': 'Funds',
     			'Summary': 'Summary',
 				'Settings': 'Settings',
 
@@ -124,6 +125,10 @@ i18next
 				"november": "November",
 				"december": "December",
 
+				// FUNDS
+				'Daily balance': 'Daily balance',
+				'Account balance': 'Account balance',
+				'Disposable income': 'Disposable income',
 
 				// ERROR
 				'Something went wrong': 'Something went wrong',
@@ -184,6 +189,7 @@ i18next
 				//Layouts
 				'Home': 'Koti',
     			'Budget': 'Budjetti',
+				'Funds': 'Käyttövara',
     			'Summary': 'Yhteenveto',
 				'Settings': 'Asetukset',
 
@@ -301,7 +307,6 @@ i18next
 				'CLOSE': 'SULJE',
 				'SAVE': 'TALLENNA',
 				'No transactions': 'Ei maksutapahtumia',
-				'Account balance': 'Tilillä rahaa',
 				'Future events': 'Tulevat tapahtumat',
 				'Past events': 'Menneet tapahtumat',
 				'Edit Transaction': 'Muokkaa tapahtumaa',
@@ -312,6 +317,11 @@ i18next
 				'Year view': 'Vuosinäkymä',
 				'No income records': 'Ei näytettäviä tuloja',
 				'No expense records': 'Ei näytettäviä menoja',
+
+				// FUNDS
+				'Daily balance': 'Päivittäinen rahatilanne',
+				'Account balance': 'Tilillä rahaa',
+				'Disposable income': 'Käyttövara',
 
 				// ERROR
 				'Something went wrong': 'Jokin meni pieleen',

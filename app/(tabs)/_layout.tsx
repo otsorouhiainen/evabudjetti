@@ -22,8 +22,8 @@ export default function TabLayout() {
 		},
 		{
 			icon: <Wallet size={'$icons.md'} color={theme.white.val} />,
-			name: t('Budget'),
-			route: 'budget',
+			name: t('Funds'),
+			route: 'funds',
 		},
 		{
 			icon: <ChartColumn size={'$icons.md'} color={theme.white.val} />,
