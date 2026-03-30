@@ -8,13 +8,12 @@ import migrations from '@/drizzle/migrations';
 import { db, isDbReal } from '@/src/db/client';
 import config from '../tamagui.config';
 import '@/src/utils/i18n';
+
 import i18next from 'i18next';
 import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useLanguageStore } from '@/src/store/useLanguageStore';
 
 export default function RootLayout() {
-	const { t } = useTranslation();
 	const { success, error } = useMigrations(db, migrations);
 
 	const language = useLanguageStore((state) => state.language);
@@ -87,11 +86,8 @@ export default function RootLayout() {
 								options={{ headerShown: false }}
 							/>
 							<Stack.Screen
-								name="fixBalanceModal"
-								options={{
-									presentation: 'modal',
-									title: t('Update balance'),
-								}}
+								name="modal"
+								options={{ presentation: 'modal' }}
 							/>
 						</Stack>
 					</SafeAreaProvider>
