@@ -18,6 +18,8 @@ import type {
 	RealTransaction,
 	TransactionOccurrence,
 } from '@/src/dataModel';
+import { isDbReal } from '@/src/db/client';
+import { useAddRealTransaction } from '@/src/finance/hook/useAddRealTransaction';
 import { useCategoryStore } from '@/src/store/categoryStore';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
@@ -26,6 +28,7 @@ import RealTransactionModal from '../src/components/RealTransactionModal';
 export default function AddTransaction() {
 	const [popupVisible, setPopupVisible] = useState(false);
 	const addTransaction = useRealTransactionsStore((state) => state.add);
+	const addRealTransactionToDb = useAddRealTransaction();
 	const [transactionType, setTransactionType] = useState<
 		'income' | 'expense'
 	>('income');
@@ -47,6 +50,7 @@ export default function AddTransaction() {
 				amount?: number;
 				date?: Date;
 				category?: number;
+				plannedTransactionId?: number | null;
 		  }
 		| undefined
 	>(undefined);
@@ -128,6 +132,8 @@ export default function AddTransaction() {
 				amount: Number(allocationAmount),
 				date: new Date(selectedPlannedTxn.date),
 				category: selectedPlannedTxn.categoryId,
+				plannedTransactionId:
+					selectedPlannedTxn.plannedTransaction?.id ?? null,
 			});
 			setTransactionType(selectedPlannedTxn.type);
 
@@ -140,15 +146,32 @@ export default function AddTransaction() {
 		}
 	};
 
-	function addItem(newItem: RealTransaction) {
-		addTransaction({
+	async function addItem(newItem: RealTransaction) {
+		const transactionToInsert: RealTransaction = {
 			...newItem,
 			type: transactionType,
 			categoryId: newItem.categoryId ?? 0,
-		});
-		setPopupVisible(false);
-		setPrefillData(undefined); // Clear prefill data
-		setShowSuccess(true);
+			plannedTransactionId:
+				newItem.plannedTransactionId ??
+				prefillData?.plannedTransactionId ??
+				null,
+		};
+
+		try {
+			if (isDbReal) {
+				const insertedTransaction =
+					await addRealTransactionToDb(transactionToInsert);
+				addTransaction(insertedTransaction);
+			} else {
+				addTransaction(transactionToInsert);
+			}
+
+			setPopupVisible(false);
+			setPrefillData(undefined);
+			setShowSuccess(true);
+		} catch (error) {
+			console.error('Failed to save real transaction:', error);
+		}
 	}
 
 	return (
@@ -163,7 +186,9 @@ export default function AddTransaction() {
 					transparent={true}
 				>
 					<RealTransactionModal
-						onAdd={(item) => addItem(item)}
+						onAdd={(item) => {
+							void addItem(item);
+						}}
 						onClose={() => {
 							setPopupVisible(false);
 							setPrefillData(undefined);
