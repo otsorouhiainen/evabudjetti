@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { LayoutChangeEvent } from 'react-native';
 import {
 	AlertDialog,
 	Button,
@@ -12,7 +13,7 @@ import {
 import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
 import { useBalances } from '@/src/finance/hook/useBalances';
 
-export function FixBalanceModal() {
+export default function FixBalanceModal() {
 	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
@@ -71,7 +72,7 @@ export function FixBalanceModal() {
 				<Dialog.Content
 					key="content"
 					width="100%"
-					onLayout={(event) => {
+					onLayout={(event: LayoutChangeEvent) => {
 						setDialogHeight(event.nativeEvent.layout.height);
 					}}
 				>
@@ -85,7 +86,8 @@ export function FixBalanceModal() {
 						</Text>
 
 						<Input
-							style={{ height: '30%' }}
+							size="$10"
+							paddingHorizontal="$4"
 							width="100%"
 							value={inputValue}
 							onChangeText={setInputValue}
@@ -108,6 +110,7 @@ export function FixBalanceModal() {
 							justifyContent="space-between"
 						>
 							<Button
+								height={40}
 								f={1}
 								onPress={() => {
 									setOpen(false);
@@ -118,6 +121,7 @@ export function FixBalanceModal() {
 							</Button>
 
 							<Button
+								height={40}
 								f={1}
 								backgroundColor="$primary200"
 								color="white"
@@ -140,8 +144,10 @@ export function FixBalanceModal() {
 					<AlertDialog.Content
 						key="content"
 						width="100%"
+						maxWidth={400}
+						padding="$5"
 						height={dialogHeight > 0 ? dialogHeight : 'auto'}
-						justifyContent="center"
+						justifyContent="space-between"
 					>
 						<AlertDialog.Title paddingBottom={20}>
 							{t('Are you sure?')}
@@ -152,14 +158,18 @@ export function FixBalanceModal() {
 
 						<XStack
 							gap="$3"
-							justifyContent="flex-end"
-							paddingTop={30}
+							justifyContent="space-between"
+							alignItems="center"
 						>
 							<AlertDialog.Cancel asChild>
-								<Button>{t('Cancel')}</Button>
+								<Button f={1} height={40}>
+									{t('Cancel')}
+								</Button>
 							</AlertDialog.Cancel>
 							<AlertDialog.Action asChild>
 								<Button
+									f={1}
+									height={40}
 									backgroundColor="$primary200"
 									color="white"
 									onPress={handleConfirmSave}

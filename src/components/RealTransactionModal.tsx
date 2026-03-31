@@ -25,6 +25,7 @@ type RealTransactionModalProps = {
 		amount?: number;
 		date?: Date;
 		category?: number;
+		plannedTransactionId?: number | null;
 	};
 };
 
@@ -67,7 +68,8 @@ const RealTransactionModal = ({
 			!name.trim() ||
 			Number.isNaN(numAmount) ||
 			numAmount <= 0 ||
-			!date
+			!date ||
+			selectedCategory === null
 		) {
 			return;
 		}
@@ -79,11 +81,16 @@ const RealTransactionModal = ({
 			date,
 			type: transactionType,
 			categoryId: selectedCategory ?? 0,
+			plannedTransactionId: prefillData?.plannedTransactionId ?? null,
 		});
 	};
 
 	const isDisabled =
-		!name.trim() || !amount || Number.parseFloat(amount) <= 0 || !date;
+		!name.trim() ||
+		!amount ||
+		Number.parseFloat(amount) <= 0 ||
+		!date ||
+		selectedCategory === null;
 
 	const handleAddCategory = async () => {
 		if (!newCategoryName.trim()) return;

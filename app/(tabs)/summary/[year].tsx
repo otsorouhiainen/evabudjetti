@@ -1,38 +1,77 @@
-import { AlertCircle, ChevronRight, DollarSign } from '@tamagui/lucide-icons';
+import {
+	AlertCircle,
+	ChevronRight,
+	DollarSign,
+	Minus,
+} from '@tamagui/lucide-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { Card, SizableText, View, XStack, YStack } from 'tamagui';
-import { allMonthsData } from '@/src/utils/mockDataSummary';
+import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
 
 export default function MonthsScreen() {
 	const { year } = useLocalSearchParams<{ year: string }>();
 	const router = useRouter();
 	const { t } = useTranslation();
 
-	const monthsForYear = useMemo(() => {
-		return allMonthsData.filter((m) => m.year === year);
-	}, [year]);
+	const yearNum = Number(year);
+	const yearlySummaries = useTransactionSummaries(yearNum, 0, yearNum, 11);
+
+	const monthKeys = [
+		'january',
+		'february',
+		'march',
+		'april',
+		'may',
+		'june',
+		'july',
+		'august',
+		'september',
+		'october',
+		'november',
+		'december',
+	];
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
 			<ScrollView>
 				<YStack padding="$4" gap="$3">
-					{monthsForYear.map((item) => {
-						const isWarning = item.status === 'warning';
+					{yearlySummaries.map((monthData, index) => {
+						const change = monthData?.cashFlow ?? 0;
+						const isWarning = change < 0;
+						const isNeutral = change === 0;
+
+						const translatedMonth = t(monthKeys[index]);
+
+						const routeId = `${yearNum}-${index.toString().padStart(2, '0')}`;
+
+						const bgColor = isWarning
+							? '#fce4ec'
+							: isNeutral
+								? '#f5f5f5'
+								: '#e0f2f1';
+						const borderColor = isWarning
+							? '#f8bbd0'
+							: isNeutral
+								? '#e0e0e0'
+								: '#b2dfdb';
+						const iconColor = isWarning
+							? '#d32f2f'
+							: isNeutral
+								? '#757575'
+								: '#00796b';
+
 						return (
 							<Card
-								key={item.id}
+								key={routeId}
 								bordered
 								padding="$4"
 								onPress={() =>
-									router.push(`/summary/detail/${item.id}`)
+									router.push(`/summary/detail/${routeId}`)
 								}
-								backgroundColor={
-									isWarning ? '#fce4ec' : '#e0f2f1'
-								}
-								borderColor={isWarning ? '#f8bbd0' : '#b2dfdb'}
+								backgroundColor={bgColor}
+								borderColor={borderColor}
 								pressStyle={{ scale: 0.98 }}
 							>
 								<XStack
@@ -50,12 +89,17 @@ export default function MonthsScreen() {
 											{isWarning ? (
 												<AlertCircle
 													size={20}
-													color="#d32f2f"
+													color={iconColor}
+												/>
+											) : isNeutral ? (
+												<Minus
+													size={20}
+													color={iconColor}
 												/>
 											) : (
 												<DollarSign
 													size={20}
-													color="#00796b"
+													color={iconColor}
 												/>
 											)}
 										</View>
@@ -64,25 +108,17 @@ export default function MonthsScreen() {
 												fontWeight="bold"
 												size="$5"
 											>
-												{t(item.name)}
+												{translatedMonth}
 											</SizableText>
-											<SizableText
-												color={
-													isWarning
-														? '#d32f2f'
-														: '#00796b'
-												}
-											>
-												{item.change > 0
-													? `+${item.change.toFixed(2)}`
-													: item.change.toFixed(2)}
-												€
+											<SizableText color={iconColor}>
+												{change > 0 ? '+' : ''}
+												{change.toFixed(2)} €
 											</SizableText>
 										</YStack>
 									</XStack>
 									<XStack gap="$3" alignItems="center">
 										<SizableText color="$color10">
-											{item.year}
+											{yearNum}
 										</SizableText>
 										<ChevronRight
 											size={20}

@@ -13,7 +13,7 @@ export const Scene5 = () => {
 				paddingVertical={20}
 				backgroundColor="$primary200"
 				color="$white"
-				onPress={() => router.push('/budget')}
+				onPress={() => router.push('/funds')}
 			>
 				{'Open budget'}
 			</Button>

@@ -5,13 +5,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Tabs, Text, YStack } from 'tamagui';
 
 import BudgetDayView from '@/src/components/BudgetDayView';
-import BudgetMonthView from '@/src/components/BudgetMonthView';
-import BudgetYearView from '@/src/components/BudgetYearView';
 import StyledTab from '@/src/components/StyledTab';
 import type { TransactionOccurrence } from '@/src/dataModel';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 
-export default function Budget() {
+export default function Funds() {
 	const storeTransactionsForTwoYears = usePlannedTransactionsStore(
 		(state) => state.transactionsForTwoYears,
 	);
@@ -53,12 +51,7 @@ export default function Budget() {
 						minHeight={'$tabItemHeight'}
 						backgroundColor="$transparent"
 					>
-						<StyledTab
-							value="day"
-							flex={1}
-							borderTopLeftRadius={20}
-							borderBottomLeftRadius={20}
-						>
+						<StyledTab value="day" flex={1} borderRadius={0}>
 							<Text
 								color={
 									selectedTab === 'day'
@@ -69,41 +62,7 @@ export default function Budget() {
 								adjustsFontSizeToFit
 								maxFontSizeMultiplier={1.3}
 							>
-								{t('Day')}
-							</Text>
-						</StyledTab>
-						<StyledTab value="month" flex={1}>
-							<Text
-								color={
-									selectedTab === 'month'
-										? '$color.white'
-										: '$color.black'
-								}
-								numberOfLines={1}
-								adjustsFontSizeToFit
-								maxFontSizeMultiplier={1.3}
-							>
-								{t('Month')}
-							</Text>
-						</StyledTab>
-						<StyledTab
-							value="year"
-							flex={1}
-							borderTopRightRadius={20}
-							borderBottomRightRadius={20}
-						>
-							<Text
-								color={
-									selectedTab === 'year'
-										? '$color.white'
-										: '$color.black'
-								}
-								numberOfLines={1}
-								adjustsFontSizeToFit
-								maxFontSizeMultiplier={1.3}
-								borderRadius={15}
-							>
-								{t('Year')}
+								{t('Daily balance')}
 							</Text>
 						</StyledTab>
 					</Tabs.List>
@@ -115,21 +74,6 @@ export default function Budget() {
 							onAddPress={() => {
 								router.push('/add_transaction2');
 							}}
-						/>
-					</Tabs.Content>
-					<Tabs.Content value="month" flex={1}>
-						<BudgetMonthView
-							currentDate={currentDate}
-							transactions={transactions}
-							router={router}
-							onDateChange={setcurrentDate}
-						/>
-					</Tabs.Content>
-					<Tabs.Content value="year" flex={1}>
-						<BudgetYearView
-							onDateChange={setcurrentDate}
-							currentDate={currentDate}
-							transactions={transactions}
 						/>
 					</Tabs.Content>
 				</Tabs>

@@ -1,12 +1,19 @@
 import { and, eq, gte, lte } from 'drizzle-orm';
 import { DEFAULT_ACCOUNT_ID } from '@/src/dataModel';
-import { db } from '@/src/db/client';
+import { db, isDbReal } from '@/src/db/client';
 import * as schema from '@/src/db/schema';
+import useBalanceReconciliationStore from '@/src/store/useBalanceReconciliationStore';
 
 export async function insertBalanceReconciliation(
 	amount: number,
 	date: Date = new Date(),
 ) {
+	if (!isDbReal) {
+		return useBalanceReconciliationStore
+			.getState()
+			.upsertForDay(amount, date, DEFAULT_ACCOUNT_ID);
+	}
+
 	const startOfDay = new Date(date);
 	startOfDay.setHours(0, 0, 0, 0);
 	const endOfDay = new Date(date);
