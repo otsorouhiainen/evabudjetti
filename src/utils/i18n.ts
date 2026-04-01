@@ -378,7 +378,10 @@ i18next
 				'Uncategorized': 'Ei määritelty',
 
 				// SETTINGS
-				'Language': 'Kieli'
+				'Language': 'Kieli',
+				'Timeframe': 'Jakso',
+				'Start date': 'Alku',
+				'End date': 'Loppu'
 
 			},
 		},
