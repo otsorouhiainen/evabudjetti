@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { addMonths } from 'date-fns';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -12,21 +13,11 @@ interface TimeframeState {
 	setTimeframe: (startDate: Date, endDate: Date) => void;
 }
 
-const addMonthToDate = (date: Date) => {
-	const d = date.getDate();
-	date.setMonth(date.getMonth() + 1);
-
-	if (date.getDate() !== d) {
-		date.setDate(0);
-	}
-	return date;
-};
-
 export const useTimeframeStore = create<TimeframeState>()(
 	persist(
 		(set) => {
 			const currentDate = new Date();
-			const defaultEndDate = addMonthToDate(currentDate);
+			const defaultEndDate = addMonths(currentDate, 1);
 
 			return {
 				// Oletusarvo: kuukauden jakso alkaen nykyisestä hetkestä

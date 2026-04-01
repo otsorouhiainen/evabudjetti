@@ -1,4 +1,5 @@
 import { Check, ChevronRight } from '@tamagui/lucide-icons';
+import { addMonths } from 'date-fns';
 import { useRouter } from 'expo-router';
 import {
 	type Dispatch,
@@ -17,6 +18,7 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
+import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
 import { useLanguageStore } from '../../src/store/useLanguageStore';
 
 interface Language {
@@ -29,6 +31,9 @@ export default function Settings() {
 	const router = useRouter();
 	const { language, setLanguage } = useLanguageStore();
 	const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
+	const [timeframeDialogOpen, setTimeframeDialogOpen] = useState(false);
+	const [startDate, setStartDate] = useState(new Date());
+	const [endDate, setEndDate] = useState(addMonths(new Date(), 1));
 
 	const possibleLanguages: Language[] = [
 		{ code: 'fi', label: 'Suomi' },
@@ -44,6 +49,16 @@ export default function Settings() {
 		await i18n.changeLanguage(code);
 		setLanguage(code);
 		setLanguageDialogOpen(false);
+	};
+
+	const setTimeframe = async () => {};
+
+	const handleCancelButtonPressed = () => {
+		// Resetoi alku ja loppu pvm jos ei tallenna
+		setStartDate(new Date());
+		setEndDate(addMonths(new Date(), 1));
+
+		setTimeframeDialogOpen(false);
 	};
 
 	return (
@@ -87,6 +102,46 @@ export default function Settings() {
 					</YStack>
 				</SettingsPopup>
 
+				<SettingsPopup
+					title="Timeframe"
+					open={timeframeDialogOpen}
+					onOpenChange={setTimeframeDialogOpen}
+				>
+					<YStack>
+						<XStack paddingHorizontal="2">
+							<SizableText size="$title3" color="$black">
+								Start date *
+							</SizableText>
+
+							<MultiPlatformDatePicker
+								value={startDate}
+								onChange={setStartDate}
+							/>
+						</XStack>
+
+						<XStack paddingHorizontal="2">
+							<SizableText size="$title3" color="$black">
+								End date *
+							</SizableText>
+
+							<MultiPlatformDatePicker
+								value={endDate}
+								onChange={setEndDate}
+							/>
+						</XStack>
+
+						<XStack alignSelf="flex-end">
+							<Dialog.Close asChild>
+								<XStack>
+									<Button onClick={handleCancelButtonPressed}>
+										Cancel
+									</Button>
+									<Button onClick={setTimeframe}>Save</Button>
+								</XStack>
+							</Dialog.Close>
+						</XStack>
+					</YStack>
+				</SettingsPopup>
 				<Button
 					unstyled
 					width="100%"
