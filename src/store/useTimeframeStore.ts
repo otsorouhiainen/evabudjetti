@@ -4,42 +4,26 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface TimeframeState {
-	startYear: number;
-	startMonth: number;
-	startDay: number;
-	endYear: number;
-	endMonth: number;
-	endDay: number;
-	setTimeframe: (startDate: Date, endDate: Date) => void;
+	startDate: Date;
+	endDate: Date;
+	setStartDate: (date: Date) => void;
+	setEndDate: (date: Date) => void;
 }
 
 export const useTimeframeStore = create<TimeframeState>()(
 	persist(
-		(set) => {
-			const currentDate = new Date();
-			const defaultEndDate = addMonths(currentDate, 1);
-
-			return {
-				// Oletusarvo: kuukauden jakso alkaen nykyisestä hetkestä
-				startYear: currentDate.getFullYear(),
-				startMonth: currentDate.getFullYear(),
-				startDay: currentDate.getDay(),
-				endYear: defaultEndDate.getFullYear(),
-				endMonth: defaultEndDate.getMonth(),
-				endDay: defaultEndDate.getDay(),
-
-				// Funktio jakson muuttamiseen
-				setTimeframe: (startDate: Date, endDate: Date) =>
-					set({
-						startYear: startDate.getFullYear(),
-						startMonth: startDate.getMonth(),
-						startDay: startDate.getDay(),
-						endYear: endDate.getFullYear(),
-						endMonth: endDate.getMonth(),
-						endDay: endDate.getDay(),
-					}),
-			};
-		},
+		(set) => ({
+			startDate: new Date(),
+			endDate: addMonths(new Date(), 1),
+			setStartDate: (date: Date) =>
+				set({
+					startDate: date,
+				}),
+			setEndDate: (date: Date) =>
+				set({
+					endDate: date,
+				}),
+		}),
 		{
 			name: 'timeframe-storage',
 			storage: createJSONStorage(() => AsyncStorage),

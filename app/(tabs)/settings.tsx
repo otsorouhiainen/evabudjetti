@@ -1,5 +1,4 @@
 import { Check, ChevronRight } from '@tamagui/lucide-icons';
-import { addMonths } from 'date-fns';
 import { useRouter } from 'expo-router';
 import {
 	type Dispatch,
@@ -19,6 +18,7 @@ import {
 	YStack,
 } from 'tamagui';
 import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
+import { useTimeframeStore } from '@/src/store/useTimeframeStore';
 import { useLanguageStore } from '../../src/store/useLanguageStore';
 
 interface Language {
@@ -32,8 +32,11 @@ export default function Settings() {
 	const { language, setLanguage } = useLanguageStore();
 	const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
 	const [timeframeDialogOpen, setTimeframeDialogOpen] = useState(false);
-	const [startDate, setStartDate] = useState(new Date());
-	const [endDate, setEndDate] = useState(addMonths(new Date(), 1));
+	const { startDate, endDate, setStartDate, setEndDate } =
+		useTimeframeStore();
+	// temp dates used to enable the user to cancel
+	const [tempStartDate, setTempStartDate] = useState(startDate);
+	const [tempEndDate, setTempEndDate] = useState(endDate);
 
 	const possibleLanguages: Language[] = [
 		{ code: 'fi', label: 'Suomi' },
@@ -51,12 +54,17 @@ export default function Settings() {
 		setLanguageDialogOpen(false);
 	};
 
-	const setTimeframe = async () => {};
+	const changeTimeframe = () => {
+		setStartDate(tempStartDate);
+		setEndDate(tempEndDate);
+
+		setTimeframeDialogOpen(false);
+	};
 
 	const handleCancelButtonPressed = () => {
-		// Resetoi alku ja loppu pvm jos ei tallenna
-		setStartDate(new Date());
-		setEndDate(addMonths(new Date(), 1));
+		// reset to saved start and end dates
+		setTempStartDate(startDate);
+		setTempEndDate(endDate);
 
 		setTimeframeDialogOpen(false);
 	};
@@ -108,37 +116,44 @@ export default function Settings() {
 					onOpenChange={setTimeframeDialogOpen}
 				>
 					<YStack>
-						<XStack paddingHorizontal="2">
-							<SizableText size="$title3" color="$black">
+						<XStack>
+							<SizableText
+								size="$title3"
+								color="$black"
+								paddingHorizontal={10}
+								paddingVertical={12}
+							>
 								Start date *
 							</SizableText>
 
 							<MultiPlatformDatePicker
-								value={startDate}
-								onChange={setStartDate}
+								value={tempStartDate}
+								onChange={setTempStartDate}
 							/>
 						</XStack>
 
-						<XStack paddingHorizontal="2">
-							<SizableText size="$title3" color="$black">
+						<XStack>
+							<SizableText
+								size="$title3"
+								color="$black"
+								paddingHorizontal={10}
+								paddingVertical={12}
+							>
 								End date *
 							</SizableText>
 
 							<MultiPlatformDatePicker
 								value={endDate}
-								onChange={setEndDate}
+								onChange={setTempEndDate}
 							/>
 						</XStack>
 
 						<XStack alignSelf="flex-end">
-							<Dialog.Close asChild>
-								<XStack>
-									<Button onClick={handleCancelButtonPressed}>
-										Cancel
-									</Button>
-									<Button onClick={setTimeframe}>Save</Button>
-								</XStack>
-							</Dialog.Close>
+							<Button onPress={handleCancelButtonPressed}>
+								Cancel
+							</Button>
+
+							<Button onPress={changeTimeframe}>Save</Button>
 						</XStack>
 					</YStack>
 				</SettingsPopup>
