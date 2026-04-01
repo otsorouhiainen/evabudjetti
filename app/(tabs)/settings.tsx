@@ -32,11 +32,12 @@ export default function Settings() {
 	const { language, setLanguage } = useLanguageStore();
 	const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
 	const [timeframeDialogOpen, setTimeframeDialogOpen] = useState(false);
-	const { startDate, endDate, setStartDate, setEndDate } =
+	const { timeframeEndYear, timeframeEndMonth, timeframeEndDay, setEndDate } =
 		useTimeframeStore();
-	// temp dates used to enable the user to cancel
-	const [tempStartDate, setTempStartDate] = useState(startDate);
-	const [tempEndDate, setTempEndDate] = useState(endDate);
+	// temp date used to enable the user to cancel
+	const [tempEndDate, setTempEndDate] = useState(
+		new Date(timeframeEndYear, timeframeEndMonth, timeframeEndDay),
+	);
 
 	const possibleLanguages: Language[] = [
 		{ code: 'fi', label: 'Suomi' },
@@ -55,16 +56,16 @@ export default function Settings() {
 	};
 
 	const changeTimeframe = () => {
-		setStartDate(tempStartDate);
 		setEndDate(tempEndDate);
 
 		setTimeframeDialogOpen(false);
 	};
 
 	const handleCancelButtonPressed = () => {
-		// reset to saved start and end dates
-		setTempStartDate(startDate);
-		setTempEndDate(endDate);
+		// reset to saved date
+		setTempEndDate(
+			new Date(timeframeEndYear, timeframeEndMonth, timeframeEndDay),
+		);
 
 		setTimeframeDialogOpen(false);
 	};
@@ -118,22 +119,11 @@ export default function Settings() {
 					<YStack gap={10} paddingHorizontal={10}>
 						<XStack gap={5}>
 							<SizableText size="$title3" color="$black">
-								{t('Start date')} *
-							</SizableText>
-
-							<MultiPlatformDatePicker
-								value={tempStartDate}
-								onChange={setTempStartDate}
-							/>
-						</XStack>
-
-						<XStack gap={5}>
-							<SizableText size="$title3" color="$black">
 								{t('End date')} *
 							</SizableText>
 
 							<MultiPlatformDatePicker
-								value={endDate}
+								value={tempEndDate}
 								onChange={setTempEndDate}
 							/>
 						</XStack>

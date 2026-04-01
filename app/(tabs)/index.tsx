@@ -18,6 +18,7 @@ import FixBalanceModal from '@/app/fixBalanceModal';
 import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
 import { useBalances } from '@/src/finance/hook/useBalances';
 import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
+import { useTimeframeStore } from '@/src/store/useTimeframeStore';
 
 export default function Landing() {
 	const { t } = useTranslation();
@@ -25,29 +26,24 @@ export default function Landing() {
 	const [initialBalance, setInitialBalance] = useState('');
 	const saveBalanceToDb = useAddBalanceReconciliation();
 	const [helpVisible, setHelpVisible] = useState(false);
+	const { timeframeEndYear, timeframeEndMonth, timeframeEndDay } =
+		useTimeframeStore();
 
 	const today = new Date();
 	const year = today.getFullYear();
 	const month = today.getMonth();
 	const dayOfMonth = today.getDate();
-
-	/* 
-	Current situation (usable funds) is currently calculated for 31 days
-	(current day + the following 30 days). 
-	TODO: Make timespan customizable 
-	*/
-	const currentSituationTimespan = 30;
-
-	const spanEndDate = addDays(today, currentSituationTimespan);
-	const spanEndYear = spanEndDate.getFullYear();
-	const spanEndMonth = spanEndDate.getMonth();
-	const spanEndDay = spanEndDate.getDate();
+	const timeframeEndDate = new Date(
+		timeframeEndYear,
+		timeframeEndMonth,
+		timeframeEndDay,
+	);
 
 	const timespanBalances = useBalances(
 		year,
 		month,
-		spanEndYear,
-		spanEndMonth,
+		timeframeEndYear,
+		timeframeEndMonth,
 	);
 	const currentMonthData = timespanBalances[0];
 
@@ -59,9 +55,9 @@ export default function Landing() {
 		year,
 		month,
 		dayOfMonth,
-		spanEndYear,
-		spanEndMonth,
-		spanEndDay,
+		timeframeEndYear,
+		timeframeEndMonth,
+		timeframeEndDay,
 	);
 
 	/* 
@@ -86,7 +82,7 @@ export default function Landing() {
 				daysCounter += 1; // If balance was not 0, add day to counter and continue.
 			}
 		}
-		return spanEndDate;
+		return timeframeEndDate;
 	};
 
 	return (
@@ -162,7 +158,7 @@ export default function Landing() {
 											{'\n'}
 											{today.toLocaleDateString('fi-FI')}
 											{' - '}
-											{spanEndDate.toLocaleDateString(
+											{timeframeEndDate.toLocaleDateString(
 												'fi-FI',
 											)}
 										</Text>
