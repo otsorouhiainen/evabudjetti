@@ -82,7 +82,7 @@ export default function Settings() {
 					open={languageDialogOpen}
 					onOpenChange={setLanguageDialogOpen}
 				>
-					<YStack>
+					<YStack paddingHorizontal={10}>
 						{possibleLanguages.map((lang) => (
 							<Button
 								unstyled
@@ -111,19 +111,14 @@ export default function Settings() {
 				</SettingsPopup>
 
 				<SettingsPopup
-					title="Timeframe"
+					title={t('Timeframe')}
 					open={timeframeDialogOpen}
 					onOpenChange={setTimeframeDialogOpen}
 				>
-					<YStack>
-						<XStack>
-							<SizableText
-								size="$title3"
-								color="$black"
-								paddingHorizontal={10}
-								paddingVertical={12}
-							>
-								Start date *
+					<YStack gap={10} paddingHorizontal={10}>
+						<XStack gap={5}>
+							<SizableText size="$title3" color="$black">
+								{t('Start date')} *
 							</SizableText>
 
 							<MultiPlatformDatePicker
@@ -132,14 +127,9 @@ export default function Settings() {
 							/>
 						</XStack>
 
-						<XStack>
-							<SizableText
-								size="$title3"
-								color="$black"
-								paddingHorizontal={10}
-								paddingVertical={12}
-							>
-								End date *
+						<XStack gap={5}>
+							<SizableText size="$title3" color="$black">
+								{t('End date')} *
 							</SizableText>
 
 							<MultiPlatformDatePicker
@@ -148,15 +138,33 @@ export default function Settings() {
 							/>
 						</XStack>
 
-						<XStack alignSelf="flex-end">
-							<Button onPress={handleCancelButtonPressed}>
-								Cancel
+						<XStack alignSelf="flex-end" gap={10}>
+							<Button
+								onPress={handleCancelButtonPressed}
+								borderColor="$primary200"
+								backgroundColor="transparent"
+								size="$buttons.lg"
+								alignItems="center"
+							>
+								<SizableText size="$title3" color="$primary200">
+									{t('Cancel')}
+								</SizableText>
 							</Button>
 
-							<Button onPress={changeTimeframe}>Save</Button>
+							<Button
+								onPress={changeTimeframe}
+								backgroundColor="$primary200"
+								size="$buttons.lg"
+								alignItems="center"
+							>
+								<SizableText size="$title3" color="$white">
+									{t('Save')}
+								</SizableText>
+							</Button>
 						</XStack>
 					</YStack>
 				</SettingsPopup>
+
 				<Button
 					unstyled
 					width="100%"
