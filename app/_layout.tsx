@@ -81,7 +81,13 @@ export default function RootLayout() {
 			<TamaguiProvider config={config} defaultTheme="light">
 				<Theme name="light">
 					<SafeAreaProvider>
-						<Stack screenOptions={{ headerShown: false }}></Stack>
+						<StatusBar style="dark" translucent={false} />
+						<Stack
+							screenOptions={{
+								headerBackButtonDisplayMode: 'minimal',
+								headerTitle: '',
+							}}
+						/>
 					</SafeAreaProvider>
 				</Theme>
 			</TamaguiProvider>

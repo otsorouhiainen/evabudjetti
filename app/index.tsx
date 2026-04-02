@@ -1,7 +1,8 @@
+import { PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SizableText, YStack } from 'tamagui';
+import { Button, SizableText, Text, YStack } from 'tamagui';
 
 export default function InstructionLanding() {
 	const { t } = useTranslation();
@@ -9,13 +10,45 @@ export default function InstructionLanding() {
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
-			<YStack>
-				<SizableText size="$title1" color="$primary200">
-					{t('EVA MyBudget')}
-				</SizableText>
-				<SizableText size="$title2" color="$black">
-					{t('Supporting your financial well-being')}
-				</SizableText>
+			<YStack
+				backgroundColor="$white"
+				paddingTop="$paddingmd"
+				paddingHorizontal={10}
+				alignItems="center"
+				flex={1}
+				gap={70}
+			>
+				<YStack paddingTop={70} alignItems="center" gap={5}>
+					<Text
+						fontSize="$7"
+						fontWeight={700}
+						color="$primary100"
+						numberOfLines={1}
+						adjustsFontSizeToFit
+					>
+						{t('EVA MyBudget')}
+					</Text>
+					<Text fontSize="$4" numberOfLines={1} adjustsFontSizeToFit>
+						{t('Supporting your financial well-being')}
+					</Text>
+				</YStack>
+
+				<PiggyBank
+					size={220}
+					style={{ height: '100%' }}
+					color="$primary100"
+				/>
+
+				<Button
+					size={52}
+					width={250}
+					backgroundColor="$primary100"
+					alignSelf="center"
+				>
+					<SizableText size="$title2" color="$white">
+						{t("Let's start!")}
+					</SizableText>
+				</Button>
 			</YStack>
 		</SafeAreaView>
 	);
