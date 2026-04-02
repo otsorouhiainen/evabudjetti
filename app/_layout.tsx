@@ -80,7 +80,7 @@ export default function RootLayout() {
 				<Theme name={'light'}>
 					<SafeAreaProvider>
 						<StatusBar style="dark" translucent={false} />
-						<Stack>
+						<Stack screenOptions={{ headerTitle: '' }}>
 							<Stack.Screen
 								name="(tabs)"
 								options={{
