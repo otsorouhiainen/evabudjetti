@@ -11,12 +11,14 @@ import '@/src/utils/i18n';
 
 import i18next from 'i18next';
 import { useEffect } from 'react';
+import { useInstructionStore } from '@/src/store/useInstructionStore';
 import { useLanguageStore } from '@/src/store/useLanguageStore';
 
 export default function RootLayout() {
 	const { success, error } = useMigrations(db, migrations);
 
 	const language = useLanguageStore((state) => state.language);
+	const { instructionShown } = useInstructionStore();
 
 	useEffect(() => {
 		if (language && i18next.language !== language) {
@@ -71,6 +73,19 @@ export default function RootLayout() {
 				</TamaguiProvider>
 			);
 		}
+	}
+
+	// Show instructions on first launch
+	if (!instructionShown) {
+		return (
+			<TamaguiProvider config={config} defaultTheme="light">
+				<Theme name="light">
+					<SafeAreaProvider>
+						<Stack screenOptions={{ headerShown: false }}></Stack>
+					</SafeAreaProvider>
+				</Theme>
+			</TamaguiProvider>
+		);
 	}
 
 	return (
