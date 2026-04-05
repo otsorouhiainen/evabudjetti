@@ -11,11 +11,13 @@ import { Button, Input, SizableText, XStack } from 'tamagui';
 
 type Props = {
 	value?: Date | null;
+	color: string;
 	onChange: (value: Date) => void;
 };
 
 export const MultiPlatformDatePicker: React.FC<Props> = ({
 	value,
+	color,
 	onChange,
 }) => {
 	const [editorDate, setEditorDate] = useState<string>('');
@@ -79,9 +81,9 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 	}
 
 	return (
-		<XStack f={1} ai={'center'}>
+		<XStack f={1} ai={'center'} maxWidth={'25%'}>
 			{/* Display selected date */}
-			<SizableText size="$body" color="$primary100">
+			<SizableText size="$body" color={'$' + color}>
 				{date ? format(date, 'd.MM.yy') : 'd.mm.yy'}
 			</SizableText>
 
@@ -89,7 +91,7 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 			<Button
 				size="$3"
 				icon={Calendar}
-				color="$primary100"
+				color={'$' + color}
 				onPress={() => setDatePickerOpen(true)}
 				chromeless
 			/>

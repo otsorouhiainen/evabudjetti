@@ -126,7 +126,7 @@ i18next
 				"december": "December",
 
 				// FUNDS
-				'Daily balance': 'Daily balance',
+				'Daily situation': 'Daily situation',
 				'Account balance': 'Account balance',
 				'Disposable income': 'Disposable income',
 
@@ -319,7 +319,7 @@ i18next
 				'No expense records': 'Ei näytettäviä menoja',
 
 				// FUNDS
-				'Daily balance': 'Päivittäinen rahatilanne',
+				'Daily situation': 'Päivän rahatilanne',
 				'Account balance': 'Tilillä rahaa',
 				'Disposable income': 'Käyttövara',
 

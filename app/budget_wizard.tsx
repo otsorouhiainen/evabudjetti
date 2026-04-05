@@ -199,6 +199,7 @@ export default function BudgetWizard() {
 							<View style={styles.itemContent}>
 								<MultiPlatformDatePicker
 									value={item.startDate}
+									color="primary100"
 									onChange={(date: Date) => {
 										setWizardData((prev) =>
 											prev.map((step, sIdx) =>

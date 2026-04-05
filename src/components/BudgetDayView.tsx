@@ -6,13 +6,13 @@ import {
 } from '@tamagui/lucide-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, ScrollView, Tabs, Text, XStack, YStack } from 'tamagui';
-import StyledTab from '@/src/components/StyledTab';
+import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
 import { formatCurrency } from '../utils/budgetUtils';
 import BudgetEventList from './BudgetEventList';
+import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 import StyledCard from './styledCard';
 
 interface BudgetDayViewProps {
@@ -138,9 +138,15 @@ export default function BudgetDayView({
 				paddingHorizontal="$4"
 				alignItems="center"
 				justifyContent="center"
+				backgroundColor="$primary300"
+				marginBottom="0"
 			>
 				{/* Date Header with Navigation */}
-				<XStack alignItems="center" justifyContent="center" gap={15}>
+				<Text fontSize="$3" fontWeight="600">
+					{' '}
+					{t('Daily situation')}{' '}
+				</Text>
+				<XStack alignItems="center" justifyContent="center" gap={20}>
 					<Button
 						outlineColor="$white"
 						size="$buttons.md"
@@ -150,9 +156,15 @@ export default function BudgetDayView({
 						circular
 						iconAfter={undefined}
 					/>
-					<Text color="$white" fontSize="$title1" fontWeight="700">
-						{formatDate(currentDate)}
-					</Text>
+
+					<MultiPlatformDatePicker
+						value={currentDate}
+						color="black"
+						onChange={(value) => {
+							onDateChange(value);
+						}}
+					/>
+
 					<Button
 						outlineColor="$white"
 						size="$buttons.md"
@@ -164,70 +176,47 @@ export default function BudgetDayView({
 					/>
 				</XStack>
 
-				{/* Transactions or Empty State */}
-				{current.length > 0 ? (
-					<YStack width="100%" gap={10}>
-						{current.map((t) => (
-							<XStack
-								key={
-									t.realTransaction?.id ??
-									t.plannedTransaction?.id
-								}
-								justifyContent="space-between"
-								borderBottomWidth={1}
-								borderColor="$primary300"
-								pb={10}
-							>
-								<Text color="$white">{t.name}</Text>
-								<Text color="$white">
-									{formatCurrency(Number(t.amount))}
-								</Text>
-							</XStack>
-						))}
+				{/* Daily Stats */}
+				<XStack>
+					<YStack alignItems="center" paddingRight={10}>
+						<Text color="$black" fontSize="$body" fontWeight="600">
+							{t('Account balance')}:
+						</Text>
+						<Text color="$black" fontSize="$4" fontWeight="800">
+							{formatCurrency(currentBalance)}
+						</Text>
 					</YStack>
-				) : (
-					<Text
-						color="$white"
-						fontSize="$3"
-						fontWeight="500"
-						fontStyle="italic"
-						marginTop={'$4'}
-					>
-						{t('No transactions')}
-					</Text>
-				)}
+					<YStack alignItems="center" paddingLeft={10}>
+						<Text color="$black" fontSize="$body" fontWeight="600">
+							{t('Disposable income')}:
+						</Text>
+						<Text color="$black" fontSize="$4" fontWeight="800">
+							{formatCurrency(disposable)}
+						</Text>
+					</YStack>
+				</XStack>
 
 				{/* Add Button */}
 				<Button
-					backgroundColor="$white"
+					backgroundColor="$primary100"
 					borderRadius="$4"
 					paddingHorizontal="$6"
+					paddingVertical="$2"
 					height="wrap-content"
 					onPress={onAddPress}
-					pressStyle={{ backgroundColor: '$primary300' }}
+					pressStyle={{ backgroundColor: '$primary200' }}
 					marginVertical={10}
 				>
 					<Text
-						color="$primary100"
-						fontWeight="800"
-						fontSize="$buttons.sm"
-						textTransform="uppercase"
+						color="$white"
+						fontWeight="500"
+						fontSize="$3"
 						numberOfLines={1}
 						adjustsFontSizeToFit
 					>
-						{t('Add new')}
+						{t('ADD INCOME/EXPENSE')}
 					</Text>
 				</Button>
-
-				{/* Daily Stats */}
-				<YStack alignItems="center" gap={5}>
-					<Text color="$white" fontSize="$body">
-						{t('Account balance')}: {formatCurrency(currentBalance)}
-					</Text>
-					<Text color="$white" fontSize="$body">
-						{t('Disposable income')}: {formatCurrency(disposable)}
-					</Text>
-				</YStack>
 			</StyledCard>
 
 			<ScrollView
