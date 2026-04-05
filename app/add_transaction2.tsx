@@ -158,6 +158,7 @@ export default function AddTransaction() {
 		};
 
 		try {
+			console.log('Adding transaction:', transactionToInsert);
 			if (isDbReal) {
 				const insertedTransaction =
 					await addRealTransactionToDb(transactionToInsert);
