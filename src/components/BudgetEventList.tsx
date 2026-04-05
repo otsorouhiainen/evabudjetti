@@ -1,6 +1,8 @@
-import { Pencil } from '@tamagui/lucide-icons';
+import { ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
+import { isToday } from 'date-fns';
+import { date } from 'drizzle-orm/mysql-core';
 import type { Router } from 'expo-router';
-import { Button, Text, XStack, YStack } from 'tamagui';
+import { Button, styled, Text, XStack, YStack } from 'tamagui';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
 import StyledListItem from './StyledListItem';
@@ -27,50 +29,63 @@ const BudgetEventList: React.FC<Props> = ({
 			)}
 
 			{txns.map((txn) => (
-				<StyledListItem
+				<XStack
+					style={{
+						padding: 10,
+						borderRadius: 10,
+						borderWidth: 2,
+						margin: -2,
+					}}
+					backgroundColor={'$white'}
+					borderColor={
+						isToday(txn.date) ? '$primary200' : '$primary300'
+					}
 					key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${txn.date.getTime()}`}
+					value={false}
 				>
-					<Text
-						flex={1}
-						numberOfLines={1}
-						ellipsizeMode="tail"
-						fontSize="$body"
-					>
-						{txn.name}
-					</Text>
-					<Text
-						flex={1}
-						fontWeight="400"
-						textAlign="center"
-						fontSize="$body"
-					>
-						{new Date(txn.date).toLocaleDateString(LOCALE)}
-					</Text>
-					<XStack
-						gap={10}
-						backgroundColor="transparent"
-						alignItems="center"
-						justifyContent="flex-end"
-						minWidth={100}
-					>
-						<Text fontSize="$body" fontWeight="600">
-							{txn.type === 'income' ? '+' : '-'}
-							{formatCurrency(Number(txn.amount))}
+					<YStack width="100%">
+						<XStack
+							gap={10}
+							backgroundColor="transparent"
+							alignItems="center"
+							justifyContent="flex-end"
+							minWidth={100}
+						>
+							<Text
+								flex={1}
+								fontWeight="700"
+								textAlign="left"
+								fontSize="$body"
+							>
+								{new Date(txn.date).toLocaleDateString(LOCALE)}
+							</Text>
+							<Text fontSize="$body" fontWeight="600">
+								{txn.type === 'income' ? '+' : '-'}
+								{formatCurrency(Number(txn.amount))}
+							</Text>
+							{/* Edit button rendered only if router exists */}
+							{router && (
+								<Button
+									size="$buttons.sm"
+									circular
+									backgroundColor="transparent"
+									icon={Pencil}
+									onPress={() => {
+										router.push('/budget_wizard');
+									}}
+								/>
+							)}
+						</XStack>
+						<Text
+							flex={1}
+							numberOfLines={1}
+							ellipsizeMode="tail"
+							fontSize="$body"
+						>
+							{txn.name}
 						</Text>
-						{/* Edit button rendered only if router exists */}
-						{router && (
-							<Button
-								size="$buttons.sm"
-								circular
-								backgroundColor="transparent"
-								icon={Pencil}
-								onPress={() => {
-									router.push('/budget_wizard');
-								}}
-							/>
-						)}
-					</XStack>
-				</StyledListItem>
+					</YStack>
+				</XStack>
 			))}
 		</YStack>
 	);

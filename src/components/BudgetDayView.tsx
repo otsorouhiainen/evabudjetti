@@ -136,6 +136,7 @@ export default function BudgetDayView({
 			<StyledCard
 				paddingVertical="$2"
 				paddingHorizontal="$4"
+				borderRadius="$1"
 				alignItems="center"
 				justifyContent="center"
 				backgroundColor="$primary300"
@@ -148,7 +149,7 @@ export default function BudgetDayView({
 				</Text>
 				<XStack alignItems="center" justifyContent="center" gap={20}>
 					<Button
-						outlineColor="$white"
+						outlineColor="$black"
 						size="$buttons.md"
 						icon={ChevronLeft}
 						onPress={handlePrevDay}
@@ -166,7 +167,7 @@ export default function BudgetDayView({
 					/>
 
 					<Button
-						outlineColor="$white"
+						outlineColor="$black"
 						size="$buttons.md"
 						icon={ChevronRight}
 						onPress={handleNextDay}

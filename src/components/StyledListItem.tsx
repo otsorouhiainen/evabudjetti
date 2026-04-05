@@ -1,7 +1,7 @@
 import { styled, XStack } from 'tamagui';
 
 const StyledListItem = styled(XStack, {
-	backgroundColor: '$color.primary300',
+	backgroundColor: '$white',
 	padding: 10,
 	borderRadius: 10,
 	shadowColor: '$color.black',
