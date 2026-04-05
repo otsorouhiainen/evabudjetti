@@ -6,7 +6,8 @@ import {
 } from '@tamagui/lucide-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
+import { Button, ScrollView, Tabs, Text, XStack, YStack } from 'tamagui';
+import StyledTab from '@/src/components/StyledTab';
 import useBalanceStore from '@/src/store/useBalanceStore';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
@@ -131,6 +132,104 @@ export default function BudgetDayView({
 
 	return (
 		<YStack flex={1}>
+			{/* --- Current Day Card (Static on top) --- */}
+			<StyledCard
+				paddingVertical="$2"
+				paddingHorizontal="$4"
+				alignItems="center"
+				justifyContent="center"
+			>
+				{/* Date Header with Navigation */}
+				<XStack alignItems="center" justifyContent="center" gap={15}>
+					<Button
+						outlineColor="$white"
+						size="$buttons.md"
+						icon={ChevronLeft}
+						onPress={handlePrevDay}
+						backgroundColor="$transparent"
+						circular
+						iconAfter={undefined}
+					/>
+					<Text color="$white" fontSize="$title1" fontWeight="700">
+						{formatDate(currentDate)}
+					</Text>
+					<Button
+						outlineColor="$white"
+						size="$buttons.md"
+						icon={ChevronRight}
+						onPress={handleNextDay}
+						backgroundColor="$transparent"
+						circular
+						iconAfter={undefined}
+					/>
+				</XStack>
+
+				{/* Transactions or Empty State */}
+				{current.length > 0 ? (
+					<YStack width="100%" gap={10}>
+						{current.map((t) => (
+							<XStack
+								key={
+									t.realTransaction?.id ??
+									t.plannedTransaction?.id
+								}
+								justifyContent="space-between"
+								borderBottomWidth={1}
+								borderColor="$primary300"
+								pb={10}
+							>
+								<Text color="$white">{t.name}</Text>
+								<Text color="$white">
+									{formatCurrency(Number(t.amount))}
+								</Text>
+							</XStack>
+						))}
+					</YStack>
+				) : (
+					<Text
+						color="$white"
+						fontSize="$3"
+						fontWeight="500"
+						fontStyle="italic"
+						marginTop={'$4'}
+					>
+						{t('No transactions')}
+					</Text>
+				)}
+
+				{/* Add Button */}
+				<Button
+					backgroundColor="$white"
+					borderRadius="$4"
+					paddingHorizontal="$6"
+					height="wrap-content"
+					onPress={onAddPress}
+					pressStyle={{ backgroundColor: '$primary300' }}
+					marginVertical={10}
+				>
+					<Text
+						color="$primary100"
+						fontWeight="800"
+						fontSize="$buttons.sm"
+						textTransform="uppercase"
+						numberOfLines={1}
+						adjustsFontSizeToFit
+					>
+						{t('Add new')}
+					</Text>
+				</Button>
+
+				{/* Daily Stats */}
+				<YStack alignItems="center" gap={5}>
+					<Text color="$white" fontSize="$body">
+						{t('Account balance')}: {formatCurrency(currentBalance)}
+					</Text>
+					<Text color="$white" fontSize="$body">
+						{t('Disposable income')}: {formatCurrency(disposable)}
+					</Text>
+				</YStack>
+			</StyledCard>
+
 			<ScrollView
 				flex={1}
 				contentContainerStyle={{ paddingBottom: 50, paddingTop: 10 }}
@@ -163,116 +262,12 @@ export default function BudgetDayView({
 						title={''}
 						formatCurrency={formatCurrency}
 					/>
-
-					{/* --- Current Day Card (Center Focus) --- */}
-					<StyledCard
-						paddingVertical="$2"
-						paddingHorizontal="$4"
-						marginVertical="$4"
-						alignItems="center"
-						justifyContent="center"
-					>
-						{/* Date Header with Navigation */}
-						<XStack
-							alignItems="center"
-							justifyContent="center"
-							gap={15}
-						>
-							<Button
-								outlineColor="$white"
-								size="$buttons.md"
-								icon={ChevronLeft}
-								onPress={handlePrevDay}
-								backgroundColor="$transparent"
-								circular
-								iconAfter={undefined}
-							/>
-							<Text
-								color="$white"
-								fontSize="$title1"
-								fontWeight="700"
-							>
-								{formatDate(currentDate)}
-							</Text>
-							<Button
-								outlineColor="$white"
-								size="$buttons.md"
-								icon={ChevronRight}
-								onPress={handleNextDay}
-								backgroundColor="$transparent"
-								circular
-								iconAfter={undefined}
-							/>
-						</XStack>
-
-						{/* Transactions or Empty State */}
-						{current.length > 0 ? (
-							<YStack width="100%" gap={10}>
-								{current.map((t) => (
-									<XStack
-										key={
-											t.realTransaction?.id ??
-											t.plannedTransaction?.id
-										}
-										justifyContent="space-between"
-										borderBottomWidth={1}
-										borderColor="$primary300"
-										pb={10}
-									>
-										<Text color="$white">{t.name}</Text>
-										<Text color="$white">
-											{formatCurrency(Number(t.amount))}
-										</Text>
-									</XStack>
-								))}
-							</YStack>
-						) : (
-							<Text
-								color="$white"
-								fontSize="$3"
-								fontWeight="500"
-								fontStyle="italic"
-								marginTop={'$4'}
-							>
-								{t('No transactions')}
-							</Text>
-						)}
-
-						{/* Add Button */}
-						<Button
-							backgroundColor="$white"
-							borderRadius="$4"
-							paddingHorizontal="$6"
-							height="wrap-content"
-							onPress={onAddPress}
-							pressStyle={{ backgroundColor: '$primary300' }}
-							marginVertical={10}
-						>
-							<Text
-								color="$primary100"
-								fontWeight="800"
-								fontSize="$buttons.sm"
-								textTransform="uppercase"
-								numberOfLines={1}
-								adjustsFontSizeToFit
-							>
-								{t('Add new')}
-							</Text>
-						</Button>
-
-						{/* Daily Stats */}
-						<YStack alignItems="center" gap={5}>
-							<Text color="$white" fontSize="$body">
-								{t('Account balance')}:{' '}
-								{formatCurrency(currentBalance)}
-							</Text>
-							<Text color="$white" fontSize="$body">
-								{t('Disposable income')}:{' '}
-								{formatCurrency(disposable)}
-							</Text>
-						</YStack>
-					</StyledCard>
-
+					{/* --- Present day events --- */}
+					<BudgetEventList
+						txns={current}
+						title={''}
+						formatCurrency={formatCurrency}
+					/>
 					{/* --- Past Events --- */}
 					<BudgetEventList
 						txns={past}

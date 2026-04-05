@@ -19,7 +19,7 @@ const BudgetEventList: React.FC<Props> = ({
 	formatCurrency,
 }) => {
 	return (
-		<YStack gap={8}>
+		<YStack gap={8} marginBottom={8}>
 			{title !== '' && (
 				<Text fontSize={'$title1'} fontWeight={'700'} mt={'$2'}>
 					{title}
