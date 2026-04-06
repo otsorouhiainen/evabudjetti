@@ -380,9 +380,7 @@ i18next
 				// SETTINGS
 				'Language': 'Kieli',
 				'Timeframe': 'Jakso',
-				'Start date': 'Alku',
-				'End date': 'Loppu'
-
+				'Start date': 'Jakson alku',
 			},
 		},
 	},

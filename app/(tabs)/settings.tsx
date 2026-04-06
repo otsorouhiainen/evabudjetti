@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	Button,
 	Dialog,
+	Input,
 	Separator,
 	SizableText,
 	XStack,
@@ -119,7 +120,7 @@ export default function Settings() {
 					<YStack gap={10} paddingHorizontal={10}>
 						<XStack gap={5}>
 							<SizableText size="$title3" color="$black">
-								{t('End date')} *
+								{t('Start date')} *
 							</SizableText>
 
 							<MultiPlatformDatePicker
@@ -127,6 +128,24 @@ export default function Settings() {
 								onChange={setTempEndDate}
 							/>
 						</XStack>
+
+						<YStack gap={5}>
+							<SizableText size="$title3" color="$black">
+								{t('Timeframe length')}
+							</SizableText>
+
+							<XStack gap={5}>
+								<Input
+									color="$black"
+									textAlign="center"
+									maxLength={3}
+									borderColor="$black"
+									defaultValue="1"
+									keyboardType="numeric"
+									style={{ minWidth: '21%', height: '100%' }}
+								/>
+							</XStack>
+						</YStack>
 
 						<XStack alignSelf="flex-end" gap={10}>
 							<Button
