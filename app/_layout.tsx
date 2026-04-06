@@ -1,23 +1,26 @@
 import { TamaguiProvider, Theme } from '@tamagui/core';
-import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PortalProvider, Spinner, Text, YStack } from 'tamagui';
-import migrations from '@/drizzle/migrations';
-import { db, initializeWebDb, isDbReal } from '@/src/db/client';
+import { initializeWebDb, isDbReal, isWebFallbackMode } from '@/src/db/client';
 import config from '../tamagui.config';
 import '@/src/utils/i18n';
 
 import { SQLiteProvider } from 'expo-sqlite';
 import i18next from 'i18next';
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLanguageStore } from '@/src/store/useLanguageStore';
 
 function MigrationHandler({ children }: { children: React.ReactNode }) {
 	const [ready, setReady] = useState(false);
 
 	useEffect(() => {
+		if (isWebFallbackMode) {
+			setReady(true);
+			return;
+		}
+
 		if (isDbReal) {
 			setReady(true);
 		} else {
@@ -44,8 +47,6 @@ function MigrationHandler({ children }: { children: React.ReactNode }) {
 }
 
 export default function RootLayout() {
-	const [_, setTick] = useState(0);
-
 	const language = useLanguageStore((state) => state.language);
 
 	useEffect(() => {

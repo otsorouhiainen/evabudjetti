@@ -1,7 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { BalanceReconciliation, Persisted } from '../dataModel';
+import { persistStorage } from './persistStorage';
 
 interface BalanceReconciliationState {
 	reconciliations: Persisted<BalanceReconciliation>[];
@@ -77,7 +77,7 @@ const useBalanceReconciliationStore = create<BalanceReconciliationState>()(
 		}),
 		{
 			name: 'balance-reconciliation-storage',
-			storage: createJSONStorage(() => AsyncStorage),
+			storage: createJSONStorage(() => persistStorage),
 			onRehydrateStorage: () => (state) => {
 				if (state) {
 					state.reconciliations = state.reconciliations.map(

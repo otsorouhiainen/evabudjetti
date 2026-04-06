@@ -1,6 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { persistStorage } from './persistStorage';
 
 interface CounterState {
 	count: number;
@@ -25,7 +25,7 @@ const usePersistantCounterStore = create<CounterState>()(
 		}),
 		{
 			name: 'counter-storage',
-			storage: createJSONStorage(() => AsyncStorage),
+			storage: createJSONStorage(() => persistStorage),
 		},
 	),
 );

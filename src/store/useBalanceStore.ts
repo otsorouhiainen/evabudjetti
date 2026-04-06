@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { add, addMonths, isWithinInterval } from 'date-fns';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -7,6 +6,7 @@ import type {
 	PlannedTransaction,
 	TransactionOccurrence,
 } from '../dataModel';
+import { persistStorage } from './persistStorage';
 
 interface BalanceState {
 	balance: number;
@@ -112,7 +112,7 @@ const useBalanceStore = create<BalanceState>()(
 		}),
 		{
 			name: 'balance-storage',
-			storage: createJSONStorage(() => AsyncStorage),
+			storage: createJSONStorage(() => persistStorage),
 		},
 	),
 );

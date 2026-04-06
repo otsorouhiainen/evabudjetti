@@ -5,8 +5,9 @@ import type {
 	Persisted,
 	PlannedTransaction,
 } from '@/src/dataModel';
-import { db } from '@/src/db/client';
+import { db, isWebFallbackMode } from '@/src/db/client';
 import * as schema from '@/src/db/schema';
+import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 
 /**
  * Retrieves all planned transactions that may have occurrences within the given month range
@@ -18,11 +19,31 @@ export async function fetchPlannedTransactionsInRange(
 	start: MonthInstance,
 	end: MonthInstance,
 ): Promise<Persisted<PlannedTransaction>[]> {
+	if (isWebFallbackMode) {
+		const rangeStart = new Date(start.year, start.month, 1);
+		const rangeEnd = endOfMonth(new Date(end.year, end.month, 1));
+
+		return usePlannedTransactionsStore
+			.getState()
+			.transactions.filter((transaction) =>
+				plannedTransactionConcernsDateRangeLocal(
+					transaction,
+					rangeStart,
+					rangeEnd,
+				),
+			)
+			.sort(
+				(a, b) =>
+					new Date(a.startDate).getTime() -
+					new Date(b.startDate).getTime(),
+			);
+	}
+
 	const data = await db
 		.select()
 		.from(schema.plannedTransactions)
 		.where(
-			plannedTransactionConcernsDateRange(
+			plannedTransactionConcernsDateRangeSql(
 				new Date(start.year, start.month, 1),
 				endOfMonth(new Date(end.year, end.month, 1)),
 			),
@@ -32,7 +53,10 @@ export async function fetchPlannedTransactionsInRange(
 	return data;
 }
 
-const plannedTransactionConcernsDateRange = (startDate: Date, endDate: Date) =>
+const plannedTransactionConcernsDateRangeSql = (
+	startDate: Date,
+	endDate: Date,
+) =>
 	and(
 		lt(schema.plannedTransactions.startDate, endDate),
 		or(
@@ -40,3 +64,19 @@ const plannedTransactionConcernsDateRange = (startDate: Date, endDate: Date) =>
 			isNull(schema.plannedTransactions.endDate),
 		),
 	);
+
+const plannedTransactionConcernsDateRangeLocal = (
+	transaction: Persisted<PlannedTransaction>,
+	startDate: Date,
+	endDate: Date,
+) => {
+	const transactionStartDate = new Date(transaction.startDate);
+	const transactionEndDate = transaction.endDate
+		? new Date(transaction.endDate)
+		: null;
+
+	return (
+		transactionStartDate < endDate &&
+		(transactionEndDate === null || transactionEndDate >= startDate)
+	);
+};
