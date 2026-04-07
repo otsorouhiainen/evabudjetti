@@ -40,7 +40,7 @@ export default function BudgetMonthsScreen() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
-			<ScrollView>
+			<ScrollView contentInsetAdjustmentBehavior="automatic">
 				<YStack padding="$4" gap="$3">
 					{yearlySummaries.map((_, index) => {
 						const routeId = `${yearNum}-${index.toString().padStart(2, '0')}`;

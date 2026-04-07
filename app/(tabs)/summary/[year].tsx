@@ -35,7 +35,7 @@ export default function MonthsScreen() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
-			<ScrollView>
+			<ScrollView contentInsetAdjustmentBehavior="automatic">
 				<YStack padding="$4" gap="$3">
 					{yearlySummaries.map((monthData, index) => {
 						const change = monthData?.cashFlow ?? 0;
