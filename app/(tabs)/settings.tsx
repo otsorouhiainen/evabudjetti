@@ -1,4 +1,4 @@
-import { Check, ChevronRight } from '@tamagui/lucide-icons';
+import { Check, ChevronDown, ChevronRight } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import {
 	type Dispatch,
@@ -8,13 +8,16 @@ import {
 	useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	Button,
 	Dialog,
 	Input,
+	Select,
 	Separator,
 	SizableText,
+	View,
 	XStack,
 	YStack,
 } from 'tamagui';
@@ -27,12 +30,19 @@ interface Language {
 	label: string;
 }
 
+type LengthOption = 'days' | 'weeks' | 'months' | 'years';
+
 export default function Settings() {
 	const { t, i18n } = useTranslation();
 	const router = useRouter();
 	const { language, setLanguage } = useLanguageStore();
 	const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
 	const [timeframeDialogOpen, setTimeframeDialogOpen] = useState(false);
+	const [timeframeLengthInput, setTimeframeLengthInput] = useState('1');
+	const [tempTimeframeLength, setTempTimeframeLength] = useState(1);
+	const [selectOpen, setSelectOpen] = useState(false);
+	const [timeframeOption, setTimeframeOption] =
+		useState<LengthOption>('months');
 	const { timeframeEndYear, timeframeEndMonth, timeframeEndDay, setEndDate } =
 		useTimeframeStore();
 	// temp date used to enable the user to cancel
@@ -45,6 +55,13 @@ export default function Settings() {
 		{ code: 'en', label: 'English' },
 	];
 
+	const TIMEFRAME_OPTIONS: LengthOption[] = [
+		'days',
+		'weeks',
+		'months',
+		'years',
+	];
+
 	const currentLanguage = useMemo(() => {
 		const activeLang = i18n.language || language;
 		return activeLang.startsWith('fi') ? 'fi' : 'en';
@@ -54,6 +71,14 @@ export default function Settings() {
 		await i18n.changeLanguage(code);
 		setLanguage(code);
 		setLanguageDialogOpen(false);
+	};
+
+	const onChangeLengthText = (text: string) => {
+		const length = Number(text);
+		if (!Number.isNaN(length) && length > 0) {
+			setTempTimeframeLength(length);
+			setTimeframeLengthInput(text);
+		}
 	};
 
 	const changeTimeframe = () => {
@@ -103,6 +128,7 @@ export default function Settings() {
 									<SizableText size="$title2" color="$black">
 										{lang.label}
 									</SizableText>
+
 									{currentLanguage === lang.code ? (
 										<Check size={20} />
 									) : null}
@@ -116,6 +142,8 @@ export default function Settings() {
 					title={t('Timeframe')}
 					open={timeframeDialogOpen}
 					onOpenChange={setTimeframeDialogOpen}
+					closeKeyboard
+					onKeyboardClose={() => {}}
 				>
 					<YStack gap={10} paddingHorizontal={10}>
 						<XStack gap={5}>
@@ -134,16 +162,98 @@ export default function Settings() {
 								{t('Timeframe length')}
 							</SizableText>
 
-							<XStack gap={5}>
+							<XStack gap={5} alignItems="unset">
 								<Input
 									color="$black"
+									borderColor="$black"
 									textAlign="center"
 									maxLength={3}
-									borderColor="$black"
 									defaultValue="1"
+									onChangeText={onChangeLengthText}
 									keyboardType="numeric"
 									style={{ minWidth: '21%', height: '100%' }}
 								/>
+
+								<View>
+									<Select
+										value={timeframeOption}
+										onValueChange={(option: LengthOption) =>
+											setTimeframeOption(option)
+										}
+										disablePreventBodyScroll
+										native="web"
+									>
+										<Select.Trigger
+											height={45}
+											iconAfter={ChevronDown}
+											borderColor="$black"
+											borderWidth={selectOpen ? 2 : 1}
+											borderBottomLeftRadius={
+												selectOpen ? 0 : 15
+											}
+											borderBottomRightRadius={
+												selectOpen ? 0 : 15
+											}
+											onPressOut={() =>
+												setSelectOpen(!selectOpen)
+											}
+										>
+											<Select.Value />
+										</Select.Trigger>
+
+										<Select.Content>
+											<Select.Viewport>
+												{TIMEFRAME_OPTIONS.map(
+													(option, i) => {
+														return (
+															<Select.Item
+																index={i}
+																key={option}
+																value={option}
+																opacity={
+																	selectOpen
+																		? 100
+																		: 0
+																}
+																disabled={
+																	!selectOpen
+																}
+																zIndex={
+																	selectOpen
+																		? 2000
+																		: 0
+																}
+																borderColor="$black"
+																borderWidth={1}
+																borderTopWidth={
+																	0
+																}
+																borderBottomWidth={
+																	i ===
+																	TIMEFRAME_OPTIONS.length -
+																		1
+																		? 1
+																		: 0
+																}
+															>
+																<Select.ItemText>
+																	{t(option)}
+																</Select.ItemText>
+																<Select.ItemIndicator marginLeft="auto">
+																	<Check
+																		size={
+																			16
+																		}
+																	/>
+																</Select.ItemIndicator>
+															</Select.Item>
+														);
+													},
+												)}
+											</Select.Viewport>
+										</Select.Content>
+									</Select>
+								</View>
 							</XStack>
 						</YStack>
 
@@ -207,13 +317,32 @@ export default function Settings() {
 	);
 }
 
-interface PopupProps extends PropsWithChildren {
+interface CommonProps extends PropsWithChildren {
 	title: string;
 	open: boolean;
 	onOpenChange: Dispatch<SetStateAction<boolean>>;
 }
 
-function SettingsPopup({ title, open, onOpenChange, children }: PopupProps) {
+interface KeyboardCloseProps {
+	closeKeyboard: true;
+	onKeyboardClose: () => void;
+}
+
+interface NoKeyboardCloseProps {
+	closeKeyboard?: undefined;
+	onKeyboardClose?: never;
+}
+
+type PopupProps = CommonProps & (KeyboardCloseProps | NoKeyboardCloseProps);
+
+function SettingsPopup({
+	title,
+	open,
+	onOpenChange,
+	closeKeyboard,
+	onKeyboardClose,
+	children,
+}: PopupProps) {
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange} modal>
 			<Dialog.Trigger asChild>
@@ -252,8 +381,16 @@ function SettingsPopup({ title, open, onOpenChange, children }: PopupProps) {
 					gap={10}
 				>
 					<Dialog.Title padding={8}>{title}</Dialog.Title>
-
-					{children}
+					<TouchableWithoutFeedback
+						onPress={() => {
+							if (closeKeyboard) {
+								Keyboard.dismiss();
+								onKeyboardClose();
+							}
+						}}
+					>
+						{children}
+					</TouchableWithoutFeedback>
 				</Dialog.Content>
 			</Dialog.Portal>
 		</Dialog>

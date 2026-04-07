@@ -178,6 +178,8 @@ i18next
 
 				// SETTINGS
 				'Language': 'Language',
+				'Timeframe': 'Timeframe',
+				'Start date': 'Start date',
 			},
 		},
 		fi: {
