@@ -22,15 +22,16 @@ import {
 	YStack,
 } from 'tamagui';
 import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
-import { useTimeframeStore } from '@/src/store/useTimeframeStore';
+import {
+	type LengthOptions,
+	useTimeframeStore,
+} from '@/src/store/useTimeframeStore';
 import { useLanguageStore } from '../../src/store/useLanguageStore';
 
 interface Language {
 	code: 'fi' | 'en';
 	label: string;
 }
-
-type LengthOption = 'days' | 'weeks' | 'months' | 'years';
 
 export default function Settings() {
 	const { t, i18n } = useTranslation();
@@ -42,12 +43,23 @@ export default function Settings() {
 	const [tempTimeframeLength, setTempTimeframeLength] = useState(1);
 	const [selectOpen, setSelectOpen] = useState(false);
 	const [timeframeOption, setTimeframeOption] =
-		useState<LengthOption>('months');
-	const { timeframeEndYear, timeframeEndMonth, timeframeEndDay, setEndDate } =
-		useTimeframeStore();
+		useState<LengthOptions>('months');
+	const {
+		timeframeStartYear,
+		timeframeStartMonth,
+		timeframeStartDay,
+		setStartDate,
+		setLength,
+	} = useTimeframeStore();
 	// temp date used to enable the user to cancel
-	const [tempEndDate, setTempEndDate] = useState(
-		new Date(timeframeEndYear, timeframeEndMonth, timeframeEndDay),
+	const [tempStartDate, setTempStartDate] = useState(
+		new Date(timeframeStartYear, timeframeStartMonth, timeframeStartDay),
+	);
+
+	const defaultStartDate = new Date(
+		timeframeStartYear,
+		timeframeStartMonth,
+		timeframeStartDay,
 	);
 
 	const possibleLanguages: Language[] = [
@@ -55,7 +67,7 @@ export default function Settings() {
 		{ code: 'en', label: 'English' },
 	];
 
-	const TIMEFRAME_OPTIONS: LengthOption[] = [
+	const timeframeOptions: LengthOptions[] = [
 		'days',
 		'weeks',
 		'months',
@@ -86,16 +98,17 @@ export default function Settings() {
 	};
 
 	const changeTimeframe = () => {
-		setEndDate(tempEndDate);
-
+		setStartDate(tempStartDate);
+		setLength(tempTimeframeLength, timeframeOption);
 		setTimeframeDialogOpen(false);
 	};
 
 	const handleCancelButtonPressed = () => {
 		// reset to saved date
-		setTempEndDate(
-			new Date(timeframeEndYear, timeframeEndMonth, timeframeEndDay),
-		);
+		setTempStartDate(defaultStartDate);
+		setTimeframeLengthInput('1');
+		setTempTimeframeLength(1);
+		setTimeframeOption('months');
 
 		setTimeframeDialogOpen(false);
 	};
@@ -156,8 +169,8 @@ export default function Settings() {
 							</SizableText>
 
 							<MultiPlatformDatePicker
-								value={tempEndDate}
-								onChange={setTempEndDate}
+								value={tempStartDate}
+								onChange={setTempStartDate}
 							/>
 						</XStack>
 
@@ -180,10 +193,10 @@ export default function Settings() {
 
 								<View>
 									<Select
-										value={timeframeOption}
-										onValueChange={(option: LengthOption) =>
-											setTimeframeOption(option)
-										}
+										value={t(timeframeOption)}
+										onValueChange={(
+											option: LengthOptions,
+										) => setTimeframeOption(option)}
 										disablePreventBodyScroll
 										native="web"
 									>
@@ -207,7 +220,7 @@ export default function Settings() {
 
 										<Select.Content>
 											<Select.Viewport>
-												{TIMEFRAME_OPTIONS.map(
+												{timeframeOptions.map(
 													(option, i) => {
 														return (
 															<Select.Item
@@ -234,7 +247,7 @@ export default function Settings() {
 																}
 																borderBottomWidth={
 																	i ===
-																	TIMEFRAME_OPTIONS.length -
+																	timeframeOptions.length -
 																		1
 																		? 1
 																		: 0
