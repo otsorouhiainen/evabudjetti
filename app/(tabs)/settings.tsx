@@ -73,11 +73,15 @@ export default function Settings() {
 		setLanguageDialogOpen(false);
 	};
 
-	const onChangeLengthText = (text: string) => {
-		const length = Number(text);
+	const checkText = () => {
+		const length = Number(timeframeLengthInput);
 		if (!Number.isNaN(length) && length > 0) {
 			setTempTimeframeLength(length);
-			setTimeframeLengthInput(text);
+		}
+		// Default to 1 if unaccepted input
+		else {
+			setTempTimeframeLength(1);
+			setTimeframeLengthInput('1');
 		}
 	};
 
@@ -143,7 +147,7 @@ export default function Settings() {
 					open={timeframeDialogOpen}
 					onOpenChange={setTimeframeDialogOpen}
 					closeKeyboard
-					onKeyboardClose={() => {}}
+					onKeyboardClose={checkText}
 				>
 					<YStack gap={10} paddingHorizontal={10}>
 						<XStack gap={5}>
@@ -168,10 +172,10 @@ export default function Settings() {
 									borderColor="$black"
 									textAlign="center"
 									maxLength={3}
-									defaultValue="1"
-									onChangeText={onChangeLengthText}
+									value={timeframeLengthInput}
+									onChangeText={setTimeframeLengthInput}
 									keyboardType="numeric"
-									style={{ minWidth: '21%', height: '100%' }}
+									style={{ minWidth: '21%', height: '25%' }}
 								/>
 
 								<View>
@@ -323,6 +327,8 @@ interface CommonProps extends PropsWithChildren {
 	onOpenChange: Dispatch<SetStateAction<boolean>>;
 }
 
+// Require onKeyboardClose prop if closeKeyboard exists
+// Used to fix keyboard not closing on ios
 interface KeyboardCloseProps {
 	closeKeyboard: true;
 	onKeyboardClose: () => void;
@@ -381,6 +387,7 @@ function SettingsPopup({
 					gap={10}
 				>
 					<Dialog.Title padding={8}>{title}</Dialog.Title>
+					{/* Necessary to close keyboard when tapping outside of input */}
 					<TouchableWithoutFeedback
 						onPress={() => {
 							if (closeKeyboard) {
