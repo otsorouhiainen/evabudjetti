@@ -83,7 +83,7 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 	return (
 		<XStack f={1} ai={'center'} maxWidth={'25%'}>
 			{/* Display selected date */}
-			<SizableText size="$body" color={'$' + color}>
+			<SizableText size="$body" color={`$${color}`}>
 				{date ? format(date, 'd.MM.yy') : 'd.mm.yy'}
 			</SizableText>
 
@@ -91,7 +91,7 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 			<Button
 				size="$3"
 				icon={Calendar}
-				color={'$' + color}
+				color={`$${color}`}
 				onPress={() => setDatePickerOpen(true)}
 				chromeless
 			/>

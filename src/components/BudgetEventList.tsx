@@ -1,11 +1,9 @@
-import { ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
+import { Pencil } from '@tamagui/lucide-icons';
 import { isToday } from 'date-fns';
-import { date } from 'drizzle-orm/mysql-core';
 import type { Router } from 'expo-router';
-import { Button, styled, Text, XStack, YStack } from 'tamagui';
+import { Button, Text, XStack, YStack } from 'tamagui';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
-import StyledListItem from './StyledListItem';
 
 interface Props {
 	txns: TransactionOccurrence[];
@@ -20,6 +18,34 @@ const BudgetEventList: React.FC<Props> = ({
 	router,
 	formatCurrency,
 }) => {
+	// Grouping the transactions by date
+	const txnsByDate: TransactionOccurrence[][] = [];
+	for (const txn of txns) {
+		const date = txn.date.getDate();
+		let dateFound = false;
+		for (const dTxns of txnsByDate) {
+			if (dTxns[0].date.getDate() === date) {
+				dTxns.push(txn);
+				dateFound = true;
+				break;
+			}
+		}
+		if (!dateFound) txnsByDate.push([txn]);
+	}
+	/* 
+	Function to calculate the total balance change for 
+	all transactions on a given date
+	*/
+	const sumOfTxns = (index: number) => {
+		const dTxns = txnsByDate[index];
+		let sum = 0;
+		for (const t of dTxns) {
+			if (t.type === 'income') sum += t.amount;
+			else sum -= t.amount;
+		}
+		return sum;
+	};
+
 	return (
 		<YStack gap={8} marginBottom={8}>
 			{title !== '' && (
@@ -27,8 +53,7 @@ const BudgetEventList: React.FC<Props> = ({
 					{title}
 				</Text>
 			)}
-
-			{txns.map((txn) => (
+			{txnsByDate.map((dTxns, index) => (
 				<XStack
 					style={{
 						padding: 10,
@@ -36,11 +61,11 @@ const BudgetEventList: React.FC<Props> = ({
 						borderWidth: 2,
 						margin: -2,
 					}}
+					key={`${dTxns[0].date.getTime()}`}
 					backgroundColor={'$white'}
 					borderColor={
-						isToday(txn.date) ? '$primary200' : '$primary300'
+						isToday(dTxns[0].date) ? '$primary200' : '$primary300'
 					}
-					key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${txn.date.getTime()}`}
 					value={false}
 				>
 					<YStack width="100%">
@@ -57,33 +82,49 @@ const BudgetEventList: React.FC<Props> = ({
 								textAlign="left"
 								fontSize="$body"
 							>
-								{new Date(txn.date).toLocaleDateString(LOCALE)}
+								{new Date(dTxns[0].date).toLocaleDateString(
+									LOCALE,
+								)}
 							</Text>
-							<Text fontSize="$body" fontWeight="600">
-								{txn.type === 'income' ? '+' : '-'}
-								{formatCurrency(Number(txn.amount))}
+							<Text fontSize="$body" fontWeight="700">
+								{formatCurrency(sumOfTxns(index))}
 							</Text>
-							{/* Edit button rendered only if router exists */}
-							{router && (
-								<Button
-									size="$buttons.sm"
-									circular
-									backgroundColor="transparent"
-									icon={Pencil}
-									onPress={() => {
-										router.push('/budget_wizard');
-									}}
-								/>
-							)}
 						</XStack>
-						<Text
-							flex={1}
-							numberOfLines={1}
-							ellipsizeMode="tail"
-							fontSize="$body"
-						>
-							{txn.name}
-						</Text>
+						{dTxns.map((txn) => (
+							<XStack
+								gap={10}
+								backgroundColor="transparent"
+								alignItems="center"
+								justifyContent="flex-end"
+								key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${txn.date.getTime()}`}
+								minWidth={100}
+							>
+								<Text
+									flex={1}
+									fontWeight="400"
+									textAlign="left"
+									fontSize="$body"
+								>
+									{txn.name}
+								</Text>
+								<Text fontSize="$body" fontWeight="400">
+									{txn.type === 'income' ? '+' : '-'}
+									{formatCurrency(Number(txn.amount))}
+								</Text>
+								{/* Edit button rendered only if router exists */}
+								{router && (
+									<Button
+										size="$buttons.sm"
+										circular
+										backgroundColor="transparent"
+										icon={Pencil}
+										onPress={() => {
+											router.push('/budget_wizard');
+										}}
+									/>
+								)}
+							</XStack>
+						))}
 					</YStack>
 				</XStack>
 			))}
