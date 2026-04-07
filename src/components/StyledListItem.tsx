@@ -1,15 +1,103 @@
-import { styled, XStack } from 'tamagui';
+import { ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
+import { isToday } from 'date-fns';
+import type { Router } from 'expo-router';
+import { useState } from 'react';
+import { Button, Text, XStack, YStack } from 'tamagui';
+import { LOCALE } from '../constants/index';
+import type { TransactionOccurrence } from '../dataModel';
 
-const StyledListItem = styled(XStack, {
-	backgroundColor: '$white',
-	padding: 10,
-	borderRadius: 10,
-	shadowColor: '$color.black',
-	shadowOffset: { width: 0, height: 3 },
-	shadowOpacity: 0.25,
-	shadowRadius: 3,
-	elevation: 3,
-	alignItems: 'center',
-});
+interface Props {
+	dTxns: TransactionOccurrence[];
+	sum: number;
+	router?: Router;
+	formatCurrency: (value: number, hideSign?: boolean) => string;
+}
+
+const StyledListItem: React.FC<Props> = ({
+	dTxns,
+	sum,
+	router,
+	formatCurrency,
+}) => {
+	const [isOpen, setOpen] = useState(false);
+	return (
+		<XStack
+			style={{
+				padding: 10,
+				borderRadius: 10,
+				borderWidth: 2,
+				margin: -2,
+			}}
+			key={`${dTxns[0].date.getTime()}`}
+			backgroundColor={'$white'}
+			borderColor={isToday(dTxns[0].date) ? '$primary200' : '$primary300'}
+			pressStyle={{ backgroundColor: '$primary300' }}
+			onPress={() => setOpen(!isOpen)}
+		>
+			<YStack width="100%">
+				<XStack
+					gap={10}
+					backgroundColor="transparent"
+					alignItems="center"
+					justifyContent="flex-end"
+					minWidth={100}
+				>
+					<Text
+						flex={1}
+						fontWeight="700"
+						textAlign="left"
+						fontSize="$body"
+					>
+						{new Date(dTxns[0].date).toLocaleDateString(LOCALE)}
+					</Text>
+					<Text fontSize="$body" fontWeight="700">
+						{formatCurrency(sum)}
+					</Text>
+					{isOpen ? (
+						<ChevronUp size={20} />
+					) : (
+						<ChevronDown size={20} />
+					)}
+				</XStack>
+				{isOpen &&
+					dTxns.map((txn) => (
+						<XStack
+							gap={10}
+							backgroundColor="transparent"
+							alignItems="center"
+							justifyContent="flex-end"
+							key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${txn.date.getTime()}`}
+							maxWidth={'90%'}
+						>
+							<Text
+								flex={1}
+								fontWeight="400"
+								textAlign="left"
+								fontSize="$body"
+							>
+								{txn.name}
+							</Text>
+							<Text fontSize="$body" fontWeight="400">
+								{txn.type === 'income' ? '+' : '-'}
+								{formatCurrency(Number(txn.amount))}
+							</Text>
+							{/* Edit button rendered only if router exists */}
+							{router && (
+								<Button
+									size="$buttons.sm"
+									circular
+									backgroundColor="transparent"
+									icon={Pencil}
+									onPress={() => {
+										router.push('/budget_wizard');
+									}}
+								/>
+							)}
+						</XStack>
+					))}
+			</YStack>
+		</XStack>
+	);
+};
 
 export default StyledListItem;

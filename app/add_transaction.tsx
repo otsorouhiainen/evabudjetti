@@ -648,6 +648,7 @@ export default function AddTransaction() {
 
 									<MultiPlatformDatePicker
 										value={date}
+										color="primary100"
 										onChange={setDate}
 									/>
 								</XStack>
