@@ -26,7 +26,7 @@ const StyledListItem: React.FC<Props> = ({
 			style={{
 				padding: 10,
 				borderRadius: 10,
-				borderWidth: 2,
+				borderWidth: isCurrent ? 4 : 3,
 				margin: -2,
 			}}
 			key={`${dTxns[0].date.getTime()}`}

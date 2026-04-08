@@ -1,9 +1,4 @@
-import {
-	ChevronDown,
-	ChevronLeft,
-	ChevronRight,
-	ChevronUp,
-} from '@tamagui/lucide-icons';
+import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
@@ -40,7 +35,7 @@ export default function BudgetDayView({
 	const storeDisposable = useBalanceStore((state) => state.disposable);
 	// When first rendered, show only 5 future txs
 	const [futureCount, setFutureCount] = useState(5);
-	// When first rendered, show only 4 past txs
+	// When first rendered, show only 5 past txs
 	const [pastCount, setPastCount] = useState(5);
 	const [currentBalance, setCurrentBalance] = useState(0);
 	const [disposable, setDisposable] = useState(0);
@@ -117,16 +112,16 @@ export default function BudgetDayView({
 		};
 	}, [transactions, currentDate, futureCount, pastCount]);
 
-	// Display 2 more transactions per chevron click
+	// Display 5 more transactions per chevron click
 
-	const handleUpChevronClick = () => {
+	const handleFutureLoadMorePress = () => {
 		if (futureTxns.length > futureCount) {
-			setFutureCount((prev) => prev + 2);
+			setFutureCount((prev) => prev + 5);
 		}
 	};
-	const handleDownChevronClick = () => {
+	const handlePastLoadMorePress = () => {
 		if (pastTxns.length > pastCount) {
-			setPastCount((prev) => prev + 2);
+			setPastCount((prev) => prev + 5);
 		}
 	};
 
@@ -228,9 +223,11 @@ export default function BudgetDayView({
 				<YStack paddingHorizontal="$1">
 					{/* --- Navigation / Up Chevron --- */}
 					<YStack alignItems="center" marginBottom={'$2'}>
-						<Button
-							unstyled
-							onPress={handleUpChevronClick}
+						<Text
+							color="$primary100"
+							fontSize="$body"
+							onPress={handleFutureLoadMorePress}
+							pressStyle={{ color: '$primary300' }}
 							opacity={futureTxns.length > futureCount ? 1 : 0.3}
 							disabled={futureTxns.length <= futureCount}
 							cursor={
@@ -239,11 +236,8 @@ export default function BudgetDayView({
 									: 'default'
 							}
 						>
-							<ChevronUp
-								size={'$buttons.md'}
-								color="$color.black"
-							/>
-						</Button>
+							{t('Load more')}
+						</Text>
 					</YStack>
 
 					{/* --- Future Events --- */}
@@ -270,9 +264,11 @@ export default function BudgetDayView({
 
 					{/* --- Navigation / Down Chevron --- */}
 					<YStack alignItems="center" marginTop="$2">
-						<Button
-							unstyled
-							onPress={handleDownChevronClick}
+						<Text
+							color="$primary100"
+							fontSize="$body"
+							onPress={handlePastLoadMorePress}
+							pressStyle={{ color: '$primary300' }}
 							opacity={pastTxns.length > pastCount ? 1 : 0.3}
 							disabled={pastTxns.length <= pastCount}
 							cursor={
@@ -281,11 +277,8 @@ export default function BudgetDayView({
 									: 'default'
 							}
 						>
-							<ChevronDown
-								size={'$buttons.md'}
-								color="$color.black"
-							/>
-						</Button>
+							{t('Load more')}
+						</Text>
 					</YStack>
 				</YStack>
 			</ScrollView>
