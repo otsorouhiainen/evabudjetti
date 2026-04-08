@@ -6,11 +6,11 @@ import useBalanceStore from '@/src/store/useBalanceStore';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
 import { formatCurrency } from '../utils/budgetUtils';
-import BudgetEventList from './BudgetEventList';
+import DailyEventList from './DailyEventList';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 import StyledCard from './styledCard';
 
-interface BudgetDayViewProps {
+interface DailyBalanceViewProps {
 	currentDate: Date;
 	transactions: TransactionOccurrence[];
 	onDateChange: (date: Date) => void;
@@ -23,12 +23,12 @@ const formatDate = (date: Date) => {
 	return new Intl.DateTimeFormat(LOCALE, {}).format(date);
 };
 
-export default function BudgetDayView({
+export default function DailyBalanceView({
 	currentDate,
 	transactions,
 	onDateChange,
 	onAddPress,
-}: BudgetDayViewProps) {
+}: DailyBalanceViewProps) {
 	const { t } = useTranslation();
 	// State to track how many transactions to show
 	const storeBalance = useBalanceStore((state) => state.balance);
@@ -255,21 +255,21 @@ export default function BudgetDayView({
 					</YStack>
 
 					{/* --- Future Events --- */}
-					<BudgetEventList
+					<DailyEventList
 						txnsByDate={future}
 						title={''}
 						isCurrent={false}
 						formatCurrency={formatCurrency}
 					/>
 					{/* --- Present day events --- */}
-					<BudgetEventList
+					<DailyEventList
 						txnsByDate={current}
 						title={''}
 						isCurrent={true}
 						formatCurrency={formatCurrency}
 					/>
 					{/* --- Past Events --- */}
-					<BudgetEventList
+					<DailyEventList
 						txnsByDate={past}
 						title={''}
 						isCurrent={false}

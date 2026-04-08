@@ -1,7 +1,7 @@
 import type { Router } from 'expo-router';
 import { Text, YStack } from 'tamagui';
 import type { TransactionOccurrence } from '../dataModel';
-import StyledListItem from './StyledListItem';
+import DailyEventListItem from './DailyEventListItem';
 
 interface Props {
 	txnsByDate: TransactionOccurrence[][];
@@ -40,14 +40,14 @@ const BudgetEventList: React.FC<Props> = ({
 				</Text>
 			)}
 			{txnsByDate.map((dTxns, index) => (
-				<StyledListItem
+				<DailyEventListItem
 					dTxns={dTxns}
 					sum={sumOfTxns(index)}
 					isCurrent={isCurrent}
 					router={router}
 					formatCurrency={formatCurrency}
 					key={`${dTxns[0].date.getTime()}`}
-				></StyledListItem>
+				></DailyEventListItem>
 			))}
 		</YStack>
 	);

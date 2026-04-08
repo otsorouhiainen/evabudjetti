@@ -13,7 +13,7 @@ interface Props {
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
 
-const StyledListItem: React.FC<Props> = ({
+const DailyEventListItem: React.FC<Props> = ({
 	dTxns,
 	sum,
 	isCurrent,
@@ -101,4 +101,4 @@ const StyledListItem: React.FC<Props> = ({
 	);
 };
 
-export default StyledListItem;
+export default DailyEventListItem;
