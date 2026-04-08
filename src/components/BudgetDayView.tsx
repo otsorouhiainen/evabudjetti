@@ -33,9 +33,9 @@ export default function BudgetDayView({
 	// State to track how many transactions to show
 	const storeBalance = useBalanceStore((state) => state.balance);
 	const storeDisposable = useBalanceStore((state) => state.disposable);
-	// When first rendered, show only 5 future txs
+	// When first rendered, show only 5 future days
 	const [futureCount, setFutureCount] = useState(5);
-	// When first rendered, show only 5 past txs
+	// When first rendered, show only 5 past days
 	const [pastCount, setPastCount] = useState(5);
 	const [currentBalance, setCurrentBalance] = useState(0);
 	const [disposable, setDisposable] = useState(0);
@@ -58,7 +58,7 @@ export default function BudgetDayView({
 	};
 
 	// --- Data Processing ---
-	const { past, current, future, futureTxns, pastTxns } = useMemo(() => {
+	const { past, current, future, futureDays, pastDays } = useMemo(() => {
 		const cDateStr = formatDate(currentDate);
 
 		// Normalize dates: ensure each txn.date is a Date object so getTime() is available
@@ -78,49 +78,61 @@ export default function BudgetDayView({
 			(a, b) => b.date.getTime() - a.date.getTime(),
 		);
 
-		const futureTxns: TransactionOccurrence[] = [];
-		const currentTxns: TransactionOccurrence[] = [];
-		const pastTxns: TransactionOccurrence[] = [];
+		// Grouping all transactions by date (Newest first)
+		const grouped: TransactionOccurrence[][] = [];
+		let prevDate = '';
+		for (const txn of sorted) {
+			const newDate = txn.date.toLocaleDateString();
+			if (newDate === prevDate) {
+				grouped[grouped.length - 1].push(txn);
+			} else {
+				grouped.push([txn]);
+				prevDate = newDate;
+			}
+		}
+
+		const futureDays: TransactionOccurrence[][] = [];
+		const currentDay: TransactionOccurrence[][] = [];
+		const pastDays: TransactionOccurrence[][] = [];
 
 		// Iterate and split based on date comparison
-		const nowTime = currentDate.getTime();
+		const nowTime = cDateStr;
+		grouped.forEach((t) => {
+			const tStr = formatDate(t[0].date);
 
-		sorted.forEach((t) => {
-			const tStr = formatDate(t.date);
-
-			if (tStr === cDateStr) {
-				currentTxns.push(t);
-			} else if (t.date.getTime() > nowTime) {
-				futureTxns.push(t);
+			if (tStr === nowTime) {
+				currentDay.push(t);
+			} else if (t[0].date > currentDate) {
+				futureDays.push(t);
 			} else {
-				pastTxns.push(t);
+				pastDays.push(t);
 			}
 		});
 
 		// Future events: We want the ones CLOSEST to today
 		return {
-			futureTxns: futureTxns,
-			future: futureTxns
+			futureDays: futureDays,
+			future: futureDays
 				.slice(
-					Math.max(0, futureTxns.length - futureCount),
-					futureTxns.length,
+					Math.max(0, futureDays.length - futureCount),
+					futureDays.length,
 				)
 				.slice(0, futureCount),
-			current: currentTxns,
-			past: pastTxns.slice(0, pastCount),
-			pastTxns: pastTxns,
+			current: currentDay,
+			past: pastDays.slice(0, pastCount),
+			pastDays: pastDays,
 		};
 	}, [transactions, currentDate, futureCount, pastCount]);
 
-	// Display 5 more transactions per chevron click
+	// Display 5 more days on "load more" press
 
 	const handleFutureLoadMorePress = () => {
-		if (futureTxns.length > futureCount) {
+		if (futureDays.length > futureCount) {
 			setFutureCount((prev) => prev + 5);
 		}
 	};
 	const handlePastLoadMorePress = () => {
-		if (pastTxns.length > pastCount) {
+		if (pastDays.length > pastCount) {
 			setPastCount((prev) => prev + 5);
 		}
 	};
@@ -228,10 +240,10 @@ export default function BudgetDayView({
 							fontSize="$body"
 							onPress={handleFutureLoadMorePress}
 							pressStyle={{ color: '$primary300' }}
-							opacity={futureTxns.length > futureCount ? 1 : 0.3}
-							disabled={futureTxns.length <= futureCount}
+							opacity={futureDays.length > futureCount ? 1 : 0.3}
+							disabled={futureDays.length <= futureCount}
 							cursor={
-								futureTxns.length > futureCount
+								futureDays.length > futureCount
 									? 'pointer'
 									: 'default'
 							}
@@ -242,21 +254,21 @@ export default function BudgetDayView({
 
 					{/* --- Future Events --- */}
 					<BudgetEventList
-						txns={future}
+						txnsByDate={future}
 						title={''}
 						isCurrent={false}
 						formatCurrency={formatCurrency}
 					/>
 					{/* --- Present day events --- */}
 					<BudgetEventList
-						txns={current}
+						txnsByDate={current}
 						title={''}
 						isCurrent={true}
 						formatCurrency={formatCurrency}
 					/>
 					{/* --- Past Events --- */}
 					<BudgetEventList
-						txns={past}
+						txnsByDate={past}
 						title={''}
 						isCurrent={false}
 						formatCurrency={formatCurrency}
@@ -269,10 +281,10 @@ export default function BudgetDayView({
 							fontSize="$body"
 							onPress={handlePastLoadMorePress}
 							pressStyle={{ color: '$primary300' }}
-							opacity={pastTxns.length > pastCount ? 1 : 0.3}
-							disabled={pastTxns.length <= pastCount}
+							opacity={pastDays.length > pastCount ? 1 : 0.3}
+							disabled={pastDays.length <= pastCount}
 							cursor={
-								pastTxns.length > pastCount
+								pastDays.length > pastCount
 									? 'pointer'
 									: 'default'
 							}

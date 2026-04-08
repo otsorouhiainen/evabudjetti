@@ -4,7 +4,7 @@ import type { TransactionOccurrence } from '../dataModel';
 import StyledListItem from './StyledListItem';
 
 interface Props {
-	txns: TransactionOccurrence[];
+	txnsByDate: TransactionOccurrence[][];
 	title: string;
 	isCurrent: boolean;
 	router?: Router;
@@ -12,26 +12,12 @@ interface Props {
 }
 
 const BudgetEventList: React.FC<Props> = ({
-	txns,
+	txnsByDate,
 	title,
 	isCurrent,
 	router,
 	formatCurrency,
 }) => {
-	// Grouping the transactions by date
-	const txnsByDate: TransactionOccurrence[][] = [];
-	for (const txn of txns) {
-		const date = txn.date.getDate();
-		let dateFound = false;
-		for (const dTxns of txnsByDate) {
-			if (dTxns[0].date.getDate() === date) {
-				dTxns.push(txn);
-				dateFound = true;
-				break;
-			}
-		}
-		if (!dateFound) txnsByDate.push([txn]);
-	}
 	/* 
 	Function to calculate the total balance change for 
 	all transactions on a given date

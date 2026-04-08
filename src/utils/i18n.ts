@@ -129,6 +129,7 @@ i18next
 				'Daily situation': 'Daily situation',
 				'Account balance': 'Account balance',
 				'Disposable income': 'Disposable income',
+				'Load more': 'Load more',
 
 				// ERROR
 				'Something went wrong': 'Something went wrong',
@@ -322,6 +323,7 @@ i18next
 				'Daily situation': 'Päivän rahatilanne',
 				'Account balance': 'Tilillä rahaa',
 				'Disposable income': 'Käyttövara',
+				'Load more': 'Lataa enemmän',
 
 				// ERROR
 				'Something went wrong': 'Jokin meni pieleen',
