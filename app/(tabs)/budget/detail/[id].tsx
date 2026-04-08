@@ -4,15 +4,13 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { Button, Card, Separator, SizableText, XStack, YStack } from 'tamagui';
-import type { TransactionOccurrence } from '@/src/dataModel';
-import { useTransactionOccurrencesCache } from '@/src/finance/cache/transactionOccurrencesCache';
-import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
-import { createMonthKey } from '@/src/finance/logic/util';
+import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
+import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
 
-type GroupedItem = {
+type ProcessedItem = {
 	name: string;
-	amount: number;
 	count: number;
+	totalAmount: number;
 };
 
 export default function BudgetDetailedMonthScreen() {
@@ -42,141 +40,90 @@ export default function BudgetDetailedMonthScreen() {
 	const translatedMonth = t(monthKeys[monthNum]);
 	const formattedTitle = `${translatedMonth} ${yearNum} (${t('Budget')})`;
 
-	const monthDataArray = useTransactionSummaries(
-		yearNum,
-		monthNum,
-		yearNum,
-		monthNum,
-	);
-	const monthData = monthDataArray[0];
-
-	const monthKey = createMonthKey(yearNum, monthNum);
-	const occurrencesState = useTransactionOccurrencesCache((state) =>
-		state.getMonth(monthKey),
-	);
-	const allOccurrences = occurrencesState.transactionOccurrences;
+	const plannedTransactions = usePlannedTransactions();
 
 	const { expenseBreakdown, incomeBreakdown, totalExpenses, totalIncomes } =
 		useMemo(() => {
-			if (!monthData)
-				return {
-					expenseBreakdown: [],
-					incomeBreakdown: [],
-					totalExpenses: 0,
-					totalIncomes: 0,
-				};
-
 			let totalExp = 0;
 			let totalInc = 0;
 
 			const expensesByCat: Record<
 				string,
-				{ total: number; items: TransactionOccurrence[] }
+				{ total: number; items: ProcessedItem[] }
 			> = {};
 			const incomesByCat: Record<
 				string,
-				{ total: number; items: TransactionOccurrence[] }
+				{ total: number; items: ProcessedItem[] }
 			> = {};
 
-			for (const occ of allOccurrences) {
-				if (occ.realTransaction) continue;
+			for (const evt of plannedTransactions) {
+				const count = getTransactionOccurrenceCount(
+					evt,
+					yearNum,
+					monthNum,
+				);
+				if (count === 0) continue;
 
-				const amount = Math.abs(occ.amount);
-				const catIdStr = String(occ.categoryId);
+				const totalAmount = Math.abs(evt.amount) * count;
+				const catIdStr = String(evt.categoryId);
 
-				if (occ.type === 'expense') {
-					totalExp += amount;
+				const processedItem: ProcessedItem = {
+					name: evt.name,
+					count: count,
+					totalAmount: totalAmount,
+				};
+
+				if (evt.type === 'expense') {
+					totalExp += totalAmount;
 					if (!expensesByCat[catIdStr]) {
 						expensesByCat[catIdStr] = { total: 0, items: [] };
 					}
-					expensesByCat[catIdStr].total += amount;
-					expensesByCat[catIdStr].items.push(occ);
-				} else if (occ.type === 'income') {
-					totalInc += amount;
+					expensesByCat[catIdStr].total += totalAmount;
+					expensesByCat[catIdStr].items.push(processedItem);
+				} else if (evt.type === 'income') {
+					totalInc += totalAmount;
 					if (!incomesByCat[catIdStr]) {
 						incomesByCat[catIdStr] = { total: 0, items: [] };
 					}
-					incomesByCat[catIdStr].total += amount;
-					incomesByCat[catIdStr].items.push(occ);
+					incomesByCat[catIdStr].total += totalAmount;
+					incomesByCat[catIdStr].items.push(processedItem);
 				}
 			}
 
-			const expenseBreakdown = Object.entries(expensesByCat)
-				.map(([categoryId, data]) => {
-					const categoryName = !Number(categoryId)
-						? t('Uncategorized')
-						: `${t('Category')} ${categoryId}`;
+			const formatBreakdown = (
+				categoryMap: Record<
+					string,
+					{ total: number; items: ProcessedItem[] }
+				>,
+			) => {
+				return Object.entries(categoryMap)
+					.map(([categoryId, data]) => {
+						const categoryName = !Number(categoryId)
+							? t('Uncategorized')
+							: `${t('Category')} ${categoryId}`;
 
-					const mergedItemsMap: Record<string, GroupedItem> = {};
-					for (const occ of data.items) {
-						const mergeKey = occ.name;
-						if (!mergedItemsMap[mergeKey]) {
-							mergedItemsMap[mergeKey] = {
-								name: occ.name,
-								amount: Math.abs(occ.amount),
-								count: 1,
-							};
-						} else {
-							mergedItemsMap[mergeKey].amount += Math.abs(
-								occ.amount,
-							);
-							mergedItemsMap[mergeKey].count += 1;
-						}
-					}
+						const sortedItems = [...data.items].sort(
+							(a, b) =>
+								Math.abs(b.totalAmount) -
+								Math.abs(a.totalAmount),
+						);
 
-					const mergedItems = Object.values(mergedItemsMap).sort(
-						(a, b) => b.amount - a.amount,
-					);
-
-					return {
-						categoryName,
-						total: data.total,
-						items: mergedItems,
-					};
-				})
-				.sort((a, b) => b.total - a.total);
-
-			const incomeBreakdown = Object.entries(incomesByCat)
-				.map(([categoryId, data]) => {
-					const categoryName = !Number(categoryId)
-						? t('Uncategorized')
-						: `${t('Category')} ${categoryId}`;
-
-					const mergedItemsMap: Record<string, GroupedItem> = {};
-					for (const occ of data.items) {
-						const mergeKey = occ.name;
-						if (!mergedItemsMap[mergeKey]) {
-							mergedItemsMap[mergeKey] = {
-								name: occ.name,
-								amount: Math.abs(occ.amount),
-								count: 1,
-							};
-						} else {
-							mergedItemsMap[mergeKey].amount += Math.abs(
-								occ.amount,
-							);
-							mergedItemsMap[mergeKey].count += 1;
-						}
-					}
-					const mergedItems = Object.values(mergedItemsMap).sort(
-						(a, b) => b.amount - a.amount,
-					);
-
-					return {
-						categoryName,
-						total: data.total,
-						items: mergedItems,
-					};
-				})
-				.sort((a, b) => b.total - a.total);
+						return {
+							categoryName,
+							total: data.total,
+							items: sortedItems,
+						};
+					})
+					.sort((a, b) => b.total - a.total);
+			};
 
 			return {
-				expenseBreakdown,
-				incomeBreakdown,
+				expenseBreakdown: formatBreakdown(expensesByCat),
+				incomeBreakdown: formatBreakdown(incomesByCat),
 				totalExpenses: totalExp,
 				totalIncomes: totalInc,
 			};
-		}, [monthData, allOccurrences, t]);
+		}, [plannedTransactions, yearNum, monthNum, t]);
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
@@ -221,7 +168,7 @@ export default function BudgetDetailedMonthScreen() {
 										textAlign="center"
 										paddingVertical="$2"
 									>
-										{t('No expenses planned this month')}
+										{t('No expenses planned')}
 									</SizableText>
 								) : (
 									<YStack
@@ -250,41 +197,35 @@ export default function BudgetDetailedMonthScreen() {
 												</XStack>
 
 												{cat.items.map(
-													(item: GroupedItem) => {
-														const displayName =
-															item.count > 1
-																? `${item.name} (x${item.count})`
-																: item.name;
-
-														return (
-															<XStack
-																key={`${cat.categoryName}-${item.name}`}
-																justifyContent="space-between"
-																paddingLeft="$3"
-																marginTop="$1"
+													(item, index) => (
+														<XStack
+															// biome-ignore lint/suspicious/noArrayIndexKey: <No unique id>
+															key={`expense-${item.name}-${index}`}
+															justifyContent="space-between"
+															paddingLeft="$3"
+															marginTop="$1"
+														>
+															<SizableText
+																size="$3"
+																color="$color11"
 															>
-																<SizableText
-																	size="$3"
-																	color="$color11"
-																>
-																	{
-																		displayName
-																	}
-																</SizableText>
-																<SizableText
-																	size="$3"
-																	color="$color11"
-																>
-																	{Math.abs(
-																		item.amount,
-																	).toFixed(
-																		2,
-																	)}{' '}
-																	€
-																</SizableText>
-															</XStack>
-														);
-													},
+																{item.count > 1
+																	? `${item.name} (x${item.count})`
+																	: item.name}
+															</SizableText>
+															<SizableText
+																size="$3"
+																color="$color11"
+															>
+																{Math.abs(
+																	item.totalAmount,
+																).toFixed(
+																	2,
+																)}{' '}
+																€
+															</SizableText>
+														</XStack>
+													),
 												)}
 											</YStack>
 										))}
@@ -330,7 +271,7 @@ export default function BudgetDetailedMonthScreen() {
 										textAlign="center"
 										paddingVertical="$2"
 									>
-										{t('No income planned this month')}
+										{t('No income planned')}
 									</SizableText>
 								) : (
 									<YStack
@@ -359,40 +300,35 @@ export default function BudgetDetailedMonthScreen() {
 												</XStack>
 
 												{cat.items.map(
-													(item: GroupedItem) => {
-														const displayName =
-															item.count > 1
-																? `${item.name} (x${item.count})`
-																: item.name;
-														return (
-															<XStack
-																key={`${cat.categoryName}-${item.name}`}
-																justifyContent="space-between"
-																paddingLeft="$3"
-																marginTop="$1"
+													(item, index) => (
+														<XStack
+															// biome-ignore lint/suspicious/noArrayIndexKey: <No unique id>
+															key={`expense-${item.name}-${index}`}
+															justifyContent="space-between"
+															paddingLeft="$3"
+															marginTop="$1"
+														>
+															<SizableText
+																size="$3"
+																color="$color11"
 															>
-																<SizableText
-																	size="$3"
-																	color="$color11"
-																>
-																	{
-																		displayName
-																	}
-																</SizableText>
-																<SizableText
-																	size="$3"
-																	color="$color11"
-																>
-																	{Math.abs(
-																		item.amount,
-																	).toFixed(
-																		2,
-																	)}{' '}
-																	€
-																</SizableText>
-															</XStack>
-														);
-													},
+																{item.count > 1
+																	? `${item.name} (x${item.count})`
+																	: item.name}
+															</SizableText>
+															<SizableText
+																size="$3"
+																color="$color11"
+															>
+																{Math.abs(
+																	item.totalAmount,
+																).toFixed(
+																	2,
+																)}{' '}
+																€
+															</SizableText>
+														</XStack>
+													),
 												)}
 											</YStack>
 										))}

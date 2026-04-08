@@ -4,15 +4,14 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { Button, Card, SizableText, View, XStack, YStack } from 'tamagui';
-import { allMonthsData } from '@/src/utils/mockDataSummary';
 
 export default function YearsScreen() {
 	const router = useRouter();
 	const { t } = useTranslation();
 
 	const availableYears = useMemo(() => {
-		const years = allMonthsData.map((m) => m.year);
-		return Array.from(new Set(years)).sort((a, b) => a.localeCompare(b));
+		const currentYear = new Date().getFullYear();
+		return Array.from({ length: 6 }, (_, i) => String(currentYear + i));
 	}, []);
 
 	return (

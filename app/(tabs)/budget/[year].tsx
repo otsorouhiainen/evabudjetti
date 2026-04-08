@@ -8,9 +8,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { Card, SizableText, View, XStack, YStack } from 'tamagui';
-import { useTransactionOccurrencesCache } from '@/src/finance/cache/transactionOccurrencesCache';
-import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
-import { createMonthKey } from '@/src/finance/logic/util';
+import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
+import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
 
 export default function BudgetMonthsScreen() {
 	const { year } = useLocalSearchParams<{ year: string }>();
@@ -19,9 +18,7 @@ export default function BudgetMonthsScreen() {
 
 	const yearNum = Number(year);
 
-	const yearlySummaries = useTransactionSummaries(yearNum, 0, yearNum, 11);
-
-	const occurrencesCache = useTransactionOccurrencesCache((state) => state);
+	const plannedTransactions = usePlannedTransactions();
 
 	const monthKeys = [
 		'january',
@@ -42,32 +39,32 @@ export default function BudgetMonthsScreen() {
 		<YStack flex={1} backgroundColor="$background">
 			<ScrollView contentInsetAdjustmentBehavior="automatic">
 				<YStack padding="$4" gap="$3">
-					{yearlySummaries.map((_, index) => {
+					{monthKeys.map((monthKey, index) => {
 						const routeId = `${yearNum}-${index.toString().padStart(2, '0')}`;
-						const monthKey = createMonthKey(yearNum, index);
 
-						const monthOccurrences =
-							occurrencesCache.getMonth(
-								monthKey,
-							).transactionOccurrences;
+						let monthlyPlannedCashFlow = 0;
+						for (const txn of plannedTransactions) {
+							const count = getTransactionOccurrenceCount(
+								txn,
+								yearNum,
+								index,
+							);
 
-						let plannedCashFlow = 0;
-						for (const occ of monthOccurrences) {
-							if (!occ.realTransaction) {
-								if (occ.type === 'income') {
-									plannedCashFlow += Math.abs(occ.amount);
-								} else if (occ.type === 'expense') {
-									plannedCashFlow -= Math.abs(occ.amount);
+							if (count > 0) {
+								const totalAmount =
+									Math.abs(txn.amount) * count;
+								if (txn.type === 'income') {
+									monthlyPlannedCashFlow += totalAmount;
+								} else if (txn.type === 'expense') {
+									monthlyPlannedCashFlow -= totalAmount;
 								}
 							}
 						}
 
-						const change = plannedCashFlow;
+						const change = monthlyPlannedCashFlow;
 						const isWarning = change < 0;
 						const isNeutral = change === 0;
-
-						const translatedMonth = t(monthKeys[index]);
-
+						const translatedMonth = t(monthKey);
 						const bgColor = isWarning
 							? '#fce4ec'
 							: isNeutral
@@ -83,7 +80,6 @@ export default function BudgetMonthsScreen() {
 							: isNeutral
 								? '#757575'
 								: '#00796b';
-
 						return (
 							<Card
 								key={routeId}

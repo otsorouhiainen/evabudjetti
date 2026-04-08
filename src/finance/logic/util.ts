@@ -112,3 +112,105 @@ export function getSignedOccurrenceAmount(
 		? occurrence.amount
 		: -occurrence.amount;
 }
+
+function safeParseDate(
+	dateValue: Date | string | number | null | undefined,
+): Date {
+	if (dateValue == null) return new Date(NaN);
+	if (dateValue instanceof Date) return dateValue;
+	if (typeof dateValue === 'number') {
+		if (dateValue < 10000000000) return new Date(dateValue * 1000);
+		return new Date(dateValue);
+	}
+	if (typeof dateValue === 'string') {
+		return new Date(dateValue.replace(' ', 'T'));
+	}
+	return new Date(NaN);
+}
+
+function getDaysDiff(d1: Date, d2: Date) {
+	const utc1 = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
+	const utc2 = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
+	return Math.floor((utc2 - utc1) / (1000 * 60 * 60 * 24));
+}
+
+export function getTransactionOccurrenceCount(
+	txn: PlannedTransaction,
+	targetYear: number,
+	targetMonth: number,
+): number {
+	if (!txn.startDate) return 1;
+
+	const start = safeParseDate(txn.startDate);
+	if (Number.isNaN(start.getTime())) return 1;
+
+	const startYear = start.getFullYear();
+	const startMonth = start.getMonth();
+
+	if (
+		targetYear < startYear ||
+		(targetYear === startYear && targetMonth < startMonth)
+	) {
+		return 0;
+	}
+
+	if (txn.endDate) {
+		const end = safeParseDate(txn.endDate);
+		if (!Number.isNaN(end.getTime())) {
+			const endYear = end.getFullYear();
+			const endMonth = end.getMonth();
+			if (
+				targetYear > endYear ||
+				(targetYear === endYear && targetMonth > endMonth)
+			) {
+				return 0;
+			}
+		}
+	}
+
+	const base = txn.recurrenceBase || 'month';
+	const interval = txn.recurrenceInterval || 1;
+
+	if (base === 'month') {
+		const monthDiff =
+			(targetYear - startYear) * 12 + (targetMonth - startMonth);
+		return monthDiff % interval === 0 ? 1 : 0;
+	}
+
+	if (base === 'year') {
+		const yearDiff = targetYear - startYear;
+		if (targetMonth === startMonth && yearDiff % interval === 0) return 1;
+		return 0;
+	}
+
+	if (base === 'week') {
+		let count = 0;
+		const d = new Date(targetYear, targetMonth, 1);
+		while (d.getMonth() === targetMonth) {
+			const daysDiff = getDaysDiff(start, d);
+			if (daysDiff >= 0 && daysDiff % 7 === 0) {
+				const weeksSinceStart = daysDiff / 7;
+				if (weeksSinceStart % interval === 0) {
+					count++;
+				}
+			}
+			d.setDate(d.getDate() + 1);
+		}
+		return count;
+	}
+
+	if (base === 'day') {
+		let count = 0;
+		const d = new Date(targetYear, targetMonth, 1);
+		while (d.getMonth() === targetMonth) {
+			const daysDiff = getDaysDiff(start, d);
+			if (daysDiff >= 0 && daysDiff % interval === 0) {
+				count++;
+			}
+			d.setDate(d.getDate() + 1);
+		}
+		return count;
+	}
+
+	return 1;
+}
