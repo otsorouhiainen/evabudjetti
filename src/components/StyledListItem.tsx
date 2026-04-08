@@ -1,5 +1,4 @@
 import { ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
-import { isToday } from 'date-fns';
 import type { Router } from 'expo-router';
 import { useState } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
@@ -9,6 +8,7 @@ import type { TransactionOccurrence } from '../dataModel';
 interface Props {
 	dTxns: TransactionOccurrence[];
 	sum: number;
+	isCurrent: boolean;
 	router?: Router;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
@@ -16,6 +16,7 @@ interface Props {
 const StyledListItem: React.FC<Props> = ({
 	dTxns,
 	sum,
+	isCurrent,
 	router,
 	formatCurrency,
 }) => {
@@ -30,7 +31,7 @@ const StyledListItem: React.FC<Props> = ({
 			}}
 			key={`${dTxns[0].date.getTime()}`}
 			backgroundColor={'$white'}
-			borderColor={isToday(dTxns[0].date) ? '$primary200' : '$primary300'}
+			borderColor={isCurrent ? '$primary200' : '$primary300'}
 			pressStyle={{ backgroundColor: '$primary300' }}
 			onPress={() => setOpen(!isOpen)}
 		>

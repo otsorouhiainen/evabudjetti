@@ -6,6 +6,7 @@ import StyledListItem from './StyledListItem';
 interface Props {
 	txns: TransactionOccurrence[];
 	title: string;
+	isCurrent: boolean;
 	router?: Router;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
@@ -13,6 +14,7 @@ interface Props {
 const BudgetEventList: React.FC<Props> = ({
 	txns,
 	title,
+	isCurrent,
 	router,
 	formatCurrency,
 }) => {
@@ -55,6 +57,7 @@ const BudgetEventList: React.FC<Props> = ({
 				<StyledListItem
 					dTxns={dTxns}
 					sum={sumOfTxns(index)}
+					isCurrent={isCurrent}
 					router={router}
 					formatCurrency={formatCurrency}
 					key={`${dTxns[0].date.getTime()}`}

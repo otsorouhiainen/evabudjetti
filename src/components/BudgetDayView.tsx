@@ -38,10 +38,10 @@ export default function BudgetDayView({
 	// State to track how many transactions to show
 	const storeBalance = useBalanceStore((state) => state.balance);
 	const storeDisposable = useBalanceStore((state) => state.disposable);
-	// When first rendered, show only 3 future txs
-	const [futureCount, setFutureCount] = useState(3);
+	// When first rendered, show only 5 future txs
+	const [futureCount, setFutureCount] = useState(5);
 	// When first rendered, show only 4 past txs
-	const [pastCount, setPastCount] = useState(4);
+	const [pastCount, setPastCount] = useState(5);
 	const [currentBalance, setCurrentBalance] = useState(0);
 	const [disposable, setDisposable] = useState(0);
 
@@ -250,18 +250,21 @@ export default function BudgetDayView({
 					<BudgetEventList
 						txns={future}
 						title={''}
+						isCurrent={false}
 						formatCurrency={formatCurrency}
 					/>
 					{/* --- Present day events --- */}
 					<BudgetEventList
 						txns={current}
 						title={''}
+						isCurrent={true}
 						formatCurrency={formatCurrency}
 					/>
 					{/* --- Past Events --- */}
 					<BudgetEventList
 						txns={past}
 						title={''}
+						isCurrent={false}
 						formatCurrency={formatCurrency}
 					/>
 
