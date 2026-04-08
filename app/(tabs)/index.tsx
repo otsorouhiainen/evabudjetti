@@ -226,53 +226,6 @@ export default function Landing() {
 											{t('ADD INCOME/EXPENSE')}
 										</Text>
 									</Button>
-
-									<XStack
-										mt={'$3'}
-										gap={'$3'}
-										minWidth={'85%'}
-									>
-										<Button
-											backgroundColor="$primary200"
-											onPress={() =>
-												router.push('/funds')
-											}
-											height={80}
-											f={1}
-											borderRadius={40}
-										>
-											<Text
-												color={'$white'}
-												fontWeight={'700'}
-												fontSize={'$3'}
-												ta={'center'}
-												numberOfLines={2}
-												adjustsFontSizeToFit
-											>
-												SHOW{'\n'}BUDGET
-											</Text>
-										</Button>
-										<Button
-											backgroundColor="$primary200"
-											onPress={() =>
-												router.push('/budget_wizard')
-											}
-											height={80}
-											f={1}
-											borderRadius={40}
-										>
-											<Text
-												color={'$white'}
-												fontWeight={'700'}
-												fontSize={'$3'}
-												ta={'center'}
-												numberOfLines={2}
-												adjustsFontSizeToFit
-											>
-												EDIT{'\n'} BUDGET
-											</Text>
-										</Button>
-									</XStack>
 								</YStack>
 							</YStack>
 						)}
