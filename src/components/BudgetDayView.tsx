@@ -141,9 +141,11 @@ export default function BudgetDayView({
 		<YStack flex={1}>
 			{/* --- Current Day Card (Static on top) --- */}
 			<StyledCard
+				style={{ borderWidth: 2 }}
 				paddingVertical="$2"
 				paddingHorizontal="$4"
 				borderRadius="$1"
+				borderColor="$primary100"
 				alignItems="center"
 				justifyContent="center"
 				backgroundColor="$primary300"
