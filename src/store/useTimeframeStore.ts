@@ -11,13 +11,10 @@ interface TimeframeState {
 	timeframeStartYear: number;
 	timeframeStartMonth: number;
 	timeframeStartDay: number;
-	timeframeEndYear: number;
-	timeframeEndMonth: number;
-	timeframeEndDay: number;
 	timeframeLength: TimeframeLength;
 	setStartDate: (date: Date) => void;
 	setLength: (num: number, option: LengthOptions) => void;
-	getCurrentTimeframeStartDate: () => { start: Date; end: Date };
+	getCurrentTimeframe: () => Date[];
 }
 
 const addLength = (date: Date, timeframe: TimeframeLength) => {
@@ -55,9 +52,6 @@ export const useTimeframeStore = create<TimeframeState>()(
 			timeframeStartYear: new Date().getFullYear(),
 			timeframeStartMonth: new Date().getMonth(),
 			timeframeStartDay: new Date().getDate(),
-			timeframeEndYear: addMonths(new Date(), 1).getFullYear(),
-			timeframeEndMonth: addMonths(new Date(), 1).getMonth(),
-			timeframeEndDay: addMonths(new Date(), 1).getDate(),
 			timeframeLength: { length: 1, type: 'months' },
 
 			setStartDate: (date: Date) =>
@@ -72,7 +66,7 @@ export const useTimeframeStore = create<TimeframeState>()(
 					timeframeLength: { length: num, type: option },
 				}),
 
-			getCurrentTimeframeStartDate: () => {
+			getCurrentTimeframe: () => {
 				const {
 					timeframeStartYear,
 					timeframeStartMonth,
@@ -90,20 +84,7 @@ export const useTimeframeStore = create<TimeframeState>()(
 						timeframeLength,
 					);
 
-				// update stored values
-				set({
-					timeframeStartYear: currentTimeframeStart.getFullYear(),
-					timeframeStartMonth: currentTimeframeStart.getMonth(),
-					timeframeStartDay: currentTimeframeStart.getDate(),
-					timeframeEndYear: currentTimeframeEnd.getFullYear(),
-					timeframeEndMonth: currentTimeframeEnd.getMonth(),
-					timeframeEndDay: currentTimeframeEnd.getDate(),
-				});
-
-				return {
-					start: currentTimeframeStart,
-					end: currentTimeframeEnd,
-				};
+				return [currentTimeframeStart, currentTimeframeEnd];
 			},
 		}),
 		{

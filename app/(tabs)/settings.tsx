@@ -162,7 +162,7 @@ export default function Settings() {
 					closeKeyboard
 					onKeyboardClose={checkText}
 				>
-					<YStack gap={10} paddingHorizontal={10}>
+					<YStack gap={10} paddingHorizontal={10} paddingTop={20}>
 						<XStack gap={5}>
 							<SizableText size="$title3" color="$black">
 								{t('Start date')} *
@@ -170,11 +170,12 @@ export default function Settings() {
 
 							<MultiPlatformDatePicker
 								value={tempStartDate}
+								color="$primary100"
 								onChange={setTempStartDate}
 							/>
 						</XStack>
 
-						<YStack gap={5}>
+						<YStack>
 							<SizableText size="$title3" color="$black">
 								{t('Timeframe length')}
 							</SizableText>
@@ -220,9 +221,9 @@ export default function Settings() {
 
 										<Select.Content>
 											<Select.Viewport>
-												{timeframeOptions.map(
-													(option, i) => {
-														return (
+												<Select.Group>
+													{timeframeOptions.map(
+														(option, i) => (
 															<Select.Item
 																index={i}
 																key={option}
@@ -264,9 +265,9 @@ export default function Settings() {
 																	/>
 																</Select.ItemIndicator>
 															</Select.Item>
-														);
-													},
-												)}
+														),
+													)}
+												</Select.Group>
 											</Select.Viewport>
 										</Select.Content>
 									</Select>

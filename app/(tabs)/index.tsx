@@ -26,38 +26,31 @@ export default function Landing() {
 	const [initialBalance, setInitialBalance] = useState('');
 	const saveBalanceToDb = useAddBalanceReconciliation();
 	const [helpVisible, setHelpVisible] = useState(false);
-	const { timeframeEndYear, timeframeEndMonth, timeframeEndDay } =
-		useTimeframeStore();
+	const { getCurrentTimeframe } = useTimeframeStore();
+
+	const [timeframeStart, timeframeEnd] = getCurrentTimeframe();
 
 	const today = new Date();
-	const year = today.getFullYear();
-	const month = today.getMonth();
-	const dayOfMonth = today.getDate();
-	const timeframeEndDate = new Date(
-		timeframeEndYear,
-		timeframeEndMonth,
-		timeframeEndDay,
-	);
 
 	const timespanBalances = useBalances(
-		year,
-		month,
-		timeframeEndYear,
-		timeframeEndMonth,
+		timeframeStart.getFullYear(),
+		timeframeStart.getMonth(),
+		timeframeEnd.getFullYear(),
+		timeframeEnd.getMonth(),
 	);
 	const currentMonthData = timespanBalances[0];
 
 	const budgetCreated = currentMonthData?.endBalance !== undefined;
 	const displayBalance =
-		currentMonthData?.dailyBalances[dayOfMonth - 1]?.balance ?? 0;
+		currentMonthData?.dailyBalances[today.getDate() - 1]?.balance ?? 0;
 
 	const usableFunds = useUsableFunds(
-		year,
-		month,
-		dayOfMonth,
-		timeframeEndYear,
-		timeframeEndMonth,
-		timeframeEndDay,
+		timeframeStart.getFullYear(),
+		timeframeStart.getMonth(),
+		timeframeStart.getDate(),
+		timeframeEnd.getFullYear(),
+		timeframeEnd.getMonth(),
+		timeframeEnd.getDate(),
 	);
 
 	/* 
@@ -68,7 +61,7 @@ export default function Landing() {
 	(TODO: Test with real values)
 	*/
 	const getBalanceZeroDate = () => {
-		let daysCounter = -dayOfMonth; // Tracks difference from current day
+		let daysCounter = -today.getDate(); // Tracks difference from current day
 
 		for (const month of timespanBalances) {
 			const balances = month.dailyBalances;
@@ -82,7 +75,7 @@ export default function Landing() {
 				daysCounter += 1; // If balance was not 0, add day to counter and continue.
 			}
 		}
-		return timeframeEndDate;
+		return timeframeEnd;
 	};
 
 	return (
@@ -156,9 +149,11 @@ export default function Landing() {
 										>
 											{t('Current situation')}
 											{'\n'}
-											{today.toLocaleDateString('fi-FI')}
+											{timeframeStart.toLocaleDateString(
+												'fi-FI',
+											)}
 											{' - '}
-											{timeframeEndDate.toLocaleDateString(
+											{timeframeEnd.toLocaleDateString(
 												'fi-FI',
 											)}
 										</Text>
