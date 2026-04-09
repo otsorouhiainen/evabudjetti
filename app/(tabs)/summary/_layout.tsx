@@ -17,6 +17,7 @@ export default function SummaryStackLayout() {
 				options={({ route }) => ({
 					title: `${t('Year')} ${(route.params as { year?: string })?.year}`,
 					headerLargeTitle: false,
+					headerBackButtonDisplayMode: 'minimal',
 				})}
 			/>
 		</Stack>
