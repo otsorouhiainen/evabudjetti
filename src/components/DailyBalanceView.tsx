@@ -33,10 +33,10 @@ export default function DailyBalanceView({
 	// State to track how many transactions to show
 	const storeBalance = useBalanceStore((state) => state.balance);
 	const storeDisposable = useBalanceStore((state) => state.disposable);
-	// When first rendered, show only 5 future days
-	const [futureCount, setFutureCount] = useState(5);
-	// When first rendered, show only 5 past days
-	const [pastCount, setPastCount] = useState(5);
+	// When first rendered, show 30 future days
+	const [futureCount, setFutureCount] = useState(30);
+	// When first rendered, show 30 past days
+	const [pastCount, setPastCount] = useState(30);
 	const [currentBalance, setCurrentBalance] = useState(0);
 	const [disposable, setDisposable] = useState(0);
 
@@ -124,16 +124,16 @@ export default function DailyBalanceView({
 		};
 	}, [transactions, currentDate, futureCount, pastCount]);
 
-	// Display 5 more days on "load more" press
+	// Display 10 more days on "load more" press
 
 	const handleFutureLoadMorePress = () => {
 		if (futureDays.length > futureCount) {
-			setFutureCount((prev) => prev + 5);
+			setFutureCount((prev) => prev + 10);
 		}
 	};
 	const handlePastLoadMorePress = () => {
 		if (pastDays.length > pastCount) {
-			setPastCount((prev) => prev + 5);
+			setPastCount((prev) => prev + 10);
 		}
 	};
 
@@ -201,7 +201,7 @@ export default function DailyBalanceView({
 							{t('Disposable income')}:
 						</Text>
 						<Text color="$black" fontSize="$4" fontWeight="800">
-							{formatCurrency(disposable)}
+							{formatCurrency(disposable)} {t('/ day')}
 						</Text>
 					</YStack>
 				</XStack>
