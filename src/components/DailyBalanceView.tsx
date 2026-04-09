@@ -13,7 +13,7 @@ import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 import StyledCard from './styledCard';
 
 interface DailyBalanceViewProps {
-	currentDate: Date;
+	selectedDate: Date;
 	transactions: TransactionOccurrence[];
 	onDateChange: (date: Date) => void;
 	onAddPress?: () => void;
@@ -26,7 +26,7 @@ const formatDate = (date: Date) => {
 };
 
 export default function DailyBalanceView({
-	currentDate,
+	selectedDate,
 	transactions,
 	onDateChange,
 	onAddPress,
@@ -58,20 +58,20 @@ export default function DailyBalanceView({
 	}, [storeBalance]);
 
 	const handlePrevDay = () => {
-		const newDate = new Date(currentDate);
+		const newDate = new Date(selectedDate);
 		newDate.setDate(newDate.getDate() - 1);
 		onDateChange(newDate);
 	};
 
 	const handleNextDay = () => {
-		const newDate = new Date(currentDate);
+		const newDate = new Date(selectedDate);
 		newDate.setDate(newDate.getDate() + 1);
 		onDateChange(newDate);
 	};
 
 	// --- Data Processing ---
 	const { past, current, future, futureDays, pastDays } = useMemo(() => {
-		const cDateStr = formatDate(currentDate);
+		const cDateStr = formatDate(selectedDate);
 
 		// Normalize dates: ensure each txn.date is a Date object so getTime() is available
 		const normalizedTxns: TransactionOccurrence[] = transactions.map(
@@ -114,7 +114,7 @@ export default function DailyBalanceView({
 
 			if (tStr === nowTime) {
 				currentDay.push(t);
-			} else if (t[0].date > currentDate) {
+			} else if (t[0].date > selectedDate) {
 				futureDays.push(t);
 			} else {
 				pastDays.push(t);
@@ -134,7 +134,7 @@ export default function DailyBalanceView({
 			past: pastDays.slice(0, pastCount),
 			pastDays: pastDays,
 		};
-	}, [transactions, currentDate, futureCount, pastCount]);
+	}, [transactions, selectedDate, futureCount, pastCount]);
 
 	// Display 10 more days on "load more" press
 
@@ -180,7 +180,7 @@ export default function DailyBalanceView({
 					/>
 
 					<MultiPlatformDatePicker
-						value={currentDate}
+						value={selectedDate}
 						color="black"
 						onChange={(value) => {
 							onDateChange(value);
