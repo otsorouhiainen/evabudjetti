@@ -181,6 +181,10 @@ i18next
 				'Language': 'Language',
 				'Timeframe': 'Timeframe',
 				'Start date': 'Start date',
+				'days': 'days',
+				'weeks': 'weeks',
+				'months': 'months',
+				'years': 'years'
 			},
 		},
 		fi: {
@@ -385,6 +389,10 @@ i18next
 				'Language': 'Kieli',
 				'Timeframe': 'Jakso',
 				'Start date': 'Jakson alku',
+				'days': 'päivää',
+				'weeks': 'viikkoa',
+				'months': 'kuukausia',
+				'years': 'vuosia'
 			},
 		},
 	},
