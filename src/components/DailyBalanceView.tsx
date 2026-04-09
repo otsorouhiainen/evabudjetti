@@ -2,9 +2,6 @@ import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
-import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
-
-import { useTimeframeStore } from '@/src/store/useTimeframeStore';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
 import { formatCurrency } from '../utils/budgetUtils';
@@ -15,6 +12,7 @@ import StyledCard from './styledCard';
 interface DailyBalanceViewProps {
 	selectedDate: Date;
 	dayBalance: number | undefined;
+	usableFunds: number;
 	transactions: TransactionOccurrence[];
 	onDateChange: (date: Date) => void;
 	onAddPress?: () => void;
@@ -29,6 +27,7 @@ const formatDate = (date: Date) => {
 export default function DailyBalanceView({
 	selectedDate,
 	dayBalance,
+	usableFunds,
 	transactions,
 	onDateChange,
 	onAddPress,
@@ -39,19 +38,6 @@ export default function DailyBalanceView({
 	const [futureCount, setFutureCount] = useState(30);
 	// When first rendered, show 30 past days
 	const [pastCount, setPastCount] = useState(30);
-
-	const { getCurrentTimeframe } = useTimeframeStore();
-
-	const [timeframeStart, timeframeEnd] = getCurrentTimeframe();
-
-	const usableFunds = useUsableFunds(
-		timeframeStart.getFullYear(),
-		timeframeStart.getMonth(),
-		timeframeStart.getDate(),
-		timeframeEnd.getFullYear(),
-		timeframeEnd.getMonth(),
-		timeframeEnd.getDate(),
-	);
 
 	const handlePrevDay = () => {
 		const newDate = new Date(selectedDate);

@@ -7,6 +7,12 @@ import DailyBalanceView from '@/src/components/DailyBalanceView';
 import type { TransactionOccurrence } from '@/src/dataModel';
 import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
 
+import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
+import {
+	getClosestTimeframe,
+	useTimeframeStore,
+} from '@/src/store/useTimeframeStore';
+
 export default function Funds() {
 	const currentDate = new Date();
 	const currentMonth = currentDate.getMonth();
@@ -44,6 +50,22 @@ export default function Funds() {
 		}
 	};
 
+	const { timeframeLength } = useTimeframeStore();
+
+	const { currentTimeframeStart, currentTimeframeEnd } = getClosestTimeframe(
+		selectedDate,
+		timeframeLength,
+	);
+
+	const usableFunds = useUsableFunds(
+		currentTimeframeStart.getFullYear(),
+		currentTimeframeStart.getMonth(),
+		currentTimeframeStart.getDate(),
+		currentTimeframeEnd.getFullYear(),
+		currentTimeframeEnd.getMonth(),
+		currentTimeframeEnd.getDate(),
+	);
+
 	const router = useRouter();
 
 	return (
@@ -58,6 +80,7 @@ export default function Funds() {
 					onDateChange={setselectedDate}
 					selectedDate={selectedDate}
 					dayBalance={selectedDayBalance()}
+					usableFunds={usableFunds}
 					transactions={transactions}
 					onAddPress={() => {
 						router.push('/add_transaction2');
