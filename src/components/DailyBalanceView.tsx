@@ -254,6 +254,7 @@ export default function DailyBalanceView({
 					<DailyEventList
 						txnsByDate={future}
 						title={''}
+						selectedDate={selectedDate}
 						isCurrent={false}
 						formatCurrency={formatCurrency}
 					/>
@@ -261,6 +262,7 @@ export default function DailyBalanceView({
 					<DailyEventList
 						txnsByDate={current}
 						title={''}
+						selectedDate={selectedDate}
 						isCurrent={true}
 						formatCurrency={formatCurrency}
 					/>
@@ -268,6 +270,7 @@ export default function DailyBalanceView({
 					<DailyEventList
 						txnsByDate={past}
 						title={''}
+						selectedDate={selectedDate}
 						isCurrent={false}
 						formatCurrency={formatCurrency}
 					/>

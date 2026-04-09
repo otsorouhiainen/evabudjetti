@@ -6,6 +6,7 @@ import DailyEventListItem from './DailyEventListItem';
 interface Props {
 	txnsByDate: TransactionOccurrence[][];
 	title: string;
+	selectedDate: Date;
 	isCurrent: boolean;
 	router?: Router;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
@@ -14,6 +15,7 @@ interface Props {
 const BudgetEventList: React.FC<Props> = ({
 	txnsByDate,
 	title,
+	selectedDate,
 	isCurrent,
 	router,
 	formatCurrency,
@@ -31,26 +33,51 @@ const BudgetEventList: React.FC<Props> = ({
 		}
 		return sum;
 	};
+	if (isCurrent) console.log(txnsByDate);
+	if (isCurrent) console.log(txnsByDate.length);
 
-	return (
-		<YStack gap={8} marginBottom={8}>
-			{title !== '' && (
-				<Text fontSize={'$title1'} fontWeight={'700'} mt={'$2'}>
-					{title}
-				</Text>
-			)}
-			{txnsByDate.map((dTxns, index) => (
+	// Render unique item when selected day has no transactions
+	if (isCurrent && txnsByDate.length === 0) {
+		return (
+			<YStack gap={8} marginBottom={8}>
+				{title !== '' && (
+					<Text fontSize={'$title1'} fontWeight={'700'} mt={'$2'}>
+						{title}
+					</Text>
+				)}
 				<DailyEventListItem
-					dTxns={dTxns}
-					sum={sumOfTxns(index)}
+					dTxns={[]}
+					date={selectedDate}
+					sum={0}
 					isCurrent={isCurrent}
 					router={router}
 					formatCurrency={formatCurrency}
-					key={`${dTxns[0].date.getTime()}`}
+					key={`${selectedDate.getTime()}`}
 				></DailyEventListItem>
-			))}
-		</YStack>
-	);
+			</YStack>
+		);
+	} else {
+		return (
+			<YStack gap={8} marginBottom={8}>
+				{title !== '' && (
+					<Text fontSize={'$title1'} fontWeight={'700'} mt={'$2'}>
+						{title}
+					</Text>
+				)}
+				{txnsByDate.map((dTxns, index) => (
+					<DailyEventListItem
+						dTxns={dTxns}
+						date={dTxns[0].date}
+						sum={sumOfTxns(index)}
+						isCurrent={isCurrent}
+						router={router}
+						formatCurrency={formatCurrency}
+						key={`${dTxns[0].date.getTime()}`}
+					></DailyEventListItem>
+				))}
+			</YStack>
+		);
+	}
 };
 
 export default BudgetEventList;
