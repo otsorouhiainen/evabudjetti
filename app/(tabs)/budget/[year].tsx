@@ -8,15 +8,17 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { Card, SizableText, View, XStack, YStack } from 'tamagui';
-import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
+import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
+import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
 
-export default function MonthsScreen() {
+export default function BudgetMonthsScreen() {
 	const { year } = useLocalSearchParams<{ year: string }>();
 	const router = useRouter();
 	const { t } = useTranslation();
 
 	const yearNum = Number(year);
-	const yearlySummaries = useTransactionSummaries(yearNum, 0, yearNum, 11);
+
+	const plannedTransactions = usePlannedTransactions();
 
 	const monthKeys = [
 		'january',
@@ -37,15 +39,32 @@ export default function MonthsScreen() {
 		<YStack flex={1} backgroundColor="$background">
 			<ScrollView contentInsetAdjustmentBehavior="automatic">
 				<YStack padding="$4" gap="$3">
-					{yearlySummaries.map((monthData, index) => {
-						const change = monthData?.cashFlow ?? 0;
-						const isWarning = change < 0;
-						const isNeutral = change === 0;
-
-						const translatedMonth = t(monthKeys[index]);
-
+					{monthKeys.map((monthKey, index) => {
 						const routeId = `${yearNum}-${index.toString().padStart(2, '0')}`;
 
+						let monthlyPlannedCashFlow = 0;
+						for (const txn of plannedTransactions) {
+							const count = getTransactionOccurrenceCount(
+								txn,
+								yearNum,
+								index,
+							);
+
+							if (count > 0) {
+								const totalAmount =
+									Math.abs(txn.amount) * count;
+								if (txn.type === 'income') {
+									monthlyPlannedCashFlow += totalAmount;
+								} else if (txn.type === 'expense') {
+									monthlyPlannedCashFlow -= totalAmount;
+								}
+							}
+						}
+
+						const change = monthlyPlannedCashFlow;
+						const isWarning = change < 0;
+						const isNeutral = change === 0;
+						const translatedMonth = t(monthKey);
 						const bgColor = isWarning
 							? '#fce4ec'
 							: isNeutral
@@ -61,14 +80,13 @@ export default function MonthsScreen() {
 							: isNeutral
 								? '#757575'
 								: '#00796b';
-
 						return (
 							<Card
 								key={routeId}
 								bordered
 								padding="$4"
 								onPress={() =>
-									router.push(`/summary/detail/${routeId}`)
+									router.push(`/budget/detail/${routeId}`)
 								}
 								backgroundColor={bgColor}
 								borderColor={borderColor}
