@@ -2,7 +2,9 @@ import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
+import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
 import useBalanceStore from '@/src/store/useBalanceStore';
+import { useTimeframeStore } from '@/src/store/useTimeframeStore';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
 import { formatCurrency } from '../utils/budgetUtils';
@@ -32,18 +34,28 @@ export default function DailyBalanceView({
 	const { t } = useTranslation();
 	// State to track how many transactions to show
 	const storeBalance = useBalanceStore((state) => state.balance);
-	const storeDisposable = useBalanceStore((state) => state.disposable);
 	// When first rendered, show 30 future days
 	const [futureCount, setFutureCount] = useState(30);
 	// When first rendered, show 30 past days
 	const [pastCount, setPastCount] = useState(30);
 	const [currentBalance, setCurrentBalance] = useState(0);
-	const [disposable, setDisposable] = useState(0);
+
+	const { getCurrentTimeframe } = useTimeframeStore();
+
+	const [timeframeStart, timeframeEnd] = getCurrentTimeframe();
+
+	const usableFunds = useUsableFunds(
+		timeframeStart.getFullYear(),
+		timeframeStart.getMonth(),
+		timeframeStart.getDate(),
+		timeframeEnd.getFullYear(),
+		timeframeEnd.getMonth(),
+		timeframeEnd.getDate(),
+	);
 
 	useEffect(() => {
 		setCurrentBalance(storeBalance);
-		setDisposable(storeDisposable);
-	}, [storeBalance, storeDisposable]);
+	}, [storeBalance]);
 
 	const handlePrevDay = () => {
 		const newDate = new Date(currentDate);
@@ -198,10 +210,10 @@ export default function DailyBalanceView({
 					</YStack>
 					<YStack alignItems="center" paddingLeft={10}>
 						<Text color="$black" fontSize="$body" fontWeight="600">
-							{t('Disposable income')}:
+							{t('Usable funds')}:
 						</Text>
 						<Text color="$black" fontSize="$4" fontWeight="800">
-							{formatCurrency(disposable)} {t('/ day')}
+							{formatCurrency(usableFunds)} {t('/ day')}
 						</Text>
 					</YStack>
 				</XStack>
