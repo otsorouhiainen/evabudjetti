@@ -179,6 +179,12 @@ i18next
 
 				// SETTINGS
 				'Language': 'Language',
+				'Timeframe': 'Timeframe',
+				'Start date': 'Start date',
+				'days': 'days',
+				'weeks': 'weeks',
+				'months': 'months',
+				'years': 'years'
 			},
 		},
 		fi: {
@@ -380,8 +386,13 @@ i18next
 				'Uncategorized': 'Ei määritelty',
 
 				// SETTINGS
-				'Language': 'Kieli'
-
+				'Language': 'Kieli',
+				'Timeframe': 'Jakso',
+				'Start date': 'Jakson alku',
+				'days': 'päivää',
+				'weeks': 'viikkoa',
+				'months': 'kuukausia',
+				'years': 'vuosia'
 			},
 		},
 	},
