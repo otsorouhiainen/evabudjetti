@@ -197,7 +197,9 @@ export default function DailyBalanceView({
 							{t('Usable funds')}:
 						</Text>
 						<Text color="$black" fontSize="$4" fontWeight="800">
-							{formatCurrency(usableFunds)} {t('/ day')}
+							{dayBalance !== undefined
+								? `${formatCurrency(usableFunds)} ${t('/ day')}`
+								: '--'}
 						</Text>
 					</YStack>
 				</XStack>
