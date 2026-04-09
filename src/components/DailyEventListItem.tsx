@@ -23,7 +23,7 @@ const DailyEventListItem: React.FC<Props> = ({
 	router,
 	formatCurrency,
 }) => {
-	const [isOpen, setOpen] = useState(dTxns.length === 0);
+	const [isOpen, setOpen] = useState(isCurrent);
 	const { t } = useTranslation();
 	return (
 		<XStack
