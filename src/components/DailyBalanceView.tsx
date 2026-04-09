@@ -1,9 +1,9 @@
 import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
-import useBalanceStore from '@/src/store/useBalanceStore';
+
 import { useTimeframeStore } from '@/src/store/useTimeframeStore';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
@@ -14,6 +14,7 @@ import StyledCard from './styledCard';
 
 interface DailyBalanceViewProps {
 	selectedDate: Date;
+	dayBalance: number | undefined;
 	transactions: TransactionOccurrence[];
 	onDateChange: (date: Date) => void;
 	onAddPress?: () => void;
@@ -27,18 +28,17 @@ const formatDate = (date: Date) => {
 
 export default function DailyBalanceView({
 	selectedDate,
+	dayBalance,
 	transactions,
 	onDateChange,
 	onAddPress,
 }: DailyBalanceViewProps) {
 	const { t } = useTranslation();
-	// State to track how many transactions to show
-	const storeBalance = useBalanceStore((state) => state.balance);
+
 	// When first rendered, show 30 future days
 	const [futureCount, setFutureCount] = useState(30);
 	// When first rendered, show 30 past days
 	const [pastCount, setPastCount] = useState(30);
-	const [currentBalance, setCurrentBalance] = useState(0);
 
 	const { getCurrentTimeframe } = useTimeframeStore();
 
@@ -52,10 +52,6 @@ export default function DailyBalanceView({
 		timeframeEnd.getMonth(),
 		timeframeEnd.getDate(),
 	);
-
-	useEffect(() => {
-		setCurrentBalance(storeBalance);
-	}, [storeBalance]);
 
 	const handlePrevDay = () => {
 		const newDate = new Date(selectedDate);
@@ -205,7 +201,9 @@ export default function DailyBalanceView({
 							{t('Account balance')}:
 						</Text>
 						<Text color="$black" fontSize="$4" fontWeight="800">
-							{formatCurrency(currentBalance)}
+							{dayBalance !== undefined
+								? formatCurrency(dayBalance)
+								: t('Unknown')}
 						</Text>
 					</YStack>
 					<YStack alignItems="center" paddingLeft={10}>

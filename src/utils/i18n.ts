@@ -128,6 +128,7 @@ i18next
 				// FUNDS
 				'Daily situation': 'Daily situation',
 				'Account balance': 'Account balance',
+				'Unknown': 'Unknown',
 				'Disposable income': 'Disposable income',
 				'Load more': 'Load more',
 
@@ -328,6 +329,7 @@ i18next
 				// FUNDS
 				'Daily situation': 'Päivän rahatilanne',
 				'Account balance': 'Tilillä rahaa',
+				'Unknown': 'Ei tietoa',
 				'Disposable income': 'Käyttövara',
 				'Load more': 'Lataa enemmän',
 

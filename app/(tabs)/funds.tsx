@@ -5,7 +5,6 @@ import { YStack } from 'tamagui';
 
 import DailyBalanceView from '@/src/components/DailyBalanceView';
 import type { TransactionOccurrence } from '@/src/dataModel';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
 
 export default function Funds() {
@@ -14,16 +13,36 @@ export default function Funds() {
 	const currentYear = currentDate.getFullYear();
 
 	// Fetch Occurrences and Balances for the next 2 years
-	const occurrencesAndBalances = useOccurrencesAndBalances(currentYear, currentMonth, currentYear+2, currentMonth)
+	const occurrencesAndBalances = useOccurrencesAndBalances(
+		currentYear,
+		currentMonth,
+		currentYear + 2,
+		currentMonth,
+	);
 	const transactions: TransactionOccurrence[] = [];
-	for(const month of occurrencesAndBalances){ 
-		for(const txn of month.transactionOccurrences){
-			transactions.push(txn)
+	for (const month of occurrencesAndBalances) {
+		for (const txn of month.transactionOccurrences) {
+			transactions.push(txn);
 		}
 	}
-	
-	const [selectedDate, setselectedDate] = useState(currentDate);
 
+	const [selectedDate, setselectedDate] = useState(currentDate);
+	const selectedDay = selectedDate.getDate();
+	const selectedYearStr = String(selectedDate.getFullYear());
+	const selectedMonthStr =
+		selectedDate.getMonth() < 9
+			? String(`0${selectedDate.getMonth() + 1}`)
+			: String(selectedDate.getMonth() + 1);
+
+	const selectedDateMonthKey = `${selectedYearStr}-${selectedMonthStr}`;
+
+	const selectedDayBalance = () => {
+		for (const month of occurrencesAndBalances) {
+			if (month.monthKey === selectedDateMonthKey) {
+				return month.dailyBalances[selectedDay - 1]?.balance;
+			}
+		}
+	};
 
 	const router = useRouter();
 
@@ -38,6 +57,7 @@ export default function Funds() {
 				<DailyBalanceView
 					onDateChange={setselectedDate}
 					selectedDate={selectedDate}
+					dayBalance={selectedDayBalance()}
 					transactions={transactions}
 					onAddPress={() => {
 						router.push('/add_transaction2');
