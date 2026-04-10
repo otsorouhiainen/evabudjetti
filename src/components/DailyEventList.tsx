@@ -33,8 +33,6 @@ const BudgetEventList: React.FC<Props> = ({
 		}
 		return sum;
 	};
-	if (isCurrent) console.log(txnsByDate);
-	if (isCurrent) console.log(txnsByDate.length);
 
 	// Render unique item when selected day has no transactions
 	if (isCurrent && txnsByDate.length === 0) {
