@@ -23,12 +23,18 @@ export default function Landing() {
 						fontSize="$7"
 						fontWeight={700}
 						color="$primary100"
+						textAlign="center"
 						numberOfLines={1}
 						adjustsFontSizeToFit
 					>
 						{t('EVA MyBudget')}
 					</Text>
-					<Text fontSize="$4" numberOfLines={1} adjustsFontSizeToFit>
+					<Text
+						fontSize="$4"
+						textAlign="center"
+						numberOfLines={1}
+						adjustsFontSizeToFit
+					>
 						{t('Supporting your financial well-being')}
 					</Text>
 				</YStack>

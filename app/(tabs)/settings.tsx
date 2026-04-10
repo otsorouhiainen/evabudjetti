@@ -352,7 +352,7 @@ export default function Settings() {
 					>
 						<YStack>
 							<SizableText color="$black" size="$title2">
-								Introduction page debug
+								Show introduction page
 							</SizableText>
 							<SizableText size="$2" color="$black">
 								Temporary
