@@ -168,6 +168,10 @@ export function getTransactionOccurrenceCount(
 		}
 	}
 
+	if (txn.recurrenceBase == null) {
+		return targetYear === startYear && targetMonth === startMonth ? 1 : 0;
+	}
+
 	const base = txn.recurrenceBase || 'month';
 	const interval = txn.recurrenceInterval || 1;
 
@@ -184,12 +188,16 @@ export function getTransactionOccurrenceCount(
 	}
 
 	if (base === 'week') {
+		if (txn.type === 'income' && interval < 4) {
+			return 365 / (7 * interval) / 12;
+		}
+
 		let count = 0;
 		const d = new Date(targetYear, targetMonth, 1);
 		while (d.getMonth() === targetMonth) {
 			const daysDiff = getDaysDiff(start, d);
 			if (daysDiff >= 0 && daysDiff % 7 === 0) {
-				const weeksSinceStart = daysDiff / 7;
+				const weeksSinceStart = Math.floor(daysDiff / 7);
 				if (weeksSinceStart % interval === 0) {
 					count++;
 				}
@@ -200,6 +208,10 @@ export function getTransactionOccurrenceCount(
 	}
 
 	if (base === 'day') {
+		if (txn.type === 'income' && interval <= 30) {
+			return 365 / (1 * interval) / 12;
+		}
+
 		let count = 0;
 		const d = new Date(targetYear, targetMonth, 1);
 		while (d.getMonth() === targetMonth) {
@@ -212,5 +224,5 @@ export function getTransactionOccurrenceCount(
 		return count;
 	}
 
-	return 1;
+	return 0;
 }

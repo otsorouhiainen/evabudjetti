@@ -18,9 +18,6 @@ export default function YearsScreen() {
 		<YStack flex={1} backgroundColor="$background">
 			<ScrollView>
 				<YStack padding="$4" gap="$3">
-					<SizableText size="$5" color="$color10" marginBottom="$2">
-						{t('Choose a year')}
-					</SizableText>
 					{availableYears.map((year) => (
 						<Card
 							key={year}

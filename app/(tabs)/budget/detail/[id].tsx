@@ -8,6 +8,7 @@ import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransaction
 import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
 
 type ProcessedItem = {
+	id: number;
 	name: string;
 	count: number;
 	totalAmount: number;
@@ -68,6 +69,7 @@ export default function BudgetDetailedMonthScreen() {
 				const catIdStr = String(evt.categoryId);
 
 				const processedItem: ProcessedItem = {
+					id: evt.id,
 					name: evt.name,
 					count: count,
 					totalAmount: totalAmount,
@@ -196,37 +198,30 @@ export default function BudgetDetailedMonthScreen() {
 													</SizableText>
 												</XStack>
 
-												{cat.items.map(
-													(item, index) => (
-														<XStack
-															// biome-ignore lint/suspicious/noArrayIndexKey: <No unique id>
-															key={`expense-${item.name}-${index}`}
-															justifyContent="space-between"
-															paddingLeft="$3"
-															marginTop="$1"
+												{cat.items.map((item) => (
+													<XStack
+														key={`expense-${item.id}`}
+														justifyContent="space-between"
+														paddingLeft="$3"
+														marginTop="$1"
+													>
+														<SizableText
+															size="$3"
+															color="$color11"
 														>
-															<SizableText
-																size="$3"
-																color="$color11"
-															>
-																{item.count > 1
-																	? `${item.name} (x${item.count})`
-																	: item.name}
-															</SizableText>
-															<SizableText
-																size="$3"
-																color="$color11"
-															>
-																{Math.abs(
-																	item.totalAmount,
-																).toFixed(
-																	2,
-																)}{' '}
-																€
-															</SizableText>
-														</XStack>
-													),
-												)}
+															{item.name}
+														</SizableText>
+														<SizableText
+															size="$3"
+															color="$color11"
+														>
+															{Math.abs(
+																item.totalAmount,
+															).toFixed(2)}{' '}
+															€
+														</SizableText>
+													</XStack>
+												))}
 											</YStack>
 										))}
 									</YStack>
@@ -299,37 +294,30 @@ export default function BudgetDetailedMonthScreen() {
 													</SizableText>
 												</XStack>
 
-												{cat.items.map(
-													(item, index) => (
-														<XStack
-															// biome-ignore lint/suspicious/noArrayIndexKey: <No unique id>
-															key={`expense-${item.name}-${index}`}
-															justifyContent="space-between"
-															paddingLeft="$3"
-															marginTop="$1"
+												{cat.items.map((item) => (
+													<XStack
+														key={`expense-${item.id}`}
+														justifyContent="space-between"
+														paddingLeft="$3"
+														marginTop="$1"
+													>
+														<SizableText
+															size="$3"
+															color="$color11"
 														>
-															<SizableText
-																size="$3"
-																color="$color11"
-															>
-																{item.count > 1
-																	? `${item.name} (x${item.count})`
-																	: item.name}
-															</SizableText>
-															<SizableText
-																size="$3"
-																color="$color11"
-															>
-																{Math.abs(
-																	item.totalAmount,
-																).toFixed(
-																	2,
-																)}{' '}
-																€
-															</SizableText>
-														</XStack>
-													),
-												)}
+															{item.name}
+														</SizableText>
+														<SizableText
+															size="$3"
+															color="$color11"
+														>
+															{Math.abs(
+																item.totalAmount,
+															).toFixed(2)}{' '}
+															€
+														</SizableText>
+													</XStack>
+												))}
 											</YStack>
 										))}
 									</YStack>
