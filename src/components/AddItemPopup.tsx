@@ -285,6 +285,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						</SizableText>
 						<MultiPlatformDatePicker
 							value={startDate}
+							color="primary100"
 							onChange={setStartDate}
 						/>
 					</View>
@@ -320,6 +321,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						{hasEndDate && (
 							<MultiPlatformDatePicker
 								value={endDate}
+								color="primary100"
 								onChange={setEndDate}
 							/>
 						)}

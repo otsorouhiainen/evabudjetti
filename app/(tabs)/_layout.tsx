@@ -1,4 +1,10 @@
-import { ChartColumn, Home, Settings, Wallet } from '@tamagui/lucide-icons';
+import {
+	ChartColumn,
+	DollarSign,
+	Home,
+	Settings,
+	Wallet,
+} from '@tamagui/lucide-icons';
 import { Tabs } from 'expo-router';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +30,11 @@ export default function TabLayout() {
 			icon: <Wallet size={'$icons.md'} color={theme.white.val} />,
 			name: t('Funds'),
 			route: 'funds',
+		},
+		{
+			icon: <DollarSign size={'$icons.md'} color={theme.white.val} />,
+			name: t('Budget'),
+			route: 'budget',
 		},
 		{
 			icon: <ChartColumn size={'$icons.md'} color={theme.white.val} />,
