@@ -58,7 +58,7 @@ export default function Settings() {
 	);
 
 	// temporary instruction page test
-	const { instructionShown, setInstructionShown } = useInstructionStore();
+	const { setInstructionShown } = useInstructionStore();
 
 	const defaultStartDate = new Date(
 		timeframeStartYear,

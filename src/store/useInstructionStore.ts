@@ -12,8 +12,9 @@ export const useInstructionStore = create<InstructionState>()(
 	persist(
 		(set) => ({
 			instructionShown: false,
-			// Only used to mark that the instructions have been shown
-			// No need for ability to change back
+
+			// Ability to set the value back to false for testing purposes
+			// Final product could just set the instructionShown to true when this function is called with no way to change it back
 			setInstructionShown: (val: boolean) =>
 				set({ instructionShown: val }),
 		}),
