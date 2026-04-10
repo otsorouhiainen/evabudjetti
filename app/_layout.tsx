@@ -9,6 +9,7 @@ import { db, isDbReal } from '@/src/db/client';
 import config from '../tamagui.config';
 import '@/src/utils/i18n';
 
+import { Redirect } from 'expo-router';
 import i18next from 'i18next';
 import { useEffect } from 'react';
 import { useInstructionStore } from '@/src/store/useInstructionStore';
@@ -75,21 +76,27 @@ export default function RootLayout() {
 		}
 	}
 
-	// Show instructions on first launch
 	if (!instructionShown) {
 		return (
 			<TamaguiProvider config={config} defaultTheme="light">
-				<Theme name="light">
-					<SafeAreaProvider>
-						<StatusBar style="dark" translucent={false} />
-						<Stack
-							screenOptions={{
-								headerBackButtonDisplayMode: 'minimal',
-								headerTitle: '',
-							}}
-						/>
-					</SafeAreaProvider>
-				</Theme>
+				<PortalProvider>
+					<Theme name="light">
+						<SafeAreaProvider>
+							<StatusBar style="dark" translucent={false} />
+							<Stack
+								screenOptions={{
+									headerBackButtonDisplayMode: 'minimal',
+									headerTitle: '',
+								}}
+							>
+								<Stack.Screen name="landing" />
+								<Stack.Screen name="introduction" />
+								<Stack.Screen name="budget_wizard" />
+							</Stack>
+							<Redirect href="/landing" />
+						</SafeAreaProvider>
+					</Theme>
+				</PortalProvider>
 			</TamaguiProvider>
 		);
 	}

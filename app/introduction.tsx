@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Checkbox, SizableText, YStack } from 'tamagui';
 import { useInstructionStore } from '@/src/store/useInstructionStore';
 
-export default function Instruction() {
+export default function Introduction() {
 	const { t } = useTranslation();
 	const { instructionShown, setInstructionShown } = useInstructionStore();
 

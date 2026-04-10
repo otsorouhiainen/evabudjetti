@@ -172,6 +172,7 @@ i18next
 				'SHOW BUDGET': 'SHOW BUDGET',
 				'EVA MyBudget': 'EVA MyBudget',
 				'EDIT BALANCE': 'EDIT BALANCE',
+				"Let's start!": "Let's start!",
 
 				// SUMMARY
 				'Choose a year': 'Choose a year',
@@ -377,6 +378,7 @@ i18next
 				'This will alter the balance record.': 'Tämä tulee muuttamaan tilin saldoa.',
 				'Confirm': 'Vahvista',
 				'Update balance': 'Muokkaa saldoa',
+				"Let's start!": "Aloitetaan!",
 
 				// SUMMARY
 				'Choose a year': 'Valitse vuosi',

@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface InstructionState {
 	instructionShown: boolean;
-	setInstructionShown: () => void;
+	setInstructionShown: (val: boolean) => void;
 }
 
 // Async storage used to remember if the instruction pages have been shown
@@ -14,7 +14,8 @@ export const useInstructionStore = create<InstructionState>()(
 			instructionShown: false,
 			// Only used to mark that the instructions have been shown
 			// No need for ability to change back
-			setInstructionShown: () => set({ instructionShown: true }),
+			setInstructionShown: (val: boolean) =>
+				set({ instructionShown: val }),
 		}),
 		{
 			name: 'instruction-shown-storage',

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, SizableText, Text, YStack } from 'tamagui';
 
-export default function InstructionLanding() {
+export default function Landing() {
 	const { t } = useTranslation();
 	const router = useRouter();
 
@@ -44,6 +44,7 @@ export default function InstructionLanding() {
 					width={250}
 					backgroundColor="$primary100"
 					alignSelf="center"
+					onPress={() => router.push('/introduction')}
 				>
 					<SizableText size="$title2" color="$white">
 						{t("Let's start!")}

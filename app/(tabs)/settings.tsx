@@ -22,6 +22,7 @@ import {
 	YStack,
 } from 'tamagui';
 import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
+import { useInstructionStore } from '@/src/store/useInstructionStore';
 import {
 	type LengthOptions,
 	useTimeframeStore,
@@ -55,6 +56,9 @@ export default function Settings() {
 	const [tempStartDate, setTempStartDate] = useState(
 		new Date(timeframeStartYear, timeframeStartMonth, timeframeStartDay),
 	);
+
+	// temporary instruction page test
+	const { instructionShown, setInstructionShown } = useInstructionStore();
 
 	const defaultStartDate = new Date(
 		timeframeStartYear,
@@ -329,6 +333,34 @@ export default function Settings() {
 					</XStack>
 				</Button>
 
+				<Separator />
+
+				<Button
+					unstyled
+					width="100%"
+					justifyContent="space-between"
+					alignItems="center"
+					paddingVertical={14}
+					paddingHorizontal={0}
+					color="$black"
+					onPress={() => setInstructionShown(false)}
+				>
+					<XStack
+						width="100%"
+						justifyContent="space-between"
+						alignItems="center"
+					>
+						<YStack>
+							<SizableText color="$black" size="$title2">
+								Introduction page debug
+							</SizableText>
+							<SizableText size="$2" color="$black">
+								Temporary
+							</SizableText>
+						</YStack>
+						<ChevronRight size="$icons.sm" color="$black" />
+					</XStack>
+				</Button>
 				<Separator />
 			</YStack>
 		</SafeAreaView>
