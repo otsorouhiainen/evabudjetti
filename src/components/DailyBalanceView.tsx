@@ -9,9 +9,8 @@ import {
 	getClosestTimeframe,
 	useTimeframeStore,
 } from '@/src/store/useTimeframeStore';
-
+import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
-
 import { formatCurrency } from '../utils/budgetUtils';
 import DailyEventList from './DailyEventList';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
@@ -23,6 +22,11 @@ interface DailyBalanceViewProps {
 	onAddPress?: () => void;
 	onEditPress?: (txn: TransactionOccurrence) => void;
 }
+
+// Helper to format date as "dd.mm.yyyy"
+const formatDate = (date: Date) => {
+	return new Intl.DateTimeFormat(LOCALE, {}).format(date);
+};
 
 export default function DailyBalanceView({
 	selectedDate,
@@ -200,6 +204,10 @@ export default function DailyBalanceView({
 						{t('ADD INCOME/EXPENSE')}
 					</Text>
 				</Button>
+				<Text color="$black" fontSize="$2" fontWeight="600">
+					{t('Usable funds timespan')}:{' '}
+					{`${formatDate(currentTimeframeStart)} - ${formatDate(currentTimeframeEnd)}`}
+				</Text>
 			</StyledCard>
 
 			<ScrollView
