@@ -1,7 +1,6 @@
 import { ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
 import type { Router } from 'expo-router';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
@@ -9,6 +8,7 @@ import type { TransactionOccurrence } from '../dataModel';
 interface Props {
 	dTxns: TransactionOccurrence[];
 	date: Date;
+	noTxnNotice: string;
 	sum: number;
 	isSelected: boolean;
 	router?: Router;
@@ -18,13 +18,13 @@ interface Props {
 const DailyEventListItem: React.FC<Props> = ({
 	dTxns,
 	date,
+	noTxnNotice,
 	sum,
 	isSelected,
 	router,
 	formatCurrency,
 }) => {
 	const [isOpen, setOpen] = useState(isSelected);
-	const { t } = useTranslation();
 	return (
 		<XStack
 			style={{
@@ -65,7 +65,7 @@ const DailyEventListItem: React.FC<Props> = ({
 					)}
 				</XStack>
 				{isOpen &&
-					(dTxns.length > 0 ? (
+					(dTxns[0].name !== '' ? (
 						dTxns.map((txn) => (
 							<XStack
 								gap={10}
@@ -106,7 +106,7 @@ const DailyEventListItem: React.FC<Props> = ({
 							style={{ fontStyle: 'italic' }}
 							color="$primary200"
 						>
-							{t('No transactions')}.
+							{noTxnNotice}
 						</Text>
 					))}
 			</YStack>
