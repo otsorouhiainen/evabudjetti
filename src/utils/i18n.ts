@@ -130,7 +130,7 @@ i18next
 				'Account balance': 'Account balance',
 				'Unknown': 'Unknown',
 				'Disposable income': 'Disposable income',
-				'Usable funds timespan': 'Usable funds timespan',
+				'Usable funds timeframe': 'Usable funds timeframe',
 				'Load more': 'Load more',
 				'No transactions': 'No transactions',
 
@@ -332,7 +332,7 @@ i18next
 				'Account balance': 'Tilillä rahaa',
 				'Unknown': 'Ei tietoa',
 				'Disposable income': 'Käyttövara',
-				'Usable funds timespan': 'Käyttövarajakso',
+				'Usable funds timeframe': 'Käyttövarajakso',
 				'Load more': 'Lataa enemmän',
 				'No transactions': 'Ei maksutapahtumia',
 

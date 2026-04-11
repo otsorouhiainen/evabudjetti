@@ -205,7 +205,7 @@ export default function DailyBalanceView({
 					</Text>
 				</Button>
 				<Text color="$black" fontSize="$2" fontWeight="600">
-					{t('Usable funds timespan')}:{' '}
+					{t('Usable funds timeframe')}:{' '}
 					{`${formatDate(currentTimeframeStart)} - ${formatDate(currentTimeframeEnd)}`}
 				</Text>
 			</StyledCard>
