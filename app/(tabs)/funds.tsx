@@ -1,27 +1,14 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { YStack } from 'tamagui';
 
 import DailyBalanceView from '@/src/components/DailyBalanceView';
-import type { TransactionOccurrence } from '@/src/dataModel';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 
 export default function Funds() {
-	const storeTransactionsForTwoYears = usePlannedTransactionsStore(
-		(state) => state.transactionsForTwoYears,
-	);
-
-	const [currentDate, setcurrentDate] = useState(new Date());
-	const [transactions, setTransactions] = useState<TransactionOccurrence[]>(
-		[],
-	);
+	const [selectedDate, setselectedDate] = useState(new Date());
 
 	const router = useRouter();
-
-	useEffect(() => {
-		setTransactions(storeTransactionsForTwoYears ?? []);
-	}, [storeTransactionsForTwoYears]);
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
@@ -32,9 +19,8 @@ export default function Funds() {
 				flex={1}
 			>
 				<DailyBalanceView
-					onDateChange={setcurrentDate}
-					currentDate={currentDate}
-					transactions={transactions}
+					onDateChange={setselectedDate}
+					selectedDate={selectedDate}
 					onAddPress={() => {
 						router.push('/add_transaction2');
 					}}

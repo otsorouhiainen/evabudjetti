@@ -128,8 +128,10 @@ i18next
 				// FUNDS
 				'Daily situation': 'Daily situation',
 				'Account balance': 'Account balance',
+				'Unknown': 'Unknown',
 				'Disposable income': 'Disposable income',
 				'Load more': 'Load more',
+				'No transactions': 'No transactions',
 
 				// ERROR
 				'Something went wrong': 'Something went wrong',
@@ -313,7 +315,6 @@ i18next
 				'Close': 'Sulje',
 				'CLOSE': 'SULJE',
 				'SAVE': 'TALLENNA',
-				'No transactions': 'Ei maksutapahtumia',
 				'Future events': 'Tulevat tapahtumat',
 				'Past events': 'Menneet tapahtumat',
 				'Edit Transaction': 'Muokkaa tapahtumaa',
@@ -328,8 +329,10 @@ i18next
 				// FUNDS
 				'Daily situation': 'Päivän rahatilanne',
 				'Account balance': 'Tilillä rahaa',
+				'Unknown': 'Ei tietoa',
 				'Disposable income': 'Käyttövara',
 				'Load more': 'Lataa enemmän',
+				'No transactions': 'Ei maksutapahtumia',
 
 				// ERROR
 				'Something went wrong': 'Jokin meni pieleen',

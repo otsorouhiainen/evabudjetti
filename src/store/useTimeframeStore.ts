@@ -39,7 +39,7 @@ const addLength = (date: Date, timeframe: TimeframeLength) => {
  * @param timeframe The timeframe length
  * @returns Both the start and the end dates of the currently active timeframe
  */
-const getClosestTimeframe = (
+export const getClosestTimeframe = (
 	originalStartDate: Date,
 	timeframe: TimeframeLength,
 ) => {
