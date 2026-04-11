@@ -65,18 +65,18 @@ const DailyEventList: React.FC<Props> = ({
 
 	// Array of month names for the title
 	const monthNames = [
-		'January',
-		'February',
-		'March',
-		'April',
-		'May',
-		'June',
-		'July',
-		'August',
-		'September',
-		'October',
-		'November',
-		'December',
+		'january',
+		'february',
+		'march',
+		'april',
+		'may',
+		'june',
+		'july',
+		'august',
+		'september',
+		'october',
+		'november',
+		'december',
 	];
 
 	// Get the year and month numbers from monthKey
@@ -86,7 +86,7 @@ const DailyEventList: React.FC<Props> = ({
 
 	// Always display current month. Also display year if not the same year as selected date.
 	const title =
-		monthNames[month] +
+		t(monthNames[month]) +
 		(year !== selectedDate.getFullYear() ? ` ${year}` : '');
 	const isSelectedMonth = month === selectedDate.getMonth();
 
