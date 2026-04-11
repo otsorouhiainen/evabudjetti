@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
 import type { Router } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
@@ -25,6 +25,12 @@ const DailyEventListItem: React.FC<Props> = ({
 	formatCurrency,
 }) => {
 	const [isOpen, setOpen] = useState(isSelected);
+
+	// Automatically open list item when selected
+	useMemo(() => {
+		if (isSelected) setOpen(true);
+	}, [isSelected]);
+
 	return (
 		<XStack
 			style={{

@@ -125,7 +125,6 @@ const DailyEventList: React.FC<Props> = ({
 		}
 		return sum;
 	};
-
 	/* 
 	Rendered for months that have no transactions 
    	(and are not the same month as selectedDays)
