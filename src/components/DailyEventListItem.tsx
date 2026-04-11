@@ -10,7 +10,7 @@ interface Props {
 	dTxns: TransactionOccurrence[];
 	date: Date;
 	sum: number;
-	isCurrent: boolean;
+	isSelected: boolean;
 	router?: Router;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
@@ -19,23 +19,23 @@ const DailyEventListItem: React.FC<Props> = ({
 	dTxns,
 	date,
 	sum,
-	isCurrent,
+	isSelected,
 	router,
 	formatCurrency,
 }) => {
-	const [isOpen, setOpen] = useState(isCurrent);
+	const [isOpen, setOpen] = useState(isSelected);
 	const { t } = useTranslation();
 	return (
 		<XStack
 			style={{
 				padding: 10,
 				borderRadius: 10,
-				borderWidth: isCurrent ? 4 : 3,
+				borderWidth: isSelected ? 4 : 3,
 				margin: -2,
 			}}
 			key={`${date.getTime()}`}
 			backgroundColor={'$white'}
-			borderColor={isCurrent ? '$primary200' : '$primary300'}
+			borderColor={isSelected ? '$primary200' : '$primary300'}
 			pressStyle={{ backgroundColor: '$primary300' }}
 			onPress={() => setOpen(!isOpen)}
 		>
@@ -106,7 +106,7 @@ const DailyEventListItem: React.FC<Props> = ({
 							style={{ fontStyle: 'italic' }}
 							color="$primary200"
 						>
-							{t('No transactions')}
+							{t('No transactions')}.
 						</Text>
 					))}
 			</YStack>
