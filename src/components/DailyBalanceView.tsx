@@ -1,9 +1,17 @@
 import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
+import { addMonths, subMonths } from 'date-fns';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
+import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
+import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
+import {
+	getClosestTimeframe,
+	useTimeframeStore,
+} from '@/src/store/useTimeframeStore';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
+
 import { formatCurrency } from '../utils/budgetUtils';
 import DailyEventList from './DailyEventList';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
@@ -11,9 +19,6 @@ import StyledCard from './styledCard';
 
 interface DailyBalanceViewProps {
 	selectedDate: Date;
-	dayBalance: number | undefined;
-	usableFunds: number;
-	transactions: TransactionOccurrence[];
 	onDateChange: (date: Date) => void;
 	onAddPress?: () => void;
 	onEditPress?: (txn: TransactionOccurrence) => void;
@@ -26,18 +31,65 @@ const formatDate = (date: Date) => {
 
 export default function DailyBalanceView({
 	selectedDate,
-	dayBalance,
-	usableFunds,
-	transactions,
 	onDateChange,
 	onAddPress,
 }: DailyBalanceViewProps) {
 	const { t } = useTranslation();
 
-	// When first rendered, show 30 future days
-	const [futureCount, setFutureCount] = useState(30);
-	// When first rendered, show 30 past days
-	const [pastCount, setPastCount] = useState(30);
+	/* 
+	Variable to determine how many past and future months are rendered. 
+	On first load, render only current month
+	*/
+	const [futureCount, setFutureCount] = useState(0);
+	const [pastCount, setPastCount] = useState(0);
+
+	const selectedDay = selectedDate.getDate();
+
+	const selectedYearStr = String(selectedDate.getFullYear());
+	const selectedMonthstr =
+		selectedDate.getMonth() < 9
+			? String(`0${selectedDate.getMonth() + 1}`)
+			: String(selectedDate.getMonth() + 1);
+
+	const selectedMonthKey = `${selectedYearStr}-${selectedMonthstr}`;
+
+	// Fetch occurrences and balances for the months that are rendered
+	const dataStartDate = subMonths(selectedDate, pastCount);
+	const dataEndDate = addMonths(selectedDate, futureCount);
+
+	const occurrencesAndBalances = useOccurrencesAndBalances(
+		dataStartDate.getFullYear(),
+		dataStartDate.getMonth(),
+		dataEndDate.getFullYear(),
+		dataEndDate.getMonth(),
+	);
+
+	const getSelectedDayBalance = () => {
+		for (const month of occurrencesAndBalances) {
+			if (month.monthKey === selectedMonthKey) {
+				return month.dailyBalances[selectedDay - 1]?.balance;
+			}
+		}
+	};
+
+	const dayBalance = getSelectedDayBalance();
+
+	/* Get  usable funds for selected day */
+	const { timeframeLength } = useTimeframeStore();
+
+	const { currentTimeframeStart, currentTimeframeEnd } = getClosestTimeframe(
+		selectedDate,
+		timeframeLength,
+	);
+
+	const usableFunds = useUsableFunds(
+		currentTimeframeStart.getFullYear(),
+		currentTimeframeStart.getMonth(),
+		currentTimeframeStart.getDate(),
+		currentTimeframeEnd.getFullYear(),
+		currentTimeframeEnd.getMonth(),
+		currentTimeframeEnd.getDate(),
+	);
 
 	const handlePrevDay = () => {
 		const newDate = new Date(selectedDate);
@@ -52,9 +104,15 @@ export default function DailyBalanceView({
 	};
 
 	// --- Data Processing ---
-	const { past, current, future, futureDays, pastDays } = useMemo(() => {
+	const { currentDay, futureDays, pastDays } = useMemo(() => {
 		const cDateStr = formatDate(selectedDate);
 
+		const transactions: TransactionOccurrence[] = [];
+		for (const month of occurrencesAndBalances) {
+			for (const txn of month.transactionOccurrences) {
+				transactions.push(txn);
+			}
+		}
 		// Normalize dates: ensure each txn.date is a Date object so getTime() is available
 		const normalizedTxns: TransactionOccurrence[] = transactions.map(
 			(t) => {
@@ -103,32 +161,19 @@ export default function DailyBalanceView({
 			}
 		});
 
-		// Future events: We want the ones CLOSEST to today
 		return {
 			futureDays: futureDays,
-			future: futureDays
-				.slice(
-					Math.max(0, futureDays.length - futureCount),
-					futureDays.length,
-				)
-				.slice(0, futureCount),
-			current: currentDay,
-			past: pastDays.slice(0, pastCount),
+			currentDay: currentDay,
 			pastDays: pastDays,
 		};
-	}, [transactions, selectedDate, futureCount, pastCount]);
+	}, [selectedDate, occurrencesAndBalances]);
 
-	// Display 10 more days on "load more" press
-
+	// On "load more" press, display 1 more past/future month
 	const handleFutureLoadMorePress = () => {
-		if (futureDays.length > futureCount) {
-			setFutureCount((prev) => prev + 10);
-		}
+		setFutureCount((prev) => prev + 1);
 	};
 	const handlePastLoadMorePress = () => {
-		if (pastDays.length > pastCount) {
-			setPastCount((prev) => prev + 10);
-		}
+		setPastCount((prev) => prev + 1);
 	};
 
 	return (
@@ -233,20 +278,14 @@ export default function DailyBalanceView({
 				showsVerticalScrollIndicator={false}
 			>
 				<YStack paddingHorizontal="$1">
-					{/* --- Navigation / Up Chevron --- */}
+					{/* --- Future Load More button --- */}
 					<YStack alignItems="center" marginBottom={'$2'}>
 						<Text
 							color="$primary100"
 							fontSize="$body"
 							onPress={handleFutureLoadMorePress}
 							pressStyle={{ color: '$primary300' }}
-							opacity={futureDays.length > futureCount ? 1 : 0.3}
-							disabled={futureDays.length <= futureCount}
-							cursor={
-								futureDays.length > futureCount
-									? 'pointer'
-									: 'default'
-							}
+							cursor={'pointer'}
 						>
 							{t('Load more')}
 						</Text>
@@ -254,7 +293,7 @@ export default function DailyBalanceView({
 
 					{/* --- Future Events --- */}
 					<DailyEventList
-						txnsByDate={future}
+						txnsByDate={futureDays}
 						title={''}
 						selectedDate={selectedDate}
 						isCurrent={false}
@@ -262,7 +301,7 @@ export default function DailyBalanceView({
 					/>
 					{/* --- Present day events --- */}
 					<DailyEventList
-						txnsByDate={current}
+						txnsByDate={currentDay}
 						title={''}
 						selectedDate={selectedDate}
 						isCurrent={true}
@@ -270,27 +309,21 @@ export default function DailyBalanceView({
 					/>
 					{/* --- Past Events --- */}
 					<DailyEventList
-						txnsByDate={past}
+						txnsByDate={pastDays}
 						title={''}
 						selectedDate={selectedDate}
 						isCurrent={false}
 						formatCurrency={formatCurrency}
 					/>
 
-					{/* --- Navigation / Down Chevron --- */}
+					{/* --- Past Load More button --- */}
 					<YStack alignItems="center" marginTop="$2">
 						<Text
 							color="$primary100"
 							fontSize="$body"
 							onPress={handlePastLoadMorePress}
 							pressStyle={{ color: '$primary300' }}
-							opacity={pastDays.length > pastCount ? 1 : 0.3}
-							disabled={pastDays.length <= pastCount}
-							cursor={
-								pastDays.length > pastCount
-									? 'pointer'
-									: 'default'
-							}
+							cursor={'pointer'}
 						>
 							{t('Load more')}
 						</Text>
