@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from '@tamagui/lucide-icons';
+import { Pencil, Plus } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -52,6 +52,41 @@ export default function BudgetWizard() {
 					: step,
 			);
 		});
+	}
+
+	function editItem(editedItem: PlannedTransaction) {
+		return wizardData.map((step, sIdx) =>
+			sIdx === stepIndex
+				? {
+						...step,
+						items: step.items.map((item) => {
+							if (item.key === selectedItem?.key) {
+								[
+									item.name,
+									item.amount,
+									item.categoryId,
+									item.type,
+									item.startDate,
+									item.endDate,
+									item.recurrenceBase,
+									item.recurrenceInterval,
+								] = [
+									editedItem.name,
+									editedItem.amount,
+									editedItem.categoryId,
+									editedItem.type,
+									editedItem.startDate,
+									editedItem.endDate,
+									editedItem.recurrenceBase,
+									editedItem.recurrenceInterval,
+								];
+							}
+							console.log(`Edited item "${item.name}".`);
+							return item;
+						}),
+					}
+				: step,
+		);
 	}
 
 	function deleteItem(item: PlannedTransaction) {
@@ -140,19 +175,36 @@ export default function BudgetWizard() {
 		);
 	}
 
+	const [selectedItem, setSelectedItem] = useState<PlannedTransaction | null>(
+		null,
+	);
+
+	const closePopUp = () => {
+		setSelectedItem(null);
+		setPopupVisible(false);
+	};
+
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
 			<View style={styles.container}>
+				{/* -- Add Item PopUp -- */}
 				<Modal
 					visible={popupVisible}
-					onRequestClose={() => setPopupVisible(false)}
+					onRequestClose={() => closePopUp()}
 					transparent={true}
 				>
 					<AddItemPopup
-						onAdd={(item) => addItem(item)}
-						onClose={() => setPopupVisible(false)}
+						item={selectedItem}
+						onSave={
+							selectedItem === null
+								? (item) => addItem(item)
+								: (item) => editItem(item)
+						}
+						onDelete={(item) => deleteItem(item)}
+						onClose={() => closePopUp()}
 					/>
 				</Modal>
+
 				<View style={styles.topContent}>
 					<Progress
 						backgroundColor="$white"
@@ -234,7 +286,7 @@ export default function BudgetWizard() {
 											? ''
 											: item.amount.toString()
 									}
-									onChangeText={(text) => {
+									onChangeText={(text: string) => {
 										console.log(text);
 										setWizardData(
 											amountInputChange(
@@ -263,8 +315,11 @@ export default function BudgetWizard() {
 									color="$black"
 									transparent
 									style={styles.trashIcon}
-									icon={Trash2}
-									onPress={() => deleteItem(item)}
+									icon={Pencil}
+									onPress={() => {
+										setSelectedItem(item);
+										setPopupVisible(true);
+									}}
 								/>
 							</View>
 						</XStack>

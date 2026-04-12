@@ -16,11 +16,13 @@ import type { PlannedTransaction, RecurrenceBase } from '../dataModel';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type AddItemPopupProps = {
-	onAdd: (item: PlannedTransaction) => void;
+	item: PlannedTransaction | null;
+	onSave: (item: PlannedTransaction) => void;
+	onDelete: (item: PlannedTransaction) => void;
 	onClose: () => void;
 };
 
-const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
+const AddItemPopup = ({ onSave, onClose }: AddItemPopupProps) => {
 	const REOCCURENCE_OPTIONS: RecurrenceBase[] = [
 		'day',
 		'week',
@@ -45,9 +47,10 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	const hasEndDate = endDate !== null;
 	const hasReocurrence = reoccurenceInterval !== undefined;
 	const handleAdd = () => {
-		onAdd({
+		onSave({
 			categoryId: 0,
 			name: name.trim(),
+			key: new Date().toISOString(),
 			amount: amount,
 			recurrenceBase: reoccurence,
 			startDate: startDate,
@@ -90,7 +93,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							placeholder={t('Write the amount here (€)')}
 							style={styles.input}
 							keyboardType="numeric"
-							onChangeText={(text) => {
+							onChangeText={(text: string) => {
 								const input = Number(text);
 								if (!Number.isNaN(input) && input >= 0) {
 									setAmount(input);
@@ -147,7 +150,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 										}}
 										defaultValue="1"
 										keyboardType="numeric"
-										onChangeText={(text) => {
+										onChangeText={(text: string) => {
 											const interval = Number(text);
 											if (
 												!Number.isNaN(interval) &&

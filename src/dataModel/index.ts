@@ -55,6 +55,7 @@ export interface Category {
  */
 export interface PlannedTransaction {
 	accountId: number;
+	key: string;
 	name: string;
 	categoryId: number;
 	amount: number;

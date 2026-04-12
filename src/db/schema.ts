@@ -35,6 +35,7 @@ export const plannedTransactions = sqliteTable('planned_transactions', {
 		.notNull()
 		.references(() => accounts.id),
 	name: text('name').notNull(),
+	key: text('key').notNull(),
 	categoryId: integer('category_id')
 		.notNull()
 		.references(() => categories.id),
