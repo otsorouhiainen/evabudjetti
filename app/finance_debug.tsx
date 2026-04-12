@@ -647,7 +647,6 @@ export default function FinanceDebugScreen() {
 				{
 					accountId: references.accountId,
 					name: 'Debug Salary',
-					key: 'Debug1',
 					categoryId: references.incomeCategoryId,
 					amount: 3200,
 					startDate: new Date(
@@ -663,7 +662,6 @@ export default function FinanceDebugScreen() {
 				{
 					accountId: references.accountId,
 					name: 'Debug Freelance Gig',
-					key: 'Debug2',
 					categoryId: references.incomeCategoryId,
 					amount: 460,
 					startDate: new Date(
@@ -679,7 +677,6 @@ export default function FinanceDebugScreen() {
 				{
 					accountId: references.accountId,
 					name: 'Debug Annual Bonus',
-					key: 'Debug3',
 					categoryId: references.incomeCategoryId,
 					amount: 1200,
 					startDate: new Date(
@@ -695,7 +692,6 @@ export default function FinanceDebugScreen() {
 				{
 					accountId: references.accountId,
 					name: 'Debug Rent',
-					key: 'Debug4',
 					categoryId: references.expenseCategoryId,
 					amount: 1100,
 					startDate: new Date(
@@ -711,7 +707,6 @@ export default function FinanceDebugScreen() {
 				{
 					accountId: references.accountId,
 					name: 'Debug Groceries',
-					key: 'Debug5',
 					categoryId: references.expenseCategoryId,
 					amount: 95,
 					startDate: new Date(
@@ -727,7 +722,6 @@ export default function FinanceDebugScreen() {
 				{
 					accountId: references.accountId,
 					name: 'Debug Commute',
-					key: 'Debug6',
 					categoryId: references.expenseCategoryId,
 					amount: 8,
 					startDate: new Date(
@@ -824,7 +818,6 @@ export default function FinanceDebugScreen() {
 				const deletedPlannedTransaction: PlannedTransaction = {
 					accountId: deleted.accountId,
 					name: deleted.name,
-					key: deleted.key,
 					categoryId: deleted.categoryId,
 					amount: deleted.amount,
 					startDate: toDate(deleted.startDate),

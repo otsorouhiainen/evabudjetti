@@ -60,13 +60,14 @@ const AddItemPopup = ({ item, onSave, onClose }: AddItemPopupProps) => {
 		onSave({
 			categoryId: 0,
 			name: name.trim(),
-			key: item ? item.key : new Date().toISOString(),
 			amount: amount,
 			recurrenceBase: reoccurence,
 			startDate: startDate,
 			endDate: endDate,
 			recurrenceInterval: reoccurenceInterval,
 		} as PlannedTransaction);
+
+		onClose();
 	};
 	return (
 		<View style={styles.container}>

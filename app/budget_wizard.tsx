@@ -61,7 +61,7 @@ export default function BudgetWizard() {
 					? {
 							...step,
 							items: step.items.map((it) =>
-								it.key === edited.key
+								it.name === selectedItem?.name
 									? {
 											...it,
 											name: edited.name,
@@ -338,7 +338,11 @@ export default function BudgetWizard() {
 						disabled={stepIndex === 0}
 						onPress={() => setStepIndex(stepIndex - 1)}
 					>
-						<SizableText adjustsFontSizeToFit color="$white" size="$title1">
+						<SizableText
+							adjustsFontSizeToFit
+							color="$white"
+							size="$title1"
+						>
 							{t('Previous')}
 						</SizableText>
 					</Button>
@@ -365,7 +369,11 @@ export default function BudgetWizard() {
 							style={styles.footerButton}
 							onPress={() => setStepIndex(stepIndex + 1)}
 						>
-							<SizableText adjustsFontSizeToFit color="$white" size="$title1">
+							<SizableText
+								adjustsFontSizeToFit
+								color="$white"
+								size="$title1"
+							>
 								{t('Next')}
 							</SizableText>
 						</Button>
