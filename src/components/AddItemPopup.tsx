@@ -67,13 +67,6 @@ const AddItemPopup = ({ item, onSave, onClose }: AddItemPopupProps) => {
 			endDate: endDate,
 			recurrenceInterval: reoccurenceInterval,
 		} as PlannedTransaction);
-		setName('');
-		setAmount(null);
-		setReoccurence('month');
-		setReoccurenceInterval(undefined);
-		setStartDate(new Date());
-		toggleRecSelect(false);
-		onClose();
 	};
 	return (
 		<View style={styles.container}>

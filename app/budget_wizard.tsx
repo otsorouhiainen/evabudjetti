@@ -338,7 +338,7 @@ export default function BudgetWizard() {
 						disabled={stepIndex === 0}
 						onPress={() => setStepIndex(stepIndex - 1)}
 					>
-						<SizableText color="$white" size="$title1">
+						<SizableText adjustsFontSizeToFit color="$white" size="$title1">
 							{t('Previous')}
 						</SizableText>
 					</Button>
@@ -365,7 +365,7 @@ export default function BudgetWizard() {
 							style={styles.footerButton}
 							onPress={() => setStepIndex(stepIndex + 1)}
 						>
-							<SizableText color="$white" size="$title1">
+							<SizableText adjustsFontSizeToFit color="$white" size="$title1">
 								{t('Next')}
 							</SizableText>
 						</Button>
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
 	},
 	footerButton: {
 		height: '100%',
-		width: '40%',
+		width: '42%',
 	},
 	buttonContainer: {
 		height: '10%',
