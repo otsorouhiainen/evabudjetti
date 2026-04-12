@@ -22,7 +22,7 @@ type AddItemPopupProps = {
 	onClose: () => void;
 };
 
-const AddItemPopup = ({ onSave, onClose }: AddItemPopupProps) => {
+const AddItemPopup = ({ item, onSave, onClose }: AddItemPopupProps) => {
 	const REOCCURENCE_OPTIONS: RecurrenceBase[] = [
 		'day',
 		'week',
@@ -31,14 +31,24 @@ const AddItemPopup = ({ onSave, onClose }: AddItemPopupProps) => {
 	];
 	const { t } = useTranslation();
 	const [recSelect, toggleRecSelect] = useState<true | false>(false);
-	const [name, setName] = useState<string>('');
-	const [amount, setAmount] = useState<number | null>(null);
-	const [startDate, setStartDate] = useState<Date>(new Date());
-	const [endDate, setEndDate] = useState<Date | null>(null);
-	const [reoccurence, setReoccurence] = useState<RecurrenceBase>('month');
+	const [name, setName] = useState<string>(item ? item.name : '');
+	const [amount, setAmount] = useState<number | null>(
+		item ? item.amount : null,
+	);
+	const [startDate, setStartDate] = useState<Date>(
+		item ? item.startDate : new Date(),
+	);
+	const [endDate, setEndDate] = useState<Date | null>(
+		item ? item.endDate : null,
+	);
+	const [reoccurence, setReoccurence] = useState<RecurrenceBase>(
+		item !== null && item.recurrenceBase !== null
+			? item.recurrenceBase
+			: 'month',
+	);
 	const [reoccurenceInterval, setReoccurenceInterval] = useState<
 		number | undefined
-	>(undefined);
+	>(item ? item.recurrenceInterval : undefined);
 	const isDisabled =
 		!name.trim() ||
 		Number.isNaN(Number(amount)) ||
@@ -69,7 +79,7 @@ const AddItemPopup = ({ onSave, onClose }: AddItemPopupProps) => {
 		<View style={styles.container}>
 			<YStack backgroundColor="$background" style={styles.card}>
 				<SizableText color="$primary100" size="$title2">
-					{t('Add a new item')}
+					{item !== null ? t('Edit item') : t('Add a new item')}
 				</SizableText>
 				<View style={styles.inputsContainer}>
 					<View style={styles.singleItemContainer}>
@@ -92,13 +102,14 @@ const AddItemPopup = ({ onSave, onClose }: AddItemPopupProps) => {
 							color="$primary100"
 							placeholder={t('Write the amount here (€)')}
 							style={styles.input}
+							value={amount ? String(amount) : null}
 							keyboardType="numeric"
 							onChangeText={(text: string) => {
 								const input = Number(text);
 								if (!Number.isNaN(input) && input >= 0) {
 									setAmount(input);
 								} else {
-									setAmount(NaN);
+									setAmount(null);
 								}
 							}}
 						/>
@@ -115,6 +126,7 @@ const AddItemPopup = ({ onSave, onClose }: AddItemPopupProps) => {
 								{t('Reoccurrence')}
 							</SizableText>
 							<Checkbox
+								checked={hasReocurrence}
 								onCheckedChange={() =>
 									hasReocurrence
 										? setReoccurenceInterval(undefined)
@@ -308,6 +320,7 @@ const AddItemPopup = ({ onSave, onClose }: AddItemPopupProps) => {
 								{t('End Date')}:
 							</SizableText>
 							<Checkbox
+								checked={hasEndDate}
 								onCheckedChange={() =>
 									hasEndDate
 										? setEndDate(null)
@@ -341,7 +354,7 @@ const AddItemPopup = ({ onSave, onClose }: AddItemPopupProps) => {
 						disabled={isDisabled}
 					>
 						<SizableText color="$white" size="$title3">
-							{t('Add')}
+							{item !== null ? t('Save') : t('Add')}
 						</SizableText>
 					</Button>
 					<Button
