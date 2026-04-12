@@ -60,10 +60,10 @@ export default function BudgetWizard() {
 				sIdx === stepIndex
 					? {
 							...step,
-							items: step.items.map((it) =>
-								it.name === selectedItem?.name
+							items: step.items.map((item) =>
+								item.name === selectedItem?.name
 									? {
-											...it,
+											...item,
 											name: edited.name,
 											amount: edited.amount,
 											categoryId: edited.categoryId,
@@ -74,7 +74,7 @@ export default function BudgetWizard() {
 											recurrenceInterval:
 												edited.recurrenceInterval,
 										}
-									: it,
+									: item,
 							),
 						}
 					: step,

@@ -70,6 +70,7 @@ i18next
 				//ADD NEW ITEM POPUP
 				'Add a new item': 'Add a new item',
 				'Edit item': 'Edit item',
+				'Delete': 'Delete',
 				'Write the name here': 'Write the name here',
 				'Write the amount here (€)': 'Write the amount here (€)',
 				'Reoccurrence': 'Does the item repeat?',
@@ -248,6 +249,7 @@ i18next
 				//ADD NEW ITEM POPUP
 				'Add a new item': 'Lisää uusi tapahtuma',
 				'Edit item': 'Muokkaa tapahtumaa',
+				'Delete': 'Poista',
 				'Write the name here': 'Kirjoita nimi tähän',
 				'Write the amount here (€)': 'Kirjoita määrä tähän (€)',
 				'Reoccurrence': 'Tapahtuma toistuu:',

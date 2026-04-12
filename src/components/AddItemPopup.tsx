@@ -22,7 +22,12 @@ type AddItemPopupProps = {
 	onClose: () => void;
 };
 
-const AddItemPopup = ({ item, onSave, onClose }: AddItemPopupProps) => {
+const AddItemPopup = ({
+	item,
+	onSave,
+	onDelete,
+	onClose,
+}: AddItemPopupProps) => {
 	const REOCCURENCE_OPTIONS: RecurrenceBase[] = [
 		'day',
 		'week',
@@ -69,12 +74,28 @@ const AddItemPopup = ({ item, onSave, onClose }: AddItemPopupProps) => {
 
 		onClose();
 	};
+	const handleDelete = () => {
+		if (item !== null) onDelete(item);
+		onClose();
+	};
 	return (
 		<View style={styles.container}>
 			<YStack backgroundColor="$background" style={styles.card}>
-				<SizableText color="$primary100" size="$title2">
-					{item !== null ? t('Edit item') : t('Add a new item')}
-				</SizableText>
+				<XStack justifyContent="space-between">
+					<SizableText color="$primary100" size="$title2">
+						{item !== null ? t('Edit item') : t('Add a new item')}
+					</SizableText>
+					{item !== null && (
+						<Button
+							onPress={handleDelete}
+							color="$white"
+							backgroundColor="$danger500"
+							height="100%"
+						>
+							{t('Delete')}
+						</Button>
+					)}
+				</XStack>
 				<View style={styles.inputsContainer}>
 					<View style={styles.singleItemContainer}>
 						<SizableText color="$primary100" size="$title3">
