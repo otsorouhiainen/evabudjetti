@@ -54,38 +54,31 @@ export default function BudgetWizard() {
 		});
 	}
 
-	function editItem(editedItem: PlannedTransaction) {
-		return wizardData.map((step, sIdx) =>
-			sIdx === stepIndex
-				? {
-						...step,
-						items: step.items.map((item) => {
-							if (item.key === selectedItem?.key) {
-								[
-									item.name,
-									item.amount,
-									item.categoryId,
-									item.type,
-									item.startDate,
-									item.endDate,
-									item.recurrenceBase,
-									item.recurrenceInterval,
-								] = [
-									editedItem.name,
-									editedItem.amount,
-									editedItem.categoryId,
-									editedItem.type,
-									editedItem.startDate,
-									editedItem.endDate,
-									editedItem.recurrenceBase,
-									editedItem.recurrenceInterval,
-								];
-							}
-							console.log(`Edited item "${item.name}".`);
-							return item;
-						}),
-					}
-				: step,
+	function editItem(edited: PlannedTransaction) {
+		setWizardData((prev) =>
+			prev.map((step, sIdx) =>
+				sIdx === stepIndex
+					? {
+							...step,
+							items: step.items.map((it) =>
+								it.key === edited.key
+									? {
+											...it,
+											name: edited.name,
+											amount: edited.amount,
+											categoryId: edited.categoryId,
+											startDate: edited.startDate,
+											endDate: edited.endDate,
+											recurrenceBase:
+												edited.recurrenceBase,
+											recurrenceInterval:
+												edited.recurrenceInterval,
+										}
+									: it,
+							),
+						}
+					: step,
+			),
 		);
 	}
 
