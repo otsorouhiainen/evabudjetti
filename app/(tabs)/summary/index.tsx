@@ -11,16 +11,13 @@ export default function YearsScreen() {
 
 	const availableYears = useMemo(() => {
 		const currentYear = new Date().getFullYear();
-		return Array.from({ length: 6 }, (_, i) => String(currentYear + i));
+		return Array.from({ length: 6 }, (_, i) => String(currentYear - i));
 	}, []);
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
 			<ScrollView>
 				<YStack padding="$4" gap="$3">
-					<SizableText size="$5" color="$color10" marginBottom="$2">
-						{t('Choose a year')}
-					</SizableText>
 					{availableYears.map((year) => (
 						<Card
 							key={year}

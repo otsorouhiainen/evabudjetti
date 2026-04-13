@@ -396,8 +396,9 @@ i18next
 				'2. instruction': 'Kun olet asettanut budjettisi, voit tarkistaa sinun päivittäistä käyttövaraa sekä vuosi ja kuukausibudjettiasi ja voit myös muokata olemassa olevaa budjettia helposti',
 				'I have read the terms and conditions': 'Olen lukenut ja hyväksynyt käyttöehdot',
 
-				// SUMMARY
-				'Choose a year': 'Valitse vuosi',
+				// BUDGET & SUMMARY
+
+				'Edit Budget': 'Muokkaa Budjettia',
 				'Planned': 'Suunniteltu',
 				'No expenses this month': 'Ei menoja tässä kuussa',
 				'No income this month': 'Ei tuloja tässä kuussa',
