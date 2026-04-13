@@ -1,7 +1,6 @@
 import { ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
 import type { Router } from 'expo-router';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useMemo, useState } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
@@ -9,8 +8,9 @@ import type { TransactionOccurrence } from '../dataModel';
 interface Props {
 	dTxns: TransactionOccurrence[];
 	date: Date;
+	noTxnNotice: string;
 	sum: number;
-	isCurrent: boolean;
+	isSelected: boolean;
 	router?: Router;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
@@ -18,24 +18,30 @@ interface Props {
 const DailyEventListItem: React.FC<Props> = ({
 	dTxns,
 	date,
+	noTxnNotice,
 	sum,
-	isCurrent,
+	isSelected,
 	router,
 	formatCurrency,
 }) => {
-	const [isOpen, setOpen] = useState(isCurrent);
-	const { t } = useTranslation();
+	const [isOpen, setOpen] = useState(isSelected);
+
+	// Automatically open list item when selected
+	useMemo(() => {
+		if (isSelected) setOpen(true);
+	}, [isSelected]);
+
 	return (
 		<XStack
 			style={{
 				padding: 10,
 				borderRadius: 10,
-				borderWidth: isCurrent ? 4 : 3,
+				borderWidth: isSelected ? 4 : 3,
 				margin: -2,
 			}}
 			key={`${date.getTime()}`}
 			backgroundColor={'$white'}
-			borderColor={isCurrent ? '$primary200' : '$primary300'}
+			borderColor={isSelected ? '$primary200' : '$primary300'}
 			pressStyle={{ backgroundColor: '$primary300' }}
 			onPress={() => setOpen(!isOpen)}
 		>
@@ -65,7 +71,7 @@ const DailyEventListItem: React.FC<Props> = ({
 					)}
 				</XStack>
 				{isOpen &&
-					(dTxns.length > 0 ? (
+					(dTxns[0].name !== '' ? (
 						dTxns.map((txn) => (
 							<XStack
 								gap={10}
@@ -106,7 +112,7 @@ const DailyEventListItem: React.FC<Props> = ({
 							style={{ fontStyle: 'italic' }}
 							color="$primary200"
 						>
-							{t('No transactions')}
+							{noTxnNotice}
 						</Text>
 					))}
 			</YStack>

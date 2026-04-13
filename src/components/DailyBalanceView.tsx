@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
 import { addMonths, subMonths } from 'date-fns';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
@@ -11,7 +11,6 @@ import {
 } from '@/src/store/useTimeframeStore';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
-
 import { formatCurrency } from '../utils/budgetUtils';
 import DailyEventList from './DailyEventList';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
@@ -102,71 +101,6 @@ export default function DailyBalanceView({
 		newDate.setDate(newDate.getDate() + 1);
 		onDateChange(newDate);
 	};
-
-	// --- Data Processing ---
-	const { currentDay, futureDays, pastDays } = useMemo(() => {
-		const cDateStr = formatDate(selectedDate);
-
-		const transactions: TransactionOccurrence[] = [];
-		for (const month of occurrencesAndBalances) {
-			for (const txn of month.transactionOccurrences) {
-				transactions.push(txn);
-			}
-		}
-		// Normalize dates: ensure each txn.date is a Date object so getTime() is available
-		const normalizedTxns: TransactionOccurrence[] = transactions.map(
-			(t) => {
-				const parsedDate =
-					// if already a Date keep it, otherwise create a Date from the value
-					t.date instanceof Date
-						? t.date
-						: new Date(t.date as unknown as string);
-				return { ...t, date: parsedDate };
-			},
-		);
-
-		// Sort all transactions by date descending (Newest first)
-		const sorted = [...normalizedTxns].sort(
-			(a, b) => b.date.getTime() - a.date.getTime(),
-		);
-
-		// Grouping all transactions by date (Newest first)
-		const grouped: TransactionOccurrence[][] = [];
-		let prevDate = '';
-		for (const txn of sorted) {
-			const newDate = txn.date.toLocaleDateString();
-			if (newDate === prevDate) {
-				grouped[grouped.length - 1].push(txn);
-			} else {
-				grouped.push([txn]);
-				prevDate = newDate;
-			}
-		}
-
-		const futureDays: TransactionOccurrence[][] = [];
-		const currentDay: TransactionOccurrence[][] = [];
-		const pastDays: TransactionOccurrence[][] = [];
-
-		// Iterate and split based on date comparison
-		const nowTime = cDateStr;
-		grouped.forEach((t) => {
-			const tStr = formatDate(t[0].date);
-
-			if (tStr === nowTime) {
-				currentDay.push(t);
-			} else if (t[0].date > selectedDate) {
-				futureDays.push(t);
-			} else {
-				pastDays.push(t);
-			}
-		});
-
-		return {
-			futureDays: futureDays,
-			currentDay: currentDay,
-			pastDays: pastDays,
-		};
-	}, [selectedDate, occurrencesAndBalances]);
 
 	// On "load more" press, display 1 more past/future month
 	const handleFutureLoadMorePress = () => {
@@ -270,6 +204,10 @@ export default function DailyBalanceView({
 						{t('ADD INCOME/EXPENSE')}
 					</Text>
 				</Button>
+				<Text color="$black" fontSize="$2" fontWeight="600">
+					{t('Usable funds timeframe')}:{' '}
+					{`${formatDate(currentTimeframeStart)} - ${formatDate(currentTimeframeEnd)}`}
+				</Text>
 			</StyledCard>
 
 			<ScrollView
@@ -291,30 +229,16 @@ export default function DailyBalanceView({
 						</Text>
 					</YStack>
 
-					{/* --- Future Events --- */}
-					<DailyEventList
-						txnsByDate={futureDays}
-						title={''}
-						selectedDate={selectedDate}
-						isCurrent={false}
-						formatCurrency={formatCurrency}
-					/>
-					{/* --- Present day events --- */}
-					<DailyEventList
-						txnsByDate={currentDay}
-						title={''}
-						selectedDate={selectedDate}
-						isCurrent={true}
-						formatCurrency={formatCurrency}
-					/>
-					{/* --- Past Events --- */}
-					<DailyEventList
-						txnsByDate={pastDays}
-						title={''}
-						selectedDate={selectedDate}
-						isCurrent={false}
-						formatCurrency={formatCurrency}
-					/>
+					{/* --- Render all loaded months in reverse order (latest first) ---*/}
+					{occurrencesAndBalances.toReversed().map((month) => (
+						<DailyEventList
+							transactions={month.transactionOccurrences}
+							monthKey={month.monthKey}
+							selectedDate={selectedDate}
+							formatCurrency={formatCurrency}
+							key={month.monthKey}
+						/>
+					))}
 
 					{/* --- Past Load More button --- */}
 					<YStack alignItems="center" marginTop="$2">

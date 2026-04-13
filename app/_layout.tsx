@@ -9,14 +9,17 @@ import { db, isDbReal } from '@/src/db/client';
 import config from '../tamagui.config';
 import '@/src/utils/i18n';
 
+import { Redirect } from 'expo-router';
 import i18next from 'i18next';
 import { useEffect } from 'react';
+import { useInstructionStore } from '@/src/store/useInstructionStore';
 import { useLanguageStore } from '@/src/store/useLanguageStore';
 
 export default function RootLayout() {
 	const { success, error } = useMigrations(db, migrations);
 
 	const language = useLanguageStore((state) => state.language);
+	const { instructionShown } = useInstructionStore();
 
 	useEffect(() => {
 		if (language && i18next.language !== language) {
@@ -71,6 +74,31 @@ export default function RootLayout() {
 				</TamaguiProvider>
 			);
 		}
+	}
+
+	if (!instructionShown) {
+		return (
+			<TamaguiProvider config={config} defaultTheme="light">
+				<PortalProvider>
+					<Theme name="light">
+						<SafeAreaProvider>
+							<StatusBar style="dark" translucent={false} />
+							<Stack
+								screenOptions={{
+									headerBackButtonDisplayMode: 'minimal',
+									headerTitle: '',
+								}}
+							>
+								<Stack.Screen name="landing" />
+								<Stack.Screen name="introduction" />
+								<Stack.Screen name="budget_wizard" />
+							</Stack>
+							<Redirect href="/landing" />
+						</SafeAreaProvider>
+					</Theme>
+				</PortalProvider>
+			</TamaguiProvider>
+		);
 	}
 
 	return (

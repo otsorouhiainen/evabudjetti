@@ -136,6 +136,7 @@ i18next
 				'Account balance': 'Account balance',
 				'Unknown': 'Unknown',
 				'Disposable income': 'Disposable income',
+				'Usable funds timeframe': 'Usable funds timeframe',
 				'Load more': 'Load more',
 				'No transactions': 'No transactions',
 
@@ -179,6 +180,12 @@ i18next
 				'SHOW BUDGET': 'SHOW BUDGET',
 				'EVA MyBudget': 'EVA MyBudget',
 				'EDIT BALANCE': 'EDIT BALANCE',
+				"Let's start!": "Let's start!",
+				'Welcome': 'Welcome',
+				'to EVA MyBudget': 'to EVA MyBudget',
+				'1. instruction': 'This app is designed to help you with your finances by creating a budget that fits your life',
+				'2. instruction': 'When you have set your budget, you can see your usable funds as well as your monthly and yearly budget and you can edit your existing budget',
+				'I have read the terms and conditions': 'I have read the terms and conditions',
 
 				// SUMMARY
 				'Choose a year': 'Choose a year',
@@ -343,6 +350,7 @@ i18next
 				'Account balance': 'Tilillä rahaa',
 				'Unknown': 'Ei tietoa',
 				'Disposable income': 'Käyttövara',
+				'Usable funds timeframe': 'Käyttövarajakso',
 				'Load more': 'Lataa enemmän',
 				'No transactions': 'Ei maksutapahtumia',
 
@@ -391,9 +399,16 @@ i18next
 				'This will alter the balance record.': 'Tämä tulee muuttamaan tilin saldoa.',
 				'Confirm': 'Vahvista',
 				'Update balance': 'Muokkaa saldoa',
+				"Let's start!": "Aloitetaan!",
+				'Welcome': 'Tervetuloa',
+				'to EVA MyBudget': 'EVA OmaBudjettiin',
+				'1. instruction': 'Tämän sovelluksen tarkoituksena on auttaa sinua saamaan taloutesi hallintaasi luomalla oman elämäsi todellinen budjetti',
+				'2. instruction': 'Kun olet asettanut budjettisi, voit tarkistaa sinun päivittäistä käyttövaraa sekä vuosi ja kuukausibudjettiasi ja voit myös muokata olemassa olevaa budjettia helposti',
+				'I have read the terms and conditions': 'Olen lukenut ja hyväksynyt käyttöehdot',
 
-				// SUMMARY
-				'Choose a year': 'Valitse vuosi',
+				// BUDGET & SUMMARY
+
+				'Edit Budget': 'Muokkaa Budjettia',
 				'Planned': 'Suunniteltu',
 				'No expenses this month': 'Ei menoja tässä kuussa',
 				'No income this month': 'Ei tuloja tässä kuussa',
