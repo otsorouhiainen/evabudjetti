@@ -22,7 +22,7 @@ i18next
 				'Home': 'Home',
     			'Budget': 'Budget',
 				'Funds': 'Funds',
-    			'Summary': 'Summary',
+    			'Summary': 'Bookkeeping',
 				'Settings': 'Settings',
 
 				//ADD_TRANSACTION
@@ -92,16 +92,21 @@ i18next
 
 				//ADD NEW ITEM POPUP
 				'Add a new item': 'Add a new item',
+				'Edit item': 'Edit item',
+				'Delete': 'Delete',
 				'Write the name here': 'Write the name here',
 				'Write the amount here (€)': 'Write the amount here (€)',
-				'Reoccurrence': 'Does the item repeat?',
+				'Reoccurrence': 'Item repeats',
+				'Reoccurs': 'Repeats',
 				'Rec_day': 'Day',
 				'Rec_week': 'Week',
 				'Rec_month': 'Month',
 				'Rec_year': 'Year',
 				'Interval': 'Interval',
 				'Start Date': 'Start Date',
-				'End Date': 'End Date',
+				'End Date': 'Repeating ends',
+				'Starts': 'Starts',
+				'Ends': 'Ends',
 				'Add': 'Add',
 
 				// BUDGET
@@ -110,6 +115,7 @@ i18next
 				'Finish': 'Finish',
 				'No budget created': 'No budget created yet. Enter your balance in € without commas and press the "Create budget" button below to get started!',
 				'Create budget': 'CREATE BUDGET',
+				'Edit Budget': 'Edit Budget',
 				'Bus card': 'Bus card',
 				'Study benefit': 'Study benefit',
 				'Study loan': 'Study loan',
@@ -149,9 +155,25 @@ i18next
 				"december": "December",
 
 				// FUNDS
-				'Daily balance': 'Daily balance',
+				'Daily situation': 'Daily situation',
 				'Account balance': 'Account balance',
+				'Unknown': 'Unknown',
 				'Disposable income': 'Disposable income',
+				'Usable funds timeframe': 'Usable funds timeframe',
+				'Load more': 'Load more',
+				'No transactions': 'No transactions',
+
+				// EDIT TRANSACTION MODAL
+				'Edit transaction': 'Edit transaction',
+				'Enter transaction name': 'Enter transaction name',
+				'Enter amount (\u20ac)': 'Enter amount (\u20ac)',
+				'Delete transaction': 'Delete transaction',
+				'Are you sure you want to delete this transaction?': 'Are you sure you want to delete this transaction?',
+				'Transaction deleted': 'Transaction deleted',
+				'Failed to delete transaction': 'Failed to delete transaction',
+				'Changes saved': 'Changes saved',
+				'Failed to save changes': 'Failed to save changes',
+				'OK': 'OK',
 
 				// ERROR
 				'Something went wrong': 'Something went wrong',
@@ -190,17 +212,32 @@ i18next
 				'Balance runs out': 'Balance runs out',
 				'EXAMINE': 'EXAMINE',
 				'ADD INCOME/EXPENSE': 'ADD INCOME/EXPENSE',
-				'EDIT BUDGET': 'EDIT BUDGET',
 				'SHOW BUDGET': 'SHOW BUDGET',
 				'EVA MyBudget': 'EVA MyBudget',
 				'EDIT BALANCE': 'EDIT BALANCE',
+				"Let's start!": "Let's start!",
+				'Welcome': 'Welcome',
+				'to EVA MyBudget': 'to EVA MyBudget',
+				'1. instruction': 'This app is designed to help you with your finances by creating a budget that fits your life',
+				'2. instruction': 'When you have set your budget, you can see your usable funds as well as your monthly and yearly budget and you can edit your existing budget',
+				'I have read the terms and conditions': 'I have read the terms and conditions',
 
 				// SUMMARY
 				'Choose a year': 'Choose a year',
 				'Months': 'Months',
+				'No expenses this month': 'No expenses this month',
+				'No income this month': 'No income this month',
+				'Uncategorized': 'Uncategorized',
 
 				// SETTINGS
 				'Language': 'Language',
+				'Timeframe': 'Timeframe',
+				'Start date': 'Start date',
+				'Timeframe length': 'Timeframe length',
+				'days': 'days',
+				'weeks': 'weeks',
+				'months': 'months',
+				'years': 'years'
 			},
 		},
 		fi: {
@@ -213,7 +250,7 @@ i18next
 				'Home': 'Koti',
     			'Budget': 'Budjetti',
 				'Funds': 'Käyttövara',
-    			'Summary': 'Yhteenveto',
+    			'Summary': 'Kirjanpito',
 				'Settings': 'Asetukset',
 
 				//ADD_TRANSACTION
@@ -282,9 +319,12 @@ i18next
 				
 				//ADD NEW ITEM POPUP
 				'Add a new item': 'Lisää uusi tapahtuma',
+				'Edit item': 'Muokkaa tapahtumaa',
+				'Delete': 'Poista',
 				'Write the name here': 'Kirjoita nimi tähän',
 				'Write the amount here (€)': 'Kirjoita määrä tähän (€)',
-				'Reoccurrence': 'Tapahtuma toistuu:',
+				'Reoccurrence': 'Tapahtuma toistuu',
+				'Reoccurs': 'Toistuu',
 				'Rec_day': 'päivän',
 				'Rec_week': 'viikon',
 				'Rec_month': 'kuukauden',
@@ -293,6 +333,8 @@ i18next
 				'Interval': 'välein',
 				'Start Date': 'Tapahtuma alkaa',
 				'End Date': 'Tapahtuma loppuu',
+				'Starts': 'Alkaa',
+				'Ends': 'Loppuu',
 				'Add': 'Lisää',
 
 				// BUDGET
@@ -301,6 +343,7 @@ i18next
 				'Finish': 'Valmis',
 				'No budget created': 'Budjettia ei ole vielä luotu. Aloita syöttämällä tilisi saldo euroina (€) ilman pilkkuja ja paina alta löytyvää "Luo budjetti" -painiketta!',
 				'Create budget': 'LUO BUDJETTI',
+				'Edit Budget': 'Muokkaa Budjettia',
 				'Bus card': 'Bussikortti',
 				'Study benefit': 'Opintotuki',
 				'Study loan': 'Opintolaina',
@@ -352,7 +395,6 @@ i18next
 				'Close': 'Sulje',
 				'CLOSE': 'SULJE',
 				'SAVE': 'TALLENNA',
-				'No transactions': 'Ei maksutapahtumia',
 				'Future events': 'Tulevat tapahtumat',
 				'Past events': 'Menneet tapahtumat',
 				'Edit Transaction': 'Muokkaa tapahtumaa',
@@ -365,9 +407,25 @@ i18next
 				'No expense records': 'Ei näytettäviä menoja',
 
 				// FUNDS
-				'Daily balance': 'Päivittäinen rahatilanne',
+				'Daily situation': 'Päivän rahatilanne',
 				'Account balance': 'Tilillä rahaa',
+				'Unknown': 'Ei tietoa',
 				'Disposable income': 'Käyttövara',
+				'Usable funds timeframe': 'Käyttövarajakso',
+				'Load more': 'Lataa enemmän',
+				'No transactions': 'Ei maksutapahtumia',
+
+				// EDIT TRANSACTION MODAL
+				'Edit transaction': 'Muokkaa tapahtumaa',
+				'Enter transaction name': 'Kirjoita tapahtuman nimi',
+				'Enter amount (\u20ac)': 'Kirjoita määrä (\u20ac)',
+				'Delete transaction': 'Poista tapahtuma',
+				'Are you sure you want to delete this transaction?': 'Haluatko varmasti poistaa tämän tapahtuman?',
+				'Transaction deleted': 'Tapahtuma poistettu',
+				'Failed to delete transaction': 'Tapahtuman poistaminen epäonnistui',
+				'Changes saved': 'Muutokset tallennettu',
+				'Failed to save changes': 'Muutosten tallentaminen epäonnistui',
+				'OK': 'OK',
 
 				// ERROR
 				'Something went wrong': 'Jokin meni pieleen',
@@ -403,7 +461,6 @@ i18next
 				'/ day': '/ vrk',
 				'EXAMINE': 'TARKASTELE',
 				'ADD INCOME/EXPENSE': 'LISÄÄ TULO/MENO',
-				'EDIT BUDGET': 'MUOKKAA BUDJETTIA',
 				'SHOW BUDGET': 'NÄYTÄ BUDJETTI',
 				'EVA MyBudget': 'EVA OmaBudjetti',
 				'EDIT BALANCE': 'MUOKKAA SALDOA',
@@ -415,17 +472,29 @@ i18next
 				'This will alter the balance record.': 'Tämä tulee muuttamaan tilin saldoa.',
 				'Confirm': 'Vahvista',
 				'Update balance': 'Muokkaa saldoa',
+				"Let's start!": "Aloitetaan!",
+				'Welcome': 'Tervetuloa',
+				'to EVA MyBudget': 'EVA OmaBudjettiin',
+				'1. instruction': 'Tämän sovelluksen tarkoituksena on auttaa sinua saamaan taloutesi hallintaasi luomalla oman elämäsi todellinen budjetti',
+				'2. instruction': 'Kun olet asettanut budjettisi, voit tarkistaa sinun päivittäistä käyttövaraa sekä vuosi ja kuukausibudjettiasi ja voit myös muokata olemassa olevaa budjettia helposti',
+				'I have read the terms and conditions': 'Olen lukenut ja hyväksynyt käyttöehdot',
 
-				// SUMMARY
-				'Choose a year': 'Valitse vuosi',
+				// BUDGET & SUMMARY
+
 				'Planned': 'Suunniteltu',
 				'No expenses this month': 'Ei menoja tässä kuussa',
 				'No income this month': 'Ei tuloja tässä kuussa',
 				'Uncategorized': 'Ei määritelty',
 
 				// SETTINGS
-				'Language': 'Kieli'
-
+				'Language': 'Kieli',
+				'Timeframe': 'Jakso',
+				'Start date': 'Jakson alku',
+				'Timeframe length': 'Jakson pituus',
+				'days': 'päivää',
+				'weeks': 'viikkoa',
+				'months': 'kuukausia',
+				'years': 'vuosia'
 			},
 		},
 	},

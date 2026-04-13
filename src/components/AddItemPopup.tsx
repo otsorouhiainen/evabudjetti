@@ -1,4 +1,5 @@
 import { Check, ChevronDown } from '@tamagui/lucide-icons';
+import { addMonths } from 'date-fns';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -16,11 +17,18 @@ import type { PlannedTransaction, RecurrenceBase } from '../dataModel';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type AddItemPopupProps = {
-	onAdd: (item: PlannedTransaction) => void;
+	item: PlannedTransaction | null;
+	onSave: (item: PlannedTransaction) => void;
+	onDelete: (item: PlannedTransaction) => void;
 	onClose: () => void;
 };
 
-const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
+const AddItemPopup = ({
+	item,
+	onSave,
+	onDelete,
+	onClose,
+}: AddItemPopupProps) => {
 	const REOCCURENCE_OPTIONS: RecurrenceBase[] = [
 		'day',
 		'week',
@@ -29,23 +37,32 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 	];
 	const { t } = useTranslation();
 	const [recSelect, toggleRecSelect] = useState<true | false>(false);
-	const [name, setName] = useState<string>('');
-	const [amount, setAmount] = useState<number | null>(null);
-	const [startDate, setStartDate] = useState<Date>(new Date());
-	const [endDate, setEndDate] = useState<Date | null>(null);
-	const [reoccurence, setReoccurence] = useState<RecurrenceBase>('month');
-	const [reoccurenceInterval, setReoccurenceInterval] = useState<
-		number | undefined
-	>(undefined);
+	const [name, setName] = useState<string>(item ? item.name : '');
+	const [amount, setAmount] = useState<number | null>(
+		item ? item.amount : null,
+	);
+	const [startDate, setStartDate] = useState<Date>(
+		item ? item.startDate : new Date(),
+	);
+	const [endDate, setEndDate] = useState<Date | null>(
+		item ? item.endDate : null,
+	);
+	const [reoccurence, setReoccurence] = useState<RecurrenceBase | null>(
+		item ? item.recurrenceBase : null,
+	);
+	const [reoccurenceInterval, setReoccurenceInterval] = useState<number>(
+		item ? item.recurrenceInterval : 1,
+	);
 	const isDisabled =
 		!name.trim() ||
 		Number.isNaN(Number(amount)) ||
 		Number(amount) <= 0 ||
-		!startDate;
+		!startDate ||
+		reoccurenceInterval <= 0;
 	const hasEndDate = endDate !== null;
-	const hasReocurrence = reoccurenceInterval !== undefined;
+	const hasReocurrence = reoccurence !== null;
 	const handleAdd = () => {
-		onAdd({
+		onSave({
 			categoryId: 0,
 			name: name.trim(),
 			amount: amount,
@@ -54,20 +71,31 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 			endDate: endDate,
 			recurrenceInterval: reoccurenceInterval,
 		} as PlannedTransaction);
-		setName('');
-		setAmount(null);
-		setReoccurence('month');
-		setReoccurenceInterval(undefined);
-		setStartDate(new Date());
-		toggleRecSelect(false);
+
+		onClose();
+	};
+	const handleDelete = () => {
+		if (item !== null) onDelete(item);
 		onClose();
 	};
 	return (
 		<View style={styles.container}>
 			<YStack backgroundColor="$background" style={styles.card}>
-				<SizableText color="$primary100" size="$title2">
-					{t('Add a new item')}
-				</SizableText>
+				<XStack justifyContent="space-between">
+					<SizableText color="$primary100" size="$title2">
+						{item !== null ? t('Edit item') : t('Add a new item')}
+					</SizableText>
+					{item !== null && (
+						<Button
+							onPress={handleDelete}
+							color="$white"
+							backgroundColor="$danger500"
+							height="100%"
+						>
+							{t('Delete')}
+						</Button>
+					)}
+				</XStack>
 				<View style={styles.inputsContainer}>
 					<View style={styles.singleItemContainer}>
 						<SizableText color="$primary100" size="$title3">
@@ -89,34 +117,54 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							color="$primary100"
 							placeholder={t('Write the amount here (€)')}
 							style={styles.input}
+							defaultValue={amount ? String(amount) : null}
 							keyboardType="numeric"
-							onChangeText={(text) => {
+							onChangeText={(text: string) => {
 								const input = Number(text);
 								if (!Number.isNaN(input) && input >= 0) {
 									setAmount(input);
 								} else {
-									setAmount(NaN);
+									setAmount(null);
 								}
 							}}
 						/>
 					</View>
 					<View style={styles.singleItemContainer}>
+						<SizableText color="$primary100" size="$title3">
+							{t('Start Date')}:
+						</SizableText>
+						<MultiPlatformDatePicker
+							value={startDate}
+							color="primary100"
+							onChange={setStartDate}
+						/>
+					</View>
+					<View>
 						<XStack
 							style={{
 								alignItems: 'center',
 								gap: 5,
+								marginTop: '-8%',
 								marginBottom: 5,
 							}}
 						>
 							<SizableText color="$primary100" size="$title3">
-								{t('Reoccurrence')}
+								{t('Reoccurrence')}:
 							</SizableText>
 							<Checkbox
-								onCheckedChange={() =>
-									hasReocurrence
-										? setReoccurenceInterval(undefined)
-										: setReoccurenceInterval(1)
-								}
+								checked={hasReocurrence}
+								onCheckedChange={() => {
+									if (hasReocurrence) {
+										setReoccurence(null);
+										setEndDate(null);
+									} else {
+										setReoccurence(
+											item?.recurrenceBase
+												? item.recurrenceBase
+												: 'month',
+										);
+									}
+								}}
 								size="$10"
 							>
 								<Checkbox.Indicator>
@@ -125,7 +173,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 							</Checkbox>
 						</XStack>
 						{hasReocurrence && (
-							<View
+							<YStack
 								style={{
 									flexDirection: 'row',
 									gap: 8,
@@ -145,25 +193,29 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 											minWidth: '21%',
 											height: '100%',
 										}}
-										defaultValue="1"
+										defaultValue={String(
+											item ? item.recurrenceInterval : 1,
+										)}
 										keyboardType="numeric"
-										onChangeText={(text) => {
+										onChangeText={(text: string) => {
 											const interval = Number(text);
-											if (
-												!Number.isNaN(interval) &&
-												interval > 0
-											) {
-												setReoccurenceInterval(
-													interval,
-												);
-											}
+											interval > 0 &&
+											!Number.isNaN(interval)
+												? setReoccurenceInterval(
+														Number(interval),
+													)
+												: setReoccurenceInterval(0);
 										}}
 									/>
 									<View>
 										<Select
 											disablePreventBodyScroll
 											native="web"
-											defaultValue={reoccurence}
+											defaultValue={
+												reoccurence
+													? reoccurence
+													: 'month'
+											}
 										>
 											<Select.Trigger
 												borderColor={'$primary100'}
@@ -276,52 +328,55 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 										{t('Interval')}
 									</Text>
 								</XStack>
-							</View>
+							</YStack>
 						)}
-					</View>
-					<View style={styles.singleItemContainer}>
-						<SizableText color="$primary100" size="$title3">
-							{t('Start Date')}:
-						</SizableText>
-						<MultiPlatformDatePicker
-							value={startDate}
-							onChange={setStartDate}
-						/>
-					</View>
-					<View style={styles.singleItemContainer}>
-						<XStack
-							style={{
-								alignItems: 'center',
-								gap: 5,
-								marginTop: '-20',
-							}}
-						>
-							<SizableText
-								style={{ height: '100%' }}
-								color="$primary100"
-								size="$title3"
-							>
-								{t('End Date')}:
-							</SizableText>
-							<Checkbox
-								onCheckedChange={() =>
-									hasEndDate
-										? setEndDate(null)
-										: setEndDate(new Date())
-								}
-								// Default end date should change based on interval?
-								size="$10"
-							>
-								<Checkbox.Indicator>
-									<Check />
-								</Checkbox.Indicator>
-							</Checkbox>
-						</XStack>
-						{hasEndDate && (
-							<MultiPlatformDatePicker
-								value={endDate}
-								onChange={setEndDate}
-							/>
+						{hasReocurrence && (
+							<View style={styles.singleItemContainer}>
+								<XStack
+									style={{
+										alignItems: 'center',
+										gap: 5,
+										marginTop: '-35%',
+										marginBottom: '-25%',
+									}}
+								>
+									<SizableText
+										style={{ height: '100%' }}
+										color="$primary100"
+										size="$title3"
+									>
+										{t('End Date')}:
+									</SizableText>
+									<Checkbox
+										checked={hasEndDate}
+										onCheckedChange={() =>
+											hasEndDate
+												? setEndDate(null)
+												: setEndDate(
+														item?.endDate
+															? item.endDate
+															: addMonths(
+																	new Date(),
+																	1,
+																),
+													)
+										}
+										// Default end date should change based on interval?
+										size="$10"
+									>
+										<Checkbox.Indicator>
+											<Check />
+										</Checkbox.Indicator>
+									</Checkbox>
+								</XStack>
+								{hasEndDate && (
+									<MultiPlatformDatePicker
+										value={endDate}
+										color="primary100"
+										onChange={setEndDate}
+									/>
+								)}
+							</View>
 						)}
 					</View>
 				</View>
@@ -336,7 +391,7 @@ const AddItemPopup = ({ onAdd, onClose }: AddItemPopupProps) => {
 						disabled={isDisabled}
 					>
 						<SizableText color="$white" size="$title3">
-							{t('Add')}
+							{item !== null ? t('Save') : t('Add')}
 						</SizableText>
 					</Button>
 					<Button

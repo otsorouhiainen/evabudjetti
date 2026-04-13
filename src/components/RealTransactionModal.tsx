@@ -238,6 +238,7 @@ const RealTransactionModal = ({
 							</SizableText>
 							<MultiPlatformDatePicker
 								value={date}
+								color="primary100"
 								onChange={setDate}
 							/>
 						</YStack>

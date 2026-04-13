@@ -7,9 +7,11 @@ import { initializeWebDb, isDbReal, isWebFallbackMode } from '@/src/db/client';
 import config from '../tamagui.config';
 import '@/src/utils/i18n';
 
+import { Redirect } from 'expo-router';
 import { SQLiteProvider } from 'expo-sqlite';
 import i18next from 'i18next';
 import { useEffect, useState } from 'react';
+import { useInstructionStore } from '@/src/store/useInstructionStore';
 import { useLanguageStore } from '@/src/store/useLanguageStore';
 
 function MigrationHandler({ children }: { children: React.ReactNode }) {
@@ -48,12 +50,38 @@ function MigrationHandler({ children }: { children: React.ReactNode }) {
 
 export default function RootLayout() {
 	const language = useLanguageStore((state) => state.language);
+	const { instructionShown } = useInstructionStore();
 
 	useEffect(() => {
 		if (language && i18next.language !== language) {
 			i18next.changeLanguage(language);
 		}
 	}, [language]);
+
+	if (!instructionShown) {
+		return (
+			<TamaguiProvider config={config} defaultTheme="light">
+				<PortalProvider>
+					<Theme name="light">
+						<SafeAreaProvider>
+							<StatusBar style="dark" translucent={false} />
+							<Stack
+								screenOptions={{
+									headerBackButtonDisplayMode: 'minimal',
+									headerTitle: '',
+								}}
+							>
+								<Stack.Screen name="landing" />
+								<Stack.Screen name="introduction" />
+								<Stack.Screen name="budget_wizard" />
+							</Stack>
+							<Redirect href="/landing" />
+						</SafeAreaProvider>
+					</Theme>
+				</PortalProvider>
+			</TamaguiProvider>
+		);
+	}
 
 	return (
 		<TamaguiProvider config={config} defaultTheme={'light'}>
@@ -77,10 +105,13 @@ export default function RootLayout() {
 							}}
 						>
 							<MigrationHandler>
-								<Stack>
+								<Stack screenOptions={{ headerTitle: '' }}>
 									<Stack.Screen
 										name="(tabs)"
-										options={{ headerShown: false }}
+										options={{
+									headerShown: false,
+									headerTitle: '',
+								}}
 									/>
 								</Stack>
 							</MigrationHandler>

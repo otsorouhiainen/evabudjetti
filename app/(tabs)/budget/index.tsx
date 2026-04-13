@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
-import { Card, SizableText, View, XStack, YStack } from 'tamagui';
+import { Button, Card, SizableText, View, XStack, YStack } from 'tamagui';
 
 export default function YearsScreen() {
 	const router = useRouter();
@@ -11,19 +11,30 @@ export default function YearsScreen() {
 
 	const availableYears = useMemo(() => {
 		const currentYear = new Date().getFullYear();
-		return Array.from({ length: 6 }, (_, i) => String(currentYear - i));
+		return Array.from({ length: 6 }, (_, i) => String(currentYear + i));
 	}, []);
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
 			<ScrollView>
 				<YStack padding="$4" gap="$3">
+					<Button
+						backgroundColor="$primary200"
+						borderRadius={40}
+						height={60}
+						onPress={() => router.push('/budget_wizard')}
+						marginBottom="$2"
+					>
+						<SizableText fontWeight="bold" color="$white">
+							{t('Edit Budget')}
+						</SizableText>
+					</Button>
 					{availableYears.map((year) => (
 						<Card
 							key={year}
 							bordered
 							padding="$4"
-							onPress={() => router.push(`/summary/${year}`)}
+							onPress={() => router.push(`/budget/${year}`)}
 							backgroundColor="white"
 							borderColor="$borderColor"
 							pressStyle={{ scale: 0.98 }}
