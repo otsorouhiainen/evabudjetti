@@ -269,21 +269,22 @@ export const useTransactionOccurrenceVersioning =
 				const monthKey = dateToMonthKey(deleted.date);
 				const oldVersion = state.versionsByMonthKey.get(monthKey);
 
-				const newVersions = incrementMonthVersionsForRealTransaction(
-					deleted,
-					state.versionsByMonthKey,
+				// Always bump the version, even if the month wasn't previously tracked.
+				// Skipping untracked months would silently prevent cache invalidation.
+				const newVersions = new Map(state.versionsByMonthKey);
+				newVersions.set(monthKey, (oldVersion ?? 0) + 1);
+
+				const changedMonths = collectChangedMonths(
+					oldVersions,
+					newVersions,
 				);
-				const changed = newVersions !== undefined;
-				const newVersion = newVersions?.get(monthKey);
-				const changedMonths = newVersions
-					? collectChangedMonths(oldVersions, newVersions)
-					: [];
+				const newVersion = newVersions.get(monthKey);
 
 				console.debug(
-					`[TransactionOccurrenceVersioning] onRealTransactionDeleted: month=${monthKey}, oldVersion=${oldVersion}, newVersion=${newVersion}, changed=${changed}, isTracked=${oldVersion !== undefined}, affectedMonths=[${changedMonths.join(', ')}]`,
+					`[TransactionOccurrenceVersioning] onRealTransactionDeleted: month=${monthKey}, oldVersion=${oldVersion}, newVersion=${newVersion}, isTracked=${oldVersion !== undefined}, affectedMonths=[${changedMonths.join(', ')}]`,
 				);
 
-				return changed ? { versionsByMonthKey: newVersions } : {};
+				return { versionsByMonthKey: newVersions };
 			});
 		},
 	}));

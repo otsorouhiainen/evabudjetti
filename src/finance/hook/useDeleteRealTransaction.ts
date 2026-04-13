@@ -17,8 +17,14 @@ export function useDeleteRealTransaction() {
 		async (transaction: Persisted<RealTransaction>): Promise<void> => {
 			await deleteRealTransaction(transaction.id);
 
-			onBalanceRealTransactionDeleted(transaction);
-			onOccurrenceRealTransactionDeleted(transaction);
+			// Normalize date in case Drizzle returns a number instead of Date
+			const date =
+				transaction.date instanceof Date
+					? transaction.date
+					: new Date(transaction.date as unknown as number);
+
+			onBalanceRealTransactionDeleted({ ...transaction, date });
+			onOccurrenceRealTransactionDeleted({ ...transaction, date });
 		},
 		[onBalanceRealTransactionDeleted, onOccurrenceRealTransactionDeleted],
 	);
