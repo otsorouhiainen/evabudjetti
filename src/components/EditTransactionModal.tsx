@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import {
-	AlertDialog,
 	Button,
 	Input,
 	ScrollView,
@@ -40,7 +39,6 @@ const EditTransactionModal = ({
 	const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
 	const [saving, setSaving] = useState(false);
 	const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
-	const [feedbackIsError, setFeedbackIsError] = useState(false);
 
 	const handleAmountChange = (text: string) => {
 		const numeric = text.replace(/[^0-9.,]/g, '');
@@ -78,7 +76,6 @@ const EditTransactionModal = ({
 			onClose();
 		} catch (e) {
 			console.error('Failed to update transaction:', e);
-			setFeedbackIsError(true);
 			setFeedbackMessage(t('Failed to save changes'));
 		} finally {
 			setSaving(false);
@@ -93,7 +90,6 @@ const EditTransactionModal = ({
 		} catch (e) {
 			console.error('Failed to delete transaction:', e);
 			setSaving(false);
-			setFeedbackIsError(true);
 			setFeedbackMessage(t('Failed to delete transaction'));
 		}
 	};
@@ -241,23 +237,10 @@ const EditTransactionModal = ({
 				</XStack>
 			</YStack>
 
-			{/* Delete confirmation dialog */}
-			<AlertDialog
-				open={deleteConfirmVisible}
-				onOpenChange={setDeleteConfirmVisible}
-			>
-				<AlertDialog.Portal>
-					<AlertDialog.Overlay
-						opacity={0.5}
-						backgroundColor="$black"
-					/>
-					<AlertDialog.Content
-						bordered
-						elevate
-						width="80%"
-						padding={24}
-						borderRadius={16}
-					>
+			{/* Delete confirmation — inline overlay (AlertDialog.Portal doesn't pierce RN Modal) */}
+			{deleteConfirmVisible && (
+				<View style={styles.inlineOverlay}>
+					<YStack style={styles.inlineDialog}>
 						<SizableText size="$title2" marginBottom={8}>
 							{t('Delete transaction')}
 						</SizableText>
@@ -291,44 +274,21 @@ const EditTransactionModal = ({
 								</SizableText>
 							</Button>
 						</XStack>
-					</AlertDialog.Content>
-				</AlertDialog.Portal>
-			</AlertDialog>
+					</YStack>
+				</View>
+			)}
 
-			{/* Feedback dialog (success or error) */}
-			<AlertDialog
-				open={feedbackMessage !== null}
-				onOpenChange={(open) => {
-					if (!open) {
-						setFeedbackMessage(null);
-						if (!feedbackIsError) onClose();
-					}
-				}}
-			>
-				<AlertDialog.Portal>
-					<AlertDialog.Overlay
-						opacity={0.5}
-						backgroundColor="$black"
-					/>
-					<AlertDialog.Content
-						bordered
-						elevate
-						width="80%"
-						padding={24}
-						borderRadius={16}
-					>
+			{/* Error feedback — inline overlay */}
+			{feedbackMessage !== null && (
+				<View style={styles.inlineOverlay}>
+					<YStack style={styles.inlineDialog}>
 						<SizableText size="$title3" marginBottom={20}>
 							{feedbackMessage}
 						</SizableText>
 						<Button
-							backgroundColor={
-								feedbackIsError ? '$caution' : '$primary200'
-							}
+							backgroundColor="$caution"
 							borderRadius={28}
-							onPress={() => {
-								setFeedbackMessage(null);
-								if (!feedbackIsError) onClose();
-							}}
+							onPress={() => setFeedbackMessage(null)}
 							alignSelf="flex-end"
 							width="45%"
 						>
@@ -336,9 +296,9 @@ const EditTransactionModal = ({
 								{t('OK')}
 							</SizableText>
 						</Button>
-					</AlertDialog.Content>
-				</AlertDialog.Portal>
-			</AlertDialog>
+					</YStack>
+				</View>
+			)}
 		</View>
 	);
 };
@@ -364,6 +324,19 @@ const styles = StyleSheet.create({
 	button: {
 		width: '45%',
 		height: 50,
+	},
+	inlineOverlay: {
+		...StyleSheet.absoluteFillObject,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'rgba(0, 0, 0, 0.55)',
+		borderRadius: 16,
+		zIndex: 10,
+	},
+	inlineDialog: {
+		width: '90%',
+		padding: 24,
+		borderRadius: 16,
 	},
 });
 
