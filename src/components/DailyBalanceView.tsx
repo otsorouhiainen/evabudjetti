@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
 import { addMonths, subMonths } from 'date-fns';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Modal } from 'react-native';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
 import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
@@ -10,9 +11,14 @@ import {
 	useTimeframeStore,
 } from '@/src/store/useTimeframeStore';
 import { LOCALE } from '../constants/index';
-import type { TransactionOccurrence } from '../dataModel';
+import type {
+	Persisted,
+	RealTransaction,
+	TransactionOccurrence,
+} from '../dataModel';
 import { formatCurrency } from '../utils/budgetUtils';
 import DailyEventList from './DailyEventList';
+import EditTransactionModal from './EditTransactionModal';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 import StyledCard from './styledCard';
 
@@ -34,6 +40,15 @@ export default function DailyBalanceView({
 	onAddPress,
 }: DailyBalanceViewProps) {
 	const { t } = useTranslation();
+
+	const [editingTransaction, setEditingTransaction] =
+		useState<Persisted<RealTransaction> | null>(null);
+
+	const handleEditPress = (txn: TransactionOccurrence) => {
+		if (txn.realTransaction) {
+			setEditingTransaction(txn.realTransaction);
+		}
+	};
 
 	/* 
 	Variable to determine how many past and future months are rendered. 
@@ -210,6 +225,20 @@ export default function DailyBalanceView({
 				</Text>
 			</StyledCard>
 
+			{/* Edit transaction modal */}
+			<Modal
+				visible={editingTransaction !== null}
+				onRequestClose={() => setEditingTransaction(null)}
+				transparent
+			>
+				{editingTransaction && (
+					<EditTransactionModal
+						transaction={editingTransaction}
+						onClose={() => setEditingTransaction(null)}
+					/>
+				)}
+			</Modal>
+
 			<ScrollView
 				flex={1}
 				contentContainerStyle={{ paddingBottom: 50, paddingTop: 10 }}
@@ -236,6 +265,7 @@ export default function DailyBalanceView({
 							monthKey={month.monthKey}
 							selectedDate={selectedDate}
 							formatCurrency={formatCurrency}
+							onEditPress={handleEditPress}
 							key={month.monthKey}
 						/>
 					))}

@@ -1,5 +1,4 @@
 import { ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
-import type { Router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import { LOCALE } from '../constants/index';
@@ -11,7 +10,7 @@ interface Props {
 	noTxnNotice: string;
 	sum: number;
 	isSelected: boolean;
-	router?: Router;
+	onEditPress?: (txn: TransactionOccurrence) => void;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
 
@@ -21,7 +20,7 @@ const DailyEventListItem: React.FC<Props> = ({
 	noTxnNotice,
 	sum,
 	isSelected,
-	router,
+	onEditPress,
 	formatCurrency,
 }) => {
 	const [isOpen, setOpen] = useState(isSelected);
@@ -93,16 +92,14 @@ const DailyEventListItem: React.FC<Props> = ({
 									{txn.type === 'income' ? '+' : '-'}
 									{formatCurrency(Number(txn.amount))}
 								</Text>
-								{/* Edit button rendered only if router exists */}
-								{router && (
+								{/* Edit button only for real (DB-persisted) transactions */}
+								{onEditPress && txn.realTransaction && (
 									<Button
 										size="$buttons.sm"
 										circular
 										backgroundColor="transparent"
 										icon={Pencil}
-										onPress={() => {
-											router.push('/budget_wizard');
-										}}
+										onPress={() => onEditPress(txn)}
 									/>
 								)}
 							</XStack>
