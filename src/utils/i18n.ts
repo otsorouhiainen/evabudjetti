@@ -69,16 +69,21 @@ i18next
 
 				//ADD NEW ITEM POPUP
 				'Add a new item': 'Add a new item',
+				'Edit item': 'Edit item',
+				'Delete': 'Delete',
 				'Write the name here': 'Write the name here',
 				'Write the amount here (€)': 'Write the amount here (€)',
-				'Reoccurrence': 'Does the item repeat?',
+				'Reoccurrence': 'Item repeats',
+				'Reoccurs': 'Repeats',
 				'Rec_day': 'Day',
 				'Rec_week': 'Week',
 				'Rec_month': 'Month',
 				'Rec_year': 'Year',
 				'Interval': 'Interval',
 				'Start Date': 'Start Date',
-				'End Date': 'End Date',
+				'End Date': 'Repeating ends',
+				'Starts': 'Starts',
+				'Ends': 'Ends',
 				'Add': 'Add',
 
 				// BUDGET
@@ -87,6 +92,7 @@ i18next
 				'Finish': 'Finish',
 				'No budget created': 'No budget created yet. Enter your balance in € without commas and press the "Create budget" button below to get started!',
 				'Create budget': 'CREATE BUDGET',
+				'Edit Budget': 'Edit Budget',
 				'Bus card': 'Bus card',
 				'Study benefit': 'Study benefit',
 				'Study loan': 'Study loan',
@@ -184,7 +190,6 @@ i18next
 				'Balance runs out': 'Balance runs out',
 				'EXAMINE': 'EXAMINE',
 				'ADD INCOME/EXPENSE': 'ADD INCOME/EXPENSE',
-				'EDIT BUDGET': 'EDIT BUDGET',
 				'SHOW BUDGET': 'SHOW BUDGET',
 				'EVA MyBudget': 'EVA MyBudget',
 				'EDIT BALANCE': 'EDIT BALANCE',
@@ -198,6 +203,9 @@ i18next
 				// SUMMARY
 				'Choose a year': 'Choose a year',
 				'Months': 'Months',
+				'No expenses this month': 'No expenses this month',
+				'No income this month': 'No income this month',
+				'Uncategorized': 'Uncategorized',
 
 				// SETTINGS
 				'Language': 'Language',
@@ -266,9 +274,12 @@ i18next
 				
 				//ADD NEW ITEM POPUP
 				'Add a new item': 'Lisää uusi tapahtuma',
+				'Edit item': 'Muokkaa tapahtumaa',
+				'Delete': 'Poista',
 				'Write the name here': 'Kirjoita nimi tähän',
 				'Write the amount here (€)': 'Kirjoita määrä tähän (€)',
-				'Reoccurrence': 'Tapahtuma toistuu:',
+				'Reoccurrence': 'Tapahtuma toistuu',
+				'Reoccurs': 'Toistuu',
 				'Rec_day': 'päivän',
 				'Rec_week': 'viikon',
 				'Rec_month': 'kuukauden',
@@ -277,6 +288,8 @@ i18next
 				'Interval': 'välein',
 				'Start Date': 'Tapahtuma alkaa',
 				'End Date': 'Tapahtuma loppuu',
+				'Starts': 'Alkaa',
+				'Ends': 'Loppuu',
 				'Add': 'Lisää',
 
 				// BUDGET
@@ -285,6 +298,7 @@ i18next
 				'Finish': 'Valmis',
 				'No budget created': 'Budjettia ei ole vielä luotu. Aloita syöttämällä tilisi saldo euroina (€) ilman pilkkuja ja paina alta löytyvää "Luo budjetti" -painiketta!',
 				'Create budget': 'LUO BUDJETTI',
+				'Edit Budget': 'Muokkaa Budjettia',
 				'Bus card': 'Bussikortti',
 				'Study benefit': 'Opintotuki',
 				'Study loan': 'Opintolaina',
@@ -403,7 +417,6 @@ i18next
 				'/ day': '/ vrk',
 				'EXAMINE': 'TARKASTELE',
 				'ADD INCOME/EXPENSE': 'LISÄÄ TULO/MENO',
-				'EDIT BUDGET': 'MUOKKAA BUDJETTIA',
 				'SHOW BUDGET': 'NÄYTÄ BUDJETTI',
 				'EVA MyBudget': 'EVA OmaBudjetti',
 				'EDIT BALANCE': 'MUOKKAA SALDOA',
@@ -424,7 +437,6 @@ i18next
 
 				// BUDGET & SUMMARY
 
-				'Edit Budget': 'Muokkaa Budjettia',
 				'Planned': 'Suunniteltu',
 				'No expenses this month': 'Ei menoja tässä kuussa',
 				'No income this month': 'Ei tuloja tässä kuussa',
