@@ -411,6 +411,7 @@ export default function AddTransaction() {
 					>
 						<AlertDialog.Portal>
 							<AlertDialog.Overlay
+								key="success"
 								opacity={0.5}
 								backgroundColor={'$black'}
 							/>
