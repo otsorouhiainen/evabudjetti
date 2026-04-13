@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Progress, SizableText, YStack } from 'tamagui';
+import { Button, ListItem, Progress, SizableText, YStack } from 'tamagui';
 import BudgetWizardItem from '@/src/components/BudgetWizardItem';
 import type { PlannedTransaction } from '@/src/dataModel';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
@@ -38,8 +38,9 @@ export default function BudgetWizard() {
 	const [popupVisible, setPopupVisible] = useState(false);
 	const currentStep = wizardData[stepIndex];
 	const progressBarValue = ((stepIndex + 1) * 100) / wizardData.length;
-
-	const [selectedItem, setSelectedItem] = useState<PlannedTransaction | null>(
+	
+	type ListItem = {index: number, item: PlannedTransaction};
+	const [selectedItem, setSelectedItem] = useState<ListItem | null>(
 		null,
 	);
 
@@ -64,8 +65,8 @@ export default function BudgetWizard() {
 				sIdx === stepIndex
 					? {
 							...step,
-							items: step.items.map((item) =>
-								item.name === selectedItem?.name
+							items: step.items.map((item, index) =>
+								index === selectedItem?.index
 									? {
 											...item,
 											name: edited.name,
@@ -116,7 +117,7 @@ export default function BudgetWizard() {
 					transparent={true}
 				>
 					<AddItemPopup
-						item={selectedItem}
+						item={selectedItem? selectedItem.item : null}
 						onSave={
 							selectedItem === null
 								? (item) => addItem(item)
@@ -157,14 +158,14 @@ export default function BudgetWizard() {
 					contentContainerStyle={{ flexGrow: 1 }}
 					style={styles.content}
 				>
-					{currentStep.items.map((item) => (
+					{currentStep.items.map((item, index) => (
 						<BudgetWizardItem
 							item={item}
 							onEdit={(it) => {
-								setSelectedItem(it);
+								setSelectedItem({index: index, item: it});
 								setPopupVisible(true);
 							}}
-							key={item.name}
+							key={index}
 						/>
 					))}
 					{/* Empty Y-stack to get margin after last budget item*/}
