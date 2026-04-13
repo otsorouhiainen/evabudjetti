@@ -1,4 +1,3 @@
-import type { Router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Text, YStack } from 'tamagui';
 import type { TransactionOccurrence } from '../dataModel';
@@ -8,7 +7,7 @@ interface Props {
 	transactions: TransactionOccurrence[];
 	monthKey: string;
 	selectedDate: Date;
-	router?: Router;
+	onEditPress?: (txn: TransactionOccurrence) => void;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
 
@@ -16,7 +15,7 @@ const DailyEventList: React.FC<Props> = ({
 	transactions,
 	monthKey,
 	selectedDate,
-	router,
+	onEditPress,
 	formatCurrency,
 }) => {
 	const { t } = useTranslation();
@@ -158,9 +157,9 @@ const DailyEventList: React.FC<Props> = ({
 							dTxns[0].date.toDateString() ===
 							selectedDate.toDateString()
 						}
-						router={router}
+						onEditPress={onEditPress}
 						formatCurrency={formatCurrency}
-						key={`${dTxns[0].date.getTime()}`}
+						key={`${monthKey}-${dTxns[0].date.getDate()}`}
 					></DailyEventListItem>
 				))}
 			</YStack>

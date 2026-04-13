@@ -140,6 +140,18 @@ i18next
 				'Load more': 'Load more',
 				'No transactions': 'No transactions',
 
+				// EDIT TRANSACTION MODAL
+				'Edit transaction': 'Edit transaction',
+				'Enter transaction name': 'Enter transaction name',
+				'Enter amount (\u20ac)': 'Enter amount (\u20ac)',
+				'Delete transaction': 'Delete transaction',
+				'Are you sure you want to delete this transaction?': 'Are you sure you want to delete this transaction?',
+				'Transaction deleted': 'Transaction deleted',
+				'Failed to delete transaction': 'Failed to delete transaction',
+				'Changes saved': 'Changes saved',
+				'Failed to save changes': 'Failed to save changes',
+				'OK': 'OK',
+
 				// ERROR
 				'Something went wrong': 'Something went wrong',
 				'Back to home': 'Back to home',
@@ -356,6 +368,18 @@ i18next
 				'Usable funds timeframe': 'Käyttövarajakso',
 				'Load more': 'Lataa enemmän',
 				'No transactions': 'Ei maksutapahtumia',
+
+				// EDIT TRANSACTION MODAL
+				'Edit transaction': 'Muokkaa tapahtumaa',
+				'Enter transaction name': 'Kirjoita tapahtuman nimi',
+				'Enter amount (\u20ac)': 'Kirjoita määrä (\u20ac)',
+				'Delete transaction': 'Poista tapahtuma',
+				'Are you sure you want to delete this transaction?': 'Haluatko varmasti poistaa tämän tapahtuman?',
+				'Transaction deleted': 'Tapahtuma poistettu',
+				'Failed to delete transaction': 'Tapahtuman poistaminen epäonnistui',
+				'Changes saved': 'Muutokset tallennettu',
+				'Failed to save changes': 'Muutosten tallentaminen epäonnistui',
+				'OK': 'OK',
 
 				// ERROR
 				'Something went wrong': 'Jokin meni pieleen',

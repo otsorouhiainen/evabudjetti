@@ -1,5 +1,4 @@
 import { ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
-import type { Router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import { LOCALE } from '../constants/index';
@@ -11,7 +10,7 @@ interface Props {
 	noTxnNotice: string;
 	sum: number;
 	isSelected: boolean;
-	router?: Router;
+	onEditPress?: (txn: TransactionOccurrence) => void;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
 
@@ -21,7 +20,7 @@ const DailyEventListItem: React.FC<Props> = ({
 	noTxnNotice,
 	sum,
 	isSelected,
-	router,
+	onEditPress,
 	formatCurrency,
 }) => {
 	const [isOpen, setOpen] = useState(isSelected);
@@ -39,7 +38,6 @@ const DailyEventListItem: React.FC<Props> = ({
 				borderWidth: isSelected ? 4 : 3,
 				margin: -2,
 			}}
-			key={`${date.getTime()}`}
 			backgroundColor={'$white'}
 			borderColor={isSelected ? '$primary200' : '$primary300'}
 			pressStyle={{ backgroundColor: '$primary300' }}
@@ -72,41 +70,48 @@ const DailyEventListItem: React.FC<Props> = ({
 				</XStack>
 				{isOpen &&
 					(dTxns[0].name !== '' ? (
-						dTxns.map((txn) => (
-							<XStack
-								gap={10}
-								backgroundColor="transparent"
-								alignItems="center"
-								justifyContent="flex-end"
-								key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${txn.date.getTime()}`}
-								maxWidth={'90%'}
-							>
-								<Text
-									flex={1}
-									fontWeight="400"
-									textAlign="left"
-									fontSize="$body"
+						dTxns.map((txn, index) => {
+							const itemKey =
+								txn.realTransaction?.id != null
+									? `r-${txn.realTransaction.id}`
+									: txn.plannedTransaction?.id != null
+										? `p-${txn.plannedTransaction.id}-${txn.date.getTime()}`
+										: `f-${txn.date.getTime()}-${txn.name}-${txn.amount}-${index}`;
+
+							return (
+								<XStack
+									gap={10}
+									backgroundColor="transparent"
+									alignItems="center"
+									justifyContent="flex-end"
+									key={itemKey}
+									maxWidth={'90%'}
 								>
-									{txn.name}
-								</Text>
-								<Text fontSize="$body" fontWeight="400">
-									{txn.type === 'income' ? '+' : '-'}
-									{formatCurrency(Number(txn.amount))}
-								</Text>
-								{/* Edit button rendered only if router exists */}
-								{router && (
-									<Button
-										size="$buttons.sm"
-										circular
-										backgroundColor="transparent"
-										icon={Pencil}
-										onPress={() => {
-											router.push('/budget_wizard');
-										}}
-									/>
-								)}
-							</XStack>
-						))
+									<Text
+										flex={1}
+										fontWeight="400"
+										textAlign="left"
+										fontSize="$body"
+									>
+										{txn.name}
+									</Text>
+									<Text fontSize="$body" fontWeight="400">
+										{txn.type === 'income' ? '+' : '-'}
+										{formatCurrency(Number(txn.amount))}
+									</Text>
+									{/* Edit button only for real (DB-persisted) transactions */}
+									{onEditPress && txn.realTransaction && (
+										<Button
+											size="$buttons.sm"
+											circular
+											backgroundColor="transparent"
+											icon={Pencil}
+											onPress={() => onEditPress(txn)}
+										/>
+									)}
+								</XStack>
+							);
+						})
 					) : (
 						<Text
 							style={{ fontStyle: 'italic' }}
