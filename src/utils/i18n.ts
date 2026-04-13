@@ -408,7 +408,6 @@ i18next
 
 				// BUDGET & SUMMARY
 
-				'Edit Budget': 'Muokkaa Budjettia',
 				'Planned': 'Suunniteltu',
 				'No expenses this month': 'Ei menoja tässä kuussa',
 				'No income this month': 'Ei tuloja tässä kuussa',
