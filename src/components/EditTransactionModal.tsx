@@ -39,6 +39,8 @@ const EditTransactionModal = ({
 	);
 	const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
 	const [saving, setSaving] = useState(false);
+	const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+	const [feedbackIsError, setFeedbackIsError] = useState(false);
 
 	const handleAmountChange = (text: string) => {
 		const numeric = text.replace(/[^0-9.,]/g, '');
@@ -73,9 +75,12 @@ const EditTransactionModal = ({
 				date,
 				categoryId: selectedCategory,
 			});
-			onClose();
+			setFeedbackIsError(false);
+			setFeedbackMessage(t('Changes saved'));
 		} catch (e) {
 			console.error('Failed to update transaction:', e);
+			setFeedbackIsError(true);
+			setFeedbackMessage(t('Failed to save changes'));
 		} finally {
 			setSaving(false);
 		}
@@ -85,11 +90,13 @@ const EditTransactionModal = ({
 		setSaving(true);
 		try {
 			await deleteRealTransaction(transaction);
-			onClose();
+			setFeedbackIsError(false);
+			setFeedbackMessage(t('Transaction deleted'));
 		} catch (e) {
 			console.error('Failed to delete transaction:', e);
-		} finally {
 			setSaving(false);
+			setFeedbackIsError(true);
+			setFeedbackMessage(t('Failed to delete transaction'));
 		}
 	};
 
@@ -262,35 +269,75 @@ const EditTransactionModal = ({
 							)}
 						</SizableText>
 						<XStack justifyContent="space-between">
-							<AlertDialog.Cancel asChild>
-								<Button
-									backgroundColor="$caution"
-									borderRadius={28}
-									style={styles.button}
-								>
-									<SizableText
-										color="$primary100"
-										size="$title3"
-									>
-										{t('Cancel')}
-									</SizableText>
-								</Button>
-							</AlertDialog.Cancel>
-							<AlertDialog.Action asChild>
-								<Button
-									backgroundColor="$red10"
-									borderRadius={28}
-									style={styles.button}
-									onPress={() => {
-										void handleDelete();
-									}}
-								>
-									<SizableText color="$white" size="$title3">
-										{t('Delete')}
-									</SizableText>
-								</Button>
-							</AlertDialog.Action>
+							<Button
+								backgroundColor="$caution"
+								borderRadius={28}
+								style={styles.button}
+								onPress={() => setDeleteConfirmVisible(false)}
+							>
+								<SizableText color="$primary100" size="$title3">
+									{t('Cancel')}
+								</SizableText>
+							</Button>
+							<Button
+								backgroundColor="$red10"
+								borderRadius={28}
+								style={styles.button}
+								onPress={() => {
+									setDeleteConfirmVisible(false);
+									void handleDelete();
+								}}
+							>
+								<SizableText color="$white" size="$title3">
+									{t('Delete')}
+								</SizableText>
+							</Button>
 						</XStack>
+					</AlertDialog.Content>
+				</AlertDialog.Portal>
+			</AlertDialog>
+
+			{/* Feedback dialog (success or error) */}
+			<AlertDialog
+				open={feedbackMessage !== null}
+				onOpenChange={(open) => {
+					if (!open) {
+						setFeedbackMessage(null);
+						if (!feedbackIsError) onClose();
+					}
+				}}
+			>
+				<AlertDialog.Portal>
+					<AlertDialog.Overlay
+						opacity={0.5}
+						backgroundColor="$black"
+					/>
+					<AlertDialog.Content
+						bordered
+						elevate
+						width="80%"
+						padding={24}
+						borderRadius={16}
+					>
+						<SizableText size="$title3" marginBottom={20}>
+							{feedbackMessage}
+						</SizableText>
+						<Button
+							backgroundColor={
+								feedbackIsError ? '$caution' : '$primary200'
+							}
+							borderRadius={28}
+							onPress={() => {
+								setFeedbackMessage(null);
+								if (!feedbackIsError) onClose();
+							}}
+							alignSelf="flex-end"
+							width="45%"
+						>
+							<SizableText color="$white" size="$title3">
+								{t('OK')}
+							</SizableText>
+						</Button>
 					</AlertDialog.Content>
 				</AlertDialog.Portal>
 			</AlertDialog>
