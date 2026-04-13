@@ -22,7 +22,7 @@ i18next
 				'Home': 'Home',
     			'Budget': 'Budget',
 				'Funds': 'Funds',
-    			'Summary': 'Summary',
+    			'Summary': 'Bookkeeping',
 				'Settings': 'Settings',
 
 				//ADD_TRANSACTION
@@ -215,7 +215,7 @@ i18next
 				'Home': 'Koti',
     			'Budget': 'Budjetti',
 				'Funds': 'Käyttövara',
-    			'Summary': 'Yhteenveto',
+    			'Summary': 'Kirjanpito',
 				'Settings': 'Asetukset',
 
 				//ADD_TRANSACTION
