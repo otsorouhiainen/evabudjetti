@@ -176,8 +176,7 @@ i18next
 				'Welcome': 'Welcome',
 				'to EVA MyBudget': 'to EVA MyBudget',
 				'1. instruction': 'This app is designed to help you with your finances by creating a budget that fits your life',
-				'2. instruction': 'On first launch, you will be asked to set your budget. The app will help you step by step',
-				'3. instruction': 'When you have set your budget, you can see your usable funds as well as your monthly and yearly budget and you can edit your existing budget',
+				'2. instruction': 'When you have set your budget, you can see your usable funds as well as your monthly and yearly budget and you can edit your existing budget',
 				'I have read the terms and conditions': 'I have read the terms and conditions',
 
 				// SUMMARY
@@ -388,8 +387,7 @@ i18next
 				'Welcome': 'Tervetuloa',
 				'to EVA MyBudget': 'EVA OmaBudjettiin',
 				'1. instruction': 'Tämän sovelluksen tarkoituksena on auttaa sinua saamaan taloutesi hallintaasi luomalla oman elämäsi todellinen budjetti',
-				'2. instruction': 'Ensimmäisellä kerralla, kun asetat budjettisi, sovellus ohjaa sinua vaihe vaiheelta eteenpäin',
-				'3. instruction': 'Kun olet asettanut budjettisi, voit tarkistaa sinun päivittäistä käyttövaraa sekä vuosi ja kuukausibudjettiasi ja voit myös muokata olemassa olevaa budjettia helposti',
+				'2. instruction': 'Kun olet asettanut budjettisi, voit tarkistaa sinun päivittäistä käyttövaraa sekä vuosi ja kuukausibudjettiasi ja voit myös muokata olemassa olevaa budjettia helposti',
 				'I have read the terms and conditions': 'Olen lukenut ja hyväksynyt käyttöehdot',
 
 				// SUMMARY
