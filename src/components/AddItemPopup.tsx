@@ -120,6 +120,7 @@ const AddItemPopup = ({
 							defaultValue={amount ? String(amount) : null}
 							keyboardType="numeric"
 							onChangeText={(text: string) => {
+								text = `${text.replace(',', '.')}`;
 								const input = Number(text);
 								if (!Number.isNaN(input) && input >= 0) {
 									setAmount(input);
