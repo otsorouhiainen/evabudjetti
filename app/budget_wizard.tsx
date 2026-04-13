@@ -39,7 +39,8 @@ export default function BudgetWizard() {
 	const currentStep = wizardData[stepIndex];
 	const progressBarValue = ((stepIndex + 1) * 100) / wizardData.length;
 
-	const [selectedItem, setSelectedItem] = useState<PlannedTransaction | null>(
+	type BudgetListItem = { index: number; item: PlannedTransaction };
+	const [selectedItem, setSelectedItem] = useState<BudgetListItem | null>(
 		null,
 	);
 
@@ -64,8 +65,8 @@ export default function BudgetWizard() {
 				sIdx === stepIndex
 					? {
 							...step,
-							items: step.items.map((item) =>
-								item.name === selectedItem?.name
+							items: step.items.map((item, index) =>
+								index === selectedItem?.index
 									? {
 											...item,
 											name: edited.name,
@@ -86,14 +87,14 @@ export default function BudgetWizard() {
 		);
 	}
 
-	function deleteItem(item: PlannedTransaction) {
+	function deleteItem() {
 		setWizardData((prev) =>
 			prev.map((step, sIdx) =>
 				sIdx === stepIndex
 					? {
 							...step,
 							items: step.items.filter(
-								(it) => it.name !== item.name,
+								(_it, index) => index !== selectedItem?.index,
 							),
 						}
 					: step,
@@ -116,13 +117,13 @@ export default function BudgetWizard() {
 					transparent={true}
 				>
 					<AddItemPopup
-						item={selectedItem}
+						item={selectedItem ? selectedItem.item : null}
 						onSave={
 							selectedItem === null
 								? (item) => addItem(item)
 								: (item) => editItem(item)
 						}
-						onDelete={(item) => deleteItem(item)}
+						onDelete={() => deleteItem()}
 						onClose={() => closePopUp()}
 					/>
 				</Modal>
@@ -157,14 +158,16 @@ export default function BudgetWizard() {
 					contentContainerStyle={{ flexGrow: 1 }}
 					style={styles.content}
 				>
-					{currentStep.items.map((item) => (
+					{currentStep.items.map((item, index) => (
 						<BudgetWizardItem
 							item={item}
 							onEdit={(it) => {
-								setSelectedItem(it);
+								setSelectedItem({ index: index, item: it });
 								setPopupVisible(true);
 							}}
-							key={item.name}
+							key={String(
+								item.name + item.amount + item.startDate,
+							)}
 						/>
 					))}
 					{/* Empty Y-stack to get margin after last budget item*/}
