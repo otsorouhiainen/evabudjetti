@@ -139,10 +139,10 @@ export function getTransactionOccurrenceCount(
 	targetYear: number,
 	targetMonth: number,
 ): number {
-	if (!txn.startDate) return 1;
+	if (!txn.startDate) return 0;
 
 	const start = safeParseDate(txn.startDate);
-	if (Number.isNaN(start.getTime())) return 1;
+	if (Number.isNaN(start.getTime())) return 0;
 
 	const startYear = start.getFullYear();
 	const startMonth = start.getMonth();
@@ -172,7 +172,7 @@ export function getTransactionOccurrenceCount(
 		return targetYear === startYear && targetMonth === startMonth ? 1 : 0;
 	}
 
-	const base = txn.recurrenceBase || 'month';
+	const base = txn.recurrenceBase;
 	const interval = txn.recurrenceInterval || 1;
 
 	if (base === 'month') {
