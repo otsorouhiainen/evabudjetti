@@ -231,25 +231,20 @@ export const useBalanceVersioning = create<BalanceVersioning>((set, get) => ({
 		set((state) => {
 			const oldVersions = new Map(state.versionsByMonthKey);
 			const newVersions = new Map(state.versionsByMonthKey);
-
-			// Always bump the deleted month even if not yet tracked.
-			// incrementTrackedVersionsFromDate silently skips untracked months.
-			const monthKey = monthKeyFromDate(deleted.date);
-			if (!newVersions.has(monthKey)) {
-				newVersions.set(monthKey, 0);
-			}
-
-			incrementTrackedVersionsFromDate(deleted.date, newVersions);
+			const changed = incrementTrackedVersionsFromDate(
+				deleted.date,
+				newVersions,
+			);
 
 			const changedMonths = collectChangedMonths(
 				oldVersions,
 				newVersions,
 			);
 			console.debug(
-				`[BalanceVersioning] onRealTransactionDeleted: month=${monthKey}, affectedMonths=[${changedMonths.join(', ')}]`,
+				`[BalanceVersioning] onRealTransactionDeleted: changed=${changed}, month=${monthKeyFromDate(deleted.date)}, affectedMonths=[${changedMonths.join(', ')}]`,
 			);
 
-			return { versionsByMonthKey: newVersions };
+			return changed ? { versionsByMonthKey: newVersions } : {};
 		});
 	},
 
