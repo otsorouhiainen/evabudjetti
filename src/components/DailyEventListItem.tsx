@@ -79,8 +79,8 @@ const DailyEventListItem: React.FC<Props> = ({
 								justifyContent="flex-end"
 								key={
 									txn.realTransaction
-										? `r${txn.realTransaction.id}-${txn.date.getTime()}`
-										: `p${txn.plannedTransaction?.id ?? 'empty'}-${txn.date.getTime()}`
+										? `r${txn.realTransaction.id}`
+										: `p${txn.plannedTransaction?.id ?? 'empty'}`
 								}
 								maxWidth={'90%'}
 							>

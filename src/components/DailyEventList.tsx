@@ -159,7 +159,7 @@ const DailyEventList: React.FC<Props> = ({
 						}
 						onEditPress={onEditPress}
 						formatCurrency={formatCurrency}
-						key={`${dTxns[0].date.getFullYear()}-${dTxns[0].date.getMonth()}-${dTxns[0].date.getDate()}`}
+						key={`${monthKey}-${dTxns[0].date.getDate()}`}
 					></DailyEventListItem>
 				))}
 			</YStack>
