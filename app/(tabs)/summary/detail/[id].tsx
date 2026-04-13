@@ -8,6 +8,7 @@ import type { TransactionOccurrence } from '@/src/dataModel';
 import { useTransactionOccurrencesCache } from '@/src/finance/cache/transactionOccurrencesCache';
 import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
 import { createMonthKey } from '@/src/finance/logic/util';
+import { useCategoryStore } from '@/src/store/categoryStore';
 
 type GroupedItem = {
 	name: string;
@@ -25,6 +26,15 @@ export default function DetailedMonthScreen() {
 	const [yearStr, monthStr] = id.split('-');
 	const yearNum = Number(yearStr);
 	const monthNum = Number(monthStr);
+	const categories = useCategoryStore((state) => state.categories);
+
+	const categoryNameById = useMemo(() => {
+		const map = new Map<number, string>();
+		for (const category of categories) {
+			map.set(category.id, category.name);
+		}
+		return map;
+	}, [categories]);
 
 	const monthKeys = [
 		'january',
@@ -102,9 +112,12 @@ export default function DetailedMonthScreen() {
 
 			const expenseBreakdown = Object.entries(expensesByCat)
 				.map(([categoryId, data]) => {
-					const categoryName = !Number(categoryId)
-						? t('Uncategorized')
-						: `${t('Category')} ${categoryId}`;
+					const numericCategoryId = Number(categoryId);
+					const categoryName =
+						numericCategoryId === 0
+							? t('Uncategorized default')
+							: (categoryNameById.get(numericCategoryId) ??
+								t('Uncategorized'));
 
 					const mergedItemsMap: Record<string, GroupedItem> = {};
 					for (const occ of data.items) {
@@ -138,9 +151,12 @@ export default function DetailedMonthScreen() {
 
 			const incomeBreakdown = Object.entries(incomesByCat)
 				.map(([categoryId, data]) => {
-					const categoryName = !Number(categoryId)
-						? t('Uncategorized')
-						: `${t('Category')} ${categoryId}`;
+					const numericCategoryId = Number(categoryId);
+					const categoryName =
+						numericCategoryId === 0
+							? t('Uncategorized default')
+							: (categoryNameById.get(numericCategoryId) ??
+								t('Uncategorized'));
 
 					const mergedItemsMap: Record<string, GroupedItem> = {};
 					for (const occ of data.items) {
@@ -177,7 +193,7 @@ export default function DetailedMonthScreen() {
 				totalExpenses: totalExp,
 				totalIncomes: totalInc,
 			};
-		}, [monthData, allOccurrences, t]);
+		}, [monthData, allOccurrences, t, categoryNameById]);
 
 	return (
 		<YStack flex={1} backgroundColor="$background">

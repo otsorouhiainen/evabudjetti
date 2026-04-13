@@ -66,6 +66,29 @@ i18next
 				'{{transactionType}} added': '{{transactionType}} added',
 				'Add {{transactionType}}': 'Add {{transactionType}}',
 				'Saved': 'Saved',
+				'OK': 'OK',
+				'Record new': 'Add new',
+				'Adjust budgeted': 'Adjust budgeted',
+				'Income short': 'Income',
+				'Expense short': 'Expense',
+				'Record new income': 'Add new income',
+				'Record new expense': 'Add new expense',
+				'Fill details in next view.':
+					'Fill in the transaction details in the next view.',
+				'Select budgeted transaction to adjust':
+					'Select budgeted transaction to adjust',
+				'Budgeted amount line': 'Budgeted: {{amount}} €',
+				'Corrected real amount line': 'Corrected real: {{amount}} €',
+				'No upcoming budgeted transactions.':
+					'No upcoming budgeted transactions.',
+				'Adjusting budgeted amount line':
+					'Budgeted amount being corrected: {{amount}} €',
+				'Select budgeted transaction first':
+					'Select a budgeted transaction first',
+				'Corrected actual amount (€)': 'Corrected actual amount (€)',
+				'Save adjustment': 'Save adjustment',
+				'Adjustment saved': 'Adjustment saved',
+				'Uncategorized default': 'Uncategorized',
 
 				//ADD NEW ITEM POPUP
 				'Add a new item': 'Add a new item',
@@ -270,6 +293,29 @@ i18next
 				'{{transactionType}} added': '{{transactionType}} lisätty',
 				'Add {{transactionType}}': 'Lisää {{transactionType}}',
 				'Saved': 'Tallennettu',
+				'OK': 'OK',
+				'Record new': 'Kirjaa uusi',
+				'Adjust budgeted': 'Korjaa budjetoitu',
+				'Income short': 'tulo',
+				'Expense short': 'meno',
+				'Record new income': 'Kirjaa uusi tulo',
+				'Record new expense': 'Kirjaa uusi meno',
+				'Fill details in next view.':
+					'Täytä tapahtuman tiedot seuraavassa näkymässä.',
+				'Select budgeted transaction to adjust':
+					'Valitse budjetoitu tapahtuma korjattavaksi',
+				'Budgeted amount line': 'Budjetoitu: {{amount}} €',
+				'Corrected real amount line': 'Korjattu toteuma: {{amount}} €',
+				'No upcoming budgeted transactions.':
+					'Ei tulevia budjetoituja tapahtumia.',
+				'Adjusting budgeted amount line':
+					'Korjattava budjetoitu summa: {{amount}} €',
+				'Select budgeted transaction first':
+					'Valitse ensin budjetoitu tapahtuma',
+				'Corrected actual amount (€)': 'Korjattu toteuma (€)',
+				'Save adjustment': 'Tallenna korjaus',
+				'Adjustment saved': 'Korjaus tallennettu',
+				'Uncategorized default': 'muu',
 				
 				//ADD NEW ITEM POPUP
 				'Add a new item': 'Lisää uusi tapahtuma',

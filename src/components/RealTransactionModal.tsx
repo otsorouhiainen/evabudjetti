@@ -1,5 +1,5 @@
 import { Plus } from '@tamagui/lucide-icons';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import {
@@ -43,11 +43,48 @@ const RealTransactionModal = ({
 		prefillData?.amount?.toString() || '',
 	);
 	const [date, setDate] = useState<Date>(prefillData?.date || new Date());
-	const [selectedCategory, setSelectedCategory] = useState<number | null>(
-		prefillData?.category || null,
+	const [selectedCategory, setSelectedCategory] = useState<number>(
+		prefillData?.category ?? 0,
 	);
 	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [newCategoryName, setNewCategoryName] = useState('');
+
+	const transactionTypeCategories = useMemo(
+		() =>
+			categories.filter(
+				(cat) => cat.type?.toLowerCase() === transactionType,
+			),
+		[categories, transactionType],
+	);
+
+	const displayCategories = useMemo(() => {
+		const hasUncategorized = transactionTypeCategories.some(
+			(cat) => cat.key === 0,
+		);
+
+		if (hasUncategorized) {
+			return transactionTypeCategories;
+		}
+
+		return [
+			{
+				key: 0,
+				label: t('Uncategorized default'),
+				type: transactionType,
+			},
+			...transactionTypeCategories,
+		];
+	}, [transactionTypeCategories, transactionType, t]);
+
+	useEffect(() => {
+		const hasSelectedCategory = displayCategories.some(
+			(category) => category.key === selectedCategory,
+		);
+
+		if (!hasSelectedCategory) {
+			setSelectedCategory(0);
+		}
+	}, [displayCategories, selectedCategory]);
 
 	const handleAmountChange = (text: string) => {
 		const numeric = text.replace(/[^0-9.,]/g, '');
@@ -68,8 +105,7 @@ const RealTransactionModal = ({
 			!name.trim() ||
 			Number.isNaN(numAmount) ||
 			numAmount <= 0 ||
-			!date ||
-			selectedCategory === null
+			!date
 		) {
 			return;
 		}
@@ -80,17 +116,13 @@ const RealTransactionModal = ({
 			amount: numAmount,
 			date,
 			type: transactionType,
-			categoryId: selectedCategory ?? 0,
+			categoryId: selectedCategory,
 			plannedTransactionId: prefillData?.plannedTransactionId ?? null,
 		});
 	};
 
 	const isDisabled =
-		!name.trim() ||
-		!amount ||
-		Number.parseFloat(amount) <= 0 ||
-		!date ||
-		selectedCategory === null;
+		!name.trim() || !amount || Number.parseFloat(amount) <= 0 || !date;
 
 	const handleAddCategory = async () => {
 		if (!newCategoryName.trim()) return;
@@ -172,37 +204,30 @@ const RealTransactionModal = ({
 									marginBottom={8}
 								/>
 
-								{categories
-									.filter(
-										(cat) =>
-											cat.type?.toLowerCase() ===
-											transactionType,
-									)
-									.map(({ key, label }) => {
-										const selected =
-											key === selectedCategory;
-										return (
-											<Button
-												key={key}
-												onPress={() =>
-													setSelectedCategory(key)
-												}
-												size={28}
-												padding={14}
-												marginRight={8}
-												marginBottom={8}
-												backgroundColor={
-													selected
-														? '$primary200'
-														: '$white'
-												}
-											>
-												<SizableText size={'$title3'}>
-													{label}
-												</SizableText>
-											</Button>
-										);
-									})}
+								{displayCategories.map(({ key, label }) => {
+									const selected = key === selectedCategory;
+									return (
+										<Button
+											key={key}
+											onPress={() =>
+												setSelectedCategory(key)
+											}
+											size={28}
+											padding={14}
+											marginRight={8}
+											marginBottom={8}
+											backgroundColor={
+												selected
+													? '$primary200'
+													: '$white'
+											}
+										>
+											<SizableText size={'$title3'}>
+												{label}
+											</SizableText>
+										</Button>
+									);
+								})}
 							</XStack>
 						</YStack>
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import {
 	type AccountBalanceMonthCacheData,
@@ -36,19 +36,31 @@ export function useBalances(
 			state.getVersionsByMonth(startYear, startMonth, endYear, endMonth),
 		),
 	);
+	const versionsByMonthRef = useRef(versionsByMonth);
+
+	useEffect(() => {
+		versionsByMonthRef.current = versionsByMonth;
+	}, [versionsByMonth]);
+
+	const versionsByMonthSignature = useMemo(
+		() => Array.from(versionsByMonth.entries()).join('|'),
+		[versionsByMonth],
+	);
 
 	const updateBalanceCacheForMonths = useBalanceCache(
 		(state) => state.updateBalanceCacheForMonths,
 	);
 
 	useEffect(() => {
+		void versionsByMonthSignature;
+
 		queueCacheUpdate(() =>
 			updateBalanceCacheForMonths(
 				startYear,
 				startMonth,
 				endYear,
 				endMonth,
-				versionsByMonth,
+				versionsByMonthRef.current,
 			),
 		);
 	}, [
@@ -57,7 +69,7 @@ export function useBalances(
 		startMonth,
 		endYear,
 		endMonth,
-		versionsByMonth,
+		versionsByMonthSignature,
 	]);
 
 	const data = useBalanceCache(

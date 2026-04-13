@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useBalanceCache } from '../cache/balanceCache';
 import { queueCacheUpdate } from '../cache/cacheUpdateQueueing';
@@ -53,6 +53,16 @@ export function useOccurrencesAndBalances(
 			state.getVersionsByMonth(startYear, startMonth, endYear, endMonth),
 		),
 	);
+	const balanceVersionsByMonthRef = useRef(balanceVersionsByMonth);
+
+	useEffect(() => {
+		balanceVersionsByMonthRef.current = balanceVersionsByMonth;
+	}, [balanceVersionsByMonth]);
+
+	const balanceVersionsByMonthSignature = useMemo(
+		() => Array.from(balanceVersionsByMonth.entries()).join('|'),
+		[balanceVersionsByMonth],
+	);
 	const updateBalanceCacheForMonths = useBalanceCache(
 		(state) => state.updateBalanceCacheForMonths,
 	);
@@ -68,6 +78,22 @@ export function useOccurrencesAndBalances(
 				),
 			),
 		);
+	const transactionOccurrencesVersionsByMonthRef = useRef(
+		transactionOccurrencesVersionsByMonth,
+	);
+
+	useEffect(() => {
+		transactionOccurrencesVersionsByMonthRef.current =
+			transactionOccurrencesVersionsByMonth;
+	}, [transactionOccurrencesVersionsByMonth]);
+
+	const transactionOccurrencesVersionsByMonthSignature = useMemo(
+		() =>
+			Array.from(transactionOccurrencesVersionsByMonth.entries()).join(
+				'|',
+			),
+		[transactionOccurrencesVersionsByMonth],
+	);
 	const updateTransactionOccurrencesCacheForMonths =
 		useTransactionOccurrencesCache(
 			(state) => state.updateTransactionOccurrencesCacheForMonths,
@@ -79,6 +105,9 @@ export function useOccurrencesAndBalances(
 		);
 
 	useEffect(() => {
+		void balanceVersionsByMonthSignature;
+		void transactionOccurrencesVersionsByMonthSignature;
+
 		queueCacheUpdate(async () => {
 			const occurrencesState =
 				await updateTransactionOccurrencesCacheForMonths(
@@ -86,7 +115,7 @@ export function useOccurrencesAndBalances(
 					startMonth,
 					endYear,
 					endMonth,
-					transactionOccurrencesVersionsByMonth,
+					transactionOccurrencesVersionsByMonthRef.current,
 				);
 
 			const balanceState = await updateBalanceCacheForMonths(
@@ -94,7 +123,7 @@ export function useOccurrencesAndBalances(
 				startMonth,
 				endYear,
 				endMonth,
-				balanceVersionsByMonth,
+				balanceVersionsByMonthRef.current,
 			);
 
 			constructOccurrencesAndBalanceMonthDatas(
@@ -114,8 +143,8 @@ export function useOccurrencesAndBalances(
 		startMonth,
 		endYear,
 		endMonth,
-		balanceVersionsByMonth,
-		transactionOccurrencesVersionsByMonth,
+		balanceVersionsByMonthSignature,
+		transactionOccurrencesVersionsByMonthSignature,
 	]);
 
 	const data = useOccurrencesAndBalanceCache(

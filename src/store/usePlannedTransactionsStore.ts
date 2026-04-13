@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type {
@@ -7,6 +6,7 @@ import type {
 	TransactionOccurrence,
 } from '../dataModel';
 import { generateTransactionsForTwoYears } from '../utils/transactionUtils';
+import { persistStorage } from './persistStorage';
 
 export interface PlannedTransactionsState {
 	transactions: Persisted<PlannedTransaction>[];
@@ -83,7 +83,7 @@ export const usePlannedTransactionsStore = create<PlannedTransactionsState>()(
 		}),
 		{
 			name: 'planned-transactions-storage',
-			storage: createJSONStorage(() => AsyncStorage),
+			storage: createJSONStorage(() => persistStorage),
 			version: 1,
 			onRehydrateStorage: () => (state) => {
 				if (state) {
