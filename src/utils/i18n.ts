@@ -73,14 +73,17 @@ i18next
 				'Delete': 'Delete',
 				'Write the name here': 'Write the name here',
 				'Write the amount here (€)': 'Write the amount here (€)',
-				'Reoccurrence': 'Does the item repeat?',
+				'Reoccurrence': 'Item repeats',
+				'Reoccurs': 'Repeats',
 				'Rec_day': 'Day',
 				'Rec_week': 'Week',
 				'Rec_month': 'Month',
 				'Rec_year': 'Year',
 				'Interval': 'Interval',
 				'Start Date': 'Start Date',
-				'End Date': 'End Date',
+				'End Date': 'Repeating ends',
+				'Starts': 'Starts',
+				'Ends': 'Ends',
 				'Add': 'Add',
 
 				// BUDGET
@@ -252,7 +255,8 @@ i18next
 				'Delete': 'Poista',
 				'Write the name here': 'Kirjoita nimi tähän',
 				'Write the amount here (€)': 'Kirjoita määrä tähän (€)',
-				'Reoccurrence': 'Tapahtuma toistuu:',
+				'Reoccurrence': 'Tapahtuma toistuu',
+				'Reoccurs': 'Toistuu',
 				'Rec_day': 'päivän',
 				'Rec_week': 'viikon',
 				'Rec_month': 'kuukauden',
@@ -261,6 +265,8 @@ i18next
 				'Interval': 'välein',
 				'Start Date': 'Tapahtuma alkaa',
 				'End Date': 'Tapahtuma loppuu',
+				'Starts': 'Alkaa',
+				'Ends': 'Loppuu',
 				'Add': 'Lisää',
 
 				// BUDGET

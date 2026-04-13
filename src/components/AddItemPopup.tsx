@@ -1,4 +1,5 @@
 import { Check, ChevronDown } from '@tamagui/lucide-icons';
+import { addMonths } from 'date-fns';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -46,21 +47,20 @@ const AddItemPopup = ({
 	const [endDate, setEndDate] = useState<Date | null>(
 		item ? item.endDate : null,
 	);
-	const [reoccurence, setReoccurence] = useState<RecurrenceBase>(
-		item !== null && item.recurrenceBase !== null
-			? item.recurrenceBase
-			: 'month',
+	const [reoccurence, setReoccurence] = useState<RecurrenceBase | null>(
+		item ? item.recurrenceBase : null,
 	);
-	const [reoccurenceInterval, setReoccurenceInterval] = useState<
-		number | undefined
-	>(item ? item.recurrenceInterval : undefined);
+	const [reoccurenceInterval, setReoccurenceInterval] = useState<number>(
+		item ? item.recurrenceInterval : 1,
+	);
 	const isDisabled =
 		!name.trim() ||
 		Number.isNaN(Number(amount)) ||
 		Number(amount) <= 0 ||
-		!startDate;
+		!startDate ||
+		reoccurenceInterval <= 0;
 	const hasEndDate = endDate !== null;
-	const hasReocurrence = reoccurenceInterval !== undefined;
+	const hasReocurrence = reoccurence !== null;
 	const handleAdd = () => {
 		onSave({
 			categoryId: 0,
@@ -130,23 +130,41 @@ const AddItemPopup = ({
 						/>
 					</View>
 					<View style={styles.singleItemContainer}>
+						<SizableText color="$primary100" size="$title3">
+							{t('Start Date')}:
+						</SizableText>
+						<MultiPlatformDatePicker
+							value={startDate}
+							color="primary100"
+							onChange={setStartDate}
+						/>
+					</View>
+					<View>
 						<XStack
 							style={{
 								alignItems: 'center',
 								gap: 5,
+								marginTop: '-8%',
 								marginBottom: 5,
 							}}
 						>
 							<SizableText color="$primary100" size="$title3">
-								{t('Reoccurrence')}
+								{t('Reoccurrence')}:
 							</SizableText>
 							<Checkbox
 								checked={hasReocurrence}
-								onCheckedChange={() =>
-									hasReocurrence
-										? setReoccurenceInterval(undefined)
-										: setReoccurenceInterval(1)
-								}
+								onCheckedChange={() => {
+									if (hasReocurrence) {
+										setReoccurence(null);
+										setEndDate(null);
+									} else {
+										setReoccurence(
+											item?.recurrenceBase
+												? item.recurrenceBase
+												: 'month',
+										);
+									}
+								}}
 								size="$10"
 							>
 								<Checkbox.Indicator>
@@ -155,7 +173,7 @@ const AddItemPopup = ({
 							</Checkbox>
 						</XStack>
 						{hasReocurrence && (
-							<View
+							<YStack
 								style={{
 									flexDirection: 'row',
 									gap: 8,
@@ -175,25 +193,29 @@ const AddItemPopup = ({
 											minWidth: '21%',
 											height: '100%',
 										}}
-										defaultValue="1"
+										defaultValue={String(
+											item ? item.recurrenceInterval : 1,
+										)}
 										keyboardType="numeric"
 										onChangeText={(text: string) => {
 											const interval = Number(text);
-											if (
-												!Number.isNaN(interval) &&
-												interval > 0
-											) {
-												setReoccurenceInterval(
-													interval,
-												);
-											}
+											interval > 0 &&
+											!Number.isNaN(interval)
+												? setReoccurenceInterval(
+														Number(interval),
+													)
+												: setReoccurenceInterval(0);
 										}}
 									/>
 									<View>
 										<Select
 											disablePreventBodyScroll
 											native="web"
-											defaultValue={reoccurence}
+											defaultValue={
+												reoccurence
+													? reoccurence
+													: 'month'
+											}
 										>
 											<Select.Trigger
 												borderColor={'$primary100'}
@@ -306,55 +328,55 @@ const AddItemPopup = ({
 										{t('Interval')}
 									</Text>
 								</XStack>
-							</View>
+							</YStack>
 						)}
-					</View>
-					<View style={styles.singleItemContainer}>
-						<SizableText color="$primary100" size="$title3">
-							{t('Start Date')}:
-						</SizableText>
-						<MultiPlatformDatePicker
-							value={startDate}
-							color="primary100"
-							onChange={setStartDate}
-						/>
-					</View>
-					<View style={styles.singleItemContainer}>
-						<XStack
-							style={{
-								alignItems: 'center',
-								gap: 5,
-								marginTop: '-20',
-							}}
-						>
-							<SizableText
-								style={{ height: '100%' }}
-								color="$primary100"
-								size="$title3"
-							>
-								{t('End Date')}:
-							</SizableText>
-							<Checkbox
-								checked={hasEndDate}
-								onCheckedChange={() =>
-									hasEndDate
-										? setEndDate(null)
-										: setEndDate(new Date())
-								}
-								// Default end date should change based on interval?
-								size="$10"
-							>
-								<Checkbox.Indicator>
-									<Check />
-								</Checkbox.Indicator>
-							</Checkbox>
-						</XStack>
-						{hasEndDate && (
-							<MultiPlatformDatePicker
-								value={endDate}
-								color="primary100"
-								onChange={setEndDate}
-							/>
+						{hasReocurrence && (
+							<View style={styles.singleItemContainer}>
+								<XStack
+									style={{
+										alignItems: 'center',
+										gap: 5,
+										marginTop: '-35%',
+										marginBottom: '-25%',
+									}}
+								>
+									<SizableText
+										style={{ height: '100%' }}
+										color="$primary100"
+										size="$title3"
+									>
+										{t('End Date')}:
+									</SizableText>
+									<Checkbox
+										checked={hasEndDate}
+										onCheckedChange={() =>
+											hasEndDate
+												? setEndDate(null)
+												: setEndDate(
+														item?.endDate
+															? item.endDate
+															: addMonths(
+																	new Date(),
+																	1,
+																),
+													)
+										}
+										// Default end date should change based on interval?
+										size="$10"
+									>
+										<Checkbox.Indicator>
+											<Check />
+										</Checkbox.Indicator>
+									</Checkbox>
+								</XStack>
+								{hasEndDate && (
+									<MultiPlatformDatePicker
+										value={endDate}
+										color="primary100"
+										onChange={setEndDate}
+									/>
+								)}
+							</View>
 						)}
 					</View>
 				</View>
