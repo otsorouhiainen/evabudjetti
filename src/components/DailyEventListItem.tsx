@@ -77,7 +77,11 @@ const DailyEventListItem: React.FC<Props> = ({
 								backgroundColor="transparent"
 								alignItems="center"
 								justifyContent="flex-end"
-								key={`${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${txn.date.getTime()}`}
+								key={
+									txn.realTransaction
+										? `r${txn.realTransaction.id}-${txn.date.getTime()}`
+										: `p${txn.plannedTransaction?.id ?? 'empty'}-${txn.date.getTime()}`
+								}
 								maxWidth={'90%'}
 							>
 								<Text

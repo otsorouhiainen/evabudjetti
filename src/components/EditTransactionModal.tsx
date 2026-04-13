@@ -75,8 +75,7 @@ const EditTransactionModal = ({
 				date,
 				categoryId: selectedCategory,
 			});
-			setFeedbackIsError(false);
-			setFeedbackMessage(t('Changes saved'));
+			onClose();
 		} catch (e) {
 			console.error('Failed to update transaction:', e);
 			setFeedbackIsError(true);
@@ -90,8 +89,7 @@ const EditTransactionModal = ({
 		setSaving(true);
 		try {
 			await deleteRealTransaction(transaction);
-			setFeedbackIsError(false);
-			setFeedbackMessage(t('Transaction deleted'));
+			onClose();
 		} catch (e) {
 			console.error('Failed to delete transaction:', e);
 			setSaving(false);
