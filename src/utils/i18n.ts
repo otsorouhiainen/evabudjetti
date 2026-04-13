@@ -190,6 +190,9 @@ i18next
 				// SUMMARY
 				'Choose a year': 'Choose a year',
 				'Months': 'Months',
+				'No expenses this month': 'No expenses this month',
+				'No income this month': 'No income this month',
+				'Uncategorized': 'Uncategorized',
 
 				// SETTINGS
 				'Language': 'Language',
