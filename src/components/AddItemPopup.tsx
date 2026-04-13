@@ -19,7 +19,7 @@ import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 type AddItemPopupProps = {
 	item: PlannedTransaction | null;
 	onSave: (item: PlannedTransaction) => void;
-	onDelete: (item: PlannedTransaction) => void;
+	onDelete: () => void;
 	onClose: () => void;
 };
 
@@ -75,7 +75,7 @@ const AddItemPopup = ({
 		onClose();
 	};
 	const handleDelete = () => {
-		if (item !== null) onDelete(item);
+		if (item !== null) onDelete();
 		onClose();
 	};
 	return (

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, ListItem, Progress, SizableText, YStack } from 'tamagui';
+import { Button, Progress, SizableText, YStack } from 'tamagui';
 import BudgetWizardItem from '@/src/components/BudgetWizardItem';
 import type { PlannedTransaction } from '@/src/dataModel';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
@@ -38,9 +38,9 @@ export default function BudgetWizard() {
 	const [popupVisible, setPopupVisible] = useState(false);
 	const currentStep = wizardData[stepIndex];
 	const progressBarValue = ((stepIndex + 1) * 100) / wizardData.length;
-	
-	type ListItem = {index: number, item: PlannedTransaction};
-	const [selectedItem, setSelectedItem] = useState<ListItem | null>(
+
+	type BudgetListItem = { index: number; item: PlannedTransaction };
+	const [selectedItem, setSelectedItem] = useState<BudgetListItem | null>(
 		null,
 	);
 
@@ -87,14 +87,14 @@ export default function BudgetWizard() {
 		);
 	}
 
-	function deleteItem(item: PlannedTransaction) {
+	function deleteItem() {
 		setWizardData((prev) =>
 			prev.map((step, sIdx) =>
 				sIdx === stepIndex
 					? {
 							...step,
 							items: step.items.filter(
-								(it) => it.name !== item.name,
+								(_it, index) => index !== selectedItem?.index,
 							),
 						}
 					: step,
@@ -117,13 +117,13 @@ export default function BudgetWizard() {
 					transparent={true}
 				>
 					<AddItemPopup
-						item={selectedItem? selectedItem.item : null}
+						item={selectedItem ? selectedItem.item : null}
 						onSave={
 							selectedItem === null
 								? (item) => addItem(item)
 								: (item) => editItem(item)
 						}
-						onDelete={(item) => deleteItem(item)}
+						onDelete={() => deleteItem()}
 						onClose={() => closePopUp()}
 					/>
 				</Modal>
@@ -162,10 +162,12 @@ export default function BudgetWizard() {
 						<BudgetWizardItem
 							item={item}
 							onEdit={(it) => {
-								setSelectedItem({index: index, item: it});
+								setSelectedItem({ index: index, item: it });
 								setPopupVisible(true);
 							}}
-							key={index}
+							key={String(
+								item.name + item.amount + item.startDate,
+							)}
 						/>
 					))}
 					{/* Empty Y-stack to get margin after last budget item*/}
