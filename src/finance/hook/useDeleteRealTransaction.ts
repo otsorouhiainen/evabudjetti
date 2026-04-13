@@ -1,37 +1,42 @@
+import { useCallback } from 'react';
 import type { Persisted, RealTransaction } from '@/src/dataModel';
-import { deleteRealTransaction } from '../query/realTransactionMutations';
+import { deleteRealTransaction as deleteRealTransactionFromDb } from '../query/realTransactionMutations';
 import { useBalanceVersioning } from '../versioning/balanceVersioning';
 import { useTransactionOccurrenceVersioning } from '../versioning/transactionOccurrenceVersioning';
 
 export function useDeleteRealTransaction() {
-	// Return a plain async function (no useCallback) so it always uses
-	// getState() at call time — matching the debug view pattern exactly.
-	return async (transaction: Persisted<RealTransaction>): Promise<void> => {
-		await deleteRealTransaction(transaction.id);
+	const onBalanceRealTransactionDeleted = useBalanceVersioning(
+		(state) => state.onRealTransactionDeleted,
+	);
+	const onOccurrenceRealTransactionDeleted =
+		useTransactionOccurrenceVersioning(
+			(state) => state.onRealTransactionDeleted,
+		);
 
-		// Normalize date in case Drizzle returns a raw number instead of Date
-		const date =
-			transaction.date instanceof Date
-				? transaction.date
-				: new Date(transaction.date as unknown as number);
+	return useCallback(
+		async (transaction: Persisted<RealTransaction>): Promise<void> => {
+			await deleteRealTransactionFromDb(transaction.id);
 
-		const deletedTransaction: RealTransaction = {
-			accountId: transaction.accountId,
-			name: transaction.name,
-			categoryId: transaction.categoryId,
-			amount: transaction.amount,
-			date,
-			type: transaction.type,
-			plannedTransactionId: transaction.plannedTransactionId ?? null,
-		};
+			// Normalize date: Drizzle expo-sqlite stores timestamps as seconds,
+			// so reconstruct a proper Date if needed.
+			const date =
+				transaction.date instanceof Date
+					? transaction.date
+					: new Date(transaction.date as unknown as number);
 
-		// Use getState() directly — same pattern as the debug view.
-		// This avoids any potential stale closure from React hook selectors.
-		useTransactionOccurrenceVersioning
-			.getState()
-			.onRealTransactionDeleted(deletedTransaction);
-		useBalanceVersioning
-			.getState()
-			.onRealTransactionDeleted(deletedTransaction);
-	};
+			const deleted: RealTransaction = {
+				accountId: transaction.accountId,
+				name: transaction.name,
+				categoryId: transaction.categoryId,
+				amount: transaction.amount,
+				date,
+				type: transaction.type,
+				plannedTransactionId: transaction.plannedTransactionId ?? null,
+			};
+
+			onBalanceRealTransactionDeleted(deleted);
+			onOccurrenceRealTransactionDeleted(deleted);
+		},
+		[onBalanceRealTransactionDeleted, onOccurrenceRealTransactionDeleted],
+	);
 }
