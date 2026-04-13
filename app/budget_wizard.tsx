@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Progress, SizableText, YStack } from 'tamagui';
 import BudgetWizardItem from '@/src/components/BudgetWizardItem';
 import type { PlannedTransaction } from '@/src/dataModel';
+import { DEFAULT_ACCOUNT_ID } from '@/src/dataModel';
 import { isDbReal } from '@/src/db/client';
 import {
 	useFetchAllPlannedTransactions,
@@ -72,6 +73,7 @@ export default function BudgetWizard() {
 
 	function addItem(newItem: PlannedTransaction) {
 		newItem.type = currentStep.header === 'Incomes' ? 'income' : 'expense';
+		newItem.accountId = DEFAULT_ACCOUNT_ID;
 		newItem.categoryId = 0;
 		setWizardData((prev) => {
 			return prev.map((step, sIdx) =>

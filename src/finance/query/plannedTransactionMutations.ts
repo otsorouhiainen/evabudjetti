@@ -46,6 +46,10 @@ export async function replaceAllPlannedTransactions(
 	// First, delete all existing
 	await db.delete(schema.plannedTransactions);
 
+	if (transactions.length === 0) {
+		return [];
+	}
+
 	// Then insert all new ones
 	const insertedTransactions = await db
 		.insert(schema.plannedTransactions)

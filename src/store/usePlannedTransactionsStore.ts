@@ -30,7 +30,11 @@ export const usePlannedTransactionsStore = create<PlannedTransactionsState>()(
 				set((state) => {
 					const newTransactions = [
 						...state.transactions,
-						{ ...item, id: state.nextId },
+						{
+							...item,
+							id: state.nextId,
+							endDate: item.endDate ?? null,
+						},
 					];
 
 					return {
@@ -70,7 +74,11 @@ export const usePlannedTransactionsStore = create<PlannedTransactionsState>()(
 				items: (PlannedTransaction | Persisted<PlannedTransaction>)[],
 			) => {
 				const transactions = items.map((item, index) => {
-					return { ...item, id: index + 1 };
+					return {
+						...item,
+						id: index + 1,
+						endDate: item.endDate ?? null,
+					};
 				});
 
 				set((state) => ({
@@ -91,7 +99,7 @@ export const usePlannedTransactionsStore = create<PlannedTransactionsState>()(
 					state.transactions = state.transactions.map((t) => ({
 						...t,
 						startDate: new Date(t.startDate),
-						endDate: t.endDate ? new Date(t.endDate) : undefined,
+						endDate: t.endDate ? new Date(t.endDate) : null,
 					}));
 				}
 			},

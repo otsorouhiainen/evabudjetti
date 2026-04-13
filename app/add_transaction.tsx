@@ -191,7 +191,7 @@ export default function AddTransaction() {
 			accountId: DEFAULT_ACCOUNT_ID,
 			amount: Number(amount),
 			startDate: date ?? new Date(),
-			endDate: undefined,
+			endDate: null,
 			categoryId: category?.id ?? 0,
 			type: type.toLowerCase() as 'income' | 'expense',
 			recurrenceBase: 'year',

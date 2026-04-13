@@ -14,6 +14,7 @@ import {
 	YStack,
 } from 'tamagui';
 import type { PlannedTransaction, RecurrenceBase } from '../dataModel';
+import { DEFAULT_ACCOUNT_ID } from '../dataModel';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type AddItemPopupProps = {
@@ -63,6 +64,7 @@ const AddItemPopup = ({
 	const hasReocurrence = reoccurence !== null;
 	const handleAdd = () => {
 		onSave({
+			accountId: DEFAULT_ACCOUNT_ID,
 			categoryId: 0,
 			name: name.trim(),
 			amount: amount,
