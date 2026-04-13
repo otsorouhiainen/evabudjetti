@@ -1,14 +1,14 @@
-import { Plus, Trash2 } from '@tamagui/lucide-icons';
+import { Plus } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Input, Progress, SizableText, XStack } from 'tamagui';
-import type { PlannedTransaction, RecurrenceBase } from '@/src/dataModel';
+import { Button, Progress, SizableText, YStack } from 'tamagui';
+import BudgetWizardItem from '@/src/components/BudgetWizardItem';
+import type { PlannedTransaction } from '@/src/dataModel';
 import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
 import AddItemPopup from '../src/components/AddItemPopup';
-import { MultiPlatformDatePicker } from '../src/components/MultiPlatformDatePicker';
 import {
 	BUDGET_WIZARD_STEPS,
 	type BudgetWizardStep,
@@ -39,6 +39,10 @@ export default function BudgetWizard() {
 	const currentStep = wizardData[stepIndex];
 	const progressBarValue = ((stepIndex + 1) * 100) / wizardData.length;
 
+	const [selectedItem, setSelectedItem] = useState<PlannedTransaction | null>(
+		null,
+	);
+
 	function addItem(newItem: PlannedTransaction) {
 		newItem.type = currentStep.header === 'Incomes' ? 'income' : 'expense';
 		newItem.categoryId = 0;
@@ -52,6 +56,34 @@ export default function BudgetWizard() {
 					: step,
 			);
 		});
+	}
+
+	function editItem(edited: PlannedTransaction) {
+		setWizardData((prev) =>
+			prev.map((step, sIdx) =>
+				sIdx === stepIndex
+					? {
+							...step,
+							items: step.items.map((item) =>
+								item.name === selectedItem?.name
+									? {
+											...item,
+											name: edited.name,
+											amount: edited.amount,
+											categoryId: edited.categoryId,
+											startDate: edited.startDate,
+											endDate: edited.endDate,
+											recurrenceBase:
+												edited.recurrenceBase,
+											recurrenceInterval:
+												edited.recurrenceInterval,
+										}
+									: item,
+							),
+						}
+					: step,
+			),
+		);
 	}
 
 	function deleteItem(item: PlannedTransaction) {
@@ -69,90 +101,32 @@ export default function BudgetWizard() {
 		);
 	}
 
-	function amountInputChange(
-		item: PlannedTransaction,
-		text: number,
-	): BudgetWizardStep[] {
-		return wizardData.map((step, sIdx) =>
-			sIdx === stepIndex
-				? {
-						...step,
-						items: step.items.map((it) =>
-							it.name === item.name
-								? {
-										...it,
-										amount: Number(text),
-									}
-								: it,
-						),
-					}
-				: step,
-		);
-	}
-
-	function shortenRecVisual(rec: RecurrenceBase): string {
-		switch (rec) {
-			case 'day':
-				return 'd';
-			case 'month':
-				return 'm';
-			case 'year':
-				return 'y';
-			case 'week':
-				return 'w';
-			// case custom for default
-			default:
-				return 'c';
-		}
-	}
-
-	function nextOccurence(rec: RecurrenceBase) {
-		switch (rec) {
-			case 'day':
-				return 'week';
-			case 'week':
-				return 'month';
-			case 'month':
-				return 'year';
-			case 'year':
-				return 'day';
-			default:
-				return 'month';
-		}
-	}
-
-	function reoccurenceChange(item: PlannedTransaction): BudgetWizardStep[] {
-		return wizardData.map((step, sIdx) =>
-			sIdx === stepIndex
-				? {
-						...step,
-						items: step.items.map((it) => {
-							if (it.name === item.name) {
-								const newRec = nextOccurence(
-									it.recurrenceBase ?? 'month',
-								);
-								it.recurrenceBase = newRec;
-							}
-							return it;
-						}),
-					}
-				: step,
-		);
-	}
+	const closePopUp = () => {
+		setSelectedItem(null);
+		setPopupVisible(false);
+	};
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
 			<View style={styles.container}>
+				{/* -- Add Item PopUp -- */}
 				<Modal
 					visible={popupVisible}
-					onRequestClose={() => setPopupVisible(false)}
+					onRequestClose={() => closePopUp()}
 					transparent={true}
 				>
 					<AddItemPopup
-						onAdd={(item) => addItem(item)}
-						onClose={() => setPopupVisible(false)}
+						item={selectedItem}
+						onSave={
+							selectedItem === null
+								? (item) => addItem(item)
+								: (item) => editItem(item)
+						}
+						onDelete={(item) => deleteItem(item)}
+						onClose={() => closePopUp()}
 					/>
 				</Modal>
+
 				<View style={styles.topContent}>
 					<Progress
 						backgroundColor="$white"
@@ -184,91 +158,17 @@ export default function BudgetWizard() {
 					style={styles.content}
 				>
 					{currentStep.items.map((item) => (
-						<XStack
-							backgroundColor="$primary300"
-							style={styles.itemContainer}
+						<BudgetWizardItem
+							item={item}
+							onEdit={(it) => {
+								setSelectedItem(it);
+								setPopupVisible(true);
+							}}
 							key={item.name}
-						>
-							<SizableText
-								color="$primary100"
-								size="$body"
-								style={styles.itemName}
-							>
-								{item.name}
-							</SizableText>
-							<View style={styles.itemContent}>
-								<MultiPlatformDatePicker
-									value={item.startDate}
-									color="primary100"
-									onChange={(date: Date) => {
-										setWizardData((prev) =>
-											prev.map((step, sIdx) =>
-												sIdx === stepIndex
-													? {
-															...step,
-															items: step.items.map(
-																(it) =>
-																	it.name ===
-																	item.name
-																		? {
-																				...it,
-																				date,
-																			}
-																		: it,
-															),
-														}
-													: step,
-											),
-										);
-									}}
-								/>
-								<Input
-									size="$title3"
-									keyboardType="numeric"
-									style={styles.amountInput}
-									backgroundColor="$white"
-									borderColor="$primary100"
-									color="$primary100"
-									value={
-										item.amount === 0
-											? ''
-											: item.amount.toString()
-									}
-									onChangeText={(text) => {
-										console.log(text);
-										setWizardData(
-											amountInputChange(
-												item,
-												Number(text),
-											),
-										);
-									}}
-								/>
-								<Button
-									backgroundColor={'$primary200'}
-									size={'$5'}
-									onPress={() => {
-										setWizardData(reoccurenceChange(item));
-									}}
-								>
-									<SizableText color="$white" size={'$body'}>
-										{shortenRecVisual(
-											item.recurrenceBase ?? 'month',
-										)}
-										{/* Need to make display enum for this later "/mo, /d, /a, etc" */}
-									</SizableText>
-								</Button>
-
-								<Button
-									color="$black"
-									transparent
-									style={styles.trashIcon}
-									icon={Trash2}
-									onPress={() => deleteItem(item)}
-								/>
-							</View>
-						</XStack>
+						/>
 					))}
+					{/* Empty Y-stack to get margin after last budget item*/}
+					<YStack marginTop="10" />
 				</ScrollView>
 				<View style={styles.addIconContainer}>
 					<Button
@@ -290,7 +190,11 @@ export default function BudgetWizard() {
 						disabled={stepIndex === 0}
 						onPress={() => setStepIndex(stepIndex - 1)}
 					>
-						<SizableText color="$white" size="$title1">
+						<SizableText
+							adjustsFontSizeToFit
+							color="$white"
+							size="$title1"
+						>
 							{t('Previous')}
 						</SizableText>
 					</Button>
@@ -317,7 +221,11 @@ export default function BudgetWizard() {
 							style={styles.footerButton}
 							onPress={() => setStepIndex(stepIndex + 1)}
 						>
-							<SizableText color="$white" size="$title1">
+							<SizableText
+								adjustsFontSizeToFit
+								color="$white"
+								size="$title1"
+							>
 								{t('Next')}
 							</SizableText>
 						</Button>
@@ -338,7 +246,7 @@ const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'column',
 		padding: 20,
-		height: '80%',
+		height: '100%',
 	},
 	dateContainer: {
 		flexDirection: 'row',
@@ -348,8 +256,10 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		flexDirection: 'column',
-		marginTop: 40,
+		marginTop: 5,
 		height: '60%',
+		borderTopWidth: 2,
+		borderBottomWidth: 2,
 	},
 	itemContainer: {
 		flexDirection: 'row',
@@ -366,7 +276,7 @@ const styles = StyleSheet.create({
 	},
 	footerButton: {
 		height: '100%',
-		width: '40%',
+		width: '42%',
 	},
 	buttonContainer: {
 		height: '10%',
@@ -397,7 +307,7 @@ const styles = StyleSheet.create({
 	itemName: {
 		width: '20%',
 	},
-	trashIcon: {
+	pencilIcon: {
 		width: '1%',
 		height: '100%',
 	},
