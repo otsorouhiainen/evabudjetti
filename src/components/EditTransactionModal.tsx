@@ -240,7 +240,15 @@ const EditTransactionModal = ({
 			{/* Delete confirmation — inline overlay (AlertDialog.Portal doesn't pierce RN Modal) */}
 			{deleteConfirmVisible && (
 				<View style={styles.inlineOverlay}>
-					<YStack style={styles.inlineDialog}>
+					<YStack
+						backgroundColor="$background"
+						borderRadius={16}
+						borderWidth={1}
+						borderColor="$borderColor"
+						padding={24}
+						width="90%"
+						elevation={8}
+					>
 						<SizableText size="$title2" marginBottom={8}>
 							{t('Delete transaction')}
 						</SizableText>
@@ -281,7 +289,15 @@ const EditTransactionModal = ({
 			{/* Error feedback — inline overlay */}
 			{feedbackMessage !== null && (
 				<View style={styles.inlineOverlay}>
-					<YStack style={styles.inlineDialog}>
+					<YStack
+						backgroundColor="$background"
+						borderRadius={16}
+						borderWidth={1}
+						borderColor="$borderColor"
+						padding={24}
+						width="90%"
+						elevation={8}
+					>
 						<SizableText size="$title3" marginBottom={20}>
 							{feedbackMessage}
 						</SizableText>
@@ -329,14 +345,9 @@ const styles = StyleSheet.create({
 		...StyleSheet.absoluteFillObject,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: 'rgba(0, 0, 0, 0.55)',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 		borderRadius: 16,
 		zIndex: 10,
-	},
-	inlineDialog: {
-		width: '90%',
-		padding: 24,
-		borderRadius: 16,
 	},
 });
 
