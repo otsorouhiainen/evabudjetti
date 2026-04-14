@@ -173,7 +173,6 @@ i18next
 				'Failed to delete transaction': 'Failed to delete transaction',
 				'Changes saved': 'Changes saved',
 				'Failed to save changes': 'Failed to save changes',
-				'OK': 'OK',
 
 				// ERROR
 				'Something went wrong': 'Something went wrong',
@@ -293,7 +292,6 @@ i18next
 				'{{transactionType}} added': '{{transactionType}} lisätty',
 				'Add {{transactionType}}': 'Lisää {{transactionType}}',
 				'Saved': 'Tallennettu',
-				'OK': 'OK',
 				'Record new': 'Kirjaa uusi',
 				'Adjust budgeted': 'Korjaa budjetoitu',
 				'Income short': 'tulo',
