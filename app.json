@@ -22,10 +22,6 @@
 		},
 		"web": {
 			"bundler": "metro",
-			"headers": {
-				"Cross-Origin-Opener-Policy": "same-origin",
-				"Cross-Origin-Embedder-Policy": "require-corp"
-			},
 			"output": "static",
 			"favicon": "./assets/images/favicon.png",
 			"build": {

@@ -4,24 +4,17 @@ import { Platform } from 'react-native';
 import * as schema from './schema';
 
 let db: ExpoSQLiteDatabase<typeof schema>;
-let isDbReal = false;
+let isDbReal: boolean;
 
 if (Platform.OS !== 'web') {
 	const expoDb = openDatabaseSync('db.db');
-	db = drizzle(expoDb, { schema });
+	db = drizzle(expoDb, {
+		schema,
+	});
 	isDbReal = true;
 } else {
-	// If web
 	db = {} as ExpoSQLiteDatabase<typeof schema>;
 	isDbReal = false;
 }
-
-export const initializeWebDb = (expoDb: any) => {
-	if (Platform.OS === 'web' && !isDbReal) {
-		db = drizzle(expoDb, { schema });
-		isDbReal = true;
-		console.log('Web-tietokanta kytketty Drizzleen onnistuneesti!');
-	}
-};
 
 export { db, isDbReal };
