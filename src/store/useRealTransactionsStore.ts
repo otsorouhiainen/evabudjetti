@@ -1,7 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { Persisted, RealTransaction } from '../dataModel';
-import { persistStorage } from './persistStorage';
 
 interface RealTransactionsState {
 	transactions: Persisted<RealTransaction>[];
@@ -47,7 +47,7 @@ const useRealTransactionsStore = create<RealTransactionsState>()(
 		}),
 		{
 			name: 'real-transactions-storage',
-			storage: createJSONStorage(() => persistStorage),
+			storage: createJSONStorage(() => AsyncStorage),
 			version: 1,
 			onRehydrateStorage: () => (state) => {
 				if (state) {

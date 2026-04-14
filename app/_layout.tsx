@@ -1,16 +1,18 @@
 import { TamaguiProvider, Theme } from '@tamagui/core';
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PortalProvider, Spinner, Text, YStack } from 'tamagui';
-import { initializeWebDb, isDbReal, isWebFallbackMode } from '@/src/db/client';
+import migrations from '@/drizzle/migrations';
+import { db, initializeWebDb, isDbReal } from '@/src/db/client';
 import config from '../tamagui.config';
 import '@/src/utils/i18n';
 
 import { Redirect } from 'expo-router';
 import { SQLiteProvider } from 'expo-sqlite';
 import i18next from 'i18next';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useInstructionStore } from '@/src/store/useInstructionStore';
 import { useLanguageStore } from '@/src/store/useLanguageStore';
 
@@ -18,11 +20,6 @@ function MigrationHandler({ children }: { children: React.ReactNode }) {
 	const [ready, setReady] = useState(false);
 
 	useEffect(() => {
-		if (isWebFallbackMode) {
-			setReady(true);
-			return;
-		}
-
 		if (isDbReal) {
 			setReady(true);
 		} else {
@@ -49,6 +46,8 @@ function MigrationHandler({ children }: { children: React.ReactNode }) {
 }
 
 export default function RootLayout() {
+	const [_, setTick] = useState(0);
+
 	const language = useLanguageStore((state) => state.language);
 	const { instructionShown } = useInstructionStore();
 
@@ -109,9 +108,9 @@ export default function RootLayout() {
 									<Stack.Screen
 										name="(tabs)"
 										options={{
-									headerShown: false,
-									headerTitle: '',
-								}}
+											headerShown: false,
+											headerTitle: '',
+										}}
 									/>
 								</Stack>
 							</MigrationHandler>

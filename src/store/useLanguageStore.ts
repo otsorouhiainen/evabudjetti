@@ -1,7 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Localization from 'expo-localization';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { persistStorage } from './persistStorage';
 
 interface LanguageState {
 	language: string;
@@ -21,7 +21,7 @@ export const useLanguageStore = create<LanguageState>()(
 		{
 			// 3. Tallennusasetukset
 			name: 'language-storage', // Avain, jolla tieto löytyy AsyncStoragesta
-			storage: createJSONStorage(() => persistStorage),
+			storage: createJSONStorage(() => AsyncStorage),
 		},
 	),
 );

@@ -5,9 +5,8 @@ import type {
 	Persisted,
 	RealTransaction,
 } from '@/src/dataModel';
-import { db, isWebFallbackMode } from '@/src/db/client';
+import { db } from '@/src/db/client';
 import * as schema from '@/src/db/schema';
-import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 
 /**
  * Retrieves all real transactions that occur within the given month range
@@ -21,30 +20,11 @@ export async function fetchRealTransactionsByDateRange(
 	start: MonthInstance,
 	end: MonthInstance,
 ): Promise<Persisted<RealTransaction>[]> {
-	if (isWebFallbackMode) {
-		const rangeStart = new Date(start.year, start.month, 1);
-		const rangeEnd = endOfMonth(new Date(end.year, end.month, 1));
-
-		return useRealTransactionsStore
-			.getState()
-			.transactions.filter((transaction) =>
-				realTransactionConcernsDateRangeLocal(
-					transaction,
-					rangeStart,
-					rangeEnd,
-				),
-			)
-			.sort(
-				(a, b) =>
-					new Date(a.date).getTime() - new Date(b.date).getTime(),
-			);
-	}
-
 	const data = await db
 		.select()
 		.from(schema.realTransactions)
 		.where(
-			realTransactionConcernsDateRangeSql(
+			realTransactionConcernsDateRange(
 				new Date(start.year, start.month, 1),
 				endOfMonth(new Date(end.year, end.month, 1)),
 			),
@@ -54,17 +34,8 @@ export async function fetchRealTransactionsByDateRange(
 	return data;
 }
 
-const realTransactionConcernsDateRangeSql = (startDate: Date, endDate: Date) =>
+const realTransactionConcernsDateRange = (startDate: Date, endDate: Date) =>
 	and(
 		gte(schema.realTransactions.date, startDate),
 		lte(schema.realTransactions.date, endDate),
 	);
-
-const realTransactionConcernsDateRangeLocal = (
-	transaction: Persisted<RealTransaction>,
-	startDate: Date,
-	endDate: Date,
-) => {
-	const date = new Date(transaction.date);
-	return date >= startDate && date <= endDate;
-};

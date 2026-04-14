@@ -1,7 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { Category, Persisted } from '../dataModel';
-import { persistStorage } from './persistStorage';
 
 interface CategoryStore {
 	categories: Persisted<Category>[];
@@ -53,7 +53,7 @@ export const useCategoryStore = create<CategoryStore>()(
 		}),
 		{
 			name: 'categories-storage',
-			storage: createJSONStorage(() => persistStorage),
+			storage: createJSONStorage(() => AsyncStorage),
 			version: 1,
 		},
 	),
