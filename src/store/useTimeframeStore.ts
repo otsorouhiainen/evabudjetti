@@ -31,32 +31,6 @@ const addLength = (date: Date, timeframe: TimeframeLength) => {
 };
 
 /**
- * Calculates the currently active timeframe.
- * Currently it returns a future timeframe if the start date is in the future
- * and does not support a clean transition between two timeframes yet.
- *
- * @param originalStartDate The start date that was originally provided by the user
- * @param currentDate The currently selected date
- * @param timeframe The timeframe length
- * @returns Both the start and the end dates of the currently active timeframe
- */
-export const getClosestTimeframe = (
-	originalStartDate: Date,
-	currentDate: Date,
-	timeframe: TimeframeLength,
-) => {
-	let currentTimeframeStart = originalStartDate;
-	let currentTimeframeEnd = addLength(currentTimeframeStart, timeframe);
-
-	while (currentDate > currentTimeframeEnd) {
-		currentTimeframeStart = currentTimeframeEnd;
-		currentTimeframeEnd = addLength(currentTimeframeStart, timeframe);
-	}
-
-	return { currentTimeframeStart, currentTimeframeEnd };
-};
-
-/**
  * Store for timeframe. For use outside of settings, only use getCurrentTimeframe.
  * The saved timeframe start date is the one that is originally set in settings
  * and wont show the current timeframes start date.
