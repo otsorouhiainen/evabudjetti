@@ -14,7 +14,7 @@ interface TimeframeState {
 	timeframeLength: TimeframeLength;
 	setStartDate: (date: Date) => void;
 	setLength: (num: number, option: LengthOptions) => void;
-	getCurrentTimeframe: () => Date[];
+	getCurrentTimeframe: (date: Date) => Date;
 }
 
 const addLength = (date: Date, timeframe: TimeframeLength) => {
@@ -36,16 +36,17 @@ const addLength = (date: Date, timeframe: TimeframeLength) => {
  * and does not support a clean transition between two timeframes yet.
  *
  * @param originalStartDate The start date that was originally provided by the user
+ * @param currentDate The currently selected date
  * @param timeframe The timeframe length
  * @returns Both the start and the end dates of the currently active timeframe
  */
 export const getClosestTimeframe = (
 	originalStartDate: Date,
+	currentDate: Date,
 	timeframe: TimeframeLength,
 ) => {
 	let currentTimeframeStart = originalStartDate;
 	let currentTimeframeEnd = addLength(currentTimeframeStart, timeframe);
-	const currentDate = new Date();
 
 	while (currentDate > currentTimeframeEnd) {
 		currentTimeframeStart = currentTimeframeEnd;
@@ -83,9 +84,10 @@ export const useTimeframeStore = create<TimeframeState>()(
 			/**
 			 * Function to calculate the current timeframe.
 			 *
-			 * @returns The start and end dates of the current timeframe
+			 * @param date The date for which the current timeframe needs to be calculated
+			 * @returns The end date of the current timeframe.
 			 */
-			getCurrentTimeframe: () => {
+			getCurrentTimeframe: (date: Date) => {
 				const {
 					timeframeStartYear,
 					timeframeStartMonth,
@@ -93,17 +95,25 @@ export const useTimeframeStore = create<TimeframeState>()(
 					timeframeLength,
 				} = get();
 
-				const { currentTimeframeStart, currentTimeframeEnd } =
-					getClosestTimeframe(
-						new Date(
-							timeframeStartYear,
-							timeframeStartMonth,
-							timeframeStartDay,
-						),
+				let currentTimeframeStart = new Date(
+					timeframeStartYear,
+					timeframeStartMonth,
+					timeframeStartDay,
+				);
+				let currentTimeframeEnd = addLength(
+					currentTimeframeStart,
+					timeframeLength,
+				);
+
+				while (date > currentTimeframeEnd) {
+					currentTimeframeStart = currentTimeframeEnd;
+					currentTimeframeEnd = addLength(
+						currentTimeframeStart,
 						timeframeLength,
 					);
+				}
 
-				return [currentTimeframeStart, currentTimeframeEnd];
+				return currentTimeframeEnd;
 			},
 		}),
 		{
