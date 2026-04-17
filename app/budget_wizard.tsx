@@ -6,7 +6,7 @@ import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Progress, SizableText, YStack } from 'tamagui';
 import BudgetWizardItem from '@/src/components/BudgetWizardItem';
-import type { PlannedTransaction } from '@/src/dataModel';
+import type { Persisted, PlannedTransaction } from '@/src/dataModel';
 import { useAddPlannedTransaction } from '@/src/finance/hook/useAddPlannedTransaction';
 import { useDeletePlannedTransaction } from '@/src/finance/hook/useDeletePlannedTransaction';
 import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
@@ -16,6 +16,7 @@ import {
 	BUDGET_WIZARD_STEPS,
 	type BudgetWizardStep,
 } from '../src/constants/wizardConfig';
+
 
 export default function BudgetWizard() {
 	const { t } = useTranslation();
@@ -51,45 +52,18 @@ export default function BudgetWizard() {
 	async function addItem(newItem: PlannedTransaction) {
 		newItem.type = currentStep.header === 'Incomes' ? 'income' : 'expense';
 		newItem.categoryId = 0;
-		if (isDbReal) {
-      await addPlannedTransaction(newItem);
-    } else { 
-      setWizardData((prev) =>
-        prev.map((step, sIdx) =>
-          sIdx === stepIndex
-            ? { ...step, items: [...step.items, newItem] }
-            : step,
-        ),
-      );
-    }
+		await addPlannedTransaction(newItem);
 	}
 
 	async function editItem(edited: Persisted<PlannedTransaction>) {
-    if (isDbReal) {
-      await updatePlannedTransaction(edited, edited);
-    }
-  }
-
-  async function deleteItem() {
-    if (selectedItem && isDbReal) {
-      const item = selectedItem.item as Persisted<PlannedTransaction>;
-      await deletePlannedTransactionHook(item);
-    }
+		await updatePlannedTransaction(edited, edited);
 	}
 
-	function deleteItem() {
-		setWizardData((prev) =>
-			prev.map((step, sIdx) =>
-				sIdx === stepIndex
-					? {
-							...step,
-							items: step.items.filter(
-								(_it, index) => index !== selectedItem?.index,
-							),
-						}
-					: step,
-			),
-		);
+	async function deleteItem() {
+		if (selectedItem) {
+			const item = selectedItem.item as Persisted<PlannedTransaction>;
+			await deletePlannedTransactionHook(item);
+		}
 	}
 
 	const closePopUp = () => {
@@ -196,12 +170,7 @@ export default function BudgetWizard() {
 							borderRadius={28}
 							style={styles.footerButton}
 							backgroundColor="$primary200"
-							onPress={() => {
-								const allItems: PlannedTransaction[] =
-									wizardData.flatMap((step) => step.items);
-								replaceAll(allItems);
-								router.push('/');
-							}}
+							onPress={() => router.push('/')}
 						>
 							<SizableText color="$white" size="$title1">
 								{t('Finish')}

@@ -18,11 +18,12 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
-import type { PlannedTransaction, RecurrenceBase } from '../dataModel';
+import type { Persisted, PlannedTransaction, RecurrenceBase } from '../dataModel';
+import { DEFAULT_ACCOUNT_ID } from '../dataModel';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type AddItemPopupProps = {
-	item: PlannedTransaction | null;
+	item: Persisted<PlannedTransaction> | PlannedTransaction | null;
 	onSave: (item: PlannedTransaction) => void;
 	onDelete: () => void;
 	onClose: () => void;
@@ -68,6 +69,8 @@ const AddItemPopup = ({
 	const hasReocurrence = reoccurence !== null;
 	const handleAdd = () => {
 		onSave({
+			...(item !== null && 'id' in item ? { id: item.id } : {}),
+			accountId: DEFAULT_ACCOUNT_ID,
 			categoryId: 0,
 			name: name.trim(),
 			amount: amount,

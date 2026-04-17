@@ -1,6 +1,29 @@
 import { Platform } from 'react-native';
+import { DEFAULT_ACCOUNT_ID, DEFAULT_BUDGET_ID } from '../dataModel';
 import { db } from './client';
-import { categories } from './schema';
+import { accounts, budgets, categories } from './schema';
+
+export const seedDefaultBudgetAndAccount = async () => {
+	if (Platform.OS === 'web') return;
+
+	try {
+		const existingBudgets = await db.select().from(budgets).limit(1);
+		if (existingBudgets.length === 0) {
+			await db.insert(budgets).values({ id: DEFAULT_BUDGET_ID + 1, name: 'Default Budget' });
+		}
+
+		const existingAccounts = await db.select().from(accounts).limit(1);
+		if (existingAccounts.length === 0) {
+			await db.insert(accounts).values({
+				id: DEFAULT_ACCOUNT_ID + 1,
+				budgetId: DEFAULT_BUDGET_ID + 1,
+				name: 'Default Account',
+			});
+		}
+	} catch (error) {
+		console.error('Error seeding default budget and account:', error);
+	}
+};
 
 export const seedCategories = async () => {
 	if (Platform.OS === 'web') return;

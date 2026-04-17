@@ -1,5 +1,5 @@
-export const DEFAULT_BUDGET_ID = 0;
-export const DEFAULT_ACCOUNT_ID = 0;
+export const DEFAULT_BUDGET_ID = 1;
+export const DEFAULT_ACCOUNT_ID = 1;
 
 export type RecurrenceBase = 'day' | 'week' | 'month' | 'year';
 
