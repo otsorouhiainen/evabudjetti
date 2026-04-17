@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,11 +19,10 @@ import {
 	type RealTransaction,
 	type TransactionOccurrence,
 } from '@/src/dataModel';
-import { isDbReal } from '@/src/db/client';
 import { useAddRealTransaction } from '@/src/finance/hook/useAddRealTransaction';
+import { useTransactionOccurrences } from '@/src/finance/hook/useTransactionOccurrences';
+import { useUpdateRealTransaction } from '@/src/finance/hook/useUpdateRealTransaction';
 import { useCategoryStore } from '@/src/store/categoryStore';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
-import useRealTransactionsStore from '@/src/store/useRealTransactionsStore';
 import RealTransactionModal from '../src/components/RealTransactionModal';
 
 export default function AddTransaction() {
@@ -41,8 +40,7 @@ export default function AddTransaction() {
 	const [selectedPlannedTxn, setSelectedPlannedTxn] =
 		useState<TransactionOccurrence | null>(null);
 	const [allocationAmount, setAllocationAmount] = useState('');
-	const [upcomingPlannedTransactions, setUpcomingPlannedTransactions] =
-		useState<TransactionOccurrence[]>([]);
+	const [confirmedExpanded, setConfirmedExpanded] = useState(false);
 	const [prefillData, setPrefillData] = useState<
 		| {
 				name?: string;
@@ -54,35 +52,42 @@ export default function AddTransaction() {
 		| undefined
 	>(undefined);
 
-	const addTransaction = useRealTransactionsStore((state) => state.add);
 	const addRealTransactionToDb = useAddRealTransaction();
+	const updateRealTransactionInDb = useUpdateRealTransaction();
 	const addCategory = useCategoryStore((state) => state.addCategory);
 	const storeCategories = useCategoryStore();
-	const plannedTransactions = usePlannedTransactionsStore(
-		(state) => state.transactionsForTwoYears,
+	const now = new Date();
+	const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+	const twoYearsLater = new Date(now.getFullYear() + 2, now.getMonth(), 1);
+	const occurrenceMonths = useTransactionOccurrences(
+		threeMonthsAgo.getFullYear(),
+		threeMonthsAgo.getMonth(),
+		twoYearsLater.getFullYear(),
+		twoYearsLater.getMonth(),
+	);
+	const plannedTransactions = occurrenceMonths.flatMap(
+		(m) => m.transactionOccurrences,
+	);
+
+	const upcomingTransactions = useMemo(
+		() =>
+			plannedTransactions
+				.filter((t) => t.plannedTransaction != null && t.realTransaction == null)
+				.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()),
+		[plannedTransactions],
+	);
+
+	const confirmedTransactions = useMemo(
+		() =>
+			plannedTransactions
+				.filter((t) => t.plannedTransaction != null && t.realTransaction != null)
+				.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+		[plannedTransactions],
 	);
 
 	useEffect(() => {
 		setCategories(storeCategories.categories);
 	}, [storeCategories.categories]);
-
-	useEffect(() => {
-		const upcomingTxns = (plannedTransactions || []).filter((t) => {
-			const txnDate = new Date(t.date);
-			const now = new Date();
-			now.setHours(0, 0, 0, 0);
-			return txnDate >= now;
-		});
-
-		const twentyUpcomingTxns = upcomingTxns
-			.sort(
-				(a, b) =>
-					new Date(a.date).getTime() - new Date(b.date).getTime(),
-			)
-			.slice(0, 20);
-
-		setUpcomingPlannedTransactions(twentyUpcomingTxns);
-	}, [plannedTransactions]);
 
 	const dynamicCategories = (categories || []).map((category) => ({
 		key: category.id,
@@ -150,14 +155,7 @@ export default function AddTransaction() {
 		};
 
 		try {
-			if (isDbReal) {
-				const insertedTransaction =
-					await addRealTransactionToDb(transactionToInsert);
-				addTransaction(insertedTransaction);
-			} else {
-				addTransaction(transactionToInsert);
-			}
-
+			await addRealTransactionToDb(transactionToInsert);
 			setPopupVisible(false);
 			setPrefillData(undefined);
 			setShowSuccess(true);
@@ -171,16 +169,29 @@ export default function AddTransaction() {
 		const numericAmount = Number(allocationAmount);
 		if (!Number.isFinite(numericAmount) || numericAmount <= 0) return;
 
-		await addItem({
-			accountId: DEFAULT_ACCOUNT_ID,
-			name: selectedPlannedTxn.name,
-			amount: numericAmount,
-			date: new Date(selectedPlannedTxn.date),
-			type: selectedPlannedTxn.type,
-			categoryId: selectedPlannedTxn.categoryId,
-			plannedTransactionId:
-				selectedPlannedTxn.plannedTransaction?.id ?? null,
-		});
+		const existing = selectedPlannedTxn.realTransaction;
+		if (existing != null) {
+			// Update the existing real transaction
+			try {
+				await updateRealTransactionInDb(existing, {
+					...existing,
+					amount: numericAmount,
+				});
+				setShowSuccess(true);
+			} catch (error) {
+				console.error('Failed to update real transaction:', error);
+			}
+		} else {
+			await addItem({
+				accountId: DEFAULT_ACCOUNT_ID,
+				name: selectedPlannedTxn.name,
+				amount: numericAmount,
+				date: new Date(selectedPlannedTxn.date),
+				type: selectedPlannedTxn.type,
+				categoryId: selectedPlannedTxn.categoryId,
+				plannedTransactionId: selectedPlannedTxn.plannedTransaction?.id ?? null,
+			});
+		}
 
 		setTransactionType(selectedPlannedTxn.type);
 		setSelectedPlannedTxn(null);
@@ -351,93 +362,96 @@ export default function AddTransaction() {
 							</SizableText>
 							<ScrollView flex={1}>
 								<YStack gap={8} paddingBottom={6}>
-									{upcomingPlannedTransactions
-										.filter(
-											(txn) =>
-												txn.type === transactionType,
-										)
+									{/* Upcoming / unconfirmed planned transactions */}
+									{upcomingTransactions
+										.filter((txn) => txn.type === transactionType)
 										.map((txn) => {
-											const key = `${txn.realTransaction?.id ?? txn.plannedTransaction?.id}-${txn.date}`;
+											const key = `${txn.plannedTransaction?.id}-${txn.date}`;
 											const isSelected =
-												selectedPlannedTxn
-													?.plannedTransaction?.id ===
-													txn.plannedTransaction
-														?.id &&
-												selectedPlannedTxn?.date ===
-													txn.date;
-											const correctedAmount =
-												txn.realTransaction?.amount;
-
+												selectedPlannedTxn?.plannedTransaction?.id ===
+													txn.plannedTransaction?.id &&
+												selectedPlannedTxn?.date === txn.date;
 											return (
 												<Button
 													key={key}
-													onPress={() =>
-														handleSelectPlanned(txn)
-													}
+													onPress={() => handleSelectPlanned(txn)}
 													height="auto"
 													padding={10}
 													borderWidth={1}
 													borderColor="$primary200"
-													backgroundColor={
-														isSelected
-															? '$primary300'
-															: '$gray100'
-													}
+													backgroundColor={isSelected ? '$primary300' : '$gray100'}
 													justifyContent="space-between"
 												>
-													<YStack
-														alignItems="flex-start"
-														gap={2}
-													>
-														<SizableText fontWeight="700">
-															{txn.name}
+													<YStack alignItems="flex-start" gap={2}>
+														<SizableText fontWeight="700">{txn.name}</SizableText>
+														<SizableText size="$2" color="$gray700">
+															{formatEuropeanDate(txn.date)}
 														</SizableText>
-														<SizableText
-															size="$2"
-															color="$gray700"
-														>
-															{formatEuropeanDate(
-																txn.date,
-															)}
+														<SizableText size="$2" color="$gray700">
+															{t('Budgeted amount line', { amount: txn.amount })}
 														</SizableText>
-														<SizableText
-															size="$2"
-															color="$gray700"
-														>
-															{t(
-																'Budgeted amount line',
-																{
-																	amount: txn.amount,
-																},
-															)}
-														</SizableText>
-														{correctedAmount !=
-															null && (
-															<SizableText
-																size="$2"
-																color="$primary200"
-															>
-																{t(
-																	'Corrected real amount line',
-																	{
-																		amount: correctedAmount,
-																	},
-																)}
-															</SizableText>
-														)}
 													</YStack>
 												</Button>
 											);
 										})}
-									{upcomingPlannedTransactions.filter(
-										(txn) => txn.type === transactionType,
-									).length === 0 && (
-										<SizableText>
-											{t(
-												'No upcoming budgeted transactions.',
-											)}
-										</SizableText>
+									{upcomingTransactions.filter((txn) => txn.type === transactionType).length === 0 && (
+										<SizableText>{t('No upcoming budgeted transactions.')}</SizableText>
 									)}
+
+									{/* Already confirmed collapsible section */}
+									{confirmedTransactions.filter((txn) => txn.type === transactionType).length > 0 && (
+										<Button
+											marginTop={8}
+											height={40}
+											borderWidth={1}
+											borderColor="$gray400"
+											backgroundColor="$gray200"
+											onPress={() => setConfirmedExpanded((v) => !v)}
+											justifyContent="space-between"
+										>
+											<SizableText size="$3" fontWeight="700" color="$gray700">
+												{t('Already confirmed')}
+											</SizableText>
+											<SizableText size="$3" color="$gray700">
+												{confirmedExpanded ? '▲' : '▼'}
+											</SizableText>
+										</Button>
+									)}
+									{confirmedExpanded &&
+										confirmedTransactions
+											.filter((txn) => txn.type === transactionType)
+											.map((txn) => {
+												const key = `confirmed-${txn.plannedTransaction?.id}-${txn.date}`;
+												const isSelected =
+													selectedPlannedTxn?.plannedTransaction?.id ===
+														txn.plannedTransaction?.id &&
+													selectedPlannedTxn?.date === txn.date;
+												return (
+													<Button
+														key={key}
+														onPress={() => handleSelectPlanned(txn)}
+														height="auto"
+														padding={10}
+														borderWidth={1}
+														borderColor="$gray400"
+														backgroundColor={isSelected ? '$primary300' : '$gray50'}
+														justifyContent="space-between"
+													>
+														<YStack alignItems="flex-start" gap={2}>
+															<SizableText fontWeight="700">{txn.name}</SizableText>
+															<SizableText size="$2" color="$gray700">
+																{formatEuropeanDate(txn.date)}
+															</SizableText>
+															<SizableText size="$2" color="$gray700">
+																{t('Budgeted amount line', { amount: txn.amount })}
+															</SizableText>
+															<SizableText size="$2" color="$primary200">
+																{t('Corrected real amount line', { amount: txn.realTransaction?.amount })}
+															</SizableText>
+														</YStack>
+													</Button>
+												);
+											})}
 								</YStack>
 							</ScrollView>
 

@@ -88,6 +88,7 @@ i18next
 				'Corrected actual amount (€)': 'Corrected actual amount (€)',
 				'Save adjustment': 'Save adjustment',
 				'Adjustment saved': 'Adjustment saved',
+				'Already confirmed': 'Already confirmed',
 				'Uncategorized default': 'Uncategorized',
 
 				//ADD NEW ITEM POPUP
@@ -313,6 +314,7 @@ i18next
 				'Corrected actual amount (€)': 'Korjattu toteuma (€)',
 				'Save adjustment': 'Tallenna korjaus',
 				'Adjustment saved': 'Korjaus tallennettu',
+				'Already confirmed': 'Jo kirjatut',
 				'Uncategorized default': 'muu',
 				
 				//ADD NEW ITEM POPUP
