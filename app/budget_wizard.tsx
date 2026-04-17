@@ -7,7 +7,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Progress, SizableText, YStack } from 'tamagui';
 import BudgetWizardItem from '@/src/components/BudgetWizardItem';
 import type { PlannedTransaction } from '@/src/dataModel';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import { useAddPlannedTransaction } from '@/src/finance/hook/useAddPlannedTransaction';
+import { useDeletePlannedTransaction } from '@/src/finance/hook/useDeletePlannedTransaction';
+import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
+import { useUpdatePlannedTransaction } from '@/src/finance/hook/useUpdatePlannedTransaction';
 import AddItemPopup from '../src/components/AddItemPopup';
 import {
 	BUDGET_WIZARD_STEPS,
@@ -17,10 +20,11 @@ import {
 export default function BudgetWizard() {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const transactions = usePlannedTransactionsStore(
-		(state) => state.transactions,
-	);
-	const replaceAll = usePlannedTransactionsStore((state) => state.replaceAll);
+	const transactions = usePlannedTransactions();
+	const addPlannedTransaction = useAddPlannedTransaction();
+	const updatePlannedTransaction = useUpdatePlannedTransaction();
+	const deletePlannedTransactionHook = useDeletePlannedTransaction();
+	
 	const [stepIndex, setStepIndex] = useState(0);
 	const [wizardData, setWizardData] =
 		useState<BudgetWizardStep[]>(BUDGET_WIZARD_STEPS);
@@ -44,47 +48,33 @@ export default function BudgetWizard() {
 		null,
 	);
 
-	function addItem(newItem: PlannedTransaction) {
+	async function addItem(newItem: PlannedTransaction) {
 		newItem.type = currentStep.header === 'Incomes' ? 'income' : 'expense';
 		newItem.categoryId = 0;
-		setWizardData((prev) => {
-			return prev.map((step, sIdx) =>
-				sIdx === stepIndex
-					? {
-							...step,
-							items: [...step.items, newItem],
-						}
-					: step,
-			);
-		});
+		if (isDbReal) {
+      await addPlannedTransaction(newItem);
+    } else { 
+      setWizardData((prev) =>
+        prev.map((step, sIdx) =>
+          sIdx === stepIndex
+            ? { ...step, items: [...step.items, newItem] }
+            : step,
+        ),
+      );
+    }
 	}
 
-	function editItem(edited: PlannedTransaction) {
-		setWizardData((prev) =>
-			prev.map((step, sIdx) =>
-				sIdx === stepIndex
-					? {
-							...step,
-							items: step.items.map((item, index) =>
-								index === selectedItem?.index
-									? {
-											...item,
-											name: edited.name,
-											amount: edited.amount,
-											categoryId: edited.categoryId,
-											startDate: edited.startDate,
-											endDate: edited.endDate,
-											recurrenceBase:
-												edited.recurrenceBase,
-											recurrenceInterval:
-												edited.recurrenceInterval,
-										}
-									: item,
-							),
-						}
-					: step,
-			),
-		);
+	async function editItem(edited: Persisted<PlannedTransaction>) {
+    if (isDbReal) {
+      await updatePlannedTransaction(edited, edited);
+    }
+  }
+
+  async function deleteItem() {
+    if (selectedItem && isDbReal) {
+      const item = selectedItem.item as Persisted<PlannedTransaction>;
+      await deletePlannedTransactionHook(item);
+    }
 	}
 
 	function deleteItem() {
