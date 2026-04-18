@@ -269,7 +269,7 @@ const EditTransactionModal = ({
 								</SizableText>
 							</Button>
 							<Button
-								backgroundColor="$red10"
+								backgroundColor="red"
 								borderRadius={28}
 								style={styles.button}
 								onPress={() => {
