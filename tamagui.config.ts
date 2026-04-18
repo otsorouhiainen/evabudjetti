@@ -99,7 +99,6 @@ const color = {
 	white: '#fff',
 	disabled: '#636363ff',
 
-
 	backgroundColor: '#fff',
 	borderColor: '#000',
 
