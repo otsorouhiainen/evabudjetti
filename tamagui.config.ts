@@ -93,6 +93,7 @@ const color = {
 	caution: '#FFE3A6',
 	danger500: '#F44336',
 	info500: '#2196F3',
+	red10: '#E53535',
 
 	black: '#000',
 	white: '#fff',
