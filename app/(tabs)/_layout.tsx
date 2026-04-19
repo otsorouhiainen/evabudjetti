@@ -62,6 +62,7 @@ export default function TabLayout() {
 					options={{
 						title: page.name,
 						tabBarIcon: () => page.icon,
+						headerTitle: '',
 					}}
 				/>
 			))}

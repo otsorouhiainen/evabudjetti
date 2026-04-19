@@ -116,11 +116,17 @@ export default function RootLayout() {
 				<Theme name={'light'}>
 					<SafeAreaProvider>
 						<StatusBar style="dark" translucent={false} />
-						<Stack screenOptions={{ headerTitle: '' }}>
+						<Stack
+							screenOptions={{
+								headerBackButtonDisplayMode: 'minimal',
+								headerTitle: '',
+							}}
+						>
 							<Stack.Screen
 								name="(tabs)"
 								options={{
 									headerShown: false,
+									headerBackButtonDisplayMode: 'minimal',
 									headerTitle: '',
 								}}
 							/>
