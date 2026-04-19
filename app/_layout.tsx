@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PortalProvider, Spinner, Text, YStack } from 'tamagui';
 import migrations from '@/drizzle/migrations';
 import { db, isDbReal } from '@/src/db/client';
+import { seedCategories, seedDefaultBudgetAndAccount } from '@/src/db/seed';
 import config from '../tamagui.config';
 import '@/src/utils/i18n';
 
@@ -17,6 +18,13 @@ import { useLanguageStore } from '@/src/store/useLanguageStore';
 
 export default function RootLayout() {
 	const { success, error } = useMigrations(db, migrations);
+
+	useEffect(() => {
+		if (success && isDbReal) {
+			seedDefaultBudgetAndAccount();
+			seedCategories();
+		}
+	}, [success]);
 
 	const language = useLanguageStore((state) => state.language);
 	const { instructionShown } = useInstructionStore();

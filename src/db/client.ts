@@ -7,7 +7,7 @@ let db: ExpoSQLiteDatabase<typeof schema>;
 let isDbReal: boolean;
 
 if (Platform.OS !== 'web') {
-	const expoDb = openDatabaseSync('db.db');
+	const expoDb = openDatabaseSync('db.db', { enableChangeListener: true });
 	db = drizzle(expoDb, {
 		schema,
 	});

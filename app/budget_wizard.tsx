@@ -6,8 +6,11 @@ import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Progress, SizableText, YStack } from 'tamagui';
 import BudgetWizardItem from '@/src/components/BudgetWizardItem';
-import type { PlannedTransaction } from '@/src/dataModel';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import type { Persisted, PlannedTransaction } from '@/src/dataModel';
+import { useAddPlannedTransaction } from '@/src/finance/hook/useAddPlannedTransaction';
+import { useDeletePlannedTransaction } from '@/src/finance/hook/useDeletePlannedTransaction';
+import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
+import { useUpdatePlannedTransaction } from '@/src/finance/hook/useUpdatePlannedTransaction';
 import AddItemPopup from '../src/components/AddItemPopup';
 import {
 	BUDGET_WIZARD_STEPS,
@@ -17,10 +20,11 @@ import {
 export default function BudgetWizard() {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const transactions = usePlannedTransactionsStore(
-		(state) => state.transactions,
-	);
-	const replaceAll = usePlannedTransactionsStore((state) => state.replaceAll);
+	const transactions = usePlannedTransactions();
+	const addPlannedTransaction = useAddPlannedTransaction();
+	const updatePlannedTransaction = useUpdatePlannedTransaction();
+	const deletePlannedTransactionHook = useDeletePlannedTransaction();
+
 	const [stepIndex, setStepIndex] = useState(0);
 	const [wizardData, setWizardData] =
 		useState<BudgetWizardStep[]>(BUDGET_WIZARD_STEPS);
@@ -44,62 +48,21 @@ export default function BudgetWizard() {
 		null,
 	);
 
-	function addItem(newItem: PlannedTransaction) {
+	async function addItem(newItem: PlannedTransaction) {
 		newItem.type = currentStep.header === 'Incomes' ? 'income' : 'expense';
 		newItem.categoryId = 0;
-		setWizardData((prev) => {
-			return prev.map((step, sIdx) =>
-				sIdx === stepIndex
-					? {
-							...step,
-							items: [...step.items, newItem],
-						}
-					: step,
-			);
-		});
+		await addPlannedTransaction(newItem);
 	}
 
-	function editItem(edited: PlannedTransaction) {
-		setWizardData((prev) =>
-			prev.map((step, sIdx) =>
-				sIdx === stepIndex
-					? {
-							...step,
-							items: step.items.map((item, index) =>
-								index === selectedItem?.index
-									? {
-											...item,
-											name: edited.name,
-											amount: edited.amount,
-											categoryId: edited.categoryId,
-											startDate: edited.startDate,
-											endDate: edited.endDate,
-											recurrenceBase:
-												edited.recurrenceBase,
-											recurrenceInterval:
-												edited.recurrenceInterval,
-										}
-									: item,
-							),
-						}
-					: step,
-			),
-		);
+	async function editItem(edited: Persisted<PlannedTransaction>) {
+		await updatePlannedTransaction(edited, edited);
 	}
 
-	function deleteItem() {
-		setWizardData((prev) =>
-			prev.map((step, sIdx) =>
-				sIdx === stepIndex
-					? {
-							...step,
-							items: step.items.filter(
-								(_it, index) => index !== selectedItem?.index,
-							),
-						}
-					: step,
-			),
-		);
+	async function deleteItem() {
+		if (selectedItem) {
+			const item = selectedItem.item as Persisted<PlannedTransaction>;
+			await deletePlannedTransactionHook(item);
+		}
 	}
 
 	const closePopUp = () => {
@@ -206,12 +169,7 @@ export default function BudgetWizard() {
 							borderRadius={28}
 							style={styles.footerButton}
 							backgroundColor="$primary200"
-							onPress={() => {
-								const allItems: PlannedTransaction[] =
-									wizardData.flatMap((step) => step.items);
-								replaceAll(allItems);
-								router.push('/');
-							}}
+							onPress={() => router.push('/')}
 						>
 							<SizableText color="$white" size="$title1">
 								{t('Finish')}
