@@ -28,13 +28,12 @@ export default function Landing() {
 	const [helpVisible, setHelpVisible] = useState(false);
 	const { getCurrentTimeframe } = useTimeframeStore();
 
-	const [timeframeStart, timeframeEnd] = getCurrentTimeframe();
-
 	const today = new Date();
+	const timeframeEnd = getCurrentTimeframe(today);
 
 	const timespanBalances = useBalances(
-		timeframeStart.getFullYear(),
-		timeframeStart.getMonth(),
+		today.getFullYear(),
+		today.getMonth(),
 		timeframeEnd.getFullYear(),
 		timeframeEnd.getMonth(),
 	);
@@ -45,9 +44,9 @@ export default function Landing() {
 		currentMonthData?.dailyBalances[today.getDate() - 1]?.balance ?? 0;
 
 	const usableFunds = useUsableFunds(
-		timeframeStart.getFullYear(),
-		timeframeStart.getMonth(),
-		timeframeStart.getDate(),
+		today.getFullYear(),
+		today.getMonth(),
+		today.getDate(),
 		timeframeEnd.getFullYear(),
 		timeframeEnd.getMonth(),
 		timeframeEnd.getDate(),
@@ -149,9 +148,7 @@ export default function Landing() {
 										>
 											{t('Current situation')}
 											{'\n'}
-											{timeframeStart.toLocaleDateString(
-												'fi-FI',
-											)}
+											{today.toLocaleDateString('fi-FI')}
 											{' - '}
 											{timeframeEnd.toLocaleDateString(
 												'fi-FI',

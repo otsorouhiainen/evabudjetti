@@ -6,10 +6,7 @@ import { Modal } from 'react-native';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
 import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
-import {
-	getClosestTimeframe,
-	useTimeframeStore,
-} from '@/src/store/useTimeframeStore';
+import { useTimeframeStore } from '@/src/store/useTimeframeStore';
 import { LOCALE } from '../constants/index';
 import type {
 	Persisted,
@@ -89,17 +86,14 @@ export default function DailyBalanceView({
 	const dayBalance = getSelectedDayBalance();
 
 	/* Get  usable funds for selected day */
-	const { timeframeLength } = useTimeframeStore();
+	const { getCurrentTimeframe } = useTimeframeStore();
 
-	const { currentTimeframeStart, currentTimeframeEnd } = getClosestTimeframe(
-		selectedDate,
-		timeframeLength,
-	);
+	const currentTimeframeEnd = getCurrentTimeframe(selectedDate);
 
 	const usableFunds = useUsableFunds(
-		currentTimeframeStart.getFullYear(),
-		currentTimeframeStart.getMonth(),
-		currentTimeframeStart.getDate(),
+		selectedDate.getFullYear(),
+		selectedDate.getMonth(),
+		selectedDate.getDate(),
 		currentTimeframeEnd.getFullYear(),
 		currentTimeframeEnd.getMonth(),
 		currentTimeframeEnd.getDate(),
@@ -221,7 +215,7 @@ export default function DailyBalanceView({
 				</Button>
 				<Text color="$black" fontSize="$2" fontWeight="600">
 					{t('Usable funds timeframe')}:{' '}
-					{`${formatDate(currentTimeframeStart)} - ${formatDate(currentTimeframeEnd)}`}
+					{`${formatDate(selectedDate)} - ${formatDate(currentTimeframeEnd)}`}
 				</Text>
 			</StyledCard>
 
