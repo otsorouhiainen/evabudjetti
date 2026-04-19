@@ -132,6 +132,7 @@ const AddItemPopup = ({
 								color="$primary100"
 								placeholder={t('Write the amount here (€)')}
 								style={styles.input}
+								maxLength={12}
 								defaultValue={amount ? String(amount) : null}
 								keyboardType="numeric"
 								onChangeText={(text: string) => {
