@@ -9,14 +9,16 @@ export const seedDefaultBudgetAndAccount = async () => {
 	try {
 		const existingBudgets = await db.select().from(budgets).limit(1);
 		if (existingBudgets.length === 0) {
-			await db.insert(budgets).values({ id: DEFAULT_BUDGET_ID + 1, name: 'Default Budget' });
+			await db
+				.insert(budgets)
+				.values({ id: DEFAULT_BUDGET_ID, name: 'Default Budget' });
 		}
 
 		const existingAccounts = await db.select().from(accounts).limit(1);
 		if (existingAccounts.length === 0) {
 			await db.insert(accounts).values({
-				id: DEFAULT_ACCOUNT_ID + 1,
-				budgetId: DEFAULT_BUDGET_ID + 1,
+				id: DEFAULT_ACCOUNT_ID,
+				budgetId: DEFAULT_BUDGET_ID,
 				name: 'Default Account',
 			});
 		}
