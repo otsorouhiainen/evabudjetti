@@ -17,7 +17,6 @@ import {
 	type BudgetWizardStep,
 } from '../src/constants/wizardConfig';
 
-
 export default function BudgetWizard() {
 	const { t } = useTranslation();
 	const router = useRouter();
@@ -25,7 +24,7 @@ export default function BudgetWizard() {
 	const addPlannedTransaction = useAddPlannedTransaction();
 	const updatePlannedTransaction = useUpdatePlannedTransaction();
 	const deletePlannedTransactionHook = useDeletePlannedTransaction();
-	
+
 	const [stepIndex, setStepIndex] = useState(0);
 	const [wizardData, setWizardData] =
 		useState<BudgetWizardStep[]>(BUDGET_WIZARD_STEPS);

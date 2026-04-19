@@ -6,7 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PortalProvider, Spinner, Text, YStack } from 'tamagui';
 import migrations from '@/drizzle/migrations';
 import { db, isDbReal } from '@/src/db/client';
-import { seedDefaultBudgetAndAccount, seedCategories } from '@/src/db/seed';
+import { seedCategories, seedDefaultBudgetAndAccount } from '@/src/db/seed';
 import config from '../tamagui.config';
 import '@/src/utils/i18n';
 

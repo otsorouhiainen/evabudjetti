@@ -5,22 +5,22 @@ import { useBalanceVersioning } from '../versioning/balanceVersioning';
 import { useTransactionOccurrenceVersioning } from '../versioning/transactionOccurrenceVersioning';
 
 export function useAddPlannedTransaction(): (
-  transaction: PlannedTransaction,
+	transaction: PlannedTransaction,
 ) => Promise<Persisted<PlannedTransaction>> {
-  const onOccurrenceCreated = useTransactionOccurrenceVersioning(
-    (state) => state.onPlannedTransactionCreated,
-  );
-  const onBalanceCreated = useBalanceVersioning(
-    (state) => state.onPlannedTransactionCreated,
-  );
+	const onOccurrenceCreated = useTransactionOccurrenceVersioning(
+		(state) => state.onPlannedTransactionCreated,
+	);
+	const onBalanceCreated = useBalanceVersioning(
+		(state) => state.onPlannedTransactionCreated,
+	);
 
-  return useCallback(
-    async (transaction: PlannedTransaction) => {
-      const inserted = await insertPlannedTransaction(transaction);
-      onOccurrenceCreated(inserted);
-      onBalanceCreated(inserted);
-      return inserted;
-    },
-    [onOccurrenceCreated, onBalanceCreated],
-  );
+	return useCallback(
+		async (transaction: PlannedTransaction) => {
+			const inserted = await insertPlannedTransaction(transaction);
+			onOccurrenceCreated(inserted);
+			onBalanceCreated(inserted);
+			return inserted;
+		},
+		[onOccurrenceCreated, onBalanceCreated],
+	);
 }

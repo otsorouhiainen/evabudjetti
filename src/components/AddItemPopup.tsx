@@ -18,7 +18,11 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
-import type { Persisted, PlannedTransaction, RecurrenceBase } from '../dataModel';
+import type {
+	Persisted,
+	PlannedTransaction,
+	RecurrenceBase,
+} from '../dataModel';
 import { DEFAULT_ACCOUNT_ID } from '../dataModel';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
