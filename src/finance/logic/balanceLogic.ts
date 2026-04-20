@@ -4,6 +4,7 @@ import type {
 	BalanceReconciliation,
 	DayBalance,
 	MonthInstance,
+	TransactionOccurrence,
 	TransactionOccurrencesMonthData,
 } from '@/src/dataModel';
 import {
@@ -56,8 +57,8 @@ export function calculateBalanceDatasForMonths(
 		const dailyBalances: (DayBalance | undefined)[] = [];
 
 		const occurrencesData = transactionOccurrencesByMonthKey.get(monthKey);
-
 		const monthDays = getDaysInMonth(new Date(year, month));
+
 		const isStartMonth =
 			year === startMonth.year && month === startMonth.month;
 		const firstKnownDayInMonth = isStartMonth
@@ -68,43 +69,27 @@ export function calculateBalanceDatasForMonths(
 				? undefined
 				: currentBalance;
 
-		let day = 1;
-
-		while (day < firstKnownDayInMonth && day <= monthDays) {
-			dailyBalances.push(undefined);
-			day++;
-		}
-
-		// The occurrences should be sorted by date
+		// Group occurrences by day number for easy lookup
+		const occurrencesByDay = new Map<number, TransactionOccurrence[]>();
 		for (const occurrence of occurrencesData?.transactionOccurrences ??
 			[]) {
-			if (occurrence.date.getDate() < day) {
-				// In the start month, occurrences before the first known day are already reflected in startBalance.
-				continue;
-			}
-
-			// Fill in the days until the next occurrence with the current balance
 			const occurrenceDay = occurrence.date.getDate();
-			while (day < occurrenceDay) {
-				const reconciliationForDay = reconciliationsByDateKey.get(
-					createDateKey(year, month, day),
-				);
-				if (reconciliationForDay) {
-					currentBalance = reconciliationForDay.amount;
-				}
-
-				dailyBalances.push({
-					balance: currentBalance,
-					isReconciled: reconciliationForDay !== undefined,
-				});
-				day++;
+			const existing = occurrencesByDay.get(occurrenceDay);
+			if (existing) {
+				existing.push(occurrence);
+			} else {
+				occurrencesByDay.set(occurrenceDay, [occurrence]);
 			}
-
-			currentBalance += getSignedOccurrenceAmount(occurrence);
 		}
 
-		// Fill in the remaining days of the month
-		while (day <= monthDays) {
+		// Fill days before the first known day as undefined (replaces the old while loop)
+		for (let day = 1; day < firstKnownDayInMonth; day++) {
+			dailyBalances.push(undefined);
+		}
+
+		// Single day-by-day loop replacing both the occurrence loop and the remaining days loop
+		for (let day = firstKnownDayInMonth; day <= monthDays; day++) {
+			// Apply reconciliation first if one exists for this day
 			const reconciliationForDay = reconciliationsByDateKey.get(
 				createDateKey(year, month, day),
 			);
@@ -112,11 +97,19 @@ export function calculateBalanceDatasForMonths(
 				currentBalance = reconciliationForDay.amount;
 			}
 
+			//Apply all transactions on top of reconciliation (or current balance)
+			const occurrencesForDay = occurrencesByDay.get(day);
+			if (occurrencesForDay) {
+				for (const occurrence of occurrencesForDay) {
+					currentBalance += getSignedOccurrenceAmount(occurrence);
+				}
+			}
+
+			//Record the final end-of-day balance
 			dailyBalances.push({
 				balance: currentBalance,
 				isReconciled: reconciliationForDay !== undefined,
 			});
-			day++;
 		}
 
 		const monthData: AccountBalanceMonthData = {
