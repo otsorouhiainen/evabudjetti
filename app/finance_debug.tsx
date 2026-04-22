@@ -1113,6 +1113,22 @@ export default function FinanceDebugScreen() {
 				? '#1d6f42'
 				: '$black';
 
+	if (Platform.OS === 'web') {
+		return (
+			<YStack
+				flex={1}
+				alignItems="center"
+				justifyContent="center"
+				padding="$4"
+			>
+				<Text fontSize="$5" textAlign="center" color="$black">
+					This debug screen does not work on web and could corrupt the
+					web database, requiring site data reset.
+				</Text>
+			</YStack>
+		);
+	}
+
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
 			<Stack.Screen options={{ title: 'Financial Debug / Test' }} />
