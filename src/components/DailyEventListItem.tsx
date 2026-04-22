@@ -74,99 +74,105 @@ const DailyEventListItem: React.FC<Props> = ({
 				</XStack>
 				{isOpen &&
 					(dTxns[0].name !== '' ? (
-						dTxns.map((txn, index) => {
-							const itemKey =
-								txn.realTransaction?.id != null
-									? `r-${txn.realTransaction.id}`
-									: txn.plannedTransaction?.id != null
-										? `p-${txn.plannedTransaction.id}-${txn.date.getTime()}`
-										: `f-${txn.date.getTime()}-${txn.name}-${txn.amount}-${index}`;
+						(() => {
+							const realTxns = dTxns.filter(
+								(txn) =>
+									txn.realTransaction != null ||
+									txn.plannedTransaction == null,
+							);
+							const plannedTxns = dTxns.filter(
+								(txn) =>
+									txn.plannedTransaction != null &&
+									txn.realTransaction == null,
+							);
 
-							const isUnconfirmedPlanned =
-								!!txn.plannedTransaction && !txn.realTransaction;
+							const renderRow = (
+								txn: TransactionOccurrence,
+								index: number,
+							) => {
+								const itemKey =
+									txn.realTransaction?.id != null
+										? `r-${txn.realTransaction.id}`
+										: txn.plannedTransaction?.id != null
+											? `p-${txn.plannedTransaction.id}-${txn.date.getTime()}`
+											: `f-${txn.date.getTime()}-${txn.name}-${txn.amount}-${index}`;
 
-							return (
-								<XStack
-									gap={10}
-									backgroundColor="transparent"
-									alignItems="center"
-									justifyContent="flex-end"
-									key={itemKey}
-									maxWidth={'90%'}
-									opacity={isUnconfirmedPlanned ? 0.65 : 1}
-								>
-									<YStack flex={1} gap={2}>
+								return (
+									<XStack
+										gap={10}
+										backgroundColor="transparent"
+										alignItems="center"
+										justifyContent="flex-end"
+										key={itemKey}
+										maxWidth={'90%'}
+									>
 										<Text
+											flex={1}
 											fontWeight="400"
 											textAlign="left"
 											fontSize="$body"
-											color={
-												isUnconfirmedPlanned
-													? '$gray600'
-													: '$color'
-											}
-											fontStyle={
-												isUnconfirmedPlanned
-													? 'italic'
-													: 'normal'
-											}
 										>
 											{txn.name}
 										</Text>
-										{/* Badge: unconfirmed planned */}
-										{isUnconfirmedPlanned && (
-											<Text
-												fontSize={10}
-												color="$gray500"
-												borderWidth={1}
-												borderColor="$gray400"
-												borderRadius={4}
-												paddingHorizontal={4}
-												paddingVertical={1}
-												alignSelf="flex-start"
-											>
-												{t('Budgeted badge')}
-											</Text>
-										)}
-									</YStack>
-									<Text
-										fontSize="$body"
-										fontWeight="400"
-										color={
-											isUnconfirmedPlanned
-												? '$gray600'
-												: '$color'
-										}
-									>
-										{txn.type === 'income' ? '+' : '-'}
-										{formatCurrency(Number(txn.amount))}
-									</Text>
-									{/* Edit button for real (DB-persisted) transactions */}
-									{onEditPress && txn.realTransaction && (
-										<Button
-											size="$buttons.sm"
-											circular
-											backgroundColor="transparent"
-											icon={Pencil}
-											onPress={() => onEditPress(txn)}
-										/>
-									)}
-									{/* Confirm/edit button for planned transactions without a real transaction */}
-									{onEditPlannedPress &&
-										isUnconfirmedPlanned && (
+										<Text fontSize="$body" fontWeight="400">
+											{txn.type === 'income' ? '+' : '-'}
+											{formatCurrency(Number(txn.amount))}
+										</Text>
+										{onEditPress && txn.realTransaction && (
 											<Button
 												size="$buttons.sm"
 												circular
 												backgroundColor="transparent"
 												icon={Pencil}
-												onPress={() =>
-													onEditPlannedPress(txn)
-												}
+												onPress={() => onEditPress(txn)}
 											/>
 										)}
-								</XStack>
+										{onEditPlannedPress &&
+											txn.plannedTransaction &&
+											!txn.realTransaction && (
+												<Button
+													size="$buttons.sm"
+													circular
+													backgroundColor="transparent"
+													icon={Pencil}
+													onPress={() =>
+														onEditPlannedPress(txn)
+													}
+												/>
+											)}
+									</XStack>
+								);
+							};
+
+							return (
+								<>
+									{realTxns.map((txn, i) =>
+										renderRow(txn, i),
+									)}
+									{plannedTxns.length > 0 && (
+										<>
+											<Text
+												fontSize="$2"
+												fontWeight="600"
+												color="$gray500"
+												marginTop={
+													realTxns.length > 0 ? 6 : 0
+												}
+												marginBottom={2}
+											>
+												{t('Planned section title')}
+											</Text>
+											{plannedTxns.map((txn, i) =>
+												renderRow(
+													txn,
+													realTxns.length + i,
+												),
+											)}
+										</>
+									)}
+								</>
 							);
-						})
+						})()
 					) : (
 						<Text
 							style={{ fontStyle: 'italic' }}

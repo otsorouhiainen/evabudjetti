@@ -95,6 +95,7 @@ i18next
 				'Save adjustment': 'Save adjustment',
 				'Adjustment saved': 'Adjustment saved',
 				'Already confirmed': 'Already confirmed',
+				'Planned section title': 'Planned',
 				'Uncategorized default': 'Uncategorized',
 
 				//ADD NEW ITEM POPUP
@@ -324,8 +325,8 @@ i18next
 				'Save adjustment': 'Tallenna korjaus',
 				'Adjustment saved': 'Korjaus tallennettu',
 				'Already confirmed': 'Jo kirjatut',
+				'Planned section title': 'Suunnitellut',
 				'Uncategorized default': 'muu',
-				'Budgeted badge': 'suunniteltu',
 				
 				//ADD NEW ITEM POPUP
 				'Add a new item': 'Lisää uusi tapahtuma',
