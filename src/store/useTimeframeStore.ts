@@ -20,7 +20,8 @@ interface TimeframeState {
 const addLength = (date: Date, timeframe: TimeframeLength) => {
 	switch (timeframe.type) {
 		case 'days':
-			return addDays(date, timeframe.length);
+			if (timeframe.length === 1) return date;
+			else return addDays(date, timeframe.length - 1);
 		case 'weeks':
 			return addDays(date, timeframe.length * 7);
 		case 'months':
@@ -68,6 +69,14 @@ export const useTimeframeStore = create<TimeframeState>()(
 					timeframeStartDay,
 					timeframeLength,
 				} = get();
+
+				// skip calculations if timeframe is 1 day
+				if (
+					timeframeLength.type === 'days' &&
+					timeframeLength.length === 1
+				) {
+					return date;
+				}
 
 				let currentTimeframeStart = new Date(
 					timeframeStartYear,
