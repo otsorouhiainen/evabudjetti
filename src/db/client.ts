@@ -1,20 +1,21 @@
 import { drizzle, type ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
-import { openDatabaseSync } from 'expo-sqlite';
-import { Platform } from 'react-native';
+import { migrate } from 'drizzle-orm/expo-sqlite/migrator';
+import type { SQLiteDatabase } from 'expo-sqlite';
+import migrations from '@/drizzle/migrations';
 import * as schema from './schema';
 
 let db: ExpoSQLiteDatabase<typeof schema>;
-let isDbReal: boolean;
+let isDbInitialized: boolean = false;
 
-if (Platform.OS !== 'web') {
-	const expoDb = openDatabaseSync('db.db', { enableChangeListener: true });
+export async function initializeDb(expoDb: SQLiteDatabase) {
 	db = drizzle(expoDb, {
 		schema,
 	});
-	isDbReal = true;
-} else {
-	db = {} as ExpoSQLiteDatabase<typeof schema>;
-	isDbReal = false;
+
+	await migrate(db, migrations);
+	isDbInitialized = true;
+
+	console.log('DB initialized');
 }
 
-export { db, isDbReal };
+export { db, isDbInitialized };
