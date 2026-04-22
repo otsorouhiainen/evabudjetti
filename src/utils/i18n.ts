@@ -308,12 +308,14 @@ i18next
 				'Add income short': 'Lisää tulo',
 				'Add expense short': 'Lisää meno',
 				'Confirm planned transaction': 'Vahvista suunniteltu tapahtuma',
+				'Confirm budgeted transaction': 'Vahvista suunniteltu tapahtuma',
 				'Edit confirmed transaction': 'Muokkaa vahvistettua tapahtumaa',
 				'Fill details in next view.':
 					'Täytä tapahtuman tiedot seuraavassa näkymässä.',
 				'Select planned transaction to adjust':
 					'Valitse suunniteltu tapahtuma korjattavaksi',
 				'Planned amount line': 'Suunniteltu: {{amount}} €',
+				'Budgeted amount line': 'Suunniteltu: {{amount}} €',
 				'Corrected real amount line': 'Korjattu toteuma: {{amount}} €',
 				'No upcoming planned transactions.':
 					'Ei tulevia suunniteltuja tapahtumia.',

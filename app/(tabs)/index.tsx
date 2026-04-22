@@ -193,28 +193,6 @@ export default function Landing() {
 									</YStack>
 								</YStack>
 								<FixBalanceModal />
-								{/* Buttons */}
-								<YStack f={1} ai="center" mt="3%">
-									<Button
-										backgroundColor="$primary200"
-										onPress={() =>
-											router.push('/add_transaction2')
-										}
-										minWidth={'85%'}
-										height={70}
-										borderRadius={40}
-									>
-										<Text
-											color={'$white'}
-											fontWeight={'700'}
-											fontSize={'$4'}
-											numberOfLines={1}
-											adjustsFontSizeToFit
-										>
-											{t('ADD INCOME/EXPENSE')}
-										</Text>
-									</Button>
-								</YStack>
 							</YStack>
 						)}
 
