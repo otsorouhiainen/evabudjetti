@@ -179,7 +179,6 @@ i18next
 				'Transaction deleted': 'Transaction deleted',
 				'Failed to delete transaction': 'Failed to delete transaction',
 				'Changes saved': 'Changes saved',
-				'Failed to save changes': 'Failed to save changes',
 
 				// ERROR
 				'Something went wrong': 'Something went wrong',
@@ -307,21 +306,20 @@ i18next
 				'Record new expense': 'Kirjaa uusi meno',
 				'Add income short': 'Lisää tulo',
 				'Add expense short': 'Lisää meno',
-				'Confirm budgeted transaction': 'Vahvista budjetoitu tapahtuma',
+				'Confirm planned transaction': 'Vahvista suunniteltu tapahtuma',
 				'Edit confirmed transaction': 'Muokkaa vahvistettua tapahtumaa',
-				'Failed to save changes': 'Tallentaminen epäonnistui',
 				'Fill details in next view.':
 					'Täytä tapahtuman tiedot seuraavassa näkymässä.',
-				'Select budgeted transaction to adjust':
-					'Valitse budjetoitu tapahtuma korjattavaksi',
-				'Budgeted amount line': 'Budjetoitu: {{amount}} €',
+				'Select planned transaction to adjust':
+					'Valitse suunniteltu tapahtuma korjattavaksi',
+				'Planned amount line': 'Suunniteltu: {{amount}} €',
 				'Corrected real amount line': 'Korjattu toteuma: {{amount}} €',
-				'No upcoming budgeted transactions.':
-					'Ei tulevia budjetoituja tapahtumia.',
-				'Adjusting budgeted amount line':
-					'Korjattava budjetoitu summa: {{amount}} €',
-				'Select budgeted transaction first':
-					'Valitse ensin budjetoitu tapahtuma',
+				'No upcoming planned transactions.':
+					'Ei tulevia suunniteltuja tapahtumia.',
+				'Adjusting planned amount line':
+					'Korjattava suunniteltu summa: {{amount}} €',
+				'Select planned transaction first':
+					'Valitse ensin suunniteltu tapahtuma',
 				'Corrected actual amount (€)': 'Korjattu toteuma (€)',
 				'Save adjustment': 'Tallenna korjaus',
 				'Adjustment saved': 'Korjaus tallennettu',
