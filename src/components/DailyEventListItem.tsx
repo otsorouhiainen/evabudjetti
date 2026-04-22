@@ -11,6 +11,7 @@ interface Props {
 	sum: number;
 	isSelected: boolean;
 	onEditPress?: (txn: TransactionOccurrence) => void;
+	onEditPlannedPress?: (txn: TransactionOccurrence) => void;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
 
@@ -21,6 +22,7 @@ const DailyEventListItem: React.FC<Props> = ({
 	sum,
 	isSelected,
 	onEditPress,
+	onEditPlannedPress,
 	formatCurrency,
 }) => {
 	const [isOpen, setOpen] = useState(isSelected);
@@ -99,7 +101,7 @@ const DailyEventListItem: React.FC<Props> = ({
 										{txn.type === 'income' ? '+' : '-'}
 										{formatCurrency(Number(txn.amount))}
 									</Text>
-									{/* Edit button only for real (DB-persisted) transactions */}
+									{/* Edit button for real (DB-persisted) transactions */}
 									{onEditPress && txn.realTransaction && (
 										<Button
 											size="$buttons.sm"
@@ -109,6 +111,20 @@ const DailyEventListItem: React.FC<Props> = ({
 											onPress={() => onEditPress(txn)}
 										/>
 									)}
+									{/* Confirm/edit button for planned transactions without a real transaction */}
+									{onEditPlannedPress &&
+										txn.plannedTransaction &&
+										!txn.realTransaction && (
+											<Button
+												size="$buttons.sm"
+												circular
+												backgroundColor="transparent"
+												icon={Pencil}
+												onPress={() =>
+													onEditPlannedPress(txn)
+												}
+											/>
+										)}
 								</XStack>
 							);
 						})

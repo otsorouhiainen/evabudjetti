@@ -1,14 +1,17 @@
 import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
 import { addMonths, subMonths } from 'date-fns';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
+import { useAddRealTransaction } from '@/src/finance/hook/useAddRealTransaction';
 import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
 import { useUsableFunds } from '@/src/finance/hook/useUsableFunds';
+import { useCategoryStore } from '@/src/store/categoryStore';
 import { useTimeframeStore } from '@/src/store/useTimeframeStore';
 import { LOCALE } from '../constants/index';
 import type {
+	Category,
 	Persisted,
 	RealTransaction,
 	TransactionOccurrence,
@@ -17,13 +20,13 @@ import { formatCurrency } from '../utils/budgetUtils';
 import DailyEventList from './DailyEventList';
 import EditTransactionModal from './EditTransactionModal';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
+import PlannedTransactionConfirmModal from './PlannedTransactionConfirmModal';
+import RealTransactionModal from './RealTransactionModal';
 import StyledCard from './styledCard';
 
 interface DailyBalanceViewProps {
 	selectedDate: Date;
 	onDateChange: (date: Date) => void;
-	onAddPress?: () => void;
-	onEditPress?: (txn: TransactionOccurrence) => void;
 }
 
 // Helper to format date as "dd.mm.yyyy"
@@ -34,16 +37,69 @@ const formatDate = (date: Date) => {
 export default function DailyBalanceView({
 	selectedDate,
 	onDateChange,
-	onAddPress,
 }: DailyBalanceViewProps) {
 	const { t } = useTranslation();
 
 	const [editingTransaction, setEditingTransaction] =
 		useState<Persisted<RealTransaction> | null>(null);
+	const [addModalVisible, setAddModalVisible] = useState(false);
+	const [addTransactionType, setAddTransactionType] = useState<
+		'income' | 'expense'
+	>('expense');
+	const [confirmingPlannedTxn, setConfirmingPlannedTxn] =
+		useState<TransactionOccurrence | null>(null);
+
+	const storeCategories = useCategoryStore();
+	const [categories, setCategories] = useState<Persisted<Category>[]>([]);
+	useEffect(() => {
+		setCategories(storeCategories.categories);
+	}, [storeCategories.categories]);
+
+	const addCategory = useCategoryStore((state) => state.addCategory);
+	const addRealTransactionToDb = useAddRealTransaction();
+
+	const dynamicCategories = categories.map((cat) => ({
+		key: cat.id,
+		label: cat.name,
+		type: cat.type,
+	}));
 
 	const handleEditPress = (txn: TransactionOccurrence) => {
 		if (txn.realTransaction) {
 			setEditingTransaction(txn.realTransaction);
+		}
+	};
+
+	const handleEditPlannedPress = (txn: TransactionOccurrence) => {
+		setConfirmingPlannedTxn(txn);
+	};
+
+	const handleOpenAddModal = (type: 'income' | 'expense') => {
+		setAddTransactionType(type);
+		setAddModalVisible(true);
+	};
+
+	const handleAddTransaction = async (item: RealTransaction) => {
+		try {
+			await addRealTransactionToDb(item);
+			setAddModalVisible(false);
+		} catch (error) {
+			console.error('Failed to save real transaction:', error);
+		}
+	};
+
+	const handleAddCategory = async (categoryName: string) => {
+		if (!categoryName.trim()) return;
+		try {
+			await addCategory({
+				name: categoryName,
+				type: addTransactionType,
+				color: '#000000',
+				icon: 'circle',
+			});
+		} catch (error) {
+			console.error('Failed to add category:', error);
+			throw error;
 		}
 	};
 
@@ -192,34 +248,56 @@ export default function DailyBalanceView({
 					</YStack>
 				</XStack>
 
-				{/* Add Button */}
-				<Button
-					backgroundColor="$primary100"
-					borderRadius="$4"
-					paddingHorizontal="$6"
-					paddingVertical="$2"
-					height="wrap-content"
-					onPress={onAddPress}
-					pressStyle={{ backgroundColor: '$primary200' }}
-					marginVertical={10}
-				>
-					<Text
-						color="$white"
-						fontWeight="500"
-						fontSize="$3"
-						numberOfLines={1}
-						adjustsFontSizeToFit
+				{/* Add Buttons */}
+				<XStack gap={8} marginVertical={10}>
+					<Button
+						backgroundColor="$primary100"
+						borderRadius="$4"
+						paddingHorizontal="$4"
+						paddingVertical="$2"
+						height="wrap-content"
+						flex={1}
+						onPress={() => handleOpenAddModal('income')}
+						pressStyle={{ backgroundColor: '$primary200' }}
 					>
-						{t('ADD INCOME/EXPENSE')}
-					</Text>
-				</Button>
+						<Text
+							color="$white"
+							fontWeight="500"
+							fontSize="$3"
+							numberOfLines={1}
+							adjustsFontSizeToFit
+						>
+							{t('Add income short')}
+						</Text>
+					</Button>
+					<Button
+						backgroundColor="$primary100"
+						borderRadius="$4"
+						paddingHorizontal="$4"
+						paddingVertical="$2"
+						height="wrap-content"
+						flex={1}
+						onPress={() => handleOpenAddModal('expense')}
+						pressStyle={{ backgroundColor: '$primary200' }}
+					>
+						<Text
+							color="$white"
+							fontWeight="500"
+							fontSize="$3"
+							numberOfLines={1}
+							adjustsFontSizeToFit
+						>
+							{t('Add expense short')}
+						</Text>
+					</Button>
+				</XStack>
 				<Text color="$black" fontSize="$2" fontWeight="600">
 					{t('Usable funds timeframe')}:{' '}
 					{`${formatDate(selectedDate)} - ${formatDate(currentTimeframeEnd)}`}
 				</Text>
 			</StyledCard>
 
-			{/* Edit transaction modal */}
+			{/* Edit real transaction modal */}
 			<Modal
 				visible={editingTransaction !== null}
 				onRequestClose={() => setEditingTransaction(null)}
@@ -229,6 +307,41 @@ export default function DailyBalanceView({
 					<EditTransactionModal
 						transaction={editingTransaction}
 						onClose={() => setEditingTransaction(null)}
+					/>
+				)}
+			</Modal>
+
+			{/* Add new real transaction modal */}
+			<Modal
+				visible={addModalVisible}
+				onRequestClose={() => setAddModalVisible(false)}
+				transparent
+			>
+				<RealTransactionModal
+					onAdd={(item) => {
+						void handleAddTransaction({
+							...item,
+							type: addTransactionType,
+						});
+					}}
+					onClose={() => setAddModalVisible(false)}
+					transactionType={addTransactionType}
+					categories={dynamicCategories}
+					onAddCategory={handleAddCategory}
+				/>
+			</Modal>
+
+			{/* Confirm / edit planned transaction modal */}
+			<Modal
+				visible={confirmingPlannedTxn !== null}
+				onRequestClose={() => setConfirmingPlannedTxn(null)}
+				transparent
+			>
+				{confirmingPlannedTxn && (
+					<PlannedTransactionConfirmModal
+						occurrence={confirmingPlannedTxn}
+						onClose={() => setConfirmingPlannedTxn(null)}
+						onConfirmed={() => setConfirmingPlannedTxn(null)}
 					/>
 				)}
 			</Modal>
@@ -260,6 +373,7 @@ export default function DailyBalanceView({
 							selectedDate={selectedDate}
 							formatCurrency={formatCurrency}
 							onEditPress={handleEditPress}
+							onEditPlannedPress={handleEditPlannedPress}
 							key={month.monthKey}
 						/>
 					))}

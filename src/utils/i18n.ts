@@ -73,6 +73,12 @@ i18next
 				'Expense short': 'Expense',
 				'Record new income': 'Add new income',
 				'Record new expense': 'Add new expense',
+				'Add income short': 'Add income',
+				'Add expense short': 'Add expense',
+				'Confirm budgeted transaction': 'Confirm budgeted transaction',
+				'Edit confirmed transaction': 'Edit confirmed transaction',
+				'Confirm': 'Confirm',
+				'Failed to save changes': 'Failed to save changes',
 				'Fill details in next view.':
 					'Fill in the transaction details in the next view.',
 				'Select budgeted transaction to adjust':
@@ -299,6 +305,11 @@ i18next
 				'Expense short': 'meno',
 				'Record new income': 'Kirjaa uusi tulo',
 				'Record new expense': 'Kirjaa uusi meno',
+				'Add income short': 'Lisää tulo',
+				'Add expense short': 'Lisää meno',
+				'Confirm budgeted transaction': 'Vahvista budjetoitu tapahtuma',
+				'Edit confirmed transaction': 'Muokkaa vahvistettua tapahtumaa',
+				'Failed to save changes': 'Tallentaminen epäonnistui',
 				'Fill details in next view.':
 					'Täytä tapahtuman tiedot seuraavassa näkymässä.',
 				'Select budgeted transaction to adjust':
