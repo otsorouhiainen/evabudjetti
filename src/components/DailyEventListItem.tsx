@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
@@ -25,6 +26,7 @@ const DailyEventListItem: React.FC<Props> = ({
 	onEditPlannedPress,
 	formatCurrency,
 }) => {
+	const { t } = useTranslation();
 	const [isOpen, setOpen] = useState(isSelected);
 
 	// Automatically open list item when selected
@@ -80,6 +82,9 @@ const DailyEventListItem: React.FC<Props> = ({
 										? `p-${txn.plannedTransaction.id}-${txn.date.getTime()}`
 										: `f-${txn.date.getTime()}-${txn.name}-${txn.amount}-${index}`;
 
+							const isUnconfirmedPlanned =
+								!!txn.plannedTransaction && !txn.realTransaction;
+
 							return (
 								<XStack
 									gap={10}
@@ -88,16 +93,51 @@ const DailyEventListItem: React.FC<Props> = ({
 									justifyContent="flex-end"
 									key={itemKey}
 									maxWidth={'90%'}
+									opacity={isUnconfirmedPlanned ? 0.65 : 1}
 								>
+									<YStack flex={1} gap={2}>
+										<Text
+											fontWeight="400"
+											textAlign="left"
+											fontSize="$body"
+											color={
+												isUnconfirmedPlanned
+													? '$gray600'
+													: '$color'
+											}
+											fontStyle={
+												isUnconfirmedPlanned
+													? 'italic'
+													: 'normal'
+											}
+										>
+											{txn.name}
+										</Text>
+										{/* Badge: unconfirmed planned */}
+										{isUnconfirmedPlanned && (
+											<Text
+												fontSize={10}
+												color="$gray500"
+												borderWidth={1}
+												borderColor="$gray400"
+												borderRadius={4}
+												paddingHorizontal={4}
+												paddingVertical={1}
+												alignSelf="flex-start"
+											>
+												{t('Budgeted badge')}
+											</Text>
+										)}
+									</YStack>
 									<Text
-										flex={1}
-										fontWeight="400"
-										textAlign="left"
 										fontSize="$body"
+										fontWeight="400"
+										color={
+											isUnconfirmedPlanned
+												? '$gray600'
+												: '$color'
+										}
 									>
-										{txn.name}
-									</Text>
-									<Text fontSize="$body" fontWeight="400">
 										{txn.type === 'income' ? '+' : '-'}
 										{formatCurrency(Number(txn.amount))}
 									</Text>
@@ -113,8 +153,7 @@ const DailyEventListItem: React.FC<Props> = ({
 									)}
 									{/* Confirm/edit button for planned transactions without a real transaction */}
 									{onEditPlannedPress &&
-										txn.plannedTransaction &&
-										!txn.realTransaction && (
+										isUnconfirmedPlanned && (
 											<Button
 												size="$buttons.sm"
 												circular

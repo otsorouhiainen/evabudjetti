@@ -325,6 +325,7 @@ i18next
 				'Adjustment saved': 'Korjaus tallennettu',
 				'Already confirmed': 'Jo kirjatut',
 				'Uncategorized default': 'muu',
+				'Budgeted badge': 'suunniteltu',
 				
 				//ADD NEW ITEM POPUP
 				'Add a new item': 'Lisää uusi tapahtuma',
