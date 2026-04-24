@@ -18,16 +18,24 @@ interface TimeframeState {
 }
 
 const addLength = (date: Date, timeframe: TimeframeLength) => {
+	let endDate = date;
 	switch (timeframe.type) {
 		case 'days':
-			return addDays(date, timeframe.length);
+			endDate = addDays(date, timeframe.length);
+			break;
 		case 'weeks':
-			return addDays(date, timeframe.length * 7);
+			endDate = addDays(date, timeframe.length * 7);
+			break;
 		case 'months':
-			return addMonths(date, timeframe.length);
+			endDate = addMonths(date, timeframe.length);
+			break;
 		case 'years':
-			return addYears(date, timeframe.length);
+			endDate = addYears(date, timeframe.length);
 	}
+	// remove next timeframes first day from current timeframe
+	endDate = addDays(endDate, -1);
+
+	return endDate;
 };
 
 /**
@@ -69,6 +77,14 @@ export const useTimeframeStore = create<TimeframeState>()(
 					timeframeLength,
 				} = get();
 
+				// skip calculations if timeframe is 1 day
+				if (
+					timeframeLength.type === 'days' &&
+					timeframeLength.length === 1
+				) {
+					return date;
+				}
+
 				let currentTimeframeStart = new Date(
 					timeframeStartYear,
 					timeframeStartMonth,
@@ -79,8 +95,9 @@ export const useTimeframeStore = create<TimeframeState>()(
 					timeframeLength,
 				);
 
-				while (date > currentTimeframeEnd) {
-					currentTimeframeStart = currentTimeframeEnd;
+				while (date > addDays(currentTimeframeEnd, 1)) {
+					// increment next timeframe start to current end + 1 for new start
+					currentTimeframeStart = addDays(currentTimeframeEnd, 1);
 					currentTimeframeEnd = addLength(
 						currentTimeframeStart,
 						timeframeLength,
