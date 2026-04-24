@@ -199,7 +199,10 @@ export default function Settings() {
 									value={timeframeLengthInput}
 									onChangeText={setTimeframeLengthInput}
 									keyboardType="numeric"
-									style={{ minWidth: '21%', height: '25%' }}
+									style={{
+										minWidth: '21%',
+										height: selectOpen ? '25%' : '100%',
+									}}
 								/>
 
 								<View>
@@ -238,62 +241,75 @@ export default function Settings() {
 										<Select.Content>
 											<Select.Viewport>
 												<Select.Group>
-													{timeframeOptions.map(
-														(option, i) => (
-															<Select.Item
-																index={i}
-																key={option}
-																value={option}
-																onTouchEnd={() => {
-																	setTimeframeOption(
-																		option,
-																	);
-																	setSelectOpen(
-																		false,
-																	);
-																}}
-																opacity={
-																	selectOpen
-																		? 100
-																		: 0
-																}
-																disabled={
-																	!selectOpen
-																}
-																zIndex={
-																	selectOpen
-																		? 2000
-																		: 0
-																}
-																borderColor="$black"
-																borderWidth={1}
-																borderTopWidth={
-																	0
-																}
-																borderBottomWidth={
-																	i ===
-																	timeframeOptions.length -
+													<View
+														height={
+															selectOpen
+																? 'auto'
+																: 0
+														}
+														overflow="hidden"
+													>
+														{timeframeOptions.map(
+															(option, i) => (
+																<Select.Item
+																	index={i}
+																	key={option}
+																	value={
+																		option
+																	}
+																	onTouchEnd={() => {
+																		setTimeframeOption(
+																			option,
+																		);
+																		setSelectOpen(
+																			false,
+																		);
+																	}}
+																	borderColor="$black"
+																	borderWidth={
 																		1
-																		? 1
-																		: 0
-																}
-															>
-																<Select.ItemText
-																	color="$black"
-																	alignContent="center"
+																	}
+																	borderTopWidth={
+																		0
+																	}
+																	borderBottomWidth={
+																		i ===
+																		timeframeOptions.length -
+																			1
+																			? 1
+																			: 0
+																	}
+																	borderBottomLeftRadius={
+																		i ===
+																		timeframeOptions.length -
+																			1
+																			? 15
+																			: 0
+																	}
+																	borderBottomRightRadius={
+																		i ===
+																		timeframeOptions.length -
+																			1
+																			? 15
+																			: 0
+																	}
 																>
-																	{t(option)}
-																</Select.ItemText>
-																<Select.ItemIndicator marginLeft="auto">
-																	<Check
-																		size={
-																			16
-																		}
-																	/>
-																</Select.ItemIndicator>
-															</Select.Item>
-														),
-													)}
+																	<Select.ItemText>
+																		{t(
+																			option,
+																		)}
+																	</Select.ItemText>
+																	<Select.ItemIndicator marginLeft="auto">
+																		<Check
+																			size={
+																				16
+																			}
+																		/>
+																	</Select.ItemIndicator>
+																</Select.Item>
+															),
+														)}
+													</View>
 												</Select.Group>
 											</Select.Viewport>
 										</Select.Content>
