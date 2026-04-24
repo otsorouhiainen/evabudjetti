@@ -241,8 +241,15 @@ export default function Settings() {
 										<Select.Content>
 											<Select.Viewport>
 												<Select.Group>
-													{selectOpen &&
-														timeframeOptions.map(
+													<View
+														height={
+															selectOpen
+																? 'auto'
+																: 0
+														}
+														overflow="hidden"
+													>
+														{timeframeOptions.map(
 															(option, i) => (
 																<Select.Item
 																	index={i}
@@ -250,14 +257,14 @@ export default function Settings() {
 																	value={
 																		option
 																	}
-																	disabled={
-																		!selectOpen
-																	}
-																	zIndex={
-																		selectOpen
-																			? 2000
-																			: 0
-																	}
+																	onTouchEnd={() => {
+																		setTimeframeOption(
+																			option,
+																		);
+																		setSelectOpen(
+																			false,
+																		);
+																	}}
 																	borderColor="$black"
 																	borderWidth={
 																		1
@@ -302,6 +309,7 @@ export default function Settings() {
 																</Select.Item>
 															),
 														)}
+													</View>
 												</Select.Group>
 											</Select.Viewport>
 										</Select.Content>
