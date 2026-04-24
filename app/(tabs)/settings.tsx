@@ -105,6 +105,9 @@ export default function Settings() {
 		setStartDate(tempStartDate);
 		setLength(tempTimeframeLength, timeframeOption);
 		setTimeframeDialogOpen(false);
+
+		// close select
+		setSelectOpen(false);
 	};
 
 	const handleCancelButtonPressed = () => {
@@ -113,6 +116,9 @@ export default function Settings() {
 		setTimeframeLengthInput('1');
 		setTempTimeframeLength(1);
 		setTimeframeOption('months');
+
+		// close select
+		setSelectOpen(false);
 
 		setTimeframeDialogOpen(false);
 	};
@@ -198,10 +204,14 @@ export default function Settings() {
 
 								<View>
 									<Select
-										value={t(timeframeOption)}
+										value={timeframeOption}
+										defaultValue="months"
 										onValueChange={(
 											option: LengthOptions,
-										) => setTimeframeOption(option)}
+										) => {
+											setTimeframeOption(option);
+											setSelectOpen(false);
+										}}
 										disablePreventBodyScroll
 										native="web"
 									>
@@ -220,7 +230,9 @@ export default function Settings() {
 												setSelectOpen(!selectOpen)
 											}
 										>
-											<Select.Value />
+											<Select.Value
+												placeholder={t(timeframeOption)}
+											/>
 										</Select.Trigger>
 
 										<Select.Content>
@@ -232,6 +244,14 @@ export default function Settings() {
 																index={i}
 																key={option}
 																value={option}
+																onTouchEnd={() => {
+																	setTimeframeOption(
+																		option,
+																	);
+																	setSelectOpen(
+																		false,
+																	);
+																}}
 																opacity={
 																	selectOpen
 																		? 100
@@ -258,7 +278,10 @@ export default function Settings() {
 																		: 0
 																}
 															>
-																<Select.ItemText>
+																<Select.ItemText
+																	color="$black"
+																	alignContent="center"
+																>
 																	{t(option)}
 																</Select.ItemText>
 																<Select.ItemIndicator marginLeft="auto">
