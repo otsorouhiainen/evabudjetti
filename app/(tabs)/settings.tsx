@@ -302,62 +302,6 @@ export default function Settings() {
 																</Select.Item>
 															),
 														)}
-													{timeframeOptions.map(
-														(option, i) => (
-															<Select.Item
-																index={i}
-																key={option}
-																value={option}
-																onTouchEnd={() => {
-																	setTimeframeOption(
-																		option,
-																	);
-																	setSelectOpen(
-																		false,
-																	);
-																}}
-																opacity={
-																	selectOpen
-																		? 100
-																		: 0
-																}
-																disabled={
-																	!selectOpen
-																}
-																zIndex={
-																	selectOpen
-																		? 2000
-																		: 0
-																}
-																borderColor="$black"
-																borderWidth={1}
-																borderTopWidth={
-																	0
-																}
-																borderBottomWidth={
-																	i ===
-																	timeframeOptions.length -
-																		1
-																		? 1
-																		: 0
-																}
-															>
-																<Select.ItemText
-																	color="$black"
-																	alignContent="center"
-																>
-																	{t(option)}
-																</Select.ItemText>
-																<Select.ItemIndicator marginLeft="auto">
-																	<Check
-																		size={
-																			16
-																		}
-																	/>
-																</Select.ItemIndicator>
-															</Select.Item>
-														),
-													)}
 												</Select.Group>
 											</Select.Viewport>
 										</Select.Content>
