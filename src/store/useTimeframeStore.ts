@@ -21,7 +21,7 @@ const addLength = (date: Date, timeframe: TimeframeLength) => {
 	let endDate = date;
 	switch (timeframe.type) {
 		case 'days':
-			endDate = addDays(date, timeframe.length - 1);
+			endDate = addDays(date, timeframe.length);
 			break;
 		case 'weeks':
 			endDate = addDays(date, timeframe.length * 7);
