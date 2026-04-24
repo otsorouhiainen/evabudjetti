@@ -105,6 +105,9 @@ export default function Settings() {
 		setStartDate(tempStartDate);
 		setLength(tempTimeframeLength, timeframeOption);
 		setTimeframeDialogOpen(false);
+
+		// close select
+		setSelectOpen(false);
 	};
 
 	const handleCancelButtonPressed = () => {
@@ -113,6 +116,9 @@ export default function Settings() {
 		setTimeframeLengthInput('1');
 		setTempTimeframeLength(1);
 		setTimeframeOption('months');
+
+		// close select
+		setSelectOpen(false);
 
 		setTimeframeDialogOpen(false);
 	};
@@ -193,15 +199,22 @@ export default function Settings() {
 									value={timeframeLengthInput}
 									onChangeText={setTimeframeLengthInput}
 									keyboardType="numeric"
-									style={{ minWidth: '21%', height: '25%' }}
+									style={{
+										minWidth: '21%',
+										height: selectOpen ? '25%' : '100%',
+									}}
 								/>
 
 								<View>
 									<Select
-										value={t(timeframeOption)}
+										value={timeframeOption}
+										defaultValue="months"
 										onValueChange={(
 											option: LengthOptions,
-										) => setTimeframeOption(option)}
+										) => {
+											setTimeframeOption(option);
+											setSelectOpen(false);
+										}}
 										disablePreventBodyScroll
 										native="web"
 									>
@@ -220,57 +233,83 @@ export default function Settings() {
 												setSelectOpen(!selectOpen)
 											}
 										>
-											<Select.Value />
+											<Select.Value
+												placeholder={t(timeframeOption)}
+											/>
 										</Select.Trigger>
 
 										<Select.Content>
 											<Select.Viewport>
 												<Select.Group>
-													{timeframeOptions.map(
-														(option, i) => (
-															<Select.Item
-																index={i}
-																key={option}
-																value={option}
-																opacity={
-																	selectOpen
-																		? 100
-																		: 0
-																}
-																disabled={
-																	!selectOpen
-																}
-																zIndex={
-																	selectOpen
-																		? 2000
-																		: 0
-																}
-																borderColor="$black"
-																borderWidth={1}
-																borderTopWidth={
-																	0
-																}
-																borderBottomWidth={
-																	i ===
-																	timeframeOptions.length -
+													<View
+														height={
+															selectOpen
+																? 'auto'
+																: 0
+														}
+														overflow="hidden"
+													>
+														{timeframeOptions.map(
+															(option, i) => (
+																<Select.Item
+																	index={i}
+																	key={option}
+																	value={
+																		option
+																	}
+																	onTouchEnd={() => {
+																		setTimeframeOption(
+																			option,
+																		);
+																		setSelectOpen(
+																			false,
+																		);
+																	}}
+																	borderColor="$black"
+																	borderWidth={
 																		1
-																		? 1
-																		: 0
-																}
-															>
-																<Select.ItemText>
-																	{t(option)}
-																</Select.ItemText>
-																<Select.ItemIndicator marginLeft="auto">
-																	<Check
-																		size={
-																			16
-																		}
-																	/>
-																</Select.ItemIndicator>
-															</Select.Item>
-														),
-													)}
+																	}
+																	borderTopWidth={
+																		0
+																	}
+																	borderBottomWidth={
+																		i ===
+																		timeframeOptions.length -
+																			1
+																			? 1
+																			: 0
+																	}
+																	borderBottomLeftRadius={
+																		i ===
+																		timeframeOptions.length -
+																			1
+																			? 15
+																			: 0
+																	}
+																	borderBottomRightRadius={
+																		i ===
+																		timeframeOptions.length -
+																			1
+																			? 15
+																			: 0
+																	}
+																>
+																	<Select.ItemText>
+																		{t(
+																			option,
+																		)}
+																	</Select.ItemText>
+																	<Select.ItemIndicator marginLeft="auto">
+																		<Check
+																			size={
+																				16
+																			}
+																		/>
+																	</Select.ItemIndicator>
+																</Select.Item>
+															),
+														)}
+													</View>
 												</Select.Group>
 											</Select.Viewport>
 										</Select.Content>
