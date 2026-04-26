@@ -37,7 +37,7 @@ export default function BudgetMonthsScreen() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
-			<ScrollView contentInsetAdjustmentBehavior="automatic">
+			<ScrollView contentInsetAdjustmentBehavior="never">
 				<YStack padding="$4" gap="$3">
 					{monthKeys.map((monthKey, index) => {
 						const routeId = `${yearNum}-${index.toString().padStart(2, '0')}`;
