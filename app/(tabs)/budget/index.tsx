@@ -16,7 +16,7 @@ export default function YearsScreen() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
-			<ScrollView>
+			<ScrollView contentInsetAdjustmentBehavior="never">
 				<YStack padding="$4" gap="$3">
 					<Button
 						backgroundColor="$primary200"

@@ -10,6 +10,7 @@ export default function SummaryStackLayout() {
 				headerShadowVisible: false,
 				headerStyle: { backgroundColor: '#f2f2f2' },
 				headerLargeTitle: false,
+				headerTitleAlign: 'center',
 			}}
 		>
 			<Stack.Screen name="index" options={{ headerShown: false }} />
@@ -17,6 +18,7 @@ export default function SummaryStackLayout() {
 				name="[year]"
 				options={({ route }) => ({
 					title: `${t('Year')} ${(route.params as { year?: string })?.year}`,
+					headerBackButtonDisplayMode: 'minimal',
 				})}
 			/>
 		</Stack>

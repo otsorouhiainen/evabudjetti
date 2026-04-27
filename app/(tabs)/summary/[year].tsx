@@ -16,7 +16,17 @@ export default function MonthsScreen() {
 	const { t } = useTranslation();
 
 	const yearNum = Number(year);
-	const yearlySummaries = useTransactionSummaries(yearNum, 0, yearNum, 11);
+	const currentDate = new Date();
+	const currentYear = currentDate.getFullYear();
+	const currentMonth = currentDate.getMonth();
+	const endMonth = yearNum === currentYear ? currentMonth : 11;
+
+	const yearlySummaries = useTransactionSummaries(
+		yearNum,
+		0,
+		yearNum,
+		endMonth,
+	);
 
 	const monthKeys = [
 		'january',
@@ -35,7 +45,7 @@ export default function MonthsScreen() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
-			<ScrollView contentInsetAdjustmentBehavior="automatic">
+			<ScrollView contentInsetAdjustmentBehavior="never">
 				<YStack padding="$4" gap="$3">
 					{yearlySummaries.map((monthData, index) => {
 						const change = monthData?.cashFlow ?? 0;

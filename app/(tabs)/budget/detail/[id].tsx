@@ -129,8 +129,14 @@ export default function BudgetDetailedMonthScreen() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
-			<Stack.Screen options={{ title: formattedTitle }} />
-			<ScrollView contentInsetAdjustmentBehavior="automatic">
+			<Stack.Screen
+				options={{
+					title: formattedTitle,
+					headerLargeTitle: false,
+					headerTitleAlign: 'center',
+				}}
+			/>
+			<ScrollView contentInsetAdjustmentBehavior="never">
 				<YStack padding="$4" gap="$4" paddingBottom="$10">
 					<YStack gap="$2">
 						<Button
