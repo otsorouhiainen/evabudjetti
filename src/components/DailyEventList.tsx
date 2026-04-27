@@ -8,6 +8,7 @@ interface Props {
 	monthKey: string;
 	selectedDate: Date;
 	onEditPress?: (txn: TransactionOccurrence) => void;
+	onEditPlannedPress?: (txn: TransactionOccurrence) => void;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
 
@@ -16,6 +17,7 @@ const DailyEventList: React.FC<Props> = ({
 	monthKey,
 	selectedDate,
 	onEditPress,
+	onEditPlannedPress,
 	formatCurrency,
 }) => {
 	const { t } = useTranslation();
@@ -158,6 +160,7 @@ const DailyEventList: React.FC<Props> = ({
 							selectedDate.toDateString()
 						}
 						onEditPress={onEditPress}
+						onEditPlannedPress={onEditPlannedPress}
 						formatCurrency={formatCurrency}
 						key={`${monthKey}-${dTxns[0].date.getDate()}`}
 					></DailyEventListItem>

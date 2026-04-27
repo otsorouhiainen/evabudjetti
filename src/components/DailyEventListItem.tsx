@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import { LOCALE } from '../constants/index';
 import type { TransactionOccurrence } from '../dataModel';
@@ -11,6 +12,7 @@ interface Props {
 	sum: number;
 	isSelected: boolean;
 	onEditPress?: (txn: TransactionOccurrence) => void;
+	onEditPlannedPress?: (txn: TransactionOccurrence) => void;
 	formatCurrency: (value: number, hideSign?: boolean) => string;
 }
 
@@ -21,8 +23,10 @@ const DailyEventListItem: React.FC<Props> = ({
 	sum,
 	isSelected,
 	onEditPress,
+	onEditPlannedPress,
 	formatCurrency,
 }) => {
+	const { t } = useTranslation();
 	const [isOpen, setOpen] = useState(isSelected);
 
 	// Automatically open list item when selected
@@ -70,48 +74,105 @@ const DailyEventListItem: React.FC<Props> = ({
 				</XStack>
 				{isOpen &&
 					(dTxns[0].name !== '' ? (
-						dTxns.map((txn, index) => {
-							const itemKey =
-								txn.realTransaction?.id != null
-									? `r-${txn.realTransaction.id}`
-									: txn.plannedTransaction?.id != null
-										? `p-${txn.plannedTransaction.id}-${txn.date.getTime()}`
-										: `f-${txn.date.getTime()}-${txn.name}-${txn.amount}-${index}`;
+						(() => {
+							const realTxns = dTxns.filter(
+								(txn) =>
+									txn.realTransaction != null ||
+									txn.plannedTransaction == null,
+							);
+							const plannedTxns = dTxns.filter(
+								(txn) =>
+									txn.plannedTransaction != null &&
+									txn.realTransaction == null,
+							);
+
+							const renderRow = (
+								txn: TransactionOccurrence,
+								index: number,
+							) => {
+								const itemKey =
+									txn.realTransaction?.id != null
+										? `r-${txn.realTransaction.id}`
+										: txn.plannedTransaction?.id != null
+											? `p-${txn.plannedTransaction.id}-${txn.date.getTime()}`
+											: `f-${txn.date.getTime()}-${txn.name}-${txn.amount}-${index}`;
+
+								return (
+									<XStack
+										gap={10}
+										backgroundColor="transparent"
+										alignItems="center"
+										justifyContent="flex-end"
+										key={itemKey}
+										maxWidth={'90%'}
+									>
+										<Text
+											flex={1}
+											fontWeight="400"
+											textAlign="left"
+											fontSize="$body"
+										>
+											{txn.name}
+										</Text>
+										<Text fontSize="$body" fontWeight="400">
+											{txn.type === 'income' ? '+' : '-'}
+											{formatCurrency(Number(txn.amount))}
+										</Text>
+										{onEditPress && txn.realTransaction && (
+											<Button
+												size="$buttons.sm"
+												circular
+												backgroundColor="transparent"
+												icon={Pencil}
+												onPress={() => onEditPress(txn)}
+											/>
+										)}
+										{onEditPlannedPress &&
+											txn.plannedTransaction &&
+											!txn.realTransaction && (
+												<Button
+													size="$buttons.sm"
+													circular
+													backgroundColor="transparent"
+													icon={Pencil}
+													onPress={() =>
+														onEditPlannedPress(txn)
+													}
+												/>
+											)}
+									</XStack>
+								);
+							};
 
 							return (
-								<XStack
-									gap={10}
-									backgroundColor="transparent"
-									alignItems="center"
-									justifyContent="flex-end"
-									key={itemKey}
-									maxWidth={'90%'}
-								>
-									<Text
-										flex={1}
-										fontWeight="400"
-										textAlign="left"
-										fontSize="$body"
-									>
-										{txn.name}
-									</Text>
-									<Text fontSize="$body" fontWeight="400">
-										{txn.type === 'income' ? '+' : '-'}
-										{formatCurrency(Number(txn.amount))}
-									</Text>
-									{/* Edit button only for real (DB-persisted) transactions */}
-									{onEditPress && txn.realTransaction && (
-										<Button
-											size="$buttons.sm"
-											circular
-											backgroundColor="transparent"
-											icon={Pencil}
-											onPress={() => onEditPress(txn)}
-										/>
+								<>
+									{realTxns.map((txn, i) =>
+										renderRow(txn, i),
 									)}
-								</XStack>
+									{plannedTxns.length > 0 && (
+										<>
+											<Text
+												fontSize="$2"
+												fontWeight="600"
+												color="$gray500"
+												marginTop={
+													realTxns.length > 0 ? 6 : 0
+												}
+												marginBottom={2}
+											>
+												{t('Planned section title')}
+											</Text>
+											{plannedTxns.map((txn, i) =>
+												renderRow(
+													txn,
+													realTxns.length + i,
+												),
+											)}
+										</>
+									)}
+								</>
 							);
-						})
+						})()
 					) : (
 						<Text
 							style={{ fontStyle: 'italic' }}
