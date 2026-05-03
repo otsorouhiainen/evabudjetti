@@ -1,14 +1,13 @@
-import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
-import { db, isDbReal } from '@/src/db/client';
-import * as schema from '@/src/db/schema';
 import useWebFallbackPlannedTransactionsStore from '@/src/store/useWebFallbackPlannedTransactionsStore';
 
+/*
+ * WEB-FALLBACK: This hook is used in the web version of the app, where we don't have access to the native database.
+ * The .native.ts is used automatically on actual devices.
+ */
 export function usePlannedTransactions() {
 	const fallbackStoreTransactions = useWebFallbackPlannedTransactionsStore(
 		(state) => state.transactions,
 	);
 
-	const { data } = useLiveQuery(db.select().from(schema.plannedTransactions));
-
-	return isDbReal ? (data ?? []) : fallbackStoreTransactions;
+	return fallbackStoreTransactions;
 }
