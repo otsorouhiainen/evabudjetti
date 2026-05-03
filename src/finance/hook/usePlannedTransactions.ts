@@ -1,10 +1,10 @@
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { db, isDbReal } from '@/src/db/client';
 import * as schema from '@/src/db/schema';
-import usePlannedTransactionsStore from '@/src/store/usePlannedTransactionsStore';
+import useWebFallbackPlannedTransactionsStore from '@/src/store/useWebFallbackPlannedTransactionsStore';
 
 export function usePlannedTransactions() {
-	const fallbackStoreTransactions = usePlannedTransactionsStore(
+	const fallbackStoreTransactions = useWebFallbackPlannedTransactionsStore(
 		(state) => state.transactions,
 	);
 
