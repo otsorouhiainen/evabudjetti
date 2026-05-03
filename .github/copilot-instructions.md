@@ -1,10 +1,9 @@
 # Copilot Coding Agent – Repository Onboarding Guide
 
-Repository: Samu-K/evabudjetti  
 Primary Language: TypeScript  
 License: MIT  
 Default Branch: main  
-Project Description: “COMP.SE.610 - Budget project” (appears to be a budgeting / expense tracking application).  
+Project Description: budgeting / expense tracking application
 Visibility: Private
 
 IMPORTANT OPERATING PRINCIPLE FOR THE AGENT  
@@ -22,10 +21,10 @@ This repository is a TypeScript codebase implementing a budgeting domain (e.g., 
 
 Architectural layers:
 
-- Domain models (e.g., Budget, Transaction, Category)
-- Service or logic layer (calculation, aggregation)
-- Persistence or adapters (zustand state managment)
-- Entry point (Primary web interface, ios and Android app options)
+- Domain models: `src/db`, `src/dataModel` (e.g., Budget, Transaction, Category)
+- Logic layer: `src/finance` (calculation, aggregation)
+- Persistence: `src/store` and `src/db` (zustand state managment)
+- Entry point (ios and Android app, web interface fallback for development)
 
 You should preserve separation of concerns, avoid duplicating logic, and prefer pure functions for domain calculations. Favor O(n log n) or linear operations for aggregation; avoid nested loops over large collections where map/reduce/groupBy patterns can replace them.
 
@@ -50,12 +49,12 @@ Always verify these files exist before relying on them:
 Bootstrap (ALWAYS run first when dependencies may be stale):
 
 1. pnpm install
-   Preconditions: Node & npm installed, correct working directory at repo root.
+   Preconditions: Node & pnpm installed, correct working directory at repo root.
    Postconditions: node_modules populated.
 
 Lint: 4. pnpm run lint
-If missing, manually: npx eslint "src/**/\*.{ts,tsx}"  
- Fix (if desired): npx eslint "src/**/\*.{ts,tsx}" --fix
+If missing, manually: pnpx eslint "src/**/\*.{ts,tsx}"  
+ Fix (if desired): pnpx eslint "src/**/\*.{ts,tsx}" --fix
 
 Format (only if a format script exists): 5. pnpm run fmt
 
@@ -65,9 +64,6 @@ Tests: 6. pnpm test
 - If using Vitest: pnpx vitest run
 
 Run (application execution): 7. pnpm run --web
-
-- dev usually invokes a watcher (ts-node-dev / nodemon / vite / next dev)
-- start may execute compiled JS from dist/
 
 Clean (before reproducibility checks):
 
@@ -102,9 +98,8 @@ ALWAYS:
 - Preserve pure functions for budget computations; avoid side effects unless clearly intentional.
 - Add/extend tests when altering business logic.
 - Prefer O(n) scans with maps/groupings over nested loops.
-- Explicitly handle edge cases: empty transaction arrays, negative values, rounding issues (use decimal libs if monetary precision matters).
+- Explicitly handle edge cases: empty transaction arrays, negative values, rounding issues.
 - Ensure state managment is handled by Zustand. Each module should have it's own store, and use slices for smaller scope structuring.
-- Ensure prisma sql migrations are documented in `prisma\migration_log.txt` (excluding init)
 
 ---
 
@@ -116,21 +111,15 @@ Likely root files (NAME → PURPOSE):
 - package.json – Scripts & dependencies
 - tsconfig.json – Compiler config
 - .gitignore – Ignored build artifacts
-- (Optional) .env.example – Environment variable template
-- src/ – Source root
-  - index.tsx – Entry point
-  - components/ – TypeScript interfaces/types
-  - services/ or logic/ – Business logic
+- src/ – Source root for non-view code
+  - components/ – React components
+  - dataModel/ - Data models for the application
+  - db/ - Drizzle schema and client setup
+  - finance/ – Business logic
   - utils/ – Shared helpers
-  - tests/ or **tests**/ – Test files (mirroring structure)
-  - store/ - Zustand store files
+  - store/ - Zustand store files for UI state management
+- app/ - Source root for views
 - dist/ – Generated build (should NOT be committed unless deliberate)
-- prisma/ - contains schema and migrations for sqlite database made using Prisma
-
-If a web frontend:
-
-- public/ – Static assets
-- vite.config.\* OR next.config.js – Build tool config
 
 ---
 
@@ -141,7 +130,7 @@ Typical jobs (reproduce locally in same order):
 
 1. Checkout
 2. Setup Node version
-3. Install (npm ci OR npm install)
+3. Install (pnpm install)
 4. Lint
 5. Build
 6. Test
@@ -170,12 +159,12 @@ Before adding a new library:
 When implementing a feature or bugfix:
 
 1. Pull latest main.
-2. Run: npm install (ALWAYS, ensures lock sync)
-3. Run: npm run lint && npx tsc --noEmit
+2. Run: pnpm install (ALWAYS, ensures lock sync)
+3. Run: pnpm run lint && pnpx tsc --noEmit
 4. Add/modify code in src/ only (do not edit dist/).
 5. Add / update tests (co-located or in tests/).
-6. Run: npm test (must pass).
-7. Run: npm run build (must succeed).
+6. Run: pnpm test (must pass).
+7. Run: pnpm run build (must succeed).
 8. Ensure no uncommitted generated artifacts (dist/ ignored).
 9. Keep commit messages concise and imperative.
 
@@ -209,7 +198,7 @@ Budget aggregation:
 
 If handling amounts:
 
-- Avoid floating point summation errors (consider decimal.js or store in integer cents).
+- Avoid floating point summation errors.
 - Validate input boundaries (no absurdly large numbers, no NaN).
 
 ---
@@ -218,7 +207,7 @@ If handling amounts:
 
 Only perform repository-wide searches if:
 
-- A referenced script (e.g., npm run build) does not exist.
+- A referenced script (e.g., pnpm run build) does not exist.
 - A config file (tsconfig.json, jest.config.ts) is missing.
 - A command fails with an unknown error not covered above.
   Otherwise, trust and follow this guide.

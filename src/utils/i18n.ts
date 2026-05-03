@@ -227,7 +227,6 @@ i18next
 				'Difference': 'Difference',
 				'Are you sure?': 'Are you sure?',
 				'This will alter the balance record.': 'This will alter the balance record.',
-				'Confirm': 'Confirm',
 				'Update balance': 'Update balance',
 				"Let's start!": "Let's start!",
 				'Welcome': 'Welcome',
