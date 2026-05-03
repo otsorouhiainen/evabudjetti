@@ -25,7 +25,7 @@ const tamaguiConfig = withTamagui(config, {
 // We apply this to the final config to ensure it's not overwritten
 tamaguiConfig.server.enhanceMiddleware = (middleware) => {
 	return (req, res, next) => {
-		res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+		res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
 		res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
 		middleware(req, res, next);
 	};

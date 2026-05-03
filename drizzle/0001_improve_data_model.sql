@@ -33,6 +33,8 @@ CREATE TABLE `real_transactions` (
 	FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
+INSERT OR IGNORE INTO `budgets` (`id`, `name`) VALUES (1, 'Default Budget');--> statement-breakpoint
+INSERT OR IGNORE INTO `accounts` (`id`, `budget_id`, `name`) VALUES (1, 1, 'Default Account');--> statement-breakpoint
 PRAGMA foreign_keys=OFF;--> statement-breakpoint
 CREATE TABLE `__new_planned_transactions` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -49,7 +51,7 @@ CREATE TABLE `__new_planned_transactions` (
 	FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-INSERT INTO `__new_planned_transactions`("id", "account_id", "name", "category_id", "amount", "date", "end_date", "type", "recurrence_base", "recurrence_interval") SELECT "id", "account_id", "name", "category_id", "amount", "date", "end_date", "type", "recurrence_base", "recurrence_interval" FROM `planned_transactions`;--> statement-breakpoint
+INSERT INTO `__new_planned_transactions`("account_id", "name", "category_id", "amount", "date", "end_date", "type", "recurrence_base", "recurrence_interval") SELECT 1, "name", CAST("category_id" AS integer), "amount", "date", NULL, "type", NULLIF("recurrence_base", 'none'), COALESCE("recurrence_interval", 1) FROM `planned_transactions`;--> statement-breakpoint
 DROP TABLE `planned_transactions`;--> statement-breakpoint
 ALTER TABLE `__new_planned_transactions` RENAME TO `planned_transactions`;--> statement-breakpoint
 PRAGMA foreign_keys=ON;--> statement-breakpoint

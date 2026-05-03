@@ -22,7 +22,7 @@ import type {
 	TransactionOccurrence,
 	TransactionType,
 } from '@/src/dataModel';
-import { db, isDbReal } from '@/src/db/client';
+import { db } from '@/src/db/client';
 import * as schema from '@/src/db/schema';
 import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
 import { createMonthKey, decodeMonthKey } from '@/src/finance/logic/util';
@@ -390,9 +390,7 @@ export default function FinanceDebugScreen() {
 	);
 	const [realTransactionAmountInput, setRealTransactionAmountInput] =
 		useState('0');
-	const [actionMessage, setActionMessage] = useState<string | null>(
-		isDbReal ? null : 'Database debug actions are disabled on web builds.',
-	);
+	const [actionMessage, setActionMessage] = useState<string | null>(null);
 	const [actionMessageTone, setActionMessageTone] =
 		useState<ActionMessageTone>('info');
 	const [isAddingReconciliation, setIsAddingReconciliation] = useState(false);
@@ -562,14 +560,6 @@ export default function FinanceDebugScreen() {
 		}, []);
 
 	const handleAddBalanceReconciliation = useCallback(async () => {
-		if (!isDbReal) {
-			setActionStatus(
-				'Database debug actions are disabled on web builds.',
-				'info',
-			);
-			return;
-		}
-
 		const parsedDate = parseDateInput(reconciliationDateInput);
 		if (parsedDate == null) {
 			setActionStatus(
@@ -625,14 +615,6 @@ export default function FinanceDebugScreen() {
 	]);
 
 	const handleAddSampleRecurringPlannedSet = useCallback(async () => {
-		if (!isDbReal) {
-			setActionStatus(
-				'Database debug actions are disabled on web builds.',
-				'info',
-			);
-			return;
-		}
-
 		setIsAddingSamplePlannedSet(true);
 
 		try {
@@ -768,14 +750,6 @@ export default function FinanceDebugScreen() {
 	}, [ensureDebugDbReferences, normalizedStartDate, setActionStatus]);
 
 	const handleClearFinancialDebugData = useCallback(async () => {
-		if (!isDbReal) {
-			setActionStatus(
-				'Database debug actions are disabled on web builds.',
-				'info',
-			);
-			return;
-		}
-
 		setIsClearingDb(true);
 
 		try {
@@ -877,14 +851,6 @@ export default function FinanceDebugScreen() {
 	}, [setActionStatus]);
 
 	const handleAddRealTransaction = useCallback(async () => {
-		if (!isDbReal) {
-			setActionStatus(
-				'Database debug actions are disabled on web builds.',
-				'info',
-			);
-			return;
-		}
-
 		const parsedDate = parseDateInput(realTransactionDateInput);
 		if (parsedDate == null) {
 			setActionStatus(
@@ -960,14 +926,6 @@ export default function FinanceDebugScreen() {
 	]);
 
 	const handleDeleteRealTransactionsAtDate = useCallback(async () => {
-		if (!isDbReal) {
-			setActionStatus(
-				'Database debug actions are disabled on web builds.',
-				'info',
-			);
-			return;
-		}
-
 		const parsedDate = parseDateInput(realTransactionDateInput);
 		if (parsedDate == null) {
 			setActionStatus(
@@ -1113,6 +1071,22 @@ export default function FinanceDebugScreen() {
 				? '#1d6f42'
 				: '$black';
 
+	if (Platform.OS === 'web') {
+		return (
+			<YStack
+				flex={1}
+				alignItems="center"
+				justifyContent="center"
+				padding="$4"
+			>
+				<Text fontSize="$5" textAlign="center" color="$black">
+					This debug screen does not work on web and could corrupt the
+					web database, requiring site data reset.
+				</Text>
+			</YStack>
+		);
+	}
+
 	return (
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
 			<Stack.Screen options={{ title: 'Financial Debug / Test' }} />
@@ -1213,7 +1187,7 @@ export default function FinanceDebugScreen() {
 						/>
 						<Button
 							onPress={handleAddBalanceReconciliation}
-							disabled={!isDbReal || isAddingReconciliation}
+							disabled={isAddingReconciliation}
 						>
 							{isAddingReconciliation
 								? 'Adding...'
@@ -1225,11 +1199,7 @@ export default function FinanceDebugScreen() {
 						<Button
 							flex={1}
 							onPress={handleAddSampleRecurringPlannedSet}
-							disabled={
-								!isDbReal ||
-								isAddingSamplePlannedSet ||
-								isClearingDb
-							}
+							disabled={isAddingSamplePlannedSet || isClearingDb}
 						>
 							{isAddingSamplePlannedSet
 								? 'Adding sample set...'
@@ -1238,11 +1208,7 @@ export default function FinanceDebugScreen() {
 						<Button
 							flex={1}
 							onPress={handleClearFinancialDebugData}
-							disabled={
-								!isDbReal ||
-								isClearingDb ||
-								isAddingSamplePlannedSet
-							}
+							disabled={isClearingDb || isAddingSamplePlannedSet}
 							backgroundColor={'#b42318'}
 							pressStyle={{ backgroundColor: '#8f2f24' }}
 							color={'$white'}
@@ -1300,7 +1266,7 @@ export default function FinanceDebugScreen() {
 							/>
 							<Button
 								onPress={handleAddRealTransaction}
-								disabled={!isDbReal || isAddingRealTransaction}
+								disabled={isAddingRealTransaction}
 							>
 								{isAddingRealTransaction
 									? 'Adding...'
@@ -1333,9 +1299,7 @@ export default function FinanceDebugScreen() {
 							/>
 							<Button
 								onPress={handleDeleteRealTransactionsAtDate}
-								disabled={
-									!isDbReal || isDeletingRealTransactions
-								}
+								disabled={isDeletingRealTransactions}
 							>
 								{isDeletingRealTransactions
 									? 'Deleting...'

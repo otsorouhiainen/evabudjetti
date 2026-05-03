@@ -1,11 +1,8 @@
-import { Platform } from 'react-native';
 import { DEFAULT_ACCOUNT_ID, DEFAULT_BUDGET_ID } from '../dataModel';
 import { db } from './client';
 import { accounts, budgets, categories } from './schema';
 
 export const seedDefaultBudgetAndAccount = async () => {
-	if (Platform.OS === 'web') return;
-
 	try {
 		const existingBudgets = await db.select().from(budgets).limit(1);
 		if (existingBudgets.length === 0) {
@@ -28,8 +25,6 @@ export const seedDefaultBudgetAndAccount = async () => {
 };
 
 export const seedCategories = async () => {
-	if (Platform.OS === 'web') return;
-
 	try {
 		// Check if categories exist
 		const existing = await db.select().from(categories).limit(1);
